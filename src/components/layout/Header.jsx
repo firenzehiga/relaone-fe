@@ -151,42 +151,72 @@ const Header = () => {
 				<AnimatePresence>
 					{mobileMenuOpen && (
 						<motion.div
-							initial={{ opacity: 0, height: 0 }}
-							animate={{ opacity: 1, height: "auto" }}
-							exit={{ opacity: 0, height: 0 }}
-							className="md:hidden py-4 border-t border-gray-200">
-							<nav className="space-y-2">
-								{navItems.map((item) => (
-									<Link
-										key={item.name}
-										to={item.href}
-										className="flex items-center space-x-2 px-2 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded"
-										onClick={() => setMobileMenuOpen(false)}>
-										<item.icon size={18} />
-										<span>{item.name}</span>
-									</Link>
-								))}
+							initial={{ opacity: 0, scaleY: 0 }}
+							animate={{ opacity: 1, scaleY: 1 }}
+							exit={{ opacity: 0, scaleY: 0 }}
+							transition={{
+								duration: 0.2,
+								ease: "easeInOut",
+								opacity: { duration: 0.15 },
+								scaleY: { duration: 0.2 },
+							}}
+							className="md:hidden origin-top overflow-hidden border-t border-gray-200"
+							style={{ transformOrigin: "top" }}>
+							<div className="py-4 px-2">
+								<nav className="space-y-1">
+									{navItems.map((item, index) => (
+										<motion.div
+											key={item.name}
+											initial={{ opacity: 0, x: -20 }}
+											animate={{ opacity: 1, x: 0 }}
+											transition={{ delay: index * 0.05, duration: 0.2 }}>
+											<Link
+												to={item.href}
+												className="flex items-center space-x-3 px-3 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+												onClick={() => setMobileMenuOpen(false)}>
+												<item.icon size={20} className="text-gray-500" />
+												<span className="font-medium">{item.name}</span>
+											</Link>
+										</motion.div>
+									))}
 
-								{!isAuthenticated && (
-									<>
-										<hr className="border-gray-200" />
-										<Link
-											to="/login"
-											className="flex items-center space-x-2 px-2 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded"
-											onClick={() => setMobileMenuOpen(false)}>
-											<LogIn size={18} />
-											<span>Masuk</span>
-										</Link>
-										<Link
-											to="/register"
-											className="flex items-center space-x-2 px-2 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded"
-											onClick={() => setMobileMenuOpen(false)}>
-											<UserPlus size={18} />
-											<span>Daftar</span>
-										</Link>
-									</>
-								)}
-							</nav>
+									{!isAuthenticated && (
+										<>
+											<hr className="my-3 border-gray-200" />
+											<motion.div
+												initial={{ opacity: 0, x: -20 }}
+												animate={{ opacity: 1, x: 0 }}
+												transition={{
+													delay: navItems.length * 0.05,
+													duration: 0.2,
+												}}>
+												<Link
+													to="/login"
+													className="flex items-center space-x-3 px-3 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+													onClick={() => setMobileMenuOpen(false)}>
+													<LogIn size={20} className="text-gray-500" />
+													<span className="font-medium">Masuk</span>
+												</Link>
+											</motion.div>
+											<motion.div
+												initial={{ opacity: 0, x: -20 }}
+												animate={{ opacity: 1, x: 0 }}
+												transition={{
+													delay: (navItems.length + 1) * 0.05,
+													duration: 0.2,
+												}}>
+												<Link
+													to="/register"
+													className="flex items-center space-x-3 px-3 py-3 text-white bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded-lg transition-colors duration-200 mt-2"
+													onClick={() => setMobileMenuOpen(false)}>
+													<UserPlus size={20} />
+													<span className="font-medium">Daftar</span>
+												</Link>
+											</motion.div>
+										</>
+									)}
+								</nav>
+							</div>
 						</motion.div>
 					)}
 				</AnimatePresence>
