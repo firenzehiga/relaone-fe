@@ -1,0 +1,112 @@
+[
+  {
+    "id": 1,
+    "user_id": 1,
+    "event_id": 1,
+    "status": "approved",
+    "registration_date": "2024-10-02T14:30:00Z",
+    "notes": "Saya sangat tertarik dengan kegiatan lingkungan dan sudah pernah ikut beach cleanup sebelumnya.",
+    "attendance": "present",
+    "check_in_time": null,
+    "certificate_issued": false
+  },
+  {
+    "id": 2,
+    "user_id": 1,
+    "event_id": 2,
+    "status": "approved",
+    "registration_date": "2024-09-30T09:15:00Z",
+    "notes": "Ini akan menjadi donor darah ketiga saya tahun ini.",
+    "attendance": "present",
+    "check_in_time": null,
+    "certificate_issued": true
+  },
+  {
+    "id": 3,
+    "user_id": 4,
+    "event_id": 3,
+    "status": "approved",
+    "registration_date": "2024-09-28T16:45:00Z",
+    "notes": "Saya mahasiswa pendidikan dan ingin berkontribusi mengajar anak-anak.",
+    "attendance": "absent",
+    "check_in_time": null,
+    "certificate_issued": false
+  },
+  {
+    "id": 4,
+    "user_id": 5,
+    "event_id": 2,
+    "status": "approved",
+    "registration_date": "2024-10-01T11:20:00Z",
+    "notes": "Sebagai tenaga medis, saya ingin membantu kegiatan donor darah ini.",
+    "attendance": "present",
+    "check_in_time": null,
+    "certificate_issued": true
+  },
+  {
+    "id": 5,
+    "user_id": 1,
+    "event_id": 4,
+    "status": "pending",
+    "registration_date": "2024-10-06T13:00:00Z",
+    "notes": "Saya memiliki background IT dan ingin berbagi ilmu dengan lansia.",
+    "attendance": null,
+    "check_in_time": null,
+    "certificate_issued": false
+  },
+  {
+    "id": 6,
+    "user_id": 4,
+    "event_id": 6,
+    "status": "approved",
+    "registration_date": "2024-10-03T08:30:00Z",
+    "notes": "Saya sangat peduli dengan lingkungan dan ingin ikut menanam pohon.",
+    "attendance": null,
+    "check_in_time": null,
+    "certificate_issued": false
+  },
+  {
+    "id": 7,
+    "user_id": 5,
+    "event_id": 7,
+    "status": "approved",
+    "registration_date": "2024-09-25T10:15:00Z",
+    "notes": "Saya suka dengan anak-anak dan ingin membantu membuat mereka bahagia.",
+    "attendance": null,
+    "check_in_time": null,
+    "certificate_issued": false
+  },
+  {
+    "id": 8,
+    "user_id": 1,
+    "event_id": 7,
+    "status": "waitlist",
+    "registration_date": "2024-10-01T15:45:00Z",
+    "notes": "Mohon diinfokan jika ada slot yang tersedia.",
+    "attendance": null,
+    "check_in_time": null,
+    "certificate_issued": false
+  },
+  {
+    "id": 9,
+    "user_id": 4,
+    "event_id": 5,
+    "status": "approved",
+    "registration_date": "2024-10-05T12:30:00Z",
+    "notes": "Ingin berbagi kebahagiaan di bulan yang penuh berkah.",
+    "attendance": null,
+    "check_in_time": null,
+    "certificate_issued": false
+  },
+  {
+    "id": 10,
+    "user_id": 5,
+    "event_id": 1,
+    "status": "approved",
+    "registration_date": "2024-10-04T09:00:00Z",
+    "notes": "Sebagai dokter, saya juga peduli dengan kesehatan lingkungan.",
+    "attendance": null,
+    "check_in_time": null,
+    "certificate_issued": false
+  }
+]

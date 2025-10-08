@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "name": "Lingkungan",
+    "slug": "environment",
+    "description": "Kegiatan untuk pelestarian dan perlindungan lingkungan",
+    "icon": "leaf",
+    "color": "green",
+    "total_events": 45
+  },
+  {
+    "id": 2,
+    "name": "Pendidikan",
+    "slug": "education",
+    "description": "Kegiatan edukasi dan pembelajaran untuk masyarakat",
+    "icon": "book-open",
+    "color": "blue",
+    "total_events": 38
+  },
+  {
+    "id": 3,
+    "name": "Kesehatan",
+    "slug": "health",
+    "description": "Kegiatan donor darah, medical check-up, dan edukasi kesehatan",
+    "icon": "heart",
+    "color": "red",
+    "total_events": 22
+  },
+  {
+    "id": 4,
+    "name": "Sosial",
+    "slug": "social",
+    "description": "Kegiatan bantuan sosial dan pengabdian masyarakat",
+    "icon": "users",
+    "color": "purple",
+    "total_events": 31
+  },
+  {
+    "id": 5,
+    "name": "Pemuda",
+    "slug": "youth",
+    "description": "Kegiatan pengembangan potensi anak muda dan remaja",
+    "icon": "star",
+    "color": "yellow",
+    "total_events": 18
+  },
+  {
+    "id": 6,
+    "name": "Teknologi",
+    "slug": "technology",
+    "description": "Kegiatan edukasi teknologi dan digital literacy",
+    "icon": "laptop",
+    "color": "indigo",
+    "total_events": 12
+  }
+]

@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "user_id": 1,
+    "event_id": 2,
+    "rating": 5,
+    "comment": "Kegiatan donor darah yang sangat terorganisir! Panitia ramah dan prosesnya cepat. Senang bisa berkontribusi untuk masyarakat.",
+    "created_at": "2024-09-15T16:30:00Z"
+  },
+  {
+    "id": 2,
+    "user_id": 4,
+    "event_id": 1,
+    "rating": 4,
+    "comment": "Beach cleanup yang seru! Tempat bagus dan banyak sampah yang berhasil dikumpulkan. Cuma agak panas saja cuacanya.",
+    "created_at": "2024-08-20T14:15:00Z"
+  },
+  {
+    "id": 3,
+    "user_id": 5,
+    "event_id": 3,
+    "rating": 5,
+    "comment": "Pengalaman mengajar yang luar biasa! Anak-anak sangat antusias belajar. Koordinator event juga sangat supportive.",
+    "created_at": "2024-08-25T11:45:00Z"
+  },
+  {
+    "id": 4,
+    "user_id": 1,
+    "event_id": 1,
+    "rating": 5,
+    "comment": "Pertama kali ikut beach cleanup dan langsung jatuh cinta! Komunitas yang solid dan impact yang nyata untuk lingkungan.",
+    "created_at": "2024-08-22T18:20:00Z"
+  },
+  {
+    "id": 5,
+    "user_id": 5,
+    "event_id": 2,
+    "rating": 4,
+    "comment": "Check-up gratis sangat membantu! Prosedur donor darah standar medis yang baik. Snacknya juga enak hehe.",
+    "created_at": "2024-09-16T13:00:00Z"
+  },
+  {
+    "id": 6,
+    "user_id": 4,
+    "event_id": 4,
+    "rating": 3,
+    "comment": "Workshop bagus tapi materinya agak terlalu cepat untuk lansia. Mungkin perlu diperlambat lagi penyampaiannya.",
+    "created_at": "2024-07-15T10:30:00Z"
+  },
+  {
+    "id": 7,
+    "user_id": 1,
+    "event_id": 5,
+    "rating": 5,
+    "comment": "Bakti sosial yang sangat bermakna. Melihat senyum warga yang menerima bantuan membuat hati terasa hangat.",
+    "created_at": "2024-06-30T19:45:00Z"
+  },
+  {
+    "id": 8,
+    "user_id": 5,
+    "event_id": 6,
+    "rating": 4,
+    "comment": "Penanaman pohon di alam terbuka sangat menyenangkan! Capek tapi puas karena bisa berkontribusi untuk bumi.",
+    "created_at": "2024-07-10T16:00:00Z"
+  },
+  {
+    "id": 9,
+    "user_id": 4,
+    "event_id": 7,
+    "rating": 5,
+    "comment": "Festival anak yatim yang mengharukan! Anak-anak sangat bahagia dan antusias ikut semua kegiatan.",
+    "created_at": "2024-05-20T20:15:00Z"
+  },
+  {
+    "id": 10,
+    "user_id": 1,
+    "event_id": 3,
+    "rating": 4,
+    "comment": "Mengajar anak jalanan adalah pengalaman yang tidak akan terlupakan. Mereka sangat haus ilmu dan semangat belajar.",
+    "created_at": "2024-08-05T17:30:00Z"
+  }
+]
