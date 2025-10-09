@@ -14,14 +14,14 @@ USE volunteer_management;
 ```sql
 CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL,
+    nama VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    phone VARCHAR(20),
-    birth_date DATE,
-    gender ENUM('male', 'female', 'other'),
-    address TEXT,
-    profile_picture VARCHAR(500),
+    telepon VARCHAR(20),
+    tanggal_lahir DATE,
+    jenis_kelamin ENUM('laki-laki', 'perempuan', 'lainnya'),
+    alamat TEXT,
+    foto_profil VARCHAR(500),
     role ENUM('volunteer', 'admin', 'organization') DEFAULT 'volunteer',
     status ENUM('active', 'inactive', 'suspended') DEFAULT 'active',
     email_verified_at TIMESTAMP NULL,
@@ -34,18 +34,18 @@ CREATE TABLE users (
 ```sql
 CREATE TABLE organizations (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
+    nama VARCHAR(255) NOT NULL,
+    deskripsi TEXT,
     email VARCHAR(255) UNIQUE NOT NULL,
-    phone VARCHAR(20),
+    telepon VARCHAR(20),
     website VARCHAR(500),
     logo VARCHAR(500),
-    address TEXT,
-    city VARCHAR(100),
-    province VARCHAR(100),
-    postal_code VARCHAR(10),
-    country VARCHAR(100) DEFAULT 'Indonesia',
-    verification_status ENUM('pending', 'verified', 'rejected') DEFAULT 'pending',
+    alamat TEXT,
+    kota VARCHAR(100),
+    provinsi VARCHAR(100),
+    kode_pos VARCHAR(10),
+    negara VARCHAR(100) DEFAULT 'Indonesia',
+    status_verifikasi ENUM('pending', 'verified', 'rejected') DEFAULT 'pending',
     rating DECIMAL(3,2) DEFAULT 0.00,
     total_events INT DEFAULT 0,
     user_id INT,
@@ -59,10 +59,10 @@ CREATE TABLE organizations (
 ```sql
 CREATE TABLE categories (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL UNIQUE,
-    description TEXT,
+    nama VARCHAR(100) NOT NULL UNIQUE,
+    deskripsi TEXT,
     icon VARCHAR(100),
-    color VARCHAR(7) DEFAULT '#3B82F6',
+    warna VARCHAR(7) DEFAULT '#3B82F6',
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -73,34 +73,34 @@ CREATE TABLE categories (
 ```sql
 CREATE TABLE events (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(255) NOT NULL,
-    description TEXT NOT NULL,
-    short_description TEXT,
-    image VARCHAR(500),
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
-    start_time TIME NOT NULL,
-    end_time TIME NOT NULL,
-    max_participants INT NOT NULL,
-    current_participants INT DEFAULT 0,
-    location_name VARCHAR(255) NOT NULL,
-    location_address TEXT NOT NULL,
+    judul VARCHAR(255) NOT NULL,
+    deskripsi TEXT NOT NULL,
+    deskripsi_singkat TEXT,
+    gambar VARCHAR(500),
+    tanggal_mulai DATE NOT NULL,
+    tanggal_selesai DATE NOT NULL,
+    waktu_mulai TIME NOT NULL,
+    waktu_selesai TIME NOT NULL,
+    maks_peserta INT NOT NULL,
+    peserta_saat_ini INT DEFAULT 0,
+    nama_lokasi VARCHAR(255) NOT NULL,
+    alamat_lokasi TEXT NOT NULL,
     latitude DECIMAL(10, 8),
     longitude DECIMAL(11, 8),
     place_id VARCHAR(255),
-    formatted_address TEXT,
-    city VARCHAR(100),
-    province VARCHAR(100),
-    postal_code VARCHAR(10),
-    country VARCHAR(100) DEFAULT 'Indonesia',
-    map_zoom_level INT DEFAULT 15,
+    alamat_lengkap TEXT,
+    kota VARCHAR(100),
+    provinsi VARCHAR(100),
+    kode_pos VARCHAR(10),
+    negara VARCHAR(100) DEFAULT 'Indonesia',
+    zoom_level INT DEFAULT 15,
     status ENUM('draft', 'published', 'ongoing', 'completed', 'cancelled') DEFAULT 'draft',
-    requirements TEXT,
-    benefits TEXT,
-    contact_person VARCHAR(255),
-    contact_phone VARCHAR(20),
-    contact_email VARCHAR(255),
-    registration_deadline DATE,
+    persyaratan TEXT,
+    manfaat TEXT,
+    nama_kontak VARCHAR(255),
+    telepon_kontak VARCHAR(20),
+    email_kontak VARCHAR(255),
+    batas_pendaftaran DATE,
     category_id INT NOT NULL,
     organization_id INT NOT NULL,
     created_by INT NOT NULL,
@@ -119,10 +119,10 @@ CREATE TABLE event_participants (
     event_id INT NOT NULL,
     user_id INT NOT NULL,
     status ENUM('registered', 'confirmed', 'attended', 'cancelled', 'no_show') DEFAULT 'registered',
-    registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    confirmation_date TIMESTAMP NULL,
-    attendance_date TIMESTAMP NULL,
-    notes TEXT,
+    tanggal_daftar TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    tanggal_konfirmasi TIMESTAMP NULL,
+    tanggal_hadir TIMESTAMP NULL,
+    catatan TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY unique_participant (event_id, user_id),
@@ -138,9 +138,9 @@ CREATE TABLE feedbacks (
     event_id INT NOT NULL,
     user_id INT NOT NULL,
     rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
-    comment TEXT,
-    is_anonymous BOOLEAN DEFAULT FALSE,
-    is_approved BOOLEAN DEFAULT TRUE,
+    komentar TEXT,
+    is_anonim BOOLEAN DEFAULT FALSE,
+    is_disetujui BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY unique_feedback (event_id, user_id),
@@ -153,20 +153,20 @@ CREATE TABLE feedbacks (
 ```sql
 CREATE TABLE saved_locations (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL,
-    address TEXT NOT NULL,
+    nama VARCHAR(255) NOT NULL,
+    alamat TEXT NOT NULL,
     latitude DECIMAL(10, 8) NOT NULL,
     longitude DECIMAL(11, 8) NOT NULL,
     place_id VARCHAR(255),
-    formatted_address TEXT,
-    city VARCHAR(100),
-    province VARCHAR(100),
-    postal_code VARCHAR(10),
-    country VARCHAR(100) DEFAULT 'Indonesia',
-    map_zoom_level INT DEFAULT 15,
+    alamat_lengkap TEXT,
+    kota VARCHAR(100),
+    provinsi VARCHAR(100),
+    kode_pos VARCHAR(10),
+    negara VARCHAR(100) DEFAULT 'Indonesia',
+    zoom_level INT DEFAULT 15,
     organization_id INT NOT NULL,
-    usage_count INT DEFAULT 0,
-    last_used_at TIMESTAMP NULL,
+    jumlah_pemakaian INT DEFAULT 0,
+    terakhir_digunakan TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE
@@ -178,33 +178,33 @@ CREATE TABLE saved_locations (
 ```sql
 -- Index untuk pencarian events
 CREATE INDEX idx_events_status ON events(status);
-CREATE INDEX idx_events_dates ON events(start_date, end_date);
-CREATE INDEX idx_events_location ON events(city, province);
+CREATE INDEX idx_events_dates ON events(tanggal_mulai, tanggal_selesai);
+CREATE INDEX idx_events_location ON events(kota, provinsi);
 CREATE INDEX idx_events_category ON events(category_id);
 CREATE INDEX idx_events_organization ON events(organization_id);
 
 -- Index untuk participants
 CREATE INDEX idx_participants_status ON event_participants(status);
-CREATE INDEX idx_participants_date ON event_participants(registration_date);
+CREATE INDEX idx_participants_date ON event_participants(tanggal_daftar);
 
 -- Index untuk feedbacks
 CREATE INDEX idx_feedbacks_rating ON feedbacks(rating);
-CREATE INDEX idx_feedbacks_approved ON feedbacks(is_approved);
+CREATE INDEX idx_feedbacks_approved ON feedbacks(is_disetujui);
 
 -- Index untuk users
 CREATE INDEX idx_users_role ON users(role);
 CREATE INDEX idx_users_status ON users(status);
 
 -- Index untuk organizations
-CREATE INDEX idx_organizations_verification ON organizations(verification_status);
-CREATE INDEX idx_organizations_location ON organizations(city, province);
+CREATE INDEX idx_organizations_verification ON organizations(status_verifikasi);
+CREATE INDEX idx_organizations_location ON organizations(kota, provinsi);
 ```
 
 ## 4. Sample Data Insert
 
 ### Categories
 ```sql
-INSERT INTO categories (name, description, icon, color) VALUES
+INSERT INTO categories (nama, deskripsi, icon, warna) VALUES
 ('Pendidikan', 'Kegiatan volunteer di bidang pendidikan', 'graduation-cap', '#3B82F6'),
 ('Kesehatan', 'Kegiatan volunteer di bidang kesehatan', 'heart', '#EF4444'),
 ('Lingkungan', 'Kegiatan volunteer untuk lingkungan', 'leaf', '#10B981'),
@@ -215,7 +215,7 @@ INSERT INTO categories (name, description, icon, color) VALUES
 
 ### Sample Users
 ```sql
-INSERT INTO users (name, email, password, phone, role, status) VALUES
+INSERT INTO users (nama, email, password, telepon, role, status) VALUES
 ('Admin System', 'admin@volunteer.com', '$2y$10$hash', '081234567890', 'admin', 'active'),
 ('Yayasan Pendidikan Nusantara', 'info@ypn.org', '$2y$10$hash', '081234567891', 'organization', 'active'),
 ('John Volunteer', 'john@example.com', '$2y$10$hash', '081234567892', 'volunteer', 'active'),
@@ -224,7 +224,7 @@ INSERT INTO users (name, email, password, phone, role, status) VALUES
 
 ### Sample Organizations
 ```sql
-INSERT INTO organizations (name, description, email, phone, address, city, province, verification_status, user_id) VALUES
+INSERT INTO organizations (nama, deskripsi, email, telepon, alamat, kota, provinsi, status_verifikasi, user_id) VALUES
 ('Yayasan Pendidikan Nusantara', 'Yayasan yang bergerak di bidang pendidikan untuk anak-anak kurang mampu', 'info@ypn.org', '081234567891', 'Jl. Pendidikan No. 123', 'Jakarta', 'DKI Jakarta', 'verified', 2),
 ('Komunitas Lingkungan Hijau', 'Komunitas yang fokus pada pelestarian lingkungan', 'info@lingkunganhijau.org', '081234567894', 'Jl. Hijau No. 456', 'Bandung', 'Jawa Barat', 'verified', 2);
 ```
