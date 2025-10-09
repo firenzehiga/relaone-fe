@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search, Filter, Calendar, MapPin } from "lucide-react";
+import { Search, Filter, Calendar, MapPin, Map } from "lucide-react";
 import Button from "../components/ui/Button";
 import Badge from "../components/ui/Badge";
 import EventCard from "../components/EventCard";
+import EventDetailModal from "../components/EventDetailModal";
 import Skeleton from "../components/ui/Skeleton";
 import { useMockData } from "../hooks/useMockData";
 import { useModalStore } from "../store";
@@ -21,10 +22,14 @@ const EventsPage = () => {
 		category: searchParams.get("category") || "",
 		status: "published",
 		date: "",
+		city: "",
 	});
 
 	const [filteredEvents, setFilteredEvents] = useState([]);
 	const [showFilters, setShowFilters] = useState(false);
+	const [selectedEvent, setSelectedEvent] = useState(null);
+	const [showDetailModal, setShowDetailModal] = useState(false);
+	const [viewMode, setViewMode] = useState("grid"); // grid, list, map
 
 	// Filter events when data or filters change
 	useEffect(() => {
@@ -60,6 +65,12 @@ const EventsPage = () => {
 			filtered = filtered.filter((event) => event.date === filters.date);
 		}
 
+		if (filters.city) {
+			filtered = filtered.filter((event) =>
+				event.city?.toLowerCase().includes(filters.city.toLowerCase())
+			);
+		}
+
 		setFilteredEvents(filtered);
 	}, [events, categories, filters]);
 
@@ -83,6 +94,7 @@ const EventsPage = () => {
 			category: "",
 			status: "published",
 			date: "",
+			city: "",
 		});
 		setSearchParams({});
 	};
@@ -92,8 +104,17 @@ const EventsPage = () => {
 	};
 
 	const handleViewEventDetail = (eventId) => {
-		navigate(`/events/${eventId}`);
+		const event = events?.find((e) => e.id === eventId);
+		if (event) {
+			setSelectedEvent(event);
+			setShowDetailModal(true);
+		}
 	};
+
+	// Get unique cities for filter
+	const availableCities = [
+		...new Set(events?.map((event) => event.city).filter(Boolean)),
+	];
 
 	const MotionDiv = motion.div;
 
@@ -139,11 +160,32 @@ const EventsPage = () => {
 							Filter {showFilters ? "▲" : "▼"}
 						</Button>
 
-						{(filters.category || filters.date) && (
-							<Button variant="outline" onClick={clearFilters} size="sm">
-								Hapus Filter
-							</Button>
-						)}
+						<div className="flex items-center gap-2">
+							{/* View Mode Toggle */}
+							<div className="flex bg-gray-100 rounded-lg p-1">
+								<Button
+									variant={viewMode === "grid" ? "primary" : "ghost"}
+									size="xs"
+									onClick={() => setViewMode("grid")}
+									className="px-3 py-1">
+									Grid
+								</Button>
+								<Button
+									variant={viewMode === "map" ? "primary" : "ghost"}
+									size="xs"
+									onClick={() => setViewMode("map")}
+									className="px-3 py-1">
+									<Map size={14} className="mr-1" />
+									Peta
+								</Button>
+							</div>
+
+							{(filters.category || filters.date || filters.city) && (
+								<Button variant="outline" onClick={clearFilters} size="sm">
+									Hapus Filter
+								</Button>
+							)}
+						</div>
 					</div>
 
 					{/* Filters */}
@@ -153,7 +195,7 @@ const EventsPage = () => {
 							animate={{ opacity: 1, height: "auto" }}
 							exit={{ opacity: 0, height: 0 }}
 							className="mt-4 pt-4 border-t border-gray-200">
-							<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+							<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 								{/* Category Filter */}
 								<div>
 									<label className="block text-gray-900 font-semibold mb-2">
@@ -169,6 +211,24 @@ const EventsPage = () => {
 										{categories?.map((category) => (
 											<option key={category.id} value={category.slug}>
 												{category.name}
+											</option>
+										))}
+									</select>
+								</div>
+
+								{/* City Filter */}
+								<div>
+									<label className="block text-gray-900 font-semibold mb-2">
+										Kota
+									</label>
+									<select
+										value={filters.city}
+										onChange={(e) => handleFilterChange("city", e.target.value)}
+										className="w-full px-3 py-3 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+										<option value="">Semua Kota</option>
+										{availableCities?.map((city) => (
+											<option key={city} value={city}>
+												{city}
 											</option>
 										))}
 									</select>
@@ -241,7 +301,7 @@ const EventsPage = () => {
 					</p>
 				</div>
 
-				{/* Events Grid */}
+				{/* Events Display */}
 				{eventsLoading ? (
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 						{Array.from({ length: 6 }).map((_, i) => (
@@ -249,29 +309,103 @@ const EventsPage = () => {
 						))}
 					</div>
 				) : filteredEvents.length > 0 ? (
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-						{filteredEvents.map((event, index) => (
-							<MotionDiv
-								key={event.id}
-								initial={{ opacity: 0, y: 20 }}
-								animate={{ opacity: 1, y: 0 }}
-								transition={{ delay: index * 0.1 }}>
-								<EventCard
-									event={{
-										...event,
-										category: categories?.find(
-											(cat) => cat.id === event.category_id
-										),
-									}}
-									onJoin={handleJoinEvent}
-									onViewDetail={handleViewEventDetail}
-								/>
-							</MotionDiv>
-						))}
-					</div>
+					<>
+						{/* Grid View */}
+						{viewMode === "grid" && (
+							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+								{filteredEvents.map((event, index) => (
+									<MotionDiv
+										key={event.id}
+										initial={{ opacity: 0, y: 20 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{ delay: index * 0.1 }}>
+										<EventCard
+											event={{
+												...event,
+												category: categories?.find(
+													(cat) => cat.id === event.category_id
+												),
+											}}
+											onJoin={handleJoinEvent}
+											onViewDetail={handleViewEventDetail}
+										/>
+									</MotionDiv>
+								))}
+							</div>
+						)}
+
+						{/* Map View */}
+						{viewMode === "map" && (
+							<div className="space-y-6">
+								{/* Google Maps */}
+								<div className="bg-gray-100 rounded-lg overflow-hidden shadow-inner h-96">
+									<iframe
+										width="100%"
+										height="100%"
+										style={{ border: 0 }}
+										loading="lazy"
+										allowFullScreen
+										referrerPolicy="no-referrer-when-downgrade"
+										src={`https://www.google.com/maps/embed/v1/search?key=YOUR_GOOGLE_MAPS_API_KEY&q=events+jakarta&zoom=12`}
+										className="rounded-lg"
+									/>
+								</div>
+
+								{/* Events List Below Map */}
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+									{filteredEvents.map((event, index) => (
+										<MotionDiv
+											key={event.id}
+											initial={{ opacity: 0, x: -20 }}
+											animate={{ opacity: 1, x: 0 }}
+											transition={{ delay: index * 0.05 }}>
+											<div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
+												<div className="flex gap-4">
+													<img
+														src={event.banner}
+														alt={event.title}
+														className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
+													/>
+													<div className="flex-1 min-w-0">
+														<h3 className="font-semibold text-gray-900 line-clamp-1 mb-1">
+															{event.title}
+														</h3>
+														<p className="text-sm text-gray-600 line-clamp-2 mb-2">
+															{event.description}
+														</p>
+														<div className="flex items-center text-xs text-gray-500 mb-2">
+															<MapPin size={12} className="mr-1" />
+															<span className="line-clamp-1">
+																{event.location}
+															</span>
+														</div>
+														<div className="flex gap-2">
+															<Button
+																variant="outline"
+																size="xs"
+																onClick={() => handleViewEventDetail(event.id)}>
+																Detail
+															</Button>
+															<Button
+																variant="primary"
+																size="xs"
+																onClick={() => handleJoinEvent(event.id)}
+																disabled={event.status === "full"}>
+																{event.status === "full" ? "Penuh" : "Daftar"}
+															</Button>
+														</div>
+													</div>
+												</div>
+											</div>
+										</MotionDiv>
+									))}
+								</div>
+							</div>
+						)}
+					</>
 				) : (
 					<div className="text-center py-16">
-						<div className="mx-auto w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+						<div className="mx-auto w-20 h-20 bg-gray-100 rounded-full flex items-center justify-between mb-6">
 							<Calendar className="text-gray-400" size={36} />
 						</div>
 						<h3 className="text-2xl font-bold text-gray-900 mb-3">
@@ -286,6 +420,14 @@ const EventsPage = () => {
 					</div>
 				)}
 			</div>
+
+			{/* Event Detail Modal */}
+			<EventDetailModal
+				isOpen={showDetailModal}
+				onClose={() => setShowDetailModal(false)}
+				event={selectedEvent}
+				onJoin={handleJoinEvent}
+			/>
 		</div>
 	);
 };
