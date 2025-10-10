@@ -93,13 +93,13 @@ CREATE TABLE events (
     batas_pendaftaran DATE,
     category_id INT NOT NULL,
     organization_id INT NOT NULL,
-    created_by INT NOT NULL,
+    user_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE RESTRICT,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT,
     FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE,
-    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 ```
 
@@ -186,13 +186,15 @@ CREATE TABLE locations (
 );
 ```
 
-### Tabel Saved Locations (Simplified)
+### Tabel Saved Locations (FUTURE FEATURE - TIDAK DIIMPLEMENTASIKAN UNTUK MVP)
 ```sql
+-- COMMENTED OUT - Untuk fitur future development
+/*
 CREATE TABLE saved_locations (
     id INT PRIMARY KEY AUTO_INCREMENT,
     location_id INT NOT NULL,
     organization_id INT NOT NULL,
-    nama_custom VARCHAR(255), -- nama khusus untuk organisasi
+    nama_custom VARCHAR(255),
     jumlah_pemakaian INT DEFAULT 0,
     terakhir_digunakan TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -201,6 +203,7 @@ CREATE TABLE saved_locations (
     FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE,
     FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE
 );
+*/
 ```
 
 ## 3. Indexes untuk Performa
@@ -233,6 +236,8 @@ CREATE INDEX idx_organizations_location ON organizations(location_id);
 CREATE INDEX idx_locations_area ON locations(kota, provinsi);
 CREATE INDEX idx_locations_coordinates ON locations(latitude, longitude);
 CREATE INDEX idx_locations_place_id ON locations(place_id);
+
+-- Note: saved_locations indexes tidak dibutuhkan untuk MVP
 ```
 
 ## 📊 **Analisis Normalisasi Database**
@@ -305,7 +310,7 @@ INSERT INTO locations (nama, alamat, kota, provinsi, negara, latitude, longitude
 ('Taman Kota Bandung', 'Jl. Taman No. 5, Bandung', 'Bandung', 'Jawa Barat', 'Indonesia', -6.9147, 107.6098, 'event');
 
 -- Insert sample events
-INSERT INTO events (judul, deskripsi, deskripsi_singkat, tanggal_mulai, tanggal_selesai, waktu_mulai, waktu_selesai, maks_peserta, location_id, category_id, organization_id, created_by) VALUES
+INSERT INTO events (judul, deskripsi, deskripsi_singkat, tanggal_mulai, tanggal_selesai, waktu_mulai, waktu_selesai, maks_peserta, location_id, category_id, organization_id, user_id) VALUES
 ('Mengajar Anak Sekolah Dasar', 'Program volunteer mengajar di sekolah dasar untuk membantu anak-anak belajar', 'Mengajar di SD', '2024-11-15', '2024-11-15', '08:00:00', '12:00:00', 20, 3, 1, 1, 2),
 ('Bersih-Bersih Taman Kota', 'Kegiatan gotong royong membersihkan taman kota dari sampah', 'Bersih-bersih taman', '2024-11-20', '2024-11-20', '07:00:00', '11:00:00', 50, 4, 3, 2, 2);
 ```
