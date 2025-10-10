@@ -69,7 +69,7 @@ CREATE TABLE categories (
 );
 ```
 
-### Tabel Events
+### Tabel Events (Updated untuk Normalisasi)
 ```sql
 CREATE TABLE events (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -83,17 +83,7 @@ CREATE TABLE events (
     waktu_selesai TIME NOT NULL,
     maks_peserta INT NOT NULL,
     peserta_saat_ini INT DEFAULT 0,
-    nama_lokasi VARCHAR(255) NOT NULL,
-    alamat_lokasi TEXT NOT NULL,
-    latitude DECIMAL(10, 8),
-    longitude DECIMAL(11, 8),
-    place_id VARCHAR(255),
-    alamat_lengkap TEXT,
-    kota VARCHAR(100),
-    provinsi VARCHAR(100),
-    kode_pos VARCHAR(10),
-    negara VARCHAR(100) DEFAULT 'Indonesia',
-    zoom_level INT DEFAULT 15,
+    location_id INT NOT NULL, -- FK ke locations table
     status ENUM('draft', 'published', 'ongoing', 'completed', 'cancelled') DEFAULT 'draft',
     persyaratan TEXT,
     manfaat TEXT,
@@ -106,9 +96,32 @@ CREATE TABLE events (
     created_by INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE RESTRICT,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT,
     FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+);
+```
+
+### Tabel Organizations (Updated untuk Normalisasi)
+```sql
+CREATE TABLE organizations (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nama VARCHAR(255) NOT NULL,
+    deskripsi TEXT,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    telepon VARCHAR(20),
+    website VARCHAR(500),
+    logo VARCHAR(500),
+    location_id INT, -- FK ke locations table (nullable)
+    status_verifikasi ENUM('pending', 'verified', 'rejected') DEFAULT 'pending',
+    rating DECIMAL(3,2) DEFAULT 0.00,
+    total_events INT DEFAULT 0,
+    user_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE SET NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 ```
 
@@ -149,14 +162,14 @@ CREATE TABLE feedbacks (
 );
 ```
 
-### Tabel Saved Locations
+### Tabel Locations (Centralized)
 ```sql
-CREATE TABLE saved_locations (
+CREATE TABLE locations (
     id INT PRIMARY KEY AUTO_INCREMENT,
     nama VARCHAR(255) NOT NULL,
     alamat TEXT NOT NULL,
-    latitude DECIMAL(10, 8) NOT NULL,
-    longitude DECIMAL(11, 8) NOT NULL,
+    latitude DECIMAL(10, 8),
+    longitude DECIMAL(11, 8),
     place_id VARCHAR(255),
     alamat_lengkap TEXT,
     kota VARCHAR(100),
@@ -164,11 +177,28 @@ CREATE TABLE saved_locations (
     kode_pos VARCHAR(10),
     negara VARCHAR(100) DEFAULT 'Indonesia',
     zoom_level INT DEFAULT 15,
+    tipe ENUM('event', 'organization', 'saved') DEFAULT 'event',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_location_place_id (place_id),
+    INDEX idx_location_coordinates (latitude, longitude),
+    INDEX idx_location_area (kota, provinsi)
+);
+```
+
+### Tabel Saved Locations (Simplified)
+```sql
+CREATE TABLE saved_locations (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    location_id INT NOT NULL,
     organization_id INT NOT NULL,
+    nama_custom VARCHAR(255), -- nama khusus untuk organisasi
     jumlah_pemakaian INT DEFAULT 0,
     terakhir_digunakan TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_org_location (organization_id, location_id),
+    FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE,
     FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE
 );
 ```
@@ -179,7 +209,7 @@ CREATE TABLE saved_locations (
 -- Index untuk pencarian events
 CREATE INDEX idx_events_status ON events(status);
 CREATE INDEX idx_events_dates ON events(tanggal_mulai, tanggal_selesai);
-CREATE INDEX idx_events_location ON events(kota, provinsi);
+CREATE INDEX idx_events_location ON events(location_id);
 CREATE INDEX idx_events_category ON events(category_id);
 CREATE INDEX idx_events_organization ON events(organization_id);
 
@@ -197,12 +227,44 @@ CREATE INDEX idx_users_status ON users(status);
 
 -- Index untuk organizations
 CREATE INDEX idx_organizations_verification ON organizations(status_verifikasi);
-CREATE INDEX idx_organizations_location ON organizations(kota, provinsi);
+CREATE INDEX idx_organizations_location ON organizations(location_id);
+
+-- Index untuk locations
+CREATE INDEX idx_locations_area ON locations(kota, provinsi);
+CREATE INDEX idx_locations_coordinates ON locations(latitude, longitude);
+CREATE INDEX idx_locations_place_id ON locations(place_id);
 ```
 
-## 4. Sample Data Insert
+## 📊 **Analisis Normalisasi Database**
 
-### Categories
+### ❌ **Masalah Sebelum Normalisasi:**
+1. **Data Lokasi Redundan** - kota, provinsi tersebar di 3 tabel
+2. **Place ID Tidak Terstruktur** - disimpan sebagai string di multiple tabel
+3. **Duplikasi Data Alamat** - sama alamat disimpan berkali-kali
+
+### ✅ **Solusi Normalisasi (Yang Sudah Diterapkan):**
+1. **Tabel `locations`** - centralized untuk semua data lokasi
+2. **Foreign Key `location_id`** - di events dan organizations  
+3. **Saved Locations** - jadi relasi many-to-many antara organizations & locations
+4. **Indexes Optimized** - untuk performa query lokasi
+
+### 🎯 **Keuntungan Struktur Baru:**
+- ✅ **No Redundancy** - satu lokasi disimpan sekali
+- ✅ **Reusable Locations** - org bisa pakai lokasi yang sama untuk multiple events
+- ✅ **Easy Google Maps Integration** - place_id tersentralisasi
+- ✅ **Better Performance** - indexes pada koordinat dan area
+- ✅ **Flexible Saved Locations** - org bisa save lokasi dengan nama custom
+
+### 🔄 **Urutan Eksekusi Yang Benar:**
+1. Buat tabel `users` dulu
+2. Buat tabel `categories` dan `locations`
+3. Buat tabel `organizations` (dengan FK ke locations)
+4. Buat tabel `events` (dengan FK ke locations, categories, organizations)
+5. Buat tabel `saved_locations` (dengan FK ke locations & organizations)
+6. Buat tabel `event_participants` dan `feedbacks`
+7. Insert sample data sesuai urutan dependencies
+
+## 4. Sample Data Insert
 ```sql
 INSERT INTO categories (nama, deskripsi, icon, warna) VALUES
 ('Pendidikan', 'Kegiatan volunteer di bidang pendidikan', 'graduation-cap', '#3B82F6'),
@@ -224,9 +286,28 @@ INSERT INTO users (nama, email, password, telepon, role, status) VALUES
 
 ### Sample Organizations
 ```sql
-INSERT INTO organizations (nama, deskripsi, email, telepon, alamat, kota, provinsi, status_verifikasi, user_id) VALUES
-('Yayasan Pendidikan Nusantara', 'Yayasan yang bergerak di bidang pendidikan untuk anak-anak kurang mampu', 'info@ypn.org', '081234567891', 'Jl. Pendidikan No. 123', 'Jakarta', 'DKI Jakarta', 'verified', 2),
-('Komunitas Lingkungan Hijau', 'Komunitas yang fokus pada pelestarian lingkungan', 'info@lingkunganhijau.org', '081234567894', 'Jl. Hijau No. 456', 'Bandung', 'Jawa Barat', 'verified', 2);
+-- Insert sample locations dulu
+INSERT INTO locations (nama, alamat, kota, provinsi, negara, latitude, longitude) VALUES
+('Kantor YPN Jakarta', 'Jl. Pendidikan No. 123', 'Jakarta', 'DKI Jakarta', 'Indonesia', -6.2088, 106.8456),
+('Kantor KLH Bandung', 'Jl. Hijau No. 456', 'Bandung', 'Jawa Barat', 'Indonesia', -6.9175, 107.6191);
+
+-- Insert organizations dengan location_id
+INSERT INTO organizations (nama, deskripsi, email, telepon, location_id, status_verifikasi, user_id) VALUES
+('Yayasan Pendidikan Nusantara', 'Yayasan yang bergerak di bidang pendidikan untuk anak-anak kurang mampu', 'info@ypn.org', '081234567891', 1, 'verified', 2),
+('Komunitas Lingkungan Hijau', 'Komunitas yang fokus pada pelestarian lingkungan', 'info@lingkunganhijau.org', '081234567894', 2, 'verified', 2);
+```
+
+### Sample Events dengan Locations
+```sql
+-- Insert event locations
+INSERT INTO locations (nama, alamat, kota, provinsi, negara, latitude, longitude, tipe) VALUES
+('SDN 01 Jakarta Pusat', 'Jl. Merdeka No. 10, Jakarta Pusat', 'Jakarta', 'DKI Jakarta', 'Indonesia', -6.1751, 106.8650, 'event'),
+('Taman Kota Bandung', 'Jl. Taman No. 5, Bandung', 'Bandung', 'Jawa Barat', 'Indonesia', -6.9147, 107.6098, 'event');
+
+-- Insert sample events
+INSERT INTO events (judul, deskripsi, deskripsi_singkat, tanggal_mulai, tanggal_selesai, waktu_mulai, waktu_selesai, maks_peserta, location_id, category_id, organization_id, created_by) VALUES
+('Mengajar Anak Sekolah Dasar', 'Program volunteer mengajar di sekolah dasar untuk membantu anak-anak belajar', 'Mengajar di SD', '2024-11-15', '2024-11-15', '08:00:00', '12:00:00', 20, 3, 1, 1, 2),
+('Bersih-Bersih Taman Kota', 'Kegiatan gotong royong membersihkan taman kota dari sampah', 'Bersih-bersih taman', '2024-11-20', '2024-11-20', '07:00:00', '11:00:00', 50, 4, 3, 2, 2);
 ```
 
 ## 5. Langkah-langkah Eksekusi di MySQL Workbench
