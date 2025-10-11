@@ -9,8 +9,8 @@ import {
 	Copy,
 	Eye,
 } from "lucide-react";
-import Button from "../ui/Button";
-import Badge from "../ui/Badge";
+import Button from "@/components/ui/Button";
+import Badge from "@/components/ui/Badge";
 
 const LocationPicker = ({
 	organizationId,

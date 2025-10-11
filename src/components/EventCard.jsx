@@ -7,11 +7,42 @@ import {
 	ExternalLink,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import Button from "./ui/Button";
-import Badge from "./ui/Badge";
-import Avatar from "./ui/Avatar";
-import { cn } from "./../utils/cn";
+import Button from "@/components/ui/Button";
+import Badge from "@/components/ui/Badge";
+import Avatar from "@/components/ui/Avatar";
+import { cn } from "@/utils/cn";
 
+/**
+ * Komponen EventCard untuk menampilkan informasi singkat suatu event volunteer
+ * Menampilkan informasi seperti judul, tanggal, lokasi, peserta, dan tombol aksi
+ *
+ * @param {Object} props - Props untuk EventCard component
+ * @param {Object} props.event - Data event yang akan ditampilkan
+ * @param {string} props.event.id - ID unik event
+ * @param {string} props.event.title - Judul event
+ * @param {string} props.event.description - Deskripsi singkat event
+ * @param {string} props.event.banner - URL gambar banner event
+ * @param {string} props.event.date - Tanggal event (format: YYYY-MM-DD)
+ * @param {string} props.event.time - Waktu mulai event (format: HH:MM)
+ * @param {string} props.event.end_time - Waktu selesai event (format: HH:MM)
+ * @param {string} props.event.location - Nama lokasi event
+ * @param {string} props.event.address - Alamat lengkap event
+ * @param {string} props.event.city - Kota event
+ * @param {string} props.event.province - Provinsi event
+ * @param {number} props.event.latitude - Koordinat latitude lokasi
+ * @param {number} props.event.longitude - Koordinat longitude lokasi
+ * @param {number} props.event.capacity - Kapasitas maksimal peserta
+ * @param {number} props.event.registered - Jumlah peserta yang sudah terdaftar
+ * @param {string} props.event.status - Status event (published, draft, cancelled, full)
+ * @param {number} props.event.category_id - ID kategori event
+ * @param {Object} props.event.organizer - Informasi penyelenggara event
+ * @param {Function} [props.onJoin] - Callback function ketika user menekan tombol daftar
+ * @param {Function} [props.onViewDetail] - Callback function ketika user menekan tombol lihat detail
+ * @param {string} [props.className] - Class CSS tambahan untuk styling kustom
+ * @param {boolean} [props.showOrganizer=true] - Apakah menampilkan informasi organizer
+ * @param {boolean} [props.showMap=false] - Apakah menampilkan tombol peta
+ * @returns {JSX.Element|null} EventCard component atau null jika event tidak ada
+ */
 const EventCard = ({
 	event,
 	onJoin,
@@ -24,6 +55,12 @@ const EventCard = ({
 
 	const MotionDiv = motion.div;
 
+	/**
+	 * Memformat string tanggal menjadi format Indonesia yang lebih ringkas
+	 *
+	 * @param {string} dateString - String tanggal dalam format apapun yang bisa di-parse Date
+	 * @returns {string} Tanggal dalam format "DD MMM YYYY"
+	 */
 	const formatDate = (dateString) => {
 		const date = new Date(dateString);
 		return date.toLocaleDateString("id-ID", {
@@ -33,10 +70,24 @@ const EventCard = ({
 		});
 	};
 
+	/**
+	 * Memformat string waktu dengan mengambil jam dan menit saja
+	 *
+	 * @param {string} timeString - String waktu dalam format HH:MM:SS atau HH:MM
+	 * @returns {string} Waktu dalam format HH:MM
+	 */
 	const formatTime = (timeString) => {
 		return timeString.slice(0, 5);
 	};
 
+	/**
+	 * Mendapatkan konfigurasi badge berdasarkan status event
+	 *
+	 * @param {string} status - Status event (published, draft, cancelled, full)
+	 * @returns {Object} Object dengan variant dan text untuk badge
+	 * @returns {string} returns.variant - Variant warna badge
+	 * @returns {string} returns.text - Text yang ditampilkan pada badge
+	 */
 	const getStatusBadge = (status) => {
 		const statusConfig = {
 			published: { variant: "success", text: "Terbuka" },
@@ -48,6 +99,12 @@ const EventCard = ({
 		return statusConfig[status] || statusConfig.published;
 	};
 
+	/**
+	 * Mendapatkan warna badge berdasarkan kategori event
+	 *
+	 * @param {number} categoryId - ID kategori event
+	 * @returns {string} Variant warna untuk badge kategori
+	 */
 	const getCategoryColor = (categoryId) => {
 		const colors = {
 			1: "success", // Environment
@@ -60,6 +117,12 @@ const EventCard = ({
 		return colors[categoryId] || "default";
 	};
 
+	/**
+	 * Generate URL Google Maps untuk melihat lokasi event
+	 * Prioritas menggunakan koordinat lat/lng, jika tidak ada fallback ke alamat
+	 *
+	 * @returns {string} URL Google Maps untuk melihat lokasi
+	 */
 	const getGoogleMapsUrl = () => {
 		if (event.latitude && event.longitude) {
 			return `https://www.google.com/maps/search/?api=1&query=${event.latitude},${event.longitude}`;
@@ -69,6 +132,12 @@ const EventCard = ({
 		)}`;
 	};
 
+	/**
+	 * Generate URL Google Maps untuk mendapatkan petunjuk arah ke lokasi event
+	 * Prioritas menggunakan koordinat lat/lng, jika tidak ada fallback ke alamat
+	 *
+	 * @returns {string} URL Google Maps untuk mendapatkan petunjuk arah
+	 */
 	const getDirectionsUrl = () => {
 		if (event.latitude && event.longitude) {
 			return `https://www.google.com/maps/dir/?api=1&destination=${event.latitude},${event.longitude}`;

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, MapPin, Star, ExternalLink } from "lucide-react";
-import Button from "../ui/Button";
-import Modal from "../ui/Modal";
-import Badge from "../ui/Badge";
+import Button from "@/components/ui/Button";
+import Modal from "@/components/ui/Modal";
+import Badge from "@/components/ui/Badge";
 
 const SavedLocationsManager = ({ organizationId }) => {
 	const [locations, setLocations] = useState([]);

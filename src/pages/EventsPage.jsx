@@ -2,20 +2,38 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, Filter, Calendar, MapPin, Map } from "lucide-react";
-import Button from "../components/ui/Button";
-import Badge from "../components/ui/Badge";
-import EventCard from "../components/EventCard";
-import EventDetailModal from "../components/EventDetailModal";
-import Skeleton from "../components/ui/Skeleton";
-import { useMockData } from "../hooks/useMockData";
-import { useModalStore } from "../store";
+import Button from "@/components/ui/Button";
+import Badge from "@/components/ui/Badge";
+import EventCard from "@/components/EventCard";
+import EventDetailModal from "@/components/EventDetailModal";
+import Skeleton from "@/components/ui/Skeleton";
+import { useEvents, useJoinEvent } from "@/hooks/useEvents";
+import { useCategories } from "@/hooks/useCategories";
+import { useModalStore } from "@/store";
 
+/**
+ * Halaman Events untuk menampilkan daftar event volunteer
+ * Menyediakan fitur search, filter, dan multiple view mode (grid, list, map)
+ * Terintegrasi dengan URL search params untuk bookmarking dan sharing
+ * Menggunakan TanStack Query + Axios untuk data fetching
+ *
+ * @returns {JSX.Element} Halaman daftar events dengan filtering dan search
+ */
 const EventsPage = () => {
 	const navigate = useNavigate();
 	const [searchParams, setSearchParams] = useSearchParams();
-	const { data: events, loading: eventsLoading } = useMockData("events", 800);
-	const { data: categories } = useMockData("categories", 300);
+
+	// Menggunakan TanStack Query hooks untuk data fetching
+	const {
+		data: events,
+		isLoading: eventsLoading,
+		error: eventsError,
+	} = useEvents({ status: "published" });
+
+	const { data: categories, isLoading: categoriesLoading } = useCategories();
+
 	const { openJoinModal } = useModalStore();
+	const joinEventMutation = useJoinEvent();
 
 	const [filters, setFilters] = useState({
 		search: searchParams.get("search") || "",
@@ -31,7 +49,10 @@ const EventsPage = () => {
 	const [showDetailModal, setShowDetailModal] = useState(false);
 	const [viewMode, setViewMode] = useState("grid"); // grid, list, map
 
-	// Filter events when data or filters change
+	/**
+	 * Effect untuk melakukan filtering events berdasarkan kriteria yang dipilih
+	 * Dijalankan setiap kali data events atau filter berubah
+	 */
 	useEffect(() => {
 		if (!events) return;
 
@@ -74,6 +95,12 @@ const EventsPage = () => {
 		setFilteredEvents(filtered);
 	}, [events, categories, filters]);
 
+	/**
+	 * Handler untuk mengubah filter dan sinkronisasi dengan URL search params
+	 *
+	 * @param {string} key - Key filter yang akan diubah (search, category, date, city)
+	 * @param {string} value - Nilai baru untuk filter
+	 */
 	const handleFilterChange = (key, value) => {
 		const newFilters = { ...filters, [key]: value };
 		setFilters(newFilters);
@@ -88,6 +115,10 @@ const EventsPage = () => {
 		setSearchParams(newParams);
 	};
 
+	/**
+	 * Menghapus semua filter dan reset ke default state
+	 * Juga membersihkan URL search params
+	 */
 	const clearFilters = () => {
 		setFilters({
 			search: "",
@@ -99,10 +130,33 @@ const EventsPage = () => {
 		setSearchParams({});
 	};
 
-	const handleJoinEvent = (eventId) => {
-		openJoinModal(eventId);
+	/**
+	 * Handler untuk membuka modal pendaftaran event
+	 * Menggunakan TanStack Query mutation untuk join event
+	 *
+	 * @param {string|number} eventId - ID event yang akan didaftari
+	 */
+	const handleJoinEvent = async (eventId) => {
+		try {
+			// Bisa langsung join atau buka modal tergantung flow yang diinginkan
+			openJoinModal(eventId);
+
+			// Alternatif: langsung join tanpa modal
+			// await joinEventMutation.mutateAsync({
+			//   eventId,
+			//   userData: { notes: "Interested to join!" }
+			// });
+		} catch (error) {
+			console.error("Failed to join event:", error);
+			// Handle error (bisa tambah toast notification)
+		}
 	};
 
+	/**
+	 * Handler untuk menampilkan detail event di modal
+	 *
+	 * @param {string|number} eventId - ID event yang akan ditampilkan detailnya
+	 */
 	const handleViewEventDetail = (eventId) => {
 		const event = events?.find((e) => e.id === eventId);
 		if (event) {
@@ -117,6 +171,28 @@ const EventsPage = () => {
 	];
 
 	const MotionDiv = motion.div;
+
+	// Error state handling
+	if (eventsError) {
+		return (
+			<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-slate-50 via-white to-blue-50">
+				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+					<div className="text-center py-12">
+						<h2 className="text-2xl font-bold text-red-600 mb-4">
+							❌ Gagal Memuat Events
+						</h2>
+						<p className="text-gray-600 mb-6">
+							{eventsError.message ||
+								"Terjadi kesalahan saat mengambil data events"}
+						</p>
+						<Button onClick={() => window.location.reload()} variant="primary">
+							Coba Lagi
+						</Button>
+					</div>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-slate-50 via-white to-blue-50">

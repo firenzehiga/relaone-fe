@@ -14,10 +14,17 @@ import {
 	Settings,
 	LogOut,
 } from "lucide-react";
-import Button from "../ui/Button";
-import Avatar from "../ui/Avatar";
-import { useAuthStore } from "../../store";
+import Button from "@/components/ui/Button";
+import Avatar from "@/components/ui/Avatar";
+import { useAuthStore } from "@/store";
 
+/**
+ * Komponen Header navigasi utama aplikasi
+ * Menampilkan logo, menu navigasi, dan user authentication controls
+ * Responsive dengan mobile menu dan user dropdown menu
+ *
+ * @returns {JSX.Element} Header navigasi dengan sticky positioning
+ */
 const Header = () => {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 	const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -25,12 +32,17 @@ const Header = () => {
 	const navigate = useNavigate();
 	const { user, isAuthenticated, logout } = useAuthStore();
 
+	// Konfigurasi menu navigasi utama
 	const navItems = [
 		{ name: "Beranda", href: "/", icon: Home },
 		{ name: "Event", href: "/events", icon: Calendar },
 		{ name: "Organisasi", href: "/organizations", icon: Building },
 	];
 
+	/**
+	 * Handler untuk logout user
+	 * Memanggil store logout, menutup user menu, dan redirect ke home
+	 */
 	const handleLogout = () => {
 		logout();
 		setUserMenuOpen(false);

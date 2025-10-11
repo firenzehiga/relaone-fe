@@ -10,15 +10,51 @@ import {
 	MessageCircle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import Button from "./ui/Button";
-import Badge from "./ui/Badge";
-import Avatar from "./ui/Avatar";
-import Modal from "./ui/Modal";
-import { cn } from "../utils/cn";
+import Button from "@/components/ui/Button";
+import Badge from "@/components/ui/Badge";
+import Avatar from "@/components/ui/Avatar";
+import Modal from "@/components/ui/Modal";
+import { cn } from "@/utils/cn";
 
+/**
+ * Modal komponen untuk menampilkan detail lengkap sebuah event volunteer
+ * Menampilkan informasi event seperti deskripsi, lokasi, peserta, dan tombol aksi
+ *
+ * @param {Object} props - Props untuk EventDetailModal
+ * @param {boolean} props.isOpen - Status apakah modal dibuka atau tidak
+ * @param {Function} props.onClose - Callback function ketika modal ditutup
+ * @param {Object} props.event - Data event yang akan ditampilkan
+ * @param {string} props.event.id - ID unik event
+ * @param {string} props.event.title - Judul event
+ * @param {string} props.event.description - Deskripsi event
+ * @param {string} props.event.banner - URL gambar banner event
+ * @param {string} props.event.date - Tanggal event (format: YYYY-MM-DD)
+ * @param {string} props.event.time - Waktu mulai event (format: HH:MM)
+ * @param {string} props.event.end_time - Waktu selesai event (format: HH:MM)
+ * @param {string} props.event.location - Nama lokasi event
+ * @param {string} props.event.address - Alamat lengkap event
+ * @param {string} props.event.city - Kota event
+ * @param {string} props.event.province - Provinsi event
+ * @param {number} props.event.latitude - Koordinat latitude lokasi
+ * @param {number} props.event.longitude - Koordinat longitude lokasi
+ * @param {number} props.event.capacity - Kapasitas maksimal peserta
+ * @param {number} props.event.registered - Jumlah peserta yang sudah terdaftar
+ * @param {string} props.event.status - Status event (published, draft, cancelled, full)
+ * @param {Array<string>} props.event.requirements - Daftar persyaratan untuk bergabung
+ * @param {Array<string>} props.event.benefits - Daftar manfaat yang didapat peserta
+ * @param {Object} props.event.organizer - Informasi penyelenggara event
+ * @param {Function} props.onJoin - Callback function ketika user menekan tombol daftar
+ * @returns {JSX.Element|null} Modal detail event atau null jika event tidak ada
+ */
 const EventDetailModal = ({ isOpen, onClose, event, onJoin }) => {
 	if (!event) return null;
 
+	/**
+	 * Memformat string tanggal menjadi format Indonesia yang mudah dibaca
+	 *
+	 * @param {string} dateString - String tanggal dalam format apapun yang bisa di-parse Date
+	 * @returns {string} Tanggal dalam format "Hari, DD Bulan YYYY" (Indonesia)
+	 */
 	const formatDate = (dateString) => {
 		const date = new Date(dateString);
 		return date.toLocaleDateString("id-ID", {
@@ -29,10 +65,24 @@ const EventDetailModal = ({ isOpen, onClose, event, onJoin }) => {
 		});
 	};
 
+	/**
+	 * Memformat string waktu dengan mengambil jam dan menit saja
+	 *
+	 * @param {string} timeString - String waktu dalam format HH:MM:SS atau HH:MM
+	 * @returns {string} Waktu dalam format HH:MM
+	 */
 	const formatTime = (timeString) => {
 		return timeString.slice(0, 5);
 	};
 
+	/**
+	 * Mendapatkan konfigurasi badge berdasarkan status event
+	 *
+	 * @param {string} status - Status event (published, draft, cancelled, full)
+	 * @returns {Object} Object dengan variant dan text untuk badge
+	 * @returns {string} returns.variant - Variant warna badge
+	 * @returns {string} returns.text - Text yang ditampilkan pada badge
+	 */
 	const getStatusBadge = (status) => {
 		const statusConfig = {
 			published: { variant: "success", text: "Terbuka" },
@@ -43,6 +93,12 @@ const EventDetailModal = ({ isOpen, onClose, event, onJoin }) => {
 		return statusConfig[status] || statusConfig.published;
 	};
 
+	/**
+	 * Generate URL Google Maps untuk melihat lokasi event
+	 * Prioritas menggunakan koordinat lat/lng, jika tidak ada fallback ke alamat
+	 *
+	 * @returns {string} URL Google Maps untuk melihat lokasi
+	 */
 	const getGoogleMapsUrl = () => {
 		if (event.latitude && event.longitude) {
 			return `https://www.google.com/maps/search/?api=1&query=${event.latitude},${event.longitude}`;
@@ -52,6 +108,12 @@ const EventDetailModal = ({ isOpen, onClose, event, onJoin }) => {
 		)}`;
 	};
 
+	/**
+	 * Generate URL Google Maps untuk mendapatkan petunjuk arah ke lokasi event
+	 * Prioritas menggunakan koordinat lat/lng, jika tidak ada fallback ke alamat
+	 *
+	 * @returns {string} URL Google Maps untuk mendapatkan petunjuk arah
+	 */
 	const getDirectionsUrl = () => {
 		if (event.latitude && event.longitude) {
 			return `https://www.google.com/maps/dir/?api=1&destination=${event.latitude},${event.longitude}`;
