@@ -1947,8 +1947,7 @@ class FeedbackSeeder extends Seeder
     }
 }
 ```
-
-### **DatabaseSeeder (Updated)**
+## 📁 **Database Seeder (Updated Order)**
 
 ```php
 <?php
@@ -1962,53 +1961,70 @@ class DatabaseSeeder extends Seeder
 {
     public function run()
     {
+        // URUTAN CRITICAL: Parent tables dulu!
         $this->call([
-            CategorySeeder::class,
-            UserSeeder::class,
-            LocationSeeder::class,
-            OrganizationSeeder::class,
-            EventSeeder::class,
-            EventParticipantSeeder::class,
-            FeedbackSeeder::class,
+            // 1. Master Data (No Dependencies)
+            CategorySeeder::class,          // ← PERTAMA
+            
+            // 2. Base Users (No Dependencies)  
+            UserSeeder::class,              // ← KEDUA
+            
+            // 3. Locations (No Dependencies)
+            LocationSeeder::class,          // ← KETIGA
+            
+            // 4. Organizations (FK: user_id, location_id)
+            OrganizationSeeder::class,      // ← KEEMPAT
+            
+            // 5. Events (FK: user_id, category_id, location_id, organization_id)
+            EventSeeder::class,             // ← KELIMA
+            
+            // 6. Event Participants (FK: event_id, user_id)
+            EventParticipantSeeder::class,  // ← KEENAM
+            
+            // 7. Feedbacks (FK: event_id, user_id)
+            FeedbackSeeder::class,          // ← TERAKHIR
         ]);
-
-        $this->command->info('🎉 All seeders completed successfully!');
-        $this->command->line('');
-        $this->command->info('📊 Seeded Data Summary:');
-        $this->command->line('✅ 6 Categories (Pendidikan, Kesehatan, Lingkungan, etc)');
-        $this->command->line('✅ 6 Users (1 Admin, 2 Organizations, 3 Volunteers)');
-        $this->command->line('✅ 7 Locations (Organization offices & Event venues)');
-        $this->command->line('✅ 2 Organizations (YPN & KLH)');
-        $this->command->line('✅ 4 Sample Events (Various categories & statuses)');
-        $this->command->line('✅ 7 Event Participants (Various status: registered, confirmed)');
-        $this->command->line('✅ 7 Event Feedbacks (Ratings 2-5, approved & pending)');
-        $this->command->line('');
-        $this->command->info('🔑 Login Credentials:');
-        $this->command->line('Admin: admin@volunteer.local / password123');
-        $this->command->line('YPN: admin@ypn.org / password123');
-        $this->command->line('KLH: admin@klh.org / password123');
-        $this->command->line('Volunteers: john@volunteer.com / password123');
-        $this->command->line('');
-        $this->command->info('📈 Sample Data Highlights:');
-        $this->command->line('• Event participants dengan berbagai status (registered, confirmed)');
-        $this->command->line('• Event ratings terupdate otomatis dari feedbacks');
-        $this->command->line('• Feedback anonim dan non-anonim untuk testing');
-        $this->command->line('• Pending feedbacks untuk testing approval system');
     }
 }
 ```
 
-### **Run Seeders**
+## 🔄 **Migration Commands (Proper Order):**
 
+### **Development Workflow:**
 ```bash
-# Jalankan semua seeders
+# 1. Create migrations (sesuai urutan dependency)
+php artisan make:migration create_users_table
+php artisan make:migration create_categories_table
+php artisan make:migration create_locations_table
+php artisan make:migration create_organizations_table
+php artisan make:migration create_events_table
+php artisan make:migration create_event_participants_table
+php artisan make:migration create_feedbacks_table
+
+# 2. Run migrations
+php artisan migrate
+
+# 3. Create seeders (sesuai urutan dependency)
+php artisan make:seeder CategorySeeder
+php artisan make:seeder UserSeeder
+php artisan make:seeder LocationSeeder
+php artisan make:seeder OrganizationSeeder
+php artisan make:seeder EventSeeder
+php artisan make:seeder EventParticipantSeeder
+php artisan make:seeder FeedbackSeeder
+
+# 4. Run seeders
 php artisan db:seed
+```
 
-# Jalankan seeder specific
-php artisan db:seed --class=CategorySeeder
-
-# Fresh migrate + seed
+### **Production/Fresh Setup:**
+```bash
+# Fresh start with seeding
 php artisan migrate:fresh --seed
+
+# Atau step by step
+php artisan migrate:fresh
+php artisan db:seed
 ```
 
 ## ⚡ **Step 7: Testing**
