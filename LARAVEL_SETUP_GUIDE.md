@@ -1275,12 +1275,680 @@ class CategoryFactory extends Factory
 
 ```bash
 php artisan make:seeder CategorySeeder
-php artisan make:seeder LocationSeeder
 php artisan make:seeder UserSeeder
+php artisan make:seeder LocationSeeder
 php artisan make:seeder OrganizationSeeder
+php artisan make:seeder EventSeeder
+php artisan make:seeder EventParticipantSeeder
+php artisan make:seeder FeedbackSeeder
 ```
 
-### **DatabaseSeeder**
+### **1. CategorySeeder**
+
+```php
+<?php
+// filepath: database/seeders/CategorySeeder.php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+class CategorySeeder extends Seeder
+{
+    public function run()
+    {
+        $categories = [
+            [
+                'nama' => 'Pendidikan',
+                'deskripsi' => 'Kegiatan volunteer di bidang pendidikan seperti mengajar, bimbingan belajar, dan pelatihan',
+                'icon' => 'graduation-cap',
+                'warna' => '#3B82F6',
+                'is_active' => true,
+            ],
+            [
+                'nama' => 'Kesehatan',
+                'deskripsi' => 'Kegiatan volunteer di bidang kesehatan seperti donor darah, penyuluhan kesehatan',
+                'icon' => 'heart',
+                'warna' => '#EF4444',
+                'is_active' => true,
+            ],
+            [
+                'nama' => 'Lingkungan',
+                'deskripsi' => 'Kegiatan volunteer untuk menjaga lingkungan seperti bersih-bersih, penanaman pohon',
+                'icon' => 'leaf',
+                'warna' => '#10B981',
+                'is_active' => true,
+            ],
+            [
+                'nama' => 'Sosial',
+                'deskripsi' => 'Kegiatan volunteer sosial kemasyarakatan seperti bakti sosial, bantuan bencana',
+                'icon' => 'users',
+                'warna' => '#F59E0B',
+                'is_active' => true,
+            ],
+            [
+                'nama' => 'Teknologi',
+                'deskripsi' => 'Kegiatan volunteer di bidang teknologi seperti pelatihan komputer, literasi digital',
+                'icon' => 'laptop',
+                'warna' => '#8B5CF6',
+                'is_active' => true,
+            ],
+            [
+                'nama' => 'Kemanusiaan',
+                'deskripsi' => 'Kegiatan volunteer kemanusiaan seperti bantuan untuk anak yatim, lansia',
+                'icon' => 'hand-heart',
+                'warna' => '#EC4899',
+                'is_active' => true,
+            ],
+        ];
+
+        foreach ($categories as $category) {
+            DB::table('categories')->insert(array_merge($category, [
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]));
+        }
+
+        $this->command->info('Categories seeded successfully!');
+    }
+}
+```
+
+### **2. UserSeeder**
+
+```php
+<?php
+// filepath: database/seeders/UserSeeder.php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
+
+class UserSeeder extends Seeder
+{
+    public function run()
+    {
+        $users = [
+            // Admin System
+            [
+                'nama' => 'Admin Volunteer System',
+                'email' => 'admin@volunteer.local',
+                'password' => Hash::make('password123'),
+                'telepon' => '081234567890',
+                'role' => 'admin',
+                'status' => 'active',
+                'email_verified_at' => Carbon::now(),
+            ],
+            
+            // Organization Users
+            [
+                'nama' => 'Admin YPN',
+                'email' => 'admin@ypn.org',
+                'password' => Hash::make('password123'),
+                'telepon' => '081234567891',
+                'role' => 'organization',
+                'status' => 'active',
+                'email_verified_at' => Carbon::now(),
+            ],
+            [
+                'nama' => 'Admin KLH',
+                'email' => 'admin@klh.org',
+                'password' => Hash::make('password123'),
+                'telepon' => '081234567892',
+                'role' => 'organization',
+                'status' => 'active',
+                'email_verified_at' => Carbon::now(),
+            ],
+            
+            // Volunteer Users
+            [
+                'nama' => 'John Volunteer',
+                'email' => 'john@volunteer.com',
+                'password' => Hash::make('password123'),
+                'telepon' => '081234567893',
+                'tanggal_lahir' => '1995-05-15',
+                'jenis_kelamin' => 'laki-laki',
+                'alamat' => 'Jl. Volunteer No. 123, Jakarta',
+                'role' => 'volunteer',
+                'status' => 'active',
+                'email_verified_at' => Carbon::now(),
+            ],
+            [
+                'nama' => 'Jane Volunteer',
+                'email' => 'jane@volunteer.com',
+                'password' => Hash::make('password123'),
+                'telepon' => '081234567894',
+                'tanggal_lahir' => '1992-08-20',
+                'jenis_kelamin' => 'perempuan',
+                'alamat' => 'Jl. Relawan No. 456, Jakarta',
+                'role' => 'volunteer',
+                'status' => 'active',
+                'email_verified_at' => Carbon::now(),
+            ],
+            [
+                'nama' => 'Mike Volunteer',
+                'email' => 'mike@volunteer.com',
+                'password' => Hash::make('password123'),
+                'telepon' => '081234567895',
+                'tanggal_lahir' => '1998-03-10',
+                'jenis_kelamin' => 'laki-laki',
+                'alamat' => 'Jl. Bakti No. 789, Jakarta',
+                'role' => 'volunteer',
+                'status' => 'active',
+                'email_verified_at' => Carbon::now(),
+            ],
+        ];
+
+        foreach ($users as $user) {
+            DB::table('users')->insert(array_merge($user, [
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]));
+        }
+
+        $this->command->info('Users seeded successfully!');
+    }
+}
+```
+
+### **3. LocationSeeder**
+
+```php
+<?php
+// filepath: database/seeders/LocationSeeder.php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+class LocationSeeder extends Seeder
+{
+    public function run()
+    {
+        $locations = [
+            // Organization Locations
+            [
+                'nama' => 'Kantor YPN Jakarta',
+                'alamat' => 'Jl. Pendidikan No. 123, Jakarta Pusat',
+                'latitude' => -6.2088,
+                'longitude' => 106.8456,
+                'kota' => 'Jakarta',
+                'provinsi' => 'DKI Jakarta',
+                'negara' => 'Indonesia',
+                'tipe' => 'organization',
+            ],
+            [
+                'nama' => 'Kantor KLH Bandung',
+                'alamat' => 'Jl. Hijau No. 456, Bandung',
+                'latitude' => -6.9175,
+                'longitude' => 107.6191,
+                'kota' => 'Bandung',
+                'provinsi' => 'Jawa Barat',
+                'negara' => 'Indonesia',
+                'tipe' => 'organization',
+            ],
+            
+            // Event Locations
+            [
+                'nama' => 'SDN 01 Jakarta Pusat',
+                'alamat' => 'Jl. Merdeka No. 10, Jakarta Pusat',
+                'latitude' => -6.1751,
+                'longitude' => 106.8650,
+                'kota' => 'Jakarta',
+                'provinsi' => 'DKI Jakarta',
+                'negara' => 'Indonesia',
+                'tipe' => 'event',
+            ],
+            [
+                'nama' => 'Taman Kota Bandung',
+                'alamat' => 'Jl. Taman No. 5, Bandung',
+                'latitude' => -6.9147,
+                'longitude' => 107.6098,
+                'kota' => 'Bandung',
+                'provinsi' => 'Jawa Barat',
+                'negara' => 'Indonesia',
+                'tipe' => 'event',
+            ],
+            [
+                'nama' => 'Community Center Jakarta',
+                'alamat' => 'Jl. Kemang Raya No. 25, Jakarta Selatan',
+                'latitude' => -6.2615,
+                'longitude' => 106.8106,
+                'kota' => 'Jakarta',
+                'provinsi' => 'DKI Jakarta',
+                'negara' => 'Indonesia',
+                'tipe' => 'event',
+            ],
+            [
+                'nama' => 'SMP Negeri 15 Jakarta',
+                'alamat' => 'Jl. Pendidikan No. 45, Jakarta Timur',
+                'latitude' => -6.2146,
+                'longitude' => 106.8451,
+                'kota' => 'Jakarta',
+                'provinsi' => 'DKI Jakarta',
+                'negara' => 'Indonesia',
+                'tipe' => 'event',
+            ],
+            [
+                'nama' => 'Pantai Ancol',
+                'alamat' => 'Jl. Lodan Timur No. 7, Jakarta Utara',
+                'latitude' => -6.1223,
+                'longitude' => 106.8420,
+                'kota' => 'Jakarta',
+                'provinsi' => 'DKI Jakarta',
+                'negara' => 'Indonesia',
+                'tipe' => 'event',
+            ],
+        ];
+
+        foreach ($locations as $location) {
+            DB::table('locations')->insert(array_merge($location, [
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]));
+        }
+
+        $this->command->info('Locations seeded successfully!');
+    }
+}
+```
+
+### **4. OrganizationSeeder**
+
+```php
+<?php
+// filepath: database/seeders/OrganizationSeeder.php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+class OrganizationSeeder extends Seeder
+{
+    public function run()
+    {
+        $organizations = [
+            [
+                'nama' => 'Yayasan Pendidikan Nusantara',
+                'deskripsi' => 'Yayasan yang bergerak di bidang pendidikan untuk membantu anak-anak kurang mampu mendapatkan akses pendidikan yang layak',
+                'email' => 'info@ypn.org',
+                'telepon' => '021-12345678',
+                'website' => 'https://ypn.org',
+                'location_id' => 1, // Kantor YPN Jakarta
+                'status_verifikasi' => 'verified',
+                'rating' => 4.8,
+                'total_events' => 0,
+                'user_id' => 2, // Admin YPN
+            ],
+            [
+                'nama' => 'Komunitas Lingkungan Hijau',
+                'deskripsi' => 'Komunitas yang fokus pada pelestarian lingkungan dan kampanye go green untuk masa depan yang lebih baik',
+                'email' => 'info@lingkunganhijau.org',
+                'telepon' => '022-87654321',
+                'website' => 'https://lingkunganhijau.org',
+                'location_id' => 2, // Kantor KLH Bandung
+                'status_verifikasi' => 'verified',
+                'rating' => 4.6,
+                'total_events' => 0,
+                'user_id' => 3, // Admin KLH
+            ],
+        ];
+
+        foreach ($organizations as $organization) {
+            DB::table('organizations')->insert(array_merge($organization, [
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]));
+        }
+
+        $this->command->info('Organizations seeded successfully!');
+    }
+}
+```
+
+### **5. EventSeeder**
+
+```php
+<?php
+// filepath: database/seeders/EventSeeder.php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+class EventSeeder extends Seeder
+{
+    public function run()
+    {
+        $events = [
+            [
+                'judul' => 'Mengajar Anak Sekolah Dasar - Matematika',
+                'deskripsi' => 'Program volunteer mengajar matematika untuk siswa SD kelas 4-6. Membantu anak-anak memahami konsep dasar matematika dengan cara yang menyenangkan dan mudah dipahami.',
+                'deskripsi_singkat' => 'Mengajar matematika untuk siswa SD',
+                'tanggal_mulai' => Carbon::now()->addDays(7)->toDateString(),
+                'tanggal_selesai' => Carbon::now()->addDays(7)->toDateString(),
+                'waktu_mulai' => '08:00:00',
+                'waktu_selesai' => '12:00:00',
+                'maks_peserta' => 20,
+                'peserta_saat_ini' => 0,
+                'location_id' => 3, // SDN 01 Jakarta Pusat
+                'status' => 'published',
+                'persyaratan' => 'Mampu mengajar matematika tingkat SD, Sabar dengan anak-anak, Minimal lulusan SMA',
+                'manfaat' => 'Sertifikat volunteer, Pengalaman mengajar, Networking dengan sesama volunteer',
+                'nama_kontak' => 'Siti Nurhaliza',
+                'telepon_kontak' => '081234567890',
+                'email_kontak' => 'kontak@ypn.org',
+                'batas_pendaftaran' => Carbon::now()->addDays(5)->toDateString(),
+                'category_id' => 1, // Pendidikan
+                'organization_id' => 1, // YPN
+                'user_id' => 2, // Admin YPN
+            ],
+            [
+                'judul' => 'Bersih-Bersih Pantai Ancol',
+                'deskripsi' => 'Kegiatan gotong royong membersihkan pantai dari sampah plastik dan limbah lainnya. Mari bersama-sama menjaga kebersihan pantai untuk kelestarian ekosistem laut.',
+                'deskripsi_singkat' => 'Bersih-bersih pantai dari sampah plastik',
+                'tanggal_mulai' => Carbon::now()->addDays(10)->toDateString(),
+                'tanggal_selesai' => Carbon::now()->addDays(10)->toDateString(),
+                'waktu_mulai' => '07:00:00',
+                'waktu_selesai' => '11:00:00',
+                'maks_peserta' => 50,
+                'peserta_saat_ini' => 0,
+                'location_id' => 7, // Pantai Ancol
+                'status' => 'published',
+                'persyaratan' => 'Sehat jasmani, Membawa sarung tangan, Pakaian yang nyaman untuk beraktivitas',
+                'manfaat' => 'Sertifikat volunteer, Pengalaman peduli lingkungan, Snack dan makan siang gratis',
+                'nama_kontak' => 'Budi Santoso',
+                'telepon_kontak' => '081234567891',
+                'email_kontak' => 'kontak@lingkunganhijau.org',
+                'batas_pendaftaran' => Carbon::now()->addDays(8)->toDateString(),
+                'category_id' => 3, // Lingkungan
+                'organization_id' => 2, // KLH
+                'user_id' => 3, // Admin KLH
+            ],
+            [
+                'judul' => 'Workshop Teknologi untuk Remaja',
+                'deskripsi' => 'Workshop pengenalan teknologi dan programming untuk remaja. Belajar dasar-dasar coding, web development, dan literasi digital untuk masa depan yang lebih cerah.',
+                'deskripsi_singkat' => 'Workshop coding dan teknologi untuk remaja',
+                'tanggal_mulai' => Carbon::now()->addDays(14)->toDateString(),
+                'tanggal_selesai' => Carbon::now()->addDays(14)->toDateString(),
+                'waktu_mulai' => '13:00:00',
+                'waktu_selesai' => '17:00:00',
+                'maks_peserta' => 30,
+                'peserta_saat_ini' => 0,
+                'location_id' => 5, // Community Center Jakarta
+                'status' => 'published',
+                'persyaratan' => 'Memiliki pengetahuan dasar komputer, Mampu mengajar remaja, Membawa laptop pribadi',
+                'manfaat' => 'Sertifikat volunteer, Pengalaman mengajar teknologi, Networking dengan tech community',
+                'nama_kontak' => 'Ahmad Fauzi',
+                'telepon_kontak' => '081234567892',
+                'email_kontak' => 'kontak@ypn.org',
+                'batas_pendaftaran' => Carbon::now()->addDays(12)->toDateString(),
+                'category_id' => 5, // Teknologi
+                'organization_id' => 1, // YPN
+                'user_id' => 2, // Admin YPN
+            ],
+            [
+                'judul' => 'Bakti Sosial untuk Anak Yatim',
+                'deskripsi' => 'Kegiatan bakti sosial memberikan bantuan dan hiburan untuk anak-anak yatim di panti asuhan. Berbagi kebahagiaan dan memberikan motivasi untuk masa depan mereka.',
+                'deskripsi_singkat' => 'Bakti sosial dan hiburan untuk anak yatim',
+                'tanggal_mulai' => Carbon::now()->addDays(21)->toDateString(),
+                'tanggal_selesai' => Carbon::now()->addDays(21)->toDateString(),
+                'waktu_mulai' => '09:00:00',
+                'waktu_selesai' => '15:00:00',
+                'maks_peserta' => 25,
+                'peserta_saat_ini' => 0,
+                'location_id' => 5, // Community Center Jakarta
+                'status' => 'draft',
+                'persyaratan' => 'Suka berinteraksi dengan anak-anak, Bisa membawa hiburan atau permainan, Berpakaian rapi dan sopan',
+                'manfaat' => 'Sertifikat volunteer, Pengalaman sosial yang berharga, Makan siang gratis',
+                'nama_kontak' => 'Dewi Sartika',
+                'telepon_kontak' => '081234567893',
+                'email_kontak' => 'kontak@ypn.org',
+                'batas_pendaftaran' => Carbon::now()->addDays(19)->toDateString(),
+                'category_id' => 6, // Kemanusiaan
+                'organization_id' => 1, // YPN
+                'user_id' => 2, // Admin YPN
+            ],
+        ];
+
+        foreach ($events as $event) {
+            DB::table('events')->insert(array_merge($event, [
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]));
+        }
+
+        $this->command->info('Events seeded successfully!');
+    }
+}
+```
+
+### **6. EventParticipantSeeder**
+
+```php
+<?php
+// filepath: database/seeders/EventParticipantSeeder.php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+class EventParticipantSeeder extends Seeder
+{
+    public function run()
+    {
+        $participants = [
+            // Event 1: Mengajar SD Matematika (event_id: 1)
+            [
+                'event_id' => 1,
+                'user_id' => 4, // John Volunteer
+                'status' => 'confirmed',
+                'tanggal_daftar' => Carbon::now()->subDays(3),
+                'tanggal_konfirmasi' => Carbon::now()->subDays(2),
+                'catatan' => 'Siap membantu mengajar matematika',
+            ],
+            [
+                'event_id' => 1,
+                'user_id' => 5, // Jane Volunteer
+                'status' => 'confirmed',
+                'tanggal_daftar' => Carbon::now()->subDays(2),
+                'tanggal_konfirmasi' => Carbon::now()->subDay(),
+                'catatan' => 'Pengalaman mengajar private matematika',
+            ],
+            [
+                'event_id' => 1,
+                'user_id' => 6, // Mike Volunteer
+                'status' => 'registered',
+                'tanggal_daftar' => Carbon::now()->subDay(),
+                'catatan' => 'Baru pertama kali volunteer mengajar',
+            ],
+
+            // Event 2: Bersih-bersih Pantai (event_id: 2)
+            [
+                'event_id' => 2,
+                'user_id' => 4, // John Volunteer
+                'status' => 'confirmed',
+                'tanggal_daftar' => Carbon::now()->subDays(4),
+                'tanggal_konfirmasi' => Carbon::now()->subDays(3),
+                'catatan' => 'Punya pengalaman bersih-bersih pantai sebelumnya',
+            ],
+            [
+                'event_id' => 2,
+                'user_id' => 6, // Mike Volunteer
+                'status' => 'confirmed',
+                'tanggal_daftar' => Carbon::now()->subDays(2),
+                'tanggal_konfirmasi' => Carbon::now()->subDay(),
+                'catatan' => 'Peduli lingkungan, siap membantu',
+            ],
+
+            // Event 3: Workshop Teknologi (event_id: 3)
+            [
+                'event_id' => 3,
+                'user_id' => 5, // Jane Volunteer
+                'status' => 'registered',
+                'tanggal_daftar' => Carbon::now()->subDays(1),
+                'catatan' => 'Background IT, siap berbagi ilmu',
+            ],
+            [
+                'event_id' => 3,
+                'user_id' => 6, // Mike Volunteer
+                'status' => 'registered',
+                'tanggal_daftar' => Carbon::now(),
+                'catatan' => 'Fresh graduate IT, ingin berkontribusi',
+            ],
+        ];
+
+        foreach ($participants as $participant) {
+            DB::table('event_participants')->insert(array_merge($participant, [
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]));
+        }
+
+        // Update peserta_saat_ini di events table
+        DB::table('events')->where('id', 1)->update(['peserta_saat_ini' => 2]); // 2 confirmed
+        DB::table('events')->where('id', 2)->update(['peserta_saat_ini' => 2]); // 2 confirmed
+        DB::table('events')->where('id', 3)->update(['peserta_saat_ini' => 0]); // 0 confirmed (masih registered)
+
+        $this->command->info('Event Participants seeded successfully!');
+    }
+}
+```
+
+### **7. FeedbackSeeder**
+
+```php
+<?php
+// filepath: database/seeders/FeedbackSeeder.php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+class FeedbackSeeder extends Seeder
+{
+    public function run()
+    {
+        $feedbacks = [
+            // Feedbacks untuk events yang sudah completed (simulasi)
+            // Misalkan ada event sebelumnya yang sudah selesai
+            
+            // Feedback untuk event mengajar (simulasi event completed)
+            [
+                'event_id' => 1, // Mengajar SD Matematika
+                'user_id' => 4, // John Volunteer
+                'rating' => 5,
+                'komentar' => 'Event yang sangat bermanfaat! Anak-anak antusias belajar matematika. Organisasi sangat baik dalam koordinasi.',
+                'is_anonim' => false,
+                'is_disetujui' => true,
+            ],
+            [
+                'event_id' => 1, // Mengajar SD Matematika
+                'user_id' => 5, // Jane Volunteer
+                'rating' => 4,
+                'komentar' => 'Pengalaman yang menyenangkan mengajar anak-anak. Fasilitas cukup memadai, namun perlu lebih banyak alat peraga.',
+                'is_anonim' => false,
+                'is_disetujui' => true,
+            ],
+            
+            // Feedback untuk event bersih pantai
+            [
+                'event_id' => 2, // Bersih-bersih Pantai
+                'user_id' => 4, // John Volunteer
+                'rating' => 5,
+                'komentar' => 'Event yang sangat baik untuk lingkungan! Koordinasi panitia excellent, dapat sertifikat dan snack.',
+                'is_anonim' => false,
+                'is_disetujui' => true,
+            ],
+            [
+                'event_id' => 2, // Bersih-bersih Pantai
+                'user_id' => 6, // Mike Volunteer
+                'rating' => 4,
+                'komentar' => 'Kegiatan yang bermakna untuk menjaga kebersihan pantai. Semoga bisa rutin diadakan.',
+                'is_anonim' => true, // anonim
+                'is_disetujui' => true,
+            ],
+            
+            // Feedback untuk workshop teknologi (simulasi)
+            [
+                'event_id' => 3, // Workshop Teknologi
+                'user_id' => 5, // Jane Volunteer
+                'rating' => 5,
+                'komentar' => 'Workshop yang sangat bermanfaat! Materi up-to-date dan peserta sangat antusias belajar coding.',
+                'is_anonim' => false,
+                'is_disetujui' => true,
+            ],
+            
+            // Feedback dengan rating rendah (untuk testing)
+            [
+                'event_id' => 3, // Workshop Teknologi
+                'user_id' => 6, // Mike Volunteer
+                'rating' => 3,
+                'komentar' => 'Event cukup baik tapi perlu perbaikan di fasilitas laptop. Beberapa laptop tidak berfungsi dengan baik.',
+                'is_anonim' => false,
+                'is_disetujui' => true,
+            ],
+            
+            // Feedback pending approval (untuk testing)
+            [
+                'event_id' => 1, // Mengajar SD Matematika
+                'user_id' => 6, // Mike Volunteer
+                'rating' => 2,
+                'komentar' => 'Kurang puas dengan koordinasi panitia. Banyak yang tidak jelas dan terlambat memberikan info.',
+                'is_anonim' => true,
+                'is_disetujui' => false, // pending approval
+            ],
+        ];
+
+        foreach ($feedbacks as $feedback) {
+            DB::table('feedbacks')->insert(array_merge($feedback, [
+                'created_at' => Carbon::now()->subDays(rand(1, 10)), // feedback dari 1-10 hari lalu
+                'updated_at' => Carbon::now()->subDays(rand(1, 10)),
+            ]));
+        }
+
+        // Update rating di events table berdasarkan approved feedbacks
+        $this->updateEventRatings();
+
+        $this->command->info('Feedbacks seeded successfully!');
+    }
+
+    private function updateEventRatings()
+    {
+        // Event 1: Rating dari feedback John (5) + Jane (4) = 4.5
+        DB::table('events')->where('id', 1)->update([
+            'rating' => 4.5 // (5+4)/2
+        ]);
+
+        // Event 2: Rating dari feedback John (5) + Mike (4) = 4.5  
+        DB::table('events')->where('id', 2)->update([
+            'rating' => 4.5 // (5+4)/2
+        ]);
+
+        // Event 3: Rating dari feedback Jane (5) + Mike (3) = 4.0
+        DB::table('events')->where('id', 3)->update([
+            'rating' => 4.0 // (5+3)/2
+        ]);
+    }
+}
+```
+
+### **DatabaseSeeder (Updated)**
 
 ```php
 <?php
@@ -1299,8 +1967,33 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             LocationSeeder::class,
             OrganizationSeeder::class,
-            // EventSeeder::class, // uncomment untuk sample events
+            EventSeeder::class,
+            EventParticipantSeeder::class,
+            FeedbackSeeder::class,
         ]);
+
+        $this->command->info('🎉 All seeders completed successfully!');
+        $this->command->line('');
+        $this->command->info('📊 Seeded Data Summary:');
+        $this->command->line('✅ 6 Categories (Pendidikan, Kesehatan, Lingkungan, etc)');
+        $this->command->line('✅ 6 Users (1 Admin, 2 Organizations, 3 Volunteers)');
+        $this->command->line('✅ 7 Locations (Organization offices & Event venues)');
+        $this->command->line('✅ 2 Organizations (YPN & KLH)');
+        $this->command->line('✅ 4 Sample Events (Various categories & statuses)');
+        $this->command->line('✅ 7 Event Participants (Various status: registered, confirmed)');
+        $this->command->line('✅ 7 Event Feedbacks (Ratings 2-5, approved & pending)');
+        $this->command->line('');
+        $this->command->info('🔑 Login Credentials:');
+        $this->command->line('Admin: admin@volunteer.local / password123');
+        $this->command->line('YPN: admin@ypn.org / password123');
+        $this->command->line('KLH: admin@klh.org / password123');
+        $this->command->line('Volunteers: john@volunteer.com / password123');
+        $this->command->line('');
+        $this->command->info('📈 Sample Data Highlights:');
+        $this->command->line('• Event participants dengan berbagai status (registered, confirmed)');
+        $this->command->line('• Event ratings terupdate otomatis dari feedbacks');
+        $this->command->line('• Feedback anonim dan non-anonim untuk testing');
+        $this->command->line('• Pending feedbacks untuk testing approval system');
     }
 }
 ```
