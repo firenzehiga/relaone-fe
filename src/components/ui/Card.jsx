@@ -13,10 +13,8 @@ import { cn } from "../../utils/cn";
  * @returns {JSX.Element} Card component dengan animasi
  */
 const Card = ({ children, className, hover = true, ...props }) => {
-	const MotionDiv = motion.div;
-
 	return (
-		<MotionDiv
+		<motion.div
 			whileHover={hover ? { y: -4, scale: 1.02 } : {}}
 			transition={{ duration: 0.3, ease: "easeOut" }}
 			className={cn(
@@ -27,7 +25,7 @@ const Card = ({ children, className, hover = true, ...props }) => {
 			)}
 			{...props}>
 			{children}
-		</MotionDiv>
+		</motion.div>
 	);
 };
 

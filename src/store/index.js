@@ -127,12 +127,16 @@ export const useEventStore = create((set, get) => ({
 export const useModalStore = create((set) => ({
 	/** @type {boolean} Status modal join event terbuka/tertutup */
 	isJoinModalOpen: false,
+	/** @type {boolean} Status modal event detail terbuka/tertutup */
+	isDetailModalOpen: false,
 	/** @type {boolean} Status modal login terbuka/tertutup */
 	isLoginModalOpen: false,
 	/** @type {boolean} Status modal register terbuka/tertutup */
 	isRegisterModalOpen: false,
 	/** @type {string|number|null} ID event yang dipilih untuk di-join */
 	selectedEventId: null,
+	/** @type {Object|null} Event yang dipilih untuk detail */
+	selectedEventDetail: null,
 
 	/**
 	 * Buka modal join event dengan event ID tertentu
@@ -145,6 +149,19 @@ export const useModalStore = create((set) => ({
 	 * Tutup modal join event dan reset selected event ID
 	 */
 	closeJoinModal: () => set({ isJoinModalOpen: false, selectedEventId: null }),
+
+	/**
+	 * Buka modal event detail dengan event data tertentu
+	 * @param {Object} event - Event data yang akan ditampilkan
+	 */
+	openDetailModal: (event) =>
+		set({ isDetailModalOpen: true, selectedEventDetail: event }),
+
+	/**
+	 * Tutup modal event detail dan reset selected event detail
+	 */
+	closeDetailModal: () =>
+		set({ isDetailModalOpen: false, selectedEventDetail: null }),
 
 	/**
 	 * Buka modal login

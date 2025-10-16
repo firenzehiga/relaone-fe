@@ -86,7 +86,7 @@ const Footer = () => {
 						<ul className="space-y-2">
 							<li className="flex items-center text-gray-400">
 								<Mail size={16} className="mr-2" />
-								<span>info@humanify.id</span>
+								<span>info@relaone.id</span>
 							</li>
 							<li className="flex items-center text-gray-400">
 								<Phone size={16} className="mr-2" />
@@ -103,7 +103,7 @@ const Footer = () => {
 				{/* Bottom */}
 				<div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto">
 					<p className="text-gray-400 text-sm">
-						© {currentYear} Humanify. Semua hak dilindungi.
+						© {currentYear} RelaOne. Semua hak dilindungi.
 					</p>
 					<div className="flex space-x-6 mt-4 md:mt-0">
 						<Link

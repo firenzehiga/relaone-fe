@@ -53,8 +53,6 @@ const EventCard = ({
 }) => {
 	if (!event) return null;
 
-	const MotionDiv = motion.div;
-
 	/**
 	 * Memformat string tanggal menjadi format Indonesia yang lebih ringkas
 	 *
@@ -171,7 +169,7 @@ const EventCard = ({
 		(event.peserta_saat_ini || event.registered || 0);
 
 	return (
-		<MotionDiv
+		<motion.div
 			whileHover={{ y: -6, scale: 1.02 }}
 			transition={{ duration: 0.3, ease: "easeOut" }}
 			className={cn(
@@ -349,7 +347,7 @@ const EventCard = ({
 					</Button>
 				</div>
 			</div>
-		</MotionDiv>
+		</motion.div>
 	);
 };
 

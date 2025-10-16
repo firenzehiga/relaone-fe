@@ -5,7 +5,6 @@ import { Search, Filter, Calendar, MapPin, Map } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import EventCard from "@/components/EventCard";
-import EventDetailModal from "@/components/EventDetailModal";
 import Skeleton from "@/components/ui/Skeleton";
 import { useEvents } from "@/hooks/useEvents";
 import { useCategory } from "@/hooks/useCategories";
@@ -32,7 +31,7 @@ const EventsPage = () => {
 
 	const { data: categories, isLoading: categoriesLoading } = useCategory();
 
-	const { openJoinModal } = useModalStore();
+	const { openJoinModal, openDetailModal } = useModalStore();
 
 	const [filters, setFilters] = useState({
 		search: searchParams.get("search") || "",
@@ -44,8 +43,6 @@ const EventsPage = () => {
 
 	const [filteredEvents, setFilteredEvents] = useState([]);
 	const [showFilters, setShowFilters] = useState(false);
-	const [selectedEvent, setSelectedEvent] = useState(null);
-	const [showDetailModal, setShowDetailModal] = useState(false);
 	const [viewMode, setViewMode] = useState("grid"); // grid, list, map
 
 	/**
@@ -163,8 +160,7 @@ const EventsPage = () => {
 	const handleViewEventDetail = (eventId) => {
 		const event = events?.find((e) => e.id === eventId);
 		if (event) {
-			setSelectedEvent(event);
-			setShowDetailModal(true);
+			openDetailModal(event);
 		}
 	};
 
@@ -172,8 +168,6 @@ const EventsPage = () => {
 	const availableCities = [
 		...new Set(events?.map((event) => event.location?.kota).filter(Boolean)),
 	];
-
-	const MotionDiv = motion.div;
 
 	// Error state handling
 	if (eventsError) {
@@ -269,7 +263,7 @@ const EventsPage = () => {
 
 					{/* Filters */}
 					{showFilters && (
-						<MotionDiv
+						<motion.div
 							initial={{ opacity: 0, height: 0 }}
 							animate={{ opacity: 1, height: "auto" }}
 							exit={{ opacity: 0, height: 0 }}
@@ -346,7 +340,7 @@ const EventsPage = () => {
 									</select>
 								</div>
 							</div>
-						</MotionDiv>
+						</motion.div>
 					)}
 				</div>
 
@@ -399,7 +393,7 @@ const EventsPage = () => {
 						{viewMode === "grid" && (
 							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 								{filteredEvents.map((event, index) => (
-									<MotionDiv
+									<motion.div
 										key={event.id}
 										initial={{ opacity: 0, y: 20 }}
 										animate={{ opacity: 1, y: 0 }}
@@ -414,7 +408,7 @@ const EventsPage = () => {
 											onJoin={handleJoinEvent}
 											onViewDetail={handleViewEventDetail}
 										/>
-									</MotionDiv>
+									</motion.div>
 								))}
 							</div>
 						)}
@@ -439,7 +433,7 @@ const EventsPage = () => {
 								{/* Events List Below Map */}
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 									{filteredEvents.map((event, index) => (
-										<MotionDiv
+										<motion.div
 											key={event.id}
 											initial={{ opacity: 0, x: -20 }}
 											animate={{ opacity: 1, x: 0 }}
@@ -482,7 +476,7 @@ const EventsPage = () => {
 													</div>
 												</div>
 											</div>
-										</MotionDiv>
+										</motion.div>
 									))}
 								</div>
 							</div>
@@ -505,14 +499,6 @@ const EventsPage = () => {
 					</div>
 				)}
 			</div>
-
-			{/* Event Detail Modal */}
-			<EventDetailModal
-				isOpen={showDetailModal}
-				onClose={() => setShowDetailModal(false)}
-				event={selectedEvent}
-				onJoin={handleJoinEvent}
-			/>
 		</div>
 	);
 };

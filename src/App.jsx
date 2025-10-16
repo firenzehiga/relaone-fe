@@ -13,6 +13,7 @@ import OrganizationsPage from "@/pages/OrganizationsPage";
 
 // Modals
 import JoinEventModal from "@/components/JoinEventModal";
+import EventDetailModal from "@/components/EventDetailModal";
 
 /**
  * Komponen utama aplikasi volunteer platform
@@ -47,6 +48,7 @@ function App() {
 
 				{/* Global Modals */}
 				<JoinEventModal />
+				<EventDetailModal />
 			</div>
 			<Footer />
 		</>

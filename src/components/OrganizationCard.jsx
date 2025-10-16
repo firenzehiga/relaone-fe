@@ -5,10 +5,8 @@ import { cn } from "@/utils/cn";
 const OrganizationCard = ({ organization, onViewProfile, className }) => {
 	if (!organization) return null;
 
-	const MotionDiv = motion.div;
-
 	return (
-		<MotionDiv
+		<motion.div
 			whileHover={{ y: -2 }}
 			transition={{ duration: 0.2 }}
 			className={cn(
@@ -67,7 +65,7 @@ const OrganizationCard = ({ organization, onViewProfile, className }) => {
 					</div>
 				</div>
 			</div>
-		</MotionDiv>
+		</motion.div>
 	);
 };
 

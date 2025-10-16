@@ -88,8 +88,6 @@ const JoinEventModal = () => {
 
 	if (!event) return null;
 
-	const MotionDiv = motion.div;
-
 	return (
 		<Modal
 			isOpen={isJoinModalOpen}
@@ -97,7 +95,7 @@ const JoinEventModal = () => {
 			title="Daftar Event Volunteer"
 			size="lg">
 			{success ? (
-				<MotionDiv
+				<motion.div
 					initial={{ opacity: 0, scale: 0.8 }}
 					animate={{ opacity: 1, scale: 1 }}
 					className="text-center py-8">
@@ -118,14 +116,14 @@ const JoinEventModal = () => {
 							📧 Email konfirmasi akan dikirim ke alamat email Anda
 						</p>
 					</div>
-				</MotionDiv>
+				</motion.div>
 			) : (
 				<div className="space-y-6">
 					{/* Event Preview Card */}
 					<div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-100">
 						<div className="flex items-start gap-4">
 							<img
-								src={event.banner}
+								src={event.banner || "https://placehold.co/400"}
 								alt={event.judul}
 								className="w-24 h-24 object-cover rounded-lg shadow-md flex-shrink-0"
 							/>

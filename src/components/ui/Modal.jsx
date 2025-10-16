@@ -30,15 +30,13 @@ const Modal = ({
 		xl: "max-w-4xl",
 	};
 
-	const MotionDiv = motion.div;
-
 	return (
 		<AnimatePresence>
 			{isOpen && (
 				<div className="fixed inset-0 z-50 overflow-y-auto">
 					<div className="flex min-h-screen items-start sm:items-center justify-center p-2 sm:p-4">
 						{/* Backdrop */}
-						<MotionDiv
+						<motion.div
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0 }}
@@ -47,7 +45,7 @@ const Modal = ({
 						/>
 
 						{/* Modal Content */}
-						<MotionDiv
+						<motion.div
 							initial={{ opacity: 0, scale: 0.95, y: 20 }}
 							animate={{ opacity: 1, scale: 1, y: 0 }}
 							exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -75,7 +73,7 @@ const Modal = ({
 							<div className={title ? "p-4 sm:p-6" : "p-4 sm:p-6"}>
 								{children}
 							</div>
-						</MotionDiv>
+						</motion.div>
 					</div>
 				</div>
 			)}

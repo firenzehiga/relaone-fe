@@ -55,11 +55,11 @@ const Header = () => {
 				<div className="flex items-center justify-between h-16 max-w-7xl mx-auto">
 					{/* Logo */}
 					<Link to="/" className="flex items-center space-x-2 group">
-						<div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl group-hover:scale-110 transition-transform duration-300">
+						<div className="p-2 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-xl group-hover:scale-110 transition-transform duration-300">
 							<Heart className="text-white" size={20} />
 						</div>
-						<span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-							Humanify
+						<span className="text-xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
+							RelaOne
 						</span>
 					</Link>
 
@@ -69,7 +69,7 @@ const Header = () => {
 							<Link
 								key={item.name}
 								to={item.href}
-								className="text-gray-700 hover:text-blue-600 transition-all duration-200 flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-50 group">
+								className="text-gray-700 hover:text-yellow-600 transition-all duration-200 flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-yellow-50 group">
 								<item.icon
 									size={18}
 									className="group-hover:scale-110 transition-transform duration-200"
@@ -86,7 +86,7 @@ const Header = () => {
 							<div className="relative">
 								<button
 									onClick={() => setUserMenuOpen(!userMenuOpen)}
-									className="flex items-center space-x-2 p-2 rounded-xl hover:bg-blue-50 transition-colors">
+									className="flex items-center space-x-2 p-2 rounded-xl hover:bg-yellow-50 transition-colors">
 									<Avatar src={user?.avatar} fallback={user?.name} size="sm" />
 								</button>
 
@@ -99,14 +99,14 @@ const Header = () => {
 											className="absolute right-0 mt-2 w-56 bg-white/90 backdrop-blur-lg border border-gray-200/50 rounded-2xl shadow-xl py-2">
 											<Link
 												to="/profile"
-												className="flex items-center px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors rounded-lg mx-2"
+												className="flex items-center px-4 py-3 text-gray-700 hover:text-yellow-600 hover:bg-yellow-50 transition-colors rounded-lg mx-2"
 												onClick={() => setUserMenuOpen(false)}>
 												<User size={18} className="mr-3" />
 												<span className="font-medium">Profile</span>
 											</Link>
 											<Link
 												to="/my-registrations"
-												className="flex items-center px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors rounded-lg mx-2"
+												className="flex items-center px-4 py-3 text-gray-700 hover:text-yellow-600 hover:bg-yellow-50 transition-colors rounded-lg mx-2"
 												onClick={() => setUserMenuOpen(false)}>
 												<Calendar size={18} className="mr-3" />
 												<span className="font-medium">Pendaftaran Saya</span>
@@ -114,7 +114,7 @@ const Header = () => {
 											{user?.role === "organizer" && (
 												<Link
 													to="/dashboard"
-													className="flex items-center px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors rounded-lg mx-2"
+													className="flex items-center px-4 py-3 text-gray-700 hover:text-yellow-600 hover:bg-yellow-50 transition-colors rounded-lg mx-2"
 													onClick={() => setUserMenuOpen(false)}>
 													<Settings size={18} className="mr-3" />
 													<span className="font-medium">Dashboard</span>
@@ -184,7 +184,7 @@ const Header = () => {
 											transition={{ delay: index * 0.05, duration: 0.2 }}>
 											<Link
 												to={item.href}
-												className="flex items-center space-x-3 px-3 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+												className="flex items-center space-x-3 px-3 py-3 text-gray-700 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors duration-200"
 												onClick={() => setMobileMenuOpen(false)}>
 												<item.icon size={20} className="text-gray-500" />
 												<span className="font-medium">{item.name}</span>
@@ -204,7 +204,7 @@ const Header = () => {
 												}}>
 												<Link
 													to="/login"
-													className="flex items-center space-x-3 px-3 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+													className="flex items-center space-x-3 px-3 py-3 text-gray-700 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors duration-200"
 													onClick={() => setMobileMenuOpen(false)}>
 													<LogIn size={20} className="text-gray-500" />
 													<span className="font-medium">Masuk</span>
@@ -219,7 +219,7 @@ const Header = () => {
 												}}>
 												<Link
 													to="/register"
-													className="flex items-center space-x-3 px-3 py-3 text-white bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded-lg transition-colors duration-200 mt-2"
+													className="flex items-center space-x-3 px-3 py-3 text-white bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 rounded-lg transition-colors duration-200 mt-2"
 													onClick={() => setMobileMenuOpen(false)}>
 													<UserPlus size={20} />
 													<span className="font-medium">Daftar</span>
