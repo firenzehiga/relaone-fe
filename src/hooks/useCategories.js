@@ -10,12 +10,15 @@ import * as categoryService from "../services/categoryService";
  * Hook untuk mengambil list categories
  * @returns {Object} Query result dengan data categories
  */
-export const useCategories = () => {
+export const useCategory = () => {
 	return useQuery({
 		queryKey: ["categories"],
-		queryFn: categoryService.getCategories,
+		queryFn: async () => {
+			const response = await categoryService.getCategories();
+			return response;
+		},
 		staleTime: 10 * 60 * 1000, // 10 minutes (categories jarang berubah)
-		retry: 2,
+		retry: 1,
 	});
 };
 
@@ -24,7 +27,7 @@ export const useCategories = () => {
  * @param {string|number} id - ID category
  * @returns {Object} Query result dengan data category
  */
-export const useCategory = (id) => {
+export const useCategoryById = (id) => {
 	return useQuery({
 		queryKey: ["categories", id],
 		queryFn: () => categoryService.getCategoryById(id),

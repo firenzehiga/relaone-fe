@@ -1,11 +1,8 @@
-import api, { mockApiResponse } from "../api/api";
-
-// Import mock data untuk development
-import categoriesData from "../mock/categories.json";
+import api from "../api/api";
 
 /**
  * Service untuk mengelola Categories API
- * Sementara menggunakan mock data, nanti akan diganti dengan real API calls
+ * Menggunakan backend Laravel yang sudah tersedia
  */
 
 /**
@@ -13,12 +10,9 @@ import categoriesData from "../mock/categories.json";
  * @returns {Promise} Promise dengan data categories
  */
 export const getCategories = async () => {
-	// TODO: Nanti ganti jadi real API call
-	// const response = await api.get('/categories');
-	// return response.data;
-
-	const response = await mockApiResponse(categoriesData);
-	return response.data;
+	const response = await api.get("/categories");
+	// Laravel API mengembalikan format {success: true, data: [...]}
+	return response.data.data || response.data;
 };
 
 /**
@@ -27,11 +21,7 @@ export const getCategories = async () => {
  * @returns {Promise} Promise dengan data category
  */
 export const getCategoryById = async (id) => {
-	// TODO: Nanti ganti jadi real API call
-	// const response = await api.get(`/categories/${id}`);
-	// return response.data;
-
-	const category = categoriesData.find((c) => c.id === parseInt(id));
-	const response = await mockApiResponse(category);
-	return response.data;
+	const response = await api.get(`/categories/${id}`);
+	// Laravel API mengembalikan format {success: true, data: {...}}
+	return response.data.data || response.data;
 };

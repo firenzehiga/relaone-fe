@@ -7,8 +7,8 @@ import Badge from "@/components/ui/Badge";
 import EventCard from "@/components/EventCard";
 import EventDetailModal from "@/components/EventDetailModal";
 import Skeleton from "@/components/ui/Skeleton";
-import { useEvents, useJoinEvent } from "@/hooks/useEvents";
-import { useCategories } from "@/hooks/useCategories";
+import { useEvents } from "@/hooks/useEvents";
+import { useCategory } from "@/hooks/useCategories";
 import { useModalStore } from "@/store";
 
 /**
@@ -30,16 +30,15 @@ const EventsPage = () => {
 		error: eventsError,
 	} = useEvents({ status: "published" });
 
-	const { data: categories, isLoading: categoriesLoading } = useCategories();
+	const { data: categories, isLoading: categoriesLoading } = useCategory();
 
 	const { openJoinModal } = useModalStore();
-	const joinEventMutation = useJoinEvent();
 
 	const [filters, setFilters] = useState({
 		search: searchParams.get("search") || "",
 		category: searchParams.get("category") || "",
 		status: "published",
-		date: "",
+		tanggal_mulai: "",
 		city: "",
 	});
 
@@ -61,19 +60,21 @@ const EventsPage = () => {
 		if (filters.search) {
 			filtered = filtered.filter(
 				(event) =>
-					event.title.toLowerCase().includes(filters.search.toLowerCase()) ||
-					event.description
+					event.judul.toLowerCase().includes(filters.search.toLowerCase()) ||
+					event.deskripsi
 						.toLowerCase()
 						.includes(filters.search.toLowerCase()) ||
-					event.location.toLowerCase().includes(filters.search.toLowerCase())
+					event.location.alamat
+						.toLowerCase()
+						.includes(filters.search.toLowerCase())
 			);
 		}
 
 		if (filters.category) {
 			const category = categories?.find(
 				(cat) =>
-					cat.name.toLowerCase() === filters.category.toLowerCase() ||
-					cat.slug === filters.category.toLowerCase()
+					cat.nama.toLowerCase() === filters.category.toLowerCase() ||
+					cat.id.toString() === filters.category
 			);
 			if (category) {
 				filtered = filtered.filter(
@@ -82,13 +83,15 @@ const EventsPage = () => {
 			}
 		}
 
-		if (filters.date) {
-			filtered = filtered.filter((event) => event.date === filters.date);
+		if (filters.tanggal_mulai) {
+			filtered = filtered.filter(
+				(event) => event.tanggal_mulai === filters.tanggal_mulai
+			);
 		}
 
 		if (filters.city) {
 			filtered = filtered.filter((event) =>
-				event.city?.toLowerCase().includes(filters.city.toLowerCase())
+				event.location?.kota.toLowerCase().includes(filters.city.toLowerCase())
 			);
 		}
 
@@ -124,7 +127,7 @@ const EventsPage = () => {
 			search: "",
 			category: "",
 			status: "published",
-			date: "",
+			tanggal_mulai: "",
 			city: "",
 		});
 		setSearchParams({});
@@ -167,7 +170,7 @@ const EventsPage = () => {
 
 	// Get unique cities for filter
 	const availableCities = [
-		...new Set(events?.map((event) => event.city).filter(Boolean)),
+		...new Set(events?.map((event) => event.location?.kota).filter(Boolean)),
 	];
 
 	const MotionDiv = motion.div;
@@ -285,8 +288,8 @@ const EventsPage = () => {
 										className="w-full px-3 py-3 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
 										<option value="">Semua Kategori</option>
 										{categories?.map((category) => (
-											<option key={category.id} value={category.slug}>
-												{category.name}
+											<option key={category.id} value={category.id}>
+												{category.nama}
 											</option>
 										))}
 									</select>
@@ -317,8 +320,10 @@ const EventsPage = () => {
 									</label>
 									<input
 										type="date"
-										value={filters.date}
-										onChange={(e) => handleFilterChange("date", e.target.value)}
+										value={filters.tanggal_mulai}
+										onChange={(e) =>
+											handleFilterChange("tanggal_mulai", e.target.value)
+										}
 										className="w-full px-3 py-3 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 									/>
 								</div>
@@ -346,7 +351,7 @@ const EventsPage = () => {
 				</div>
 
 				{/* Active Filters */}
-				{(filters.category || filters.search || filters.date) && (
+				{(filters.category || filters.search || filters.tanggal_mulai) && (
 					<div className="flex flex-wrap items-center gap-2 mb-6">
 						<span className="text-gray-600 text-sm font-medium">
 							Filter aktif:
@@ -356,13 +361,17 @@ const EventsPage = () => {
 						)}
 						{filters.category && categories && (
 							<Badge variant="secondary">
-								{categories.find((cat) => cat.slug === filters.category)?.name}
+								{
+									categories.find(
+										(cat) => cat.id.toString() === filters.category
+									)?.nama
+								}
 							</Badge>
 						)}
-						{filters.date && (
+						{filters.tanggal_mulai && (
 							<Badge variant="warning">
 								<Calendar size={14} className="mr-1" />
-								{new Date(filters.date).toLocaleDateString("id-ID")}
+								{new Date(filters.tanggal_mulai).toLocaleDateString("id-ID")}
 							</Badge>
 						)}
 					</div>
@@ -438,21 +447,21 @@ const EventsPage = () => {
 											<div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
 												<div className="flex gap-4">
 													<img
-														src={event.banner}
-														alt={event.title}
+														src={event.gambar || "/api/placeholder/80/80"}
+														alt={event.judul}
 														className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
 													/>
 													<div className="flex-1 min-w-0">
 														<h3 className="font-semibold text-gray-900 line-clamp-1 mb-1">
-															{event.title}
+															{event.judul}
 														</h3>
 														<p className="text-sm text-gray-600 line-clamp-2 mb-2">
-															{event.description}
+															{event.deskripsi}
 														</p>
 														<div className="flex items-center text-xs text-gray-500 mb-2">
 															<MapPin size={12} className="mr-1" />
 															<span className="line-clamp-1">
-																{event.location}
+																{event.location?.alamat}
 															</span>
 														</div>
 														<div className="flex gap-2">

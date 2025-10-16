@@ -1,23 +1,17 @@
 import axios from "axios";
 
-// Import mock data
-import eventsData from "../mock/events.json";
-import categoriesData from "../mock/categories.json";
-import organizationsData from "../mock/organizations.json";
-import usersData from "../mock/users.json";
-
-// Base API URL - akan dipakai nanti ketika backend ready
-const BASE_URL = "http://localhost:8000/api";
+// Base API URL - menggunakan Laravel backend yang sudah ada
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 /**
  * Instance axios yang sudah dikonfigurasi untuk API calls
- * Sementara menggunakan mock data, nanti ganti ke real API
  */
 const api = axios.create({
 	baseURL: BASE_URL,
 	timeout: 10000,
 	headers: {
 		"Content-Type": "application/json",
+		Accept: "application/json",
 	},
 });
 
@@ -54,132 +48,125 @@ api.interceptors.response.use(
 );
 
 /**
- * Helper untuk simulasi API response dengan mock data
- * Nanti fungsi ini akan dihapus ketika backend ready
- */
-const mockApiResponse = (data, delay = 300) => {
-	return new Promise((resolve) => {
-		setTimeout(() => {
-			resolve({ data });
-		}, delay);
-	});
-};
-
-/**
- * API endpoints - sementara pakai mock, nanti ganti ke real API calls
+ * API endpoints - menggunakan backend Laravel yang sudah ada
  */
 export const endpoints = {
 	events: {
 		getAll: (params) => {
-			// TODO: Nanti ganti jadi real API call: return api.get("/events", { params });
-			let filteredEvents = eventsData;
-			if (params?.status) {
-				filteredEvents = eventsData.filter(
-					(event) => event.status === params.status
-				);
-			}
-			return mockApiResponse(filteredEvents);
+			return api.get("/events", { params });
 		},
 
 		getById: (id) => {
-			// TODO: Nanti ganti jadi: return api.get(`/events/${id}`);
-			const event = eventsData.find((e) => e.id === parseInt(id));
-			return mockApiResponse(event);
+			return api.get(`/events/${id}`);
 		},
 
 		create: (data) => {
-			// TODO: Nanti ganti jadi: return api.post("/events", data);
-			const newEvent = { ...data, id: Date.now() };
-			return mockApiResponse(newEvent);
+			return api.post("/events", data);
 		},
 
 		update: (id, data) => {
-			// TODO: Nanti ganti jadi: return api.put(`/events/${id}`, data);
-			return mockApiResponse({ ...data, id });
+			return api.put(`/events/${id}`, data);
 		},
 
 		delete: (id) => {
-			// TODO: Nanti ganti jadi: return api.delete(`/events/${id}`);
-			return mockApiResponse({ success: true });
+			return api.delete(`/events/${id}`);
 		},
 
 		join: (id, data) => {
-			// TODO: Nanti ganti jadi: return api.post(`/events/${id}/join`, data);
-			return mockApiResponse({
-				success: true,
-				message: "Successfully joined event",
-				eventId: id,
-				userData: data,
+			return api.post(`/event-participants`, {
+				event_id: id,
+				...data,
 			});
 		},
 	},
 
 	categories: {
 		getAll: () => {
-			// TODO: Nanti ganti jadi: return api.get("/categories");
-			return mockApiResponse(categoriesData);
+			return api.get("/categories");
 		},
 
 		getById: (id) => {
-			// TODO: Nanti ganti jadi: return api.get(`/categories/${id}`);
-			const category = categoriesData.find((c) => c.id === parseInt(id));
-			return mockApiResponse(category);
+			return api.get(`/categories/${id}`);
 		},
 	},
 
 	organizations: {
 		getAll: (params) => {
-			// TODO: Nanti ganti jadi: return api.get("/organizations", { params });
-			return mockApiResponse(organizationsData);
+			return api.get("/organizations", { params });
 		},
 
 		getById: (id) => {
-			// TODO: Nanti ganti jadi: return api.get(`/organizations/${id}`);
-			const org = organizationsData.find((o) => o.id === parseInt(id));
-			return mockApiResponse(org);
+			return api.get(`/organizations/${id}`);
+		},
+	},
+
+	locations: {
+		getAll: () => {
+			return api.get("/locations");
+		},
+
+		getById: (id) => {
+			return api.get(`/locations/${id}`);
+		},
+	},
+
+	feedbacks: {
+		getAll: () => {
+			return api.get("/feedbacks");
+		},
+
+		create: (data) => {
+			return api.post("/feedbacks", data);
 		},
 	},
 
 	auth: {
 		login: (credentials) => {
-			// TODO: Nanti ganti jadi: return api.post("/auth/login", credentials);
-			return mockApiResponse({
-				user: usersData[0],
-				token: "mock-token-" + Date.now(),
+			// Note: Auth belum ada di backend, masih mock untuk sekarang
+			return Promise.resolve({
+				data: {
+					user: { id: 1, name: "Test User", email: credentials.email },
+					token: "mock-token-" + Date.now(),
+				},
 			});
 		},
 
 		register: (userData) => {
-			// TODO: Nanti ganti jadi: return api.post("/auth/register", userData);
-			return mockApiResponse({
-				user: { ...userData, id: Date.now() },
-				token: "mock-token-" + Date.now(),
+			// Note: Auth belum ada di backend, masih mock untuk sekarang
+			return Promise.resolve({
+				data: {
+					user: { ...userData, id: Date.now() },
+					token: "mock-token-" + Date.now(),
+				},
 			});
 		},
 
 		logout: () => {
-			// TODO: Nanti ganti jadi: return api.post("/auth/logout");
-			return mockApiResponse({ success: true });
+			// Note: Auth belum ada di backend, masih mock untuk sekarang
+			return Promise.resolve({ data: { success: true } });
 		},
 	},
 
 	users: {
 		getProfile: () => {
-			// TODO: Nanti ganti jadi: return api.get("/users/profile");
-			return mockApiResponse(usersData[0]);
+			// Note: User management belum ada di backend, masih mock untuk sekarang
+			return Promise.resolve({
+				data: { id: 1, name: "Test User", email: "test@example.com" },
+			});
 		},
 
 		updateProfile: (data) => {
-			// TODO: Nanti ganti jadi: return api.put("/users/profile", data);
-			return mockApiResponse({ ...usersData[0], ...data });
+			// Note: User management belum ada di backend, masih mock untuk sekarang
+			return Promise.resolve({
+				data: { id: 1, ...data },
+			});
 		},
 
 		getRegistrations: () => {
-			// TODO: Nanti ganti jadi: return api.get("/users/registrations");
-			return mockApiResponse(eventsData.slice(0, 3));
+			// Note: User registrations belum ada di backend, akan menggunakan events untuk sekarang
+			return api.get("/events?limit=3");
 		},
 	},
 };
 
 export default api;
-export { mockApiResponse };

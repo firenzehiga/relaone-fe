@@ -12,7 +12,7 @@ import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import { useModalStore } from "@/store";
-import { useEvent, useJoinEvent } from "@/hooks/useEvents";
+import { useEvents } from "@/hooks/useEvents";
 
 /**
  * Modal untuk join event volunteer
@@ -24,9 +24,12 @@ import { useEvent, useJoinEvent } from "@/hooks/useEvents";
 const JoinEventModal = () => {
 	const { isJoinModalOpen, closeJoinModal, selectedEventId } = useModalStore();
 
-	// Menggunakan TanStack Query untuk fetch event detail
-	const { data: event, isLoading: eventLoading } = useEvent(selectedEventId);
-	const joinEventMutation = useJoinEvent();
+	// TODO: Implement fetch single event by ID
+	// const { data: event, isLoading: eventLoading } = useEvents(selectedEventId);
+
+	// Temporary: Get event from events list (not ideal, but works for now)
+	const { data: events, isLoading: eventLoading } = useEvents();
+	const event = events?.find((e) => e.id === selectedEventId);
 
 	const [notes, setNotes] = useState("");
 	const [agreed, setAgreed] = useState(false);
@@ -35,7 +38,7 @@ const JoinEventModal = () => {
 
 	/**
 	 * Handler untuk submit form join event
-	 * Menggunakan mutation untuk mengirim data ke API
+	 * TODO: Implement join mutation when backend ready
 	 */
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -43,42 +46,27 @@ const JoinEventModal = () => {
 
 		setIsSubmitting(true);
 
-		joinEventMutation.mutate(
-			{
-				eventId: selectedEventId,
-				userData: {
-					notes: notes.trim(),
-					agreed: true,
-					joinedAt: new Date().toISOString(),
-				},
-			},
-			{
-				onSuccess: () => {
-					setIsSubmitting(false);
-					setSuccess(true);
+		// TODO: Implement actual join event API call
+		// Simulate API call for now
+		setTimeout(() => {
+			setIsSubmitting(false);
+			setSuccess(true);
 
-					// Close modal after success animation
-					setTimeout(() => {
-						setSuccess(false);
-						setNotes("");
-						setAgreed(false);
-						closeJoinModal();
-					}, 2000);
-				},
-				onError: (error) => {
-					console.error("Failed to join event:", error);
-					setIsSubmitting(false);
-					// Handle error (bisa tambah toast notification)
-				},
-			}
-		);
+			// Close modal after success animation
+			setTimeout(() => {
+				setSuccess(false);
+				setNotes("");
+				setAgreed(false);
+				closeJoinModal();
+			}, 2000);
+		}, 1500);
 	};
 
 	/**
 	 * Handler untuk menutup modal dan reset form
 	 */
 	const handleClose = () => {
-		if (!joinEventMutation.isPending && !isSubmitting) {
+		if (!isSubmitting) {
 			setNotes("");
 			setAgreed(false);
 			setSuccess(false);
@@ -121,7 +109,9 @@ const JoinEventModal = () => {
 					</h3>
 					<p className="text-gray-600 text-lg leading-relaxed">
 						Anda telah berhasil mendaftar untuk event <br />
-						<span className="font-semibold text-blue-600">"{event.title}"</span>
+						<span className="font-semibold text-blue-600">
+							"{event.judul || event.title}"
+						</span>
 					</p>
 					<div className="mt-6 p-4 bg-blue-50 rounded-lg">
 						<p className="text-sm text-blue-800">
@@ -136,12 +126,12 @@ const JoinEventModal = () => {
 						<div className="flex items-start gap-4">
 							<img
 								src={event.banner}
-								alt={event.title}
+								alt={event.judul}
 								className="w-24 h-24 object-cover rounded-lg shadow-md flex-shrink-0"
 							/>
 							<div className="flex-1 min-w-0">
 								<h3 className="font-bold text-gray-900 text-xl mb-2 line-clamp-2">
-									{event.title}
+									{event.judul}
 								</h3>
 								<div className="space-y-2">
 									<div className="flex items-center text-gray-700 text-sm">
@@ -150,11 +140,14 @@ const JoinEventModal = () => {
 											className="mr-2 text-blue-500 flex-shrink-0"
 										/>
 										<span className="font-medium">
-											{new Date(event.date).toLocaleDateString("id-ID", {
-												day: "numeric",
-												month: "long",
-												year: "numeric",
-											})}
+											{new Date(event.tanggal_mulai).toLocaleDateString(
+												"id-ID",
+												{
+													day: "numeric",
+													month: "long",
+													year: "numeric",
+												}
+											)}
 										</span>
 									</div>
 									<div className="flex items-center text-gray-700 text-sm">
@@ -163,7 +156,7 @@ const JoinEventModal = () => {
 											className="mr-2 text-purple-500 flex-shrink-0"
 										/>
 										<span className="font-medium">
-											{event.time} - {event.end_time}
+											{event.waktu_mulai} - {event.waktu_selesai}
 										</span>
 									</div>
 									<div className="flex items-center text-gray-700 text-sm">
@@ -172,7 +165,7 @@ const JoinEventModal = () => {
 											className="mr-2 text-green-500 flex-shrink-0"
 										/>
 										<span className="font-medium line-clamp-1">
-											{event.location}
+											{event.location?.nama}
 										</span>
 									</div>
 									<div className="flex items-center text-gray-700 text-sm">
@@ -181,10 +174,12 @@ const JoinEventModal = () => {
 											className="mr-2 text-orange-500 flex-shrink-0"
 										/>
 										<span className="font-medium">
-											{event.registered} / {event.capacity} peserta
+											{event.peserta_saat_ini || 0} / {event.maks_peserta}{" "}
+											peserta
 										</span>
 										<Badge variant="success" className="ml-2">
-											{event.capacity - event.registered} slot tersisa
+											{event.maks_peserta - (event.peserta_saat_ini || 0)} slot
+											tersisa
 										</Badge>
 									</div>
 								</div>
@@ -194,22 +189,28 @@ const JoinEventModal = () => {
 
 					<form onSubmit={handleSubmit} className="space-y-6">
 						{/* Requirements */}
-						{event.requirements && event.requirements.length > 0 && (
+						{event.persyaratan && (
 							<div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
 								<h4 className="font-bold text-amber-800 mb-3 flex items-center">
 									<AlertCircle size={20} className="mr-2" />
 									Persyaratan Event
 								</h4>
-								<ul className="space-y-2">
-									{event.requirements.map((req, index) => (
-										<li
-											key={index}
-											className="flex items-start text-amber-700 text-sm">
-											<span className="inline-block w-1.5 h-1.5 bg-amber-500 rounded-full mr-3 mt-2 flex-shrink-0" />
-											{req}
-										</li>
-									))}
-								</ul>
+								<div className="text-amber-700 text-sm leading-relaxed">
+									{Array.isArray(event.persyaratan) ? (
+										<ul className="space-y-2">
+											{event.persyaratan.map((req, index) => (
+												<li key={index} className="flex items-start gap-2">
+													<span className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0"></span>
+													<span>{req}</span>
+												</li>
+											))}
+										</ul>
+									) : (
+										<div className="whitespace-pre-line">
+											{event.persyaratan}
+										</div>
+									)}
+								</div>
 							</div>
 						)}
 
@@ -264,21 +265,17 @@ const JoinEventModal = () => {
 								type="button"
 								variant="outline"
 								onClick={handleClose}
-								disabled={joinEventMutation.isPending || isSubmitting}
+								disabled={isSubmitting}
 								className="flex-1 order-2 sm:order-1">
 								Batal
 							</Button>
 							<Button
 								type="submit"
 								variant="primary"
-								disabled={
-									!agreed || joinEventMutation.isPending || isSubmitting
-								}
-								loading={joinEventMutation.isPending || isSubmitting}
+								disabled={!agreed || isSubmitting}
+								loading={isSubmitting}
 								className="flex-1 order-1 sm:order-2">
-								{joinEventMutation.isPending || isSubmitting
-									? "Mendaftarkan..."
-									: "✨ Daftar Sekarang"}
+								{isSubmitting ? "Mendaftarkan..." : "✨ Daftar Sekarang"}
 							</Button>
 						</div>
 					</form>

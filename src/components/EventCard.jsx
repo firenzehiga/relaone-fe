@@ -72,11 +72,13 @@ const EventCard = ({
 
 	/**
 	 * Memformat string waktu dengan mengambil jam dan menit saja
+	 * Menangani case dimana timeString bisa undefined/null
 	 *
 	 * @param {string} timeString - String waktu dalam format HH:MM:SS atau HH:MM
 	 * @returns {string} Waktu dalam format HH:MM
 	 */
 	const formatTime = (timeString) => {
+		if (!timeString) return "00:00";
 		return timeString.slice(0, 5);
 	};
 
@@ -124,11 +126,14 @@ const EventCard = ({
 	 * @returns {string} URL Google Maps untuk melihat lokasi
 	 */
 	const getGoogleMapsUrl = () => {
+		if (event.location?.latitude && event.location?.longitude) {
+			return `https://www.google.com/maps/search/?api=1&query=${event.location.latitude},${event.location.longitude}`;
+		}
 		if (event.latitude && event.longitude) {
 			return `https://www.google.com/maps/search/?api=1&query=${event.latitude},${event.longitude}`;
 		}
 		return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-			event.address
+			event.location?.alamat || event.address
 		)}`;
 	};
 
@@ -139,23 +144,31 @@ const EventCard = ({
 	 * @returns {string} URL Google Maps untuk mendapatkan petunjuk arah
 	 */
 	const getDirectionsUrl = () => {
+		if (event.location?.latitude && event.location?.longitude) {
+			return `https://www.google.com/maps/dir/?api=1&destination=${event.location.latitude},${event.location.longitude}`;
+		}
 		if (event.latitude && event.longitude) {
 			return `https://www.google.com/maps/dir/?api=1&destination=${event.latitude},${event.longitude}`;
 		}
 		return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-			event.address
+			event.location?.alamat || event.address
 		)}`;
 	};
 
 	const getStaticMapUrl = () => {
-		if (!event.latitude || !event.longitude) return null;
+		const lat = event.location?.latitude || event.latitude;
+		const lng = event.location?.longitude || event.longitude;
+
+		if (!lat || !lng) return null;
 
 		const zoom = event.map_zoom_level || 15;
-		return `https://maps.googleapis.com/maps/api/staticmap?center=${event.latitude},${event.longitude}&zoom=${zoom}&size=400x200&maptype=roadmap&markers=color:red%7Clabel:E%7C${event.latitude},${event.longitude}&key=YOUR_GOOGLE_MAPS_API_KEY`;
+		return `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${zoom}&size=400x200&maptype=roadmap&markers=color:red%7Clabel:E%7C${lat},${lng}&key=YOUR_GOOGLE_MAPS_API_KEY`;
 	};
 
 	const statusBadge = getStatusBadge(event.status);
-	const slotsRemaining = event.capacity - event.registered;
+	const slotsRemaining =
+		(event.maks_peserta || event.capacity) -
+		(event.peserta_saat_ini || event.registered || 0);
 
 	return (
 		<MotionDiv
@@ -168,8 +181,8 @@ const EventCard = ({
 			{/* Event Banner */}
 			<div className="relative h-48 overflow-hidden">
 				<img
-					src={event.banner}
-					alt={event.title}
+					src={event.gambar || event.banner || "https://placehold.co/400"}
+					alt={event.judul || event.title}
 					className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
 				/>
 				<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
@@ -178,7 +191,7 @@ const EventCard = ({
 				</div>
 				<div className="absolute top-3 right-3">
 					<Badge variant={getCategoryColor(event.category_id)}>
-						{event.category?.name || "Kategori"}
+						{event.category?.nama || "undefined"}
 					</Badge>
 				</div>
 			</div>
@@ -186,11 +199,11 @@ const EventCard = ({
 			{/* Event Content */}
 			<div className="p-6">
 				<h3 className="font-bold text-gray-900 text-lg mb-3 line-clamp-2 leading-tight">
-					{event.title}
+					{event.judul || event.title}
 				</h3>
 
 				<p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
-					{event.description}
+					{event.deskripsi || event.description}
 				</p>
 
 				{/* Event Details */}
@@ -198,8 +211,9 @@ const EventCard = ({
 					<div className="flex items-center text-gray-700 text-sm">
 						<Calendar size={16} className="mr-3 text-blue-600 flex-shrink-0" />
 						<span className="font-semibold">
-							{formatDate(event.date)} • {formatTime(event.time)} -{" "}
-							{formatTime(event.end_time)}
+							{formatDate(event.tanggal_mulai || event.date)} •{" "}
+							{formatTime(event.waktu_mulai || event.time)} -{" "}
+							{formatTime(event.waktu_selesai || event.end_time)}
 						</span>
 					</div>
 
@@ -209,15 +223,19 @@ const EventCard = ({
 							className="mr-3 text-purple-600 flex-shrink-0 mt-0.5"
 						/>
 						<div className="flex-1">
-							<div className="font-semibold mb-1">{event.location}</div>
-							<div className="text-gray-500 text-xs line-clamp-2">
-								{event.address}
+							<div className="font-semibold mb-1">
+								{event.location?.nama || event.location}
 							</div>
-							{event.city && event.province && (
-								<div className="text-gray-500 text-xs mt-1">
-									{event.city}, {event.province}
-								</div>
-							)}
+							<div className="text-gray-500 text-xs line-clamp-2">
+								{event.location?.alamat || event.address}
+							</div>
+							{(event.location?.kota || event.city) &&
+								(event.location?.provinsi || event.province) && (
+									<div className="text-gray-500 text-xs mt-1">
+										{event.location?.kota || event.city},{" "}
+										{event.location?.provinsi || event.province}
+									</div>
+								)}
 							<div className="flex gap-2 mt-2">
 								<Button
 									variant="outline"
@@ -242,7 +260,8 @@ const EventCard = ({
 					<div className="flex items-center text-gray-700 text-sm">
 						<Users size={16} className="mr-3 text-green-600 flex-shrink-0" />
 						<span className="font-semibold">
-							{event.registered} / {event.capacity} peserta
+							{event.peserta_saat_ini || event.registered || 0} /{" "}
+							{event.maks_peserta || event.capacity} peserta
 						</span>
 						{slotsRemaining > 0 && (
 							<span className="text-green-700 ml-2 font-bold text-xs bg-green-50 px-2 py-1 rounded-full">
