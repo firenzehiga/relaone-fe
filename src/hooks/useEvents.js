@@ -7,7 +7,7 @@ import * as eventService from "../services/eventService";
  */
 
 /**
- * Hook untuk mengambil list events
+ * Hook untuk mengambil data events
  * @param {Object} params - Query parameters untuk filtering
  * @returns {Object} Query result dengan data, isLoading, error, etc
  */

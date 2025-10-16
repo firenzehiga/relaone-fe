@@ -7,7 +7,7 @@ import * as categoryService from "../services/categoryService";
  */
 
 /**
- * Hook untuk mengambil list categories
+ * Hook untuk mengambil data categories
  * @returns {Object} Query result dengan data categories
  */
 export const useCategory = () => {
