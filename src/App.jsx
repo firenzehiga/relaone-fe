@@ -1,15 +1,16 @@
-import { useEffect } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
+import { Routes, Route } from "react-router-dom";
 
 // Layout Components
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import MainLayout from "@/layout/MainLayout";
 
 // Pages
 import LandingPage from "@/pages/LandingPage";
 import EventsPage from "@/pages/EventsPage";
 import OrganizationsPage from "@/pages/OrganizationsPage";
+
+// Auth Pages
+import LoginPage from "@/pages/Auth/LoginPage";
+import RegisterPage from "@/pages/Auth/RegisterPage";
 
 // Modals
 import JoinEventModal from "@/components/JoinEventModal";
@@ -17,40 +18,32 @@ import EventDetailModal from "@/components/EventDetailModal";
 
 /**
  * Komponen utama aplikasi volunteer platform
- * Mengatur routing, layout global, dan modal-modal yang dapat diakses dari mana saja
- * Menggunakan React Router untuk navigasi dan Framer Motion untuk animasi halaman
+ * Mengatur routing dengan layout yang menggunakan Outlet
+ * AnimatePresence sekarang dihandle di MainLayout
  *
  * @returns {JSX.Element} Struktur aplikasi lengkap dengan routing dan layout
  */
 function App() {
-	const location = useLocation();
-
-	// Auto scroll to top setiap pindah halaman
-	useEffect(() => {
-		window.scrollTo(0, 0);
-	}, [location.pathname]);
-
 	return (
 		<>
-			<Header />
-			<div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-white to-blue-50">
-				<main className="flex-1 w-full">
-					<AnimatePresence mode="wait">
-						<Routes>
-							<Route path="/" element={<LandingPage />} />
-							<Route path="/events" element={<EventsPage />} />
-							<Route path="/organizations" element={<OrganizationsPage />} />
+			<Routes>
+				{/* Public Routes with MainLayout */}
+				<Route path="/" element={<MainLayout />}>
+					<Route index element={<LandingPage />} />
+					<Route path="events" element={<EventsPage />} />
+					<Route path="organizations" element={<OrganizationsPage />} />
 
-							{/* Add more routes as needed */}
-						</Routes>
-					</AnimatePresence>
-				</main>
+					{/* Add more routes as needed */}
+				</Route>
 
-				{/* Global Modals */}
-				<JoinEventModal />
-				<EventDetailModal />
-			</div>
-			<Footer />
+				{/* Auth Routes (tanpa layout) */}
+				<Route path="/login" element={<LoginPage />} />
+				<Route path="/register" element={<RegisterPage />} />
+			</Routes>
+
+			{/* Global Modals */}
+			<JoinEventModal />
+			<EventDetailModal />
 		</>
 	);
 }
