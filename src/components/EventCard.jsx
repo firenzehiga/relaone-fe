@@ -15,33 +15,6 @@ import { cn } from "@/utils/cn";
 /**
  * Komponen EventCard untuk menampilkan informasi singkat suatu event volunteer
  * Menampilkan informasi seperti judul, tanggal, lokasi, peserta, dan tombol aksi
- *
- * @param {Object} props - Props untuk EventCard component
- * @param {Object} props.event - Data event yang akan ditampilkan
- * @param {string} props.event.id - ID unik event
- * @param {string} props.event.title - Judul event
- * @param {string} props.event.description - Deskripsi singkat event
- * @param {string} props.event.banner - URL gambar banner event
- * @param {string} props.event.date - Tanggal event (format: YYYY-MM-DD)
- * @param {string} props.event.time - Waktu mulai event (format: HH:MM)
- * @param {string} props.event.end_time - Waktu selesai event (format: HH:MM)
- * @param {string} props.event.location - Nama lokasi event
- * @param {string} props.event.address - Alamat lengkap event
- * @param {string} props.event.city - Kota event
- * @param {string} props.event.province - Provinsi event
- * @param {number} props.event.latitude - Koordinat latitude lokasi
- * @param {number} props.event.longitude - Koordinat longitude lokasi
- * @param {number} props.event.capacity - Kapasitas maksimal peserta
- * @param {number} props.event.registered - Jumlah peserta yang sudah terdaftar
- * @param {string} props.event.status - Status event (published, draft, cancelled, full)
- * @param {number} props.event.category_id - ID kategori event
- * @param {Object} props.event.organizer - Informasi penyelenggara event
- * @param {Function} [props.onJoin] - Callback function ketika user menekan tombol daftar
- * @param {Function} [props.onViewDetail] - Callback function ketika user menekan tombol lihat detail
- * @param {string} [props.className] - Class CSS tambahan untuk styling kustom
- * @param {boolean} [props.showOrganizer=true] - Apakah menampilkan informasi organizer
- * @param {boolean} [props.showMap=false] - Apakah menampilkan tombol peta
- * @returns {JSX.Element|null} EventCard component atau null jika event tidak ada
  */
 const EventCard = ({
 	event,
