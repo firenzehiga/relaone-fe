@@ -8,7 +8,7 @@ import EventCard from "@/components/EventCard";
 import Skeleton from "@/components/ui/Skeleton";
 import { useEvents } from "@/hooks/useEvents";
 import { useCategory } from "@/hooks/useCategories";
-import { useModalStore } from "@/store";
+import { useModalStore } from "@/stores/useAppStore";
 
 /**
  * Halaman Events untuk menampilkan daftar event volunteer

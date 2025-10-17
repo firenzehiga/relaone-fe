@@ -11,7 +11,7 @@ import {
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
-import { useModalStore } from "@/store";
+import { useModalStore } from "@/stores/useAppStore";
 import { useEvents } from "@/hooks/useEvents";
 
 /**

@@ -16,7 +16,7 @@ import Card from "@/components/ui/Card";
 import EventCard from "@/components/EventCard";
 import Skeleton from "@/components/ui/Skeleton";
 import { useEvents } from "@/hooks/useEvents";
-import { useModalStore } from "@/store";
+import { useModalStore } from "@/stores/useAppStore";
 
 const LandingPage = () => {
 	const navigate = useNavigate();

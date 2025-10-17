@@ -14,7 +14,7 @@ import { useEffect } from "react";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
-import { useModalStore } from "@/store";
+import { useModalStore } from "@/stores/useAppStore";
 
 /**
  * Modal komponen global untuk menampilkan detail lengkap sebuah event volunteer

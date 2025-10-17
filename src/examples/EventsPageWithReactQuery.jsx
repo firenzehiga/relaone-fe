@@ -10,7 +10,7 @@ import Badge from "../components/ui/Badge";
 import EventCard from "../components/EventCard";
 import Skeleton from "../components/ui/Skeleton";
 import { useEvents, useCategories, useJoinEvent } from "../hooks/useQueries";
-import { useModalStore } from "../store";
+import { useModalStore } from "../stores/useAppStore";
 
 const EventsPage = () => {
 	const navigate = useNavigate();
