@@ -49,6 +49,11 @@ export default function Header() {
 		navigate("/");
 	};
 
+	const location = useLocation();
+	const isActive = (path) => {
+		return location.pathname === path;
+	};
+
 	return (
 		<header className="w-full sticky top-0 z-40 bg-white/90 backdrop-blur-lg border-b border-gray-200/50 shadow-sm">
 			<div className="w-full px-4 sm:px-6 lg:px-8">
@@ -65,18 +70,27 @@ export default function Header() {
 
 					{/* Desktop Navigation - Centered */}
 					<nav className="hidden md:flex items-center space-x-8 flex-1 justify-center">
-						{navItems.map((item) => (
-							<Link
-								key={item.name}
-								to={item.href}
-								className="text-gray-700 hover:text-yellow-600 transition-all duration-200 flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-yellow-50 group">
-								<item.icon
-									size={18}
-									className="group-hover:scale-110 transition-transform duration-200"
-								/>
-								<span className="font-medium">{item.name}</span>
-							</Link>
-						))}
+						{navItems.map((item) => {
+							const active = isActive(item.href);
+							return (
+								<Link
+									key={item.name}
+									to={item.href}
+									className={`transition-all duration-200 flex items-center space-x-2 px-3 py-2 rounded-lg group ${
+										active
+											? "text-yellow-600 bg-yellow-50 font-semibold"
+											: "text-gray-700 hover:text-yellow-600 hover:bg-yellow-50"
+									}`}>
+									<item.icon
+										size={18}
+										className={`group-hover:scale-110 transition-transform duration-200 ${
+											active ? "text-yellow-600" : ""
+										}`}
+									/>
+									<span className="font-medium">{item.name}</span>
+								</Link>
+							);
+						})}
 					</nav>
 
 					{/* User Actions */}
@@ -176,21 +190,33 @@ export default function Header() {
 							style={{ transformOrigin: "top" }}>
 							<div className="py-4 px-2">
 								<nav className="space-y-1">
-									{navItems.map((item, index) => (
-										<motion.div
-											key={item.name}
-											initial={{ opacity: 0, x: -20 }}
-											animate={{ opacity: 1, x: 0 }}
-											transition={{ delay: index * 0.05, duration: 0.2 }}>
-											<Link
-												to={item.href}
-												className="flex items-center space-x-3 px-3 py-3 text-gray-700 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors duration-200"
-												onClick={() => setMobileMenuOpen(false)}>
-												<item.icon size={20} className="text-gray-500" />
-												<span className="font-medium">{item.name}</span>
-											</Link>
-										</motion.div>
-									))}
+									{navItems.map((item, index) => {
+										const active = isActive(item.href);
+										return (
+											<motion.div
+												key={item.name}
+												initial={{ opacity: 0, x: -20 }}
+												animate={{ opacity: 1, x: 0 }}
+												transition={{ delay: index * 0.05, duration: 0.2 }}>
+												<Link
+													to={item.href}
+													className={`flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors duration-200 ${
+														active
+															? "text-yellow-600 bg-yellow-50 font-semibold"
+															: "text-gray-700 hover:text-yellow-600 hover:bg-yellow-50"
+													}`}
+													onClick={() => setMobileMenuOpen(false)}>
+													<item.icon
+														size={20}
+														className={
+															active ? "text-yellow-600" : "text-gray-500"
+														}
+													/>
+													<span className="font-medium">{item.name}</span>
+												</Link>
+											</motion.div>
+										);
+									})}
 
 									{!isAuthenticated && (
 										<>
