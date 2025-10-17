@@ -20,7 +20,7 @@ import { useModalStore } from "@/stores/useAppStore";
  * Modal komponen global untuk menampilkan detail lengkap sebuah event volunteer
  * Menggunakan global state management melalui useModalStore
  */
-const EventDetailModal = () => {
+export default function EventDetailModal() {
 	const {
 		isDetailModalOpen,
 		closeDetailModal,
@@ -327,6 +327,4 @@ const EventDetailModal = () => {
 			)}
 		</AnimatePresence>
 	);
-};
-
-export default EventDetailModal;
+}

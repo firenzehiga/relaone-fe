@@ -12,13 +12,13 @@ import { cn } from "../../utils/cn";
  * @param {...any} props - Props tambahan yang akan di-forward ke element span
  * @returns {JSX.Element} Badge component dengan styling sesuai variant dan size
  */
-const Badge = ({
+export default function Badge({
 	children,
 	variant = "default",
 	size = "sm",
 	className,
 	...props
-}) => {
+}) {
 	const variants = {
 		default: "bg-gray-100 text-gray-800 border border-gray-200",
 		primary: "bg-blue-100 text-blue-800 border border-blue-200",
@@ -47,6 +47,4 @@ const Badge = ({
 			{children}
 		</span>
 	);
-};
-
-export default Badge;
+}

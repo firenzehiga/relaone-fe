@@ -15,7 +15,7 @@ import { cn } from "../../utils/cn";
  * @param {...any} props - Props tambahan yang akan di-forward ke element button
  * @returns {JSX.Element} Button component dengan animasi dan styling
  */
-const Button = ({
+export default function Button({
 	children,
 	variant = "primary",
 	size = "md",
@@ -23,7 +23,7 @@ const Button = ({
 	loading = false,
 	className,
 	...props
-}) => {
+}) {
 	const baseClasses =
 		"inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95";
 
@@ -79,6 +79,4 @@ const Button = ({
 			{children}
 		</MotionButton>
 	);
-};
-
-export default Button;
+}

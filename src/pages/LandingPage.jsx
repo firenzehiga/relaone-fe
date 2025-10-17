@@ -18,7 +18,7 @@ import Skeleton from "@/components/ui/Skeleton";
 import { useEvents } from "@/hooks/useEvents";
 import { useModalStore } from "@/stores/useAppStore";
 
-const LandingPage = () => {
+export default function LandingPage() {
 	const navigate = useNavigate();
 	const { data: events, isLoading: eventsLoading } = useEvents({
 		status: "published",
@@ -355,6 +355,4 @@ const LandingPage = () => {
 			</section>
 		</div>
 	);
-};
-
-export default LandingPage;
+}

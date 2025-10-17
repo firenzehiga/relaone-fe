@@ -15,14 +15,14 @@ import { cn } from "../../utils/cn";
  * @param {string} [props.className] - Class CSS tambahan untuk styling kustom
  * @returns {JSX.Element|null} Modal component dengan animasi atau null jika tidak terbuka
  */
-const Modal = ({
+export default function Modal({
 	isOpen,
 	onClose,
 	children,
 	title,
 	size = "md",
 	className,
-}) => {
+}) {
 	const sizes = {
 		sm: "max-w-md",
 		md: "max-w-lg",
@@ -79,6 +79,4 @@ const Modal = ({
 			)}
 		</AnimatePresence>
 	);
-};
-
-export default Modal;
+}

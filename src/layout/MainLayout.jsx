@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
-const Layout = () => {
+export default function Layout() {
 	const location = useLocation();
 
 	// Auto scroll to top setiap pindah halaman
@@ -23,6 +23,4 @@ const Layout = () => {
 			<Footer />
 		</div>
 	);
-};
-
-export default Layout;
+}

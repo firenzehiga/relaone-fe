@@ -4,7 +4,7 @@ import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 import Badge from "@/components/ui/Badge";
 
-const SavedLocationsManager = ({ organizationId }) => {
+export default function SavedLocationsManager({ organizationId }) {
 	const [locations, setLocations] = useState([]);
 	const [showAddModal, setShowAddModal] = useState(false);
 	const [editingLocation, setEditingLocation] = useState(null);
@@ -409,6 +409,4 @@ const SavedLocationsManager = ({ organizationId }) => {
 			</Modal>
 		</div>
 	);
-};
-
-export default SavedLocationsManager;
+}

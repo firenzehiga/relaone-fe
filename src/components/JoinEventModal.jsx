@@ -21,7 +21,7 @@ import { useEvents } from "@/hooks/useEvents";
  *
  * @returns {JSX.Element} Modal untuk pendaftaran event
  */
-const JoinEventModal = () => {
+export default function JoinEventModal() {
 	const { isJoinModalOpen, closeJoinModal, selectedEventId } = useModalStore();
 
 	// TODO: Implement fetch single event by ID
@@ -281,6 +281,4 @@ const JoinEventModal = () => {
 			)}
 		</Modal>
 	);
-};
-
-export default JoinEventModal;
+}

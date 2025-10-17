@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
 	Heart,
@@ -25,7 +25,7 @@ import { useAuthStore } from "@/stores/useAppStore";
  *
  * @returns {JSX.Element} Header navigasi dengan sticky positioning
  */
-const Header = () => {
+export default function Header() {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 	const [userMenuOpen, setUserMenuOpen] = useState(false);
 
@@ -235,6 +235,4 @@ const Header = () => {
 			</div>
 		</header>
 	);
-};
-
-export default Header;
+}

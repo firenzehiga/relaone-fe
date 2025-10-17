@@ -18,7 +18,7 @@ import { useModalStore } from "@/stores/useAppStore";
  *
  * @returns {JSX.Element} Halaman daftar events dengan filtering dan search
  */
-const EventsPage = () => {
+export default function EventsPage() {
 	const navigate = useNavigate();
 	const [searchParams, setSearchParams] = useSearchParams();
 
@@ -501,6 +501,4 @@ const EventsPage = () => {
 			</div>
 		</div>
 	);
-};
-
-export default EventsPage;
+}

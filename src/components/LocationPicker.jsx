@@ -12,12 +12,12 @@ import {
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 
-const LocationPicker = ({
+export default function LocationPicker({
 	organizationId,
 	selectedLocation,
 	onLocationSelect,
 	className = "",
-}) => {
+}) {
 	const [savedLocations, setSavedLocations] = useState([]);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [searchResults, setSearchResults] = useState([]);
@@ -601,6 +601,4 @@ const LocationPicker = ({
 				)}
 		</div>
 	);
-};
-
-export default LocationPicker;
+}

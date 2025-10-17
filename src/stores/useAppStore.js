@@ -1,74 +1,55 @@
 import { create } from "zustand";
 
 /**
- * Store untuk manajemen autentikasi user
- * Menyimpan informasi user yang sedang login dan status authentication
+ * ========================================
+ * AUTH STORE - Kelola Authentication User
+ * ========================================
+ * State: user data, authentication status, loading, error
+ * Actions: login, logout, setLoading, setError
  */
 export const useAuthStore = create((set) => ({
-	/** @type {Object|null} Data user yang sedang login */
+	// STATE
 	user: null,
-	/** @type {boolean} Status apakah user sudah authenticated */
 	isAuthenticated: false,
+	isLoading: false,
+	error: null,
 
-	/**
-	 * Login user dan simpan data user
-	 * @param {Object} userData - Data user yang akan disimpan
-	 */
-	login: (userData) => set({ user: userData, isAuthenticated: true }),
+	// ACTIONS
+	login: (userData) =>
+		set({
+			user: userData,
+			isAuthenticated: true,
+			error: null,
+		}),
 
-	/**
-	 * Logout user dan hapus semua data user
-	 */
-	logout: () => set({ user: null, isAuthenticated: false }),
+	logout: () =>
+		set({
+			user: null,
+			isAuthenticated: false,
+			error: null,
+		}),
+
+	setLoading: (loading) => set({ isLoading: loading }),
+
+	setError: (error) => set({ error }),
+
+	clearError: () => set({ error: null }),
 }));
 
 /**
- * Store untuk manajemen UI states global
- * Mengatur state seperti loading, dark mode, sidebar, dll
- */
-export const useUIStore = create((set) => ({
-	/** @type {boolean} Status loading global */
-	loading: false,
-	/** @type {boolean} Status dark mode */
-	darkMode: true,
-	/** @type {boolean} Status sidebar terbuka/tertutup */
-	sidebarOpen: false,
-
-	/**
-	 * Set status loading global
-	 * @param {boolean} loading - Status loading baru
-	 */
-	setLoading: (loading) => set({ loading }),
-
-	/**
-	 * Toggle dark mode on/off
-	 */
-	toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
-
-	/**
-	 * Set status sidebar terbuka/tertutup
-	 * @param {boolean} open - Status sidebar baru
-	 */
-	setSidebarOpen: (open) => set({ sidebarOpen: open }),
-
-	/**
-	 * Toggle sidebar terbuka/tertutup
-	 */
-	toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
-}));
-
-/**
- * Store untuk manajemen events dan filtering
- * Menyimpan daftar events, event yang dipilih, dan filter yang diterapkan
+ * ========================================
+ * EVENT STORE - Kelola Events & Filtering
+ * ========================================
+ * State: events list, filtered events, selected event, filters
+ * Actions: setEvents, setSelectedEvent, setFilters, clearFilters
  */
 export const useEventStore = create((set, get) => ({
-	/** @type {Array} Daftar semua events */
+	// STATE
 	events: [],
-	/** @type {Array} Daftar events yang sudah difilter */
 	filteredEvents: [],
-	/** @type {Object|null} Event yang sedang dipilih */
 	selectedEvent: null,
-	/** @type {Object} Filter yang sedang diterapkan */
+	isLoading: false,
+	error: null,
 	filters: {
 		category: "",
 		search: "",
@@ -76,44 +57,71 @@ export const useEventStore = create((set, get) => ({
 		status: "published",
 	},
 
-	/**
-	 * Set daftar events dan reset filtered events
-	 * @param {Array} events - Daftar events baru
-	 */
-	setEvents: (events) => set({ events, filteredEvents: events }),
+	// ACTIONS
+	setEvents: (events) =>
+		set({
+			events,
+			filteredEvents: events,
+			error: null,
+		}),
 
-	/**
-	 * Set event yang sedang dipilih
-	 * @param {Object} event - Event yang dipilih
-	 */
 	setSelectedEvent: (event) => set({ selectedEvent: event }),
 
-	/**
-	 * Set filter dan apply filtering secara otomatis
-	 * @param {Object} filters - Filter baru yang akan diterapkan
-	 */
-	setFilters: (filters) => {
-		set({ filters });
-		// Apply filters
-		const { events } = get();
-		let filtered = events;
+	setLoading: (loading) => set({ isLoading: loading }),
 
+	setError: (error) => set({ error }),
+
+	clearError: () => set({ error: null }),
+
+	clearFilters: () => {
+		const defaultFilters = {
+			category: "",
+			search: "",
+			date: "",
+			status: "published",
+		};
+		set({ filters: defaultFilters });
+
+		// Reapply with default filters
+		const { events } = get();
+		set({ filteredEvents: events });
+	},
+
+	setFilters: (newFilters) => {
+		// Merge dengan filter yang sudah ada
+		const currentFilters = get().filters;
+		const filters = { ...currentFilters, ...newFilters };
+		set({ filters });
+
+		// Apply filtering
+		const { events } = get();
+		let filtered = [...events]; // Create copy to avoid mutation
+
+		// Filter by category
 		if (filters.category) {
 			filtered = filtered.filter(
 				(event) => event.category_id === parseInt(filters.category)
 			);
 		}
 
+		// Filter by search (title & description)
 		if (filters.search) {
+			const searchLower = filters.search.toLowerCase();
 			filtered = filtered.filter(
 				(event) =>
-					event.title.toLowerCase().includes(filters.search.toLowerCase()) ||
-					event.description.toLowerCase().includes(filters.search.toLowerCase())
+					event.title.toLowerCase().includes(searchLower) ||
+					event.description.toLowerCase().includes(searchLower)
 			);
 		}
 
+		// Filter by status
 		if (filters.status) {
 			filtered = filtered.filter((event) => event.status === filters.status);
+		}
+
+		// Filter by date (if needed in future)
+		if (filters.date) {
+			// TODO: Implement date filtering logic
 		}
 
 		set({ filteredEvents: filtered });
@@ -121,65 +129,49 @@ export const useEventStore = create((set, get) => ({
 }));
 
 /**
- * Store untuk manajemen modal dan popup dialogs
- * Mengatur state buka/tutup modal dan data yang terkait
+ * ========================================
+ * MODAL STORE - Kelola Modal & Popup Dialogs
+ * ========================================
+ * State: modal states, selected data
+ * Actions: open/close modals
  */
 export const useModalStore = create((set) => ({
-	/** @type {boolean} Status modal join event terbuka/tertutup */
+	// STATE
 	isJoinModalOpen: false,
-	/** @type {boolean} Status modal event detail terbuka/tertutup */
 	isDetailModalOpen: false,
-	/** @type {boolean} Status modal login terbuka/tertutup */
 	isLoginModalOpen: false,
-	/** @type {boolean} Status modal register terbuka/tertutup */
 	isRegisterModalOpen: false,
-	/** @type {string|number|null} ID event yang dipilih untuk di-join */
 	selectedEventId: null,
-	/** @type {Object|null} Event yang dipilih untuk detail */
 	selectedEventDetail: null,
 
-	/**
-	 * Buka modal join event dengan event ID tertentu
-	 * @param {string|number} eventId - ID event yang akan di-join
-	 */
+	// ACTIONS - Join Modal
 	openJoinModal: (eventId) =>
 		set({ isJoinModalOpen: true, selectedEventId: eventId }),
 
-	/**
-	 * Tutup modal join event dan reset selected event ID
-	 */
 	closeJoinModal: () => set({ isJoinModalOpen: false, selectedEventId: null }),
 
-	/**
-	 * Buka modal event detail dengan event data tertentu
-	 * @param {Object} event - Event data yang akan ditampilkan
-	 */
+	// ACTIONS - Detail Modal
 	openDetailModal: (event) =>
 		set({ isDetailModalOpen: true, selectedEventDetail: event }),
 
-	/**
-	 * Tutup modal event detail dan reset selected event detail
-	 */
 	closeDetailModal: () =>
 		set({ isDetailModalOpen: false, selectedEventDetail: null }),
 
-	/**
-	 * Buka modal login
-	 */
+	// ACTIONS - Auth Modals
 	openLoginModal: () => set({ isLoginModalOpen: true }),
-
-	/**
-	 * Tutup modal login
-	 */
 	closeLoginModal: () => set({ isLoginModalOpen: false }),
 
-	/**
-	 * Buka modal register
-	 */
 	openRegisterModal: () => set({ isRegisterModalOpen: true }),
-
-	/**
-	 * Tutup modal register
-	 */
 	closeRegisterModal: () => set({ isRegisterModalOpen: false }),
+
+	// ACTIONS - Close All
+	closeAllModals: () =>
+		set({
+			isJoinModalOpen: false,
+			isDetailModalOpen: false,
+			isLoginModalOpen: false,
+			isRegisterModalOpen: false,
+			selectedEventId: null,
+			selectedEventDetail: null,
+		}),
 }));

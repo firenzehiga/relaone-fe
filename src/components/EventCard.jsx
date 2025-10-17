@@ -16,14 +16,14 @@ import { cn } from "@/utils/cn";
  * Komponen EventCard untuk menampilkan informasi singkat suatu event volunteer
  * Menampilkan informasi seperti judul, tanggal, lokasi, peserta, dan tombol aksi
  */
-const EventCard = ({
+export default function EventCard({
 	event,
 	onJoin,
 	onViewDetail,
 	className,
 	showOrganizer = true,
 	showMap = false,
-}) => {
+}) {
 	if (!event) return null;
 
 	/**
@@ -322,6 +322,4 @@ const EventCard = ({
 			</div>
 		</motion.div>
 	);
-};
-
-export default EventCard;
+}

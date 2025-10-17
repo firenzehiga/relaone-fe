@@ -13,7 +13,14 @@ import { cn } from "../../utils/cn";
  * @param {...any} props - Props tambahan yang akan di-forward ke element img atau div
  * @returns {JSX.Element} Avatar component berupa gambar atau inisial nama
  */
-const Avatar = ({ src, alt, size = "md", fallback, className, ...props }) => {
+export default function Avatar({
+	src,
+	alt,
+	size = "md",
+	fallback,
+	className,
+	...props
+}) {
 	const sizes = {
 		sm: "w-8 h-8 text-sm",
 		md: "w-10 h-10 text-base",
@@ -65,6 +72,4 @@ const Avatar = ({ src, alt, size = "md", fallback, className, ...props }) => {
 			{getFallbackInitials(fallback)}
 		</div>
 	);
-};
-
-export default Avatar;
+}

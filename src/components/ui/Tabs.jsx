@@ -2,7 +2,12 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "../../utils/cn";
 
-const Tabs = ({ children, defaultValue, className, onValueChange }) => {
+export default function Tabs({
+	children,
+	defaultValue,
+	className,
+	onValueChange,
+}) {
 	const [activeTab, setActiveTab] = useState(defaultValue);
 
 	const handleTabChange = (value) => {
@@ -15,13 +20,15 @@ const Tabs = ({ children, defaultValue, className, onValueChange }) => {
 			{children({ activeTab, setActiveTab: handleTabChange })}
 		</div>
 	);
-};
+}
 
-const TabsList = ({ children, className }) => (
-	<div className={cn("flex border-b border-gray-700", className)}>
-		{children}
-	</div>
-);
+function TabsList({ children, className }) {
+	return (
+		<div className={cn("flex border-b border-gray-700", className)}>
+			{children}
+		</div>
+	);
+}
 
 const TabsTrigger = ({
 	value,
@@ -50,7 +57,7 @@ const TabsTrigger = ({
 	);
 };
 
-const TabsContent = ({ value, children, activeTab, className }) => {
+function TabsContent({ value, children, activeTab, className }) {
 	if (value !== activeTab) return null;
 
 	return (
@@ -62,10 +69,8 @@ const TabsContent = ({ value, children, activeTab, className }) => {
 			{children}
 		</motion.div>
 	);
-};
+}
 
 Tabs.List = TabsList;
 Tabs.Trigger = TabsTrigger;
 Tabs.Content = TabsContent;
-
-export default Tabs;

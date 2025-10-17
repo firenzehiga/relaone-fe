@@ -14,11 +14,14 @@ const queryClient = new QueryClient({
 		queries: {
 			staleTime: 1000 * 60 * 5, // 5 minutes - data akan dianggap fresh selama 5 menit
 			retry: (failureCount, error) => {
-				// Jangan retry jika error 404 (Not Found)
+				// Jangan retry jika error 404 (Not Found) atau timeout
 				if (error?.response?.status === 404) return false;
-				// Retry maksimal 3 kali untuk error lainnya
-				return failureCount < 3;
+				if (error?.code === "ECONNABORTED") return false; // Timeout error
+				if (error?.message?.includes("timeout")) return false;
+				// Retry maksimal 2 kali untuk error lainnya (lebih cepat)
+				return failureCount < 2;
 			},
+			retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 3000), // Max 3 detik delay
 		},
 	},
 });

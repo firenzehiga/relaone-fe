@@ -2,7 +2,11 @@ import { motion } from "framer-motion";
 import { MapPin, Users, Calendar } from "lucide-react";
 import { cn } from "@/utils/cn";
 
-const OrganizationCard = ({ organization, onViewProfile, className }) => {
+export default function OrganizationCard({
+	organization,
+	onViewProfile,
+	className,
+}) {
 	if (!organization) return null;
 
 	return (
@@ -67,6 +71,4 @@ const OrganizationCard = ({ organization, onViewProfile, className }) => {
 			</div>
 		</motion.div>
 	);
-};
-
-export default OrganizationCard;
+}

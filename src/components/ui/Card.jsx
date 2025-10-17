@@ -12,7 +12,7 @@ import { cn } from "../../utils/cn";
  * @param {...any} props - Props tambahan yang akan di-forward ke element div
  * @returns {JSX.Element} Card component dengan animasi
  */
-const Card = ({ children, className, hover = true, ...props }) => {
+export default function Card({ children, className, hover = true, ...props }) {
 	return (
 		<motion.div
 			whileHover={hover ? { y: -4, scale: 1.02 } : {}}
@@ -27,7 +27,7 @@ const Card = ({ children, className, hover = true, ...props }) => {
 			{children}
 		</motion.div>
 	);
-};
+}
 
 /**
  * Sub-komponen untuk header section dalam Card
@@ -36,11 +36,13 @@ const Card = ({ children, className, hover = true, ...props }) => {
  * @param {string} [props.className] - Class CSS tambahan
  * @returns {JSX.Element} Header section card
  */
-const CardHeader = ({ children, className, ...props }) => (
-	<div className={cn("mb-6", className)} {...props}>
-		{children}
-	</div>
-);
+function CardHeader({ children, className, ...props }) {
+	return (
+		<div className={cn("mb-6", className)} {...props}>
+			{children}
+		</div>
+	);
+}
 
 /**
  * Sub-komponen untuk title dalam Card
@@ -49,13 +51,15 @@ const CardHeader = ({ children, className, ...props }) => (
  * @param {string} [props.className] - Class CSS tambahan
  * @returns {JSX.Element} Title element card
  */
-const CardTitle = ({ children, className, ...props }) => (
-	<h3
-		className={cn("text-xl font-bold text-gray-900 leading-tight", className)}
-		{...props}>
-		{children}
-	</h3>
-);
+function CardTitle({ children, className, ...props }) {
+	return (
+		<h3
+			className={cn("text-xl font-bold text-gray-900 leading-tight", className)}
+			{...props}>
+			{children}
+		</h3>
+	);
+}
 
 /**
  * Sub-komponen untuk description/subtitle dalam Card
@@ -64,13 +68,15 @@ const CardTitle = ({ children, className, ...props }) => (
  * @param {string} [props.className] - Class CSS tambahan
  * @returns {JSX.Element} Description element card
  */
-const CardDescription = ({ children, className, ...props }) => (
-	<p
-		className={cn("text-gray-600 text-sm leading-relaxed", className)}
-		{...props}>
-		{children}
-	</p>
-);
+function CardDescription({ children, className, ...props }) {
+	return (
+		<p
+			className={cn("text-gray-600 text-sm leading-relaxed", className)}
+			{...props}>
+			{children}
+		</p>
+	);
+}
 
 /**
  * Sub-komponen untuk content body dalam Card
@@ -79,11 +85,13 @@ const CardDescription = ({ children, className, ...props }) => (
  * @param {string} [props.className] - Class CSS tambahan
  * @returns {JSX.Element} Content section card
  */
-const CardContent = ({ children, className, ...props }) => (
-	<div className={cn("space-y-4", className)} {...props}>
-		{children}
-	</div>
-);
+function CardContent({ children, className, ...props }) {
+	return (
+		<div className={cn("space-y-4", className)} {...props}>
+			{children}
+		</div>
+	);
+}
 
 /**
  * Sub-komponen untuk footer section dalam Card
@@ -92,22 +100,15 @@ const CardContent = ({ children, className, ...props }) => (
  * @param {string} [props.className] - Class CSS tambahan
  * @returns {JSX.Element} Footer section card
  */
-const CardFooter = ({ children, className, ...props }) => (
-	<div
-		className={cn(
-			"mt-6 pt-4 border-t border-gray-100 flex items-center justify-between",
-			className
-		)}
-		{...props}>
-		{children}
-	</div>
-);
-
-// Attach sub-components to main Card component
-Card.Header = CardHeader;
-Card.Title = CardTitle;
-Card.Description = CardDescription;
-Card.Content = CardContent;
-Card.Footer = CardFooter;
-
-export default Card;
+function CardFooter({ children, className, ...props }) {
+	return (
+		<div
+			className={cn(
+				"mt-6 pt-4 border-t border-gray-100 flex items-center justify-between",
+				className
+			)}
+			{...props}>
+			{children}
+		</div>
+	);
+}

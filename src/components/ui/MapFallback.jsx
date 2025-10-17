@@ -1,7 +1,7 @@
 import { MapPin, ExternalLink, Navigation, Copy } from "lucide-react";
 import Button from "./ui/Button";
 
-const MapFallback = ({
+export default function MapFallback({
 	latitude,
 	longitude,
 	location,
@@ -9,7 +9,7 @@ const MapFallback = ({
 	className = "",
 	showActions = true,
 	size = "md", // sm, md, lg
-}) => {
+}) {
 	const coordinates = `${latitude}, ${longitude}`;
 
 	const getGoogleMapsUrl = () => {
@@ -100,6 +100,4 @@ const MapFallback = ({
 			</div>
 		</div>
 	);
-};
-
-export default MapFallback;
+}

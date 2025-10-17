@@ -64,7 +64,6 @@ src/
 │   ├── admin/           # Admin-specific components
 │   ├── layout/          # Layout components (Header, Footer)
 │   └── ui/              # UI components (Button, Modal, etc.)
-├── examples/            # Example implementations
 ├── hooks/               # Custom React hooks
 ├── mock/                # Mock data untuk development
 ├── pages/               # Page components
