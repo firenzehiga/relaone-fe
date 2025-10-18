@@ -18,7 +18,8 @@ export const useEvents = (params = {}) => {
 			const response = await eventService.getEvents(params);
 			return response;
 		},
-		staleTime: 1 * 60 * 1000, // 1 minute
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
 		retry: 1,
 	});
 };

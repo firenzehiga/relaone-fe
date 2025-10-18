@@ -1,8 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
-import * as organizationService from "../services/organizationService";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import * as organizationService from "@/services/organizationService";
 
 /**
- * Hook untuk mengambil list organizations
+ * Ambil semua data organisasi (khusus admin).
+ *
+ * @returns {UseQueryResult<Array>} List organisasi
+ * @features Auto-refetch setiap 1 menit, cache 5 menit
  */
 export const useOrganizations = (params = {}) => {
 	return useQuery({
@@ -11,20 +14,88 @@ export const useOrganizations = (params = {}) => {
 			const response = await organizationService.getOrganizations(params);
 			return response;
 		},
-		staleTime: 5 * 60 * 1000, // 5 minutes
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
 		retry: 1,
 	});
 };
 
 /**
- * Hook untuk mengambil detail organization berdasarkan ID
+ * Ambil detail organization berdasarkan ID.
+ *
+ * @param {string|number} organizationId - ID organization
+ * @returns {UseQueryResult<Object>} Data detail organization
  */
-export const useOrganization = (id) => {
+export const useOrganizationById = (id) => {
 	return useQuery({
 		queryKey: ["organizations", id],
-		queryFn: () => organizationService.getOrganizationById(id),
+		queryFn: async () => {
+			const response = await organizationService.getOrganizationById(id);
+			return response;
+		},
 		enabled: !!id,
-		staleTime: 5 * 60 * 1000,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
 		retry: 1,
+	});
+};
+
+/**
+ * Buat organisasi baru (admin).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["organizations"]
+ */
+export const useCreateOrganizationMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: createOrganization,
+		onSuccess: () => {
+			queryClient.invalidateQueries(["organizations"]);
+		},
+	});
+};
+
+/**
+ * Update organisasi (admin).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @param {Object} variables - Parameter update
+ * @param {string|number} variables.organizationId - ID organisasi
+ * @param {Object} variables.payload - Data organisasi baru
+ * @invalidates ["organizations"]
+ */
+export const useUpdateOrganizationMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({ organizationId, payload }) =>
+			updateOrganization(organizationId, payload),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries(["formOrganizationPackages"]);
+			queryClient.invalidateQueries(["organizations"]);
+		},
+	});
+};
+
+/**
+ * Hapus organisasi (admin).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["mentorOrganizations"]
+ * @optimisticUpdate Cache ["adminOrganizations"] langsung difilter
+ */
+export const useDeleteOrganizationMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: deleteOrganization,
+		onSuccess: (_, id) => {
+			queryClient.setQueryData(["adminOrganizations"], (oldData) =>
+				oldData.filter((organization) => organization.id !== id)
+			);
+			queryClient.invalidateQueries(["mentorOrganizations"]);
+		},
 	});
 };
