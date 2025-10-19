@@ -35,9 +35,9 @@ export default function Button({
 		outline:
 			"border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-700 hover:text-gray-900 focus:ring-gray-300 shadow-sm hover:shadow-md bg-white",
 		ghost:
-			"hover:bg-blue-50 text-blue-600 hover:text-blue-700 focus:ring-blue-500",
+			"hover:bg-emerald-50 text-emerald-600 hover:text-emerald-700 focus:ring-emerald-500",
 		success:
-			"bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl focus:ring-green-500",
+			"bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl focus:ring-emerald-500",
 		danger:
 			"bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white shadow-lg hover:shadow-xl focus:ring-red-500",
 	};

@@ -197,7 +197,7 @@ export default function EventsPage() {
 				{/* Header */}
 				<div className="mb-8">
 					<h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-						Event Volunteer 🌟
+						Event Volunteer
 					</h1>
 					<p className="text-xl text-gray-600">
 						Temukan berbagai kegiatan sosial yang dapat Anda ikuti
@@ -237,14 +237,14 @@ export default function EventsPage() {
 							{/* View Mode Toggle */}
 							<div className="flex bg-gray-100 rounded-lg p-1">
 								<Button
-									variant={viewMode === "grid" ? "primary" : "ghost"}
+									variant={viewMode === "grid" ? "success" : "ghost"}
 									size="xs"
 									onClick={() => setViewMode("grid")}
 									className="px-3 py-1">
 									Grid
 								</Button>
 								<Button
-									variant={viewMode === "map" ? "primary" : "ghost"}
+									variant={viewMode === "map" ? "success" : "ghost"}
 									size="xs"
 									onClick={() => setViewMode("map")}
 									className="px-3 py-1">

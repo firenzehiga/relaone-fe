@@ -19,8 +19,8 @@ export default function Footer() {
 					{/* Brand */}
 					<div className="col-span-1 md:col-span-2">
 						<div className="flex items-center space-x-2 mb-4">
-							<Heart className="text-blue-500" size={28} />
-							<span className="text-xl font-bold text-white">VolunteerHub</span>
+							<Heart className="text-emerald-500" size={28} />
+							<span className="text-xl font-bold text-white">RelaOne</span>
 						</div>
 						<p className="text-gray-400 mb-4 max-w-md">
 							Platform yang menghubungkan para volunteer dengan organisasi untuk
@@ -29,17 +29,17 @@ export default function Footer() {
 						<div className="flex space-x-4">
 							<a
 								href="#"
-								className="text-gray-400 hover:text-blue-400 transition-colors">
+								className="text-gray-400 hover:text-emerald-400 transition-colors">
 								<Facebook size={20} />
 							</a>
 							<a
 								href="#"
-								className="text-gray-400 hover:text-blue-400 transition-colors">
+								className="text-gray-400 hover:text-emerald-400 transition-colors">
 								<Instagram size={20} />
 							</a>
 							<a
 								href="#"
-								className="text-gray-400 hover:text-blue-400 transition-colors">
+								className="text-gray-400 hover:text-emerald-400 transition-colors">
 								<Twitter size={20} />
 							</a>
 						</div>

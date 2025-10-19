@@ -146,7 +146,7 @@ export default function EventCard({
 			whileHover={{ y: -6, scale: 1.02 }}
 			transition={{ duration: 0.3, ease: "easeOut" }}
 			className={cn(
-				"bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:shadow-blue-500/10",
+				"bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:shadow-emerald-500/10",
 				className
 			)}>
 			{/* Event Banner */}
@@ -180,7 +180,10 @@ export default function EventCard({
 				{/* Event Details */}
 				<div className="space-y-3 mb-6">
 					<div className="flex items-center text-gray-700 text-sm">
-						<Calendar size={16} className="mr-3 text-blue-600 flex-shrink-0" />
+						<Calendar
+							size={16}
+							className="mr-3 text-emerald-600 flex-shrink-0"
+						/>
 						<span className="font-semibold">
 							{formatDate(event.tanggal_mulai || event.date)} •{" "}
 							{formatTime(event.waktu_mulai || event.time)} -{" "}
@@ -191,7 +194,7 @@ export default function EventCard({
 					<div className="flex items-start text-gray-700 text-sm">
 						<MapPin
 							size={16}
-							className="mr-3 text-purple-600 flex-shrink-0 mt-0.5"
+							className="mr-3 text-emerald-600 flex-shrink-0 mt-0.5"
 						/>
 						<div className="flex-1">
 							<div className="font-semibold mb-1">
@@ -217,7 +220,7 @@ export default function EventCard({
 									Lihat di Maps
 								</Button>
 								<Button
-									variant="primary"
+									variant="success"
 									size="xs"
 									onClick={() => window.open(getDirectionsUrl(), "_blank")}
 									className="flex items-center gap-1 text-xs px-2 py-1">
@@ -245,10 +248,10 @@ export default function EventCard({
 				{/* Location Info & Map Preview */}
 				{showMap && event.latitude && event.longitude && (
 					<div className="mb-6">
-						<div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg h-48 flex flex-col items-center justify-center relative overflow-hidden">
+						<div className="bg-gradient-to-br from-emerald-50 to-emerald-50 rounded-lg h-48 flex flex-col items-center justify-center relative overflow-hidden">
 							<div className="text-center z-10">
 								<div className="bg-white rounded-full p-3 shadow-sm mb-3 inline-flex">
-									<MapPin size={28} className="text-blue-600" />
+									<MapPin size={28} className="text-emerald-600" />
 								</div>
 								<h4 className="font-semibold text-gray-900 mb-1">
 									{event.location}
@@ -258,7 +261,7 @@ export default function EventCard({
 								</p>
 								<div className="flex gap-2 justify-center">
 									<Button
-										variant="primary"
+										variant="success"
 										size="sm"
 										onClick={() => window.open(getGoogleMapsUrl(), "_blank")}
 										className="flex items-center gap-1">
@@ -278,10 +281,10 @@ export default function EventCard({
 
 							{/* Background pattern */}
 							<div className="absolute inset-0 opacity-10">
-								<div className="absolute top-2 left-2 w-2 h-2 bg-blue-400 rounded-full"></div>
-								<div className="absolute top-4 right-6 w-1 h-1 bg-purple-400 rounded-full"></div>
-								<div className="absolute bottom-6 left-8 w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-								<div className="absolute bottom-3 right-3 w-2 h-2 bg-purple-400 rounded-full"></div>
+								<div className="absolute top-2 left-2 w-2 h-2 bg-emerald-400 rounded-full"></div>
+								<div className="absolute top-4 right-6 w-1 h-1 bg-emerald-400 rounded-full"></div>
+								<div className="absolute bottom-6 left-8 w-1.5 h-1.5 bg-emerald-400 rounded-full"></div>
+								<div className="absolute bottom-3 right-3 w-2 h-2 bg-emerald-400 rounded-full"></div>
 							</div>
 						</div>
 					</div>
@@ -311,7 +314,7 @@ export default function EventCard({
 						Detail
 					</Button>
 					<Button
-						variant="primary"
+						variant="success"
 						size="sm"
 						className="flex-1"
 						disabled={event.status === "full" || event.status === "cancelled"}
