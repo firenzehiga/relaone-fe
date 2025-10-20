@@ -4,7 +4,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import MainLayout from "@/layout/MainLayout";
 
 // Auth Components
-import AuthInitializer from "@/components/auth/AuthInitializer";
 import GuestRoute from "@/components/auth/GuestRoute";
 import {
 	AdminRoute,
@@ -34,7 +33,7 @@ import EventDetailModal from "@/components/EventDetailModal";
  */
 function App() {
 	return (
-		<AuthInitializer>
+		<>
 			<Routes>
 				{/* PUBLIC ROUTES (bareng volunteer nanti) */}
 				<Route path="/" element={<MainLayout />}>
@@ -109,7 +108,7 @@ function App() {
 			{/* Global Modals */}
 			<JoinEventModal />
 			<EventDetailModal />
-		</AuthInitializer>
+		</>
 	);
 }
 

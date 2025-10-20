@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 import "@/index.css";
 import App from "@/App.jsx";
 import { BrowserRouter } from "react-router-dom";
+import { useAuthStore } from "@/hooks/useAuth";
 /**
  * Konfigurasi React Query Client untuk manajemen state server
  * Mengatur default options untuk caching, retry logic, dan error handling
@@ -32,6 +33,23 @@ const queryClient = new QueryClient({
  * Mengatur provider untuk React Query dan render aplikasi utama
  * Dilengkapi dengan React Query DevTools untuk development
  */
+// Panggil initializeAuth satu kali sebelum render agar store ter-rehydrate
+// dan verifikasi token berjalan di background. Ini membantu mencegah UI
+// "flash" pada saat refresh (header, menu user, dsb.).
+// Karena pemanggilan ini async, kita tidak memblokir render: komponen
+// `AuthInitializer` akan menunggu flag `initialized` di store.
+// Note: jangan memanggil initializeAuth terlalu sering — cukup sekali saat startup.
+const init = async () => {
+	try {
+		await useAuthStore.getState().initializeAuth();
+	} catch (e) {
+		// ignore errors — initializeAuth sudah men-handle cleanup
+	}
+};
+
+// mulai inisialisasi (tidak menunggu selesai)
+init();
+
 createRoot(document.getElementById("root")).render(
 	<StrictMode>
 		<QueryClientProvider client={queryClient}>

@@ -173,12 +173,12 @@ export default function EventCard({
 
 			{/* Event Content */}
 			<div className="p-6">
-				<h3 className="font-bold text-gray-900 text-lg mb-3 line-clamp-2 leading-tight">
-					{event.judul || event.title}
+				<h3 className="font-bold text-gray-900 text-md mb-3 line-clamp-2 leading-tight">
+					{event.judul}
 				</h3>
 
 				<p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
-					{event.deskripsi || event.description}
+					{event.deskripsi}
 				</p>
 
 				{/* Event Details */}
@@ -189,9 +189,9 @@ export default function EventCard({
 							className="mr-3 text-emerald-600 flex-shrink-0"
 						/>
 						<span className="font-semibold">
-							{formatDate(event.tanggal_mulai || event.date)} •{" "}
-							{formatTime(event.waktu_mulai || event.time)} -{" "}
-							{formatTime(event.waktu_selesai || event.end_time)}
+							{formatDate(event.tanggal_mulai)} •{" "}
+							{formatTime(event.waktu_mulai)} -{" "}
+							{formatTime(event.waktu_selesai)}
 						</span>
 					</div>
 
@@ -201,19 +201,15 @@ export default function EventCard({
 							className="mr-3 text-emerald-600 flex-shrink-0 mt-0.5"
 						/>
 						<div className="flex-1">
-							<div className="font-semibold mb-1">
-								{event.location?.nama || event.location}
-							</div>
+							<div className="font-semibold mb-1">{event.location?.nama}</div>
 							<div className="text-gray-500 text-xs line-clamp-2">
-								{event.location?.alamat || event.address}
+								{event.location?.alamat}
 							</div>
-							{(event.location?.kota || event.city) &&
-								(event.location?.provinsi || event.province) && (
-									<div className="text-gray-500 text-xs mt-1">
-										{event.location?.kota || event.city},{" "}
-										{event.location?.provinsi || event.province}
-									</div>
-								)}
+							{event.location?.kota && event.location?.provinsi && (
+								<div className="text-gray-500 text-xs mt-1">
+									{event.location?.kota}, {event.location?.provinsi}
+								</div>
+							)}
 							<div className="flex gap-2 mt-2">
 								<Button
 									variant="outline"
@@ -238,8 +234,7 @@ export default function EventCard({
 					<div className="flex items-center text-gray-700 text-sm">
 						<Users size={16} className="mr-3 text-green-600 flex-shrink-0" />
 						<span className="font-semibold">
-							{event.peserta_saat_ini || event.registered || 0} /{" "}
-							{event.maks_peserta || event.capacity} peserta
+							{event.peserta_saat_ini || 0} / {event.maks_peserta} peserta
 						</span>
 						{slotsRemaining > 0 && (
 							<span className="text-green-700 ml-2 font-bold text-xs bg-green-50 px-2 py-1 rounded-full">

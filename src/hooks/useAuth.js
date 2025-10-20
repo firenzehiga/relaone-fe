@@ -4,15 +4,48 @@ import { create } from "zustand";
 import toast from "react-hot-toast";
 import * as authService from "@/services/authService";
 
+/**
+ * Baca user yang tersimpan di localStorage (jika ada) saat file dimuat.
+ * Nama `rehydratedUser` menandakan bahwa ini adalah data yang di-"rehydrate"
+ * kembali ke store pada startup aplikasi.
+ *
+ * Dibungkus dalam try/catch karena localStorage bisa saja tidak tersedia
+ * (private mode / quota / error), sehingga kita aman jika operasi gagal.
+ */
+const rehydratedUser = (() => {
+	try {
+		const raw = localStorage.getItem("authUser");
+		return raw ? JSON.parse(raw) : null;
+	} catch (e) {
+		return null;
+	}
+})();
+
+/**
+ * Zustand store untuk auth
+ * - Menyimpan user dan token
+ * - Mendukung re-hydrate dari localStorage (authUser, authToken)
+ * - Menyediakan `initializeAuth()` untuk dipanggil sekali saat app startup
+ */
 const useAuthStore = create((set, get) => ({
-	user: null,
+	// data yang diisi dari localStorage apabila ada (rehydrated pada startup)
+	user: rehydratedUser,
 	token: localStorage.getItem("authToken"),
 	isAuthenticated: !!localStorage.getItem("authToken"),
 	isLoading: false,
 	error: null,
+	// flag untuk menandakan inisialisasi store selesai (dipakai oleh AuthInitializer)
+	initialized: false,
 
+	// setAuth: persist ke localStorage juga supaya header/UX tidak nge-flash setelah refresh
 	setAuth: (userData, token) => {
-		localStorage.setItem("authToken", token);
+		try {
+			if (token) localStorage.setItem("authToken", token);
+			if (userData) localStorage.setItem("authUser", JSON.stringify(userData));
+		} catch (e) {
+			// ignore storage errors
+		}
+
 		set({
 			user: userData,
 			token,
@@ -21,8 +54,15 @@ const useAuthStore = create((set, get) => ({
 		});
 	},
 
+	// clearAuth: hapus dari localStorage juga
 	clearAuth: () => {
-		localStorage.removeItem("authToken");
+		try {
+			localStorage.removeItem("authToken");
+			localStorage.removeItem("authUser");
+		} catch (e) {
+			// ignore
+		}
+
 		set({
 			user: null,
 			token: null,
@@ -32,9 +72,13 @@ const useAuthStore = create((set, get) => ({
 	},
 
 	updateUser: (userData) => {
-		set((state) => ({
-			user: { ...state.user, ...userData },
-		}));
+		set((state) => {
+			const merged = { ...(state.user || {}), ...userData };
+			try {
+				localStorage.setItem("authUser", JSON.stringify(merged));
+			} catch (e) {}
+			return { user: merged };
+		});
 	},
 
 	setLoading: (loading) => set({ isLoading: loading }),
@@ -42,6 +86,65 @@ const useAuthStore = create((set, get) => ({
 	setError: (error) => set({ error }),
 
 	clearError: () => set({ error: null }),
+
+	/**
+	 * initializeAuth: inisialisasi auth saat aplikasi diload
+	 * - Membaca token + user dari localStorage secara sinkron sehingga UI (header) punya data
+	 * - Melakukan verifikasi token di background dengan memanggil API profile
+	 * - Jika verifikasi gagal, akan meng-clear auth
+	 *
+	 * Fungsi ini bisa dipanggil sekali di entrypoint (mis. main.jsx) untuk menghindari "flash"
+	 */
+	initializeAuth: async () => {
+		const token = localStorage.getItem("authToken");
+
+		// jika tidak ada token, tandai initialized dan selesai
+		if (!token) {
+			set({ initialized: true });
+			return;
+		}
+
+		// jika token ada, set state dari localStorage (synchronous)
+		const rawUser = (() => {
+			try {
+				return localStorage.getItem("authUser");
+			} catch (e) {
+				return null;
+			}
+		})();
+
+		const parsedUser = rawUser ? JSON.parse(rawUser) : null;
+		// set initialized langsung agar UI (header dll) tidak ter-block
+		set({ token, isAuthenticated: true, user: parsedUser, initialized: true });
+
+		// Jalankan verifikasi profil di background tanpa menunggu.
+		// Jika verifikasi gagal, kita bersihkan auth lokal.
+		(async () => {
+			try {
+				const res = await authService.getCurrentUser();
+				const remoteUser = res.data;
+				if (remoteUser) {
+					set({ user: remoteUser });
+					try {
+						localStorage.setItem("authUser", JSON.stringify(remoteUser));
+					} catch (e) {}
+				} else {
+					// jika respons tidak valid, hapus data lokal
+					set({ user: null, token: null, isAuthenticated: false });
+					try {
+						localStorage.removeItem("authToken");
+						localStorage.removeItem("authUser");
+					} catch (e) {}
+				}
+			} catch (err) {
+				set({ user: null, token: null, isAuthenticated: false });
+				try {
+					localStorage.removeItem("authToken");
+					localStorage.removeItem("authUser");
+				} catch (e) {}
+			}
+		})();
+	},
 }));
 
 export const useProfile = () => {
@@ -173,8 +276,8 @@ export const useLogout = () => {
 			// Clear all cached data
 			queryClient.clear();
 
-			// Navigate to home
-			navigate("/");
+			// Navigate to home AFTER auth state cleared to avoid ProtectedRoute race
+			setTimeout(() => navigate("/home", { replace: true }), 0);
 		},
 		onError: (error) => {
 			// Even if logout fails on server, clear local data
@@ -187,8 +290,8 @@ export const useLogout = () => {
 			// Clear all cached data
 			queryClient.clear();
 
-			// Navigate to home
-			navigate("/");
+			// Ensure we land on home (and not intercepted by guard)
+			setTimeout(() => navigate("/home", { replace: true }), 0);
 		},
 	});
 };
