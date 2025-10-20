@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { create } from "zustand";
-import * as authService from "../services/authService";
+import * as authService from "@/services/authService";
 
 const useAuthStore = create((set) => ({
 	user: null,
@@ -32,7 +32,8 @@ export const useProfile = () => {
 			return response;
 		},
 		enabled: isAuthenticated,
-		staleTime: 5 * 60 * 1000,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
 		retry: 1,
 	});
 };

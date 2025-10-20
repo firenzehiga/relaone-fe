@@ -1,10 +1,10 @@
-import api from "../api/api";
+import api from "@/api/api";
 
 /**
  * Login user dengan credentials
  */
 export const login = async (credentials) => {
-	const response = await api.post("/auth/login", credentials);
+	const response = await api.post("/login", credentials);
 	return response.data.data || response.data;
 };
 
@@ -12,7 +12,7 @@ export const login = async (credentials) => {
  * Register user baru
  */
 export const register = async (userData) => {
-	const response = await api.post("/auth/register", userData);
+	const response = await api.post("/register", userData);
 	return response.data.data || response.data;
 };
 
@@ -20,7 +20,7 @@ export const register = async (userData) => {
  * Logout user
  */
 export const logout = async () => {
-	const response = await api.post("/auth/logout");
+	const response = await api.post("/logout");
 	return response.data;
 };
 
@@ -36,6 +36,6 @@ export const getCurrentUser = async () => {
  * Refresh authentication token
  */
 export const refreshToken = async () => {
-	const response = await api.post("/auth/refresh");
+	const response = await api.post("/refresh");
 	return response.data.data || response.data;
 };
