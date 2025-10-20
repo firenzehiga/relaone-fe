@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, ArrowLeft, Heart } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { useLogin, useAuthStore } from "@/hooks/useAuth";
 
 export default function LoginPage() {
 	const [formData, setFormData] = useState({
@@ -11,6 +12,9 @@ export default function LoginPage() {
 		rememberMe: false,
 	});
 	const [showPassword, setShowPassword] = useState(false);
+
+	const loginMutation = useLogin();
+	const { isLoading } = useAuthStore();
 
 	const handleInputChange = (e) => {
 		const { name, value, type, checked } = e.target;
@@ -22,8 +26,17 @@ export default function LoginPage() {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		console.log("Login attempt:", formData);
-		// Handle login logic here
+
+		// Basic validation
+		if (!formData.email || !formData.password) {
+			return;
+		}
+
+		// Call login mutation with email and password
+		loginMutation.mutate({
+			email: formData.email,
+			password: formData.password,
+		});
 	};
 
 	return (
@@ -33,7 +46,7 @@ export default function LoginPage() {
 				initial={{ opacity: 0, x: -50 }}
 				animate={{ opacity: 1, x: 0 }}
 				transition={{ duration: 0.6 }}
-				className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-400 relative overflow-hidden">
+				className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-emerald-400 via-purple-500 to-pink-400 relative overflow-hidden">
 				<div className="absolute inset-0 bg-black/10"></div>
 				<div className="relative z-10 flex flex-col justify-center items-center p-12 text-white text-center">
 					<motion.div
@@ -78,21 +91,22 @@ export default function LoginPage() {
 						animate={{ y: 0, opacity: 1 }}
 						transition={{ delay: 0.5, duration: 0.5 }}
 						className="text-4xl font-bold mb-4">
-						Welcome Back!
+						Selamat Datang!
 					</motion.h1>
 					<motion.p
 						initial={{ y: 20, opacity: 0 }}
 						animate={{ y: 0, opacity: 1 }}
 						transition={{ delay: 0.7, duration: 0.5 }}
 						className="text-xl opacity-90 mb-8">
-						Your volunteer community is here!
+						Komunitas relawan ada di sini!
 					</motion.p>
 					<motion.p
 						initial={{ y: 20, opacity: 0 }}
 						animate={{ y: 0, opacity: 1 }}
 						transition={{ delay: 0.9, duration: 0.5 }}
 						className="text-lg opacity-80">
-						Join our amazing volunteer platform and make a difference!
+						Bergabung ke komunitas relawan sekarang dan mulai berkontribusi
+						untuk mengubah dunia!
 					</motion.p>
 				</div>
 
@@ -112,7 +126,7 @@ export default function LoginPage() {
 				<div className="w-full max-w-md">
 					{/* Back Button */}
 					<Link
-						to="/"
+						to="/home"
 						className="inline-flex items-center text-gray-600 hover:text-gray-800 mb-8 transition-colors">
 						<ArrowLeft className="w-4 h-4 mr-2" />
 						Go Back
@@ -150,8 +164,9 @@ export default function LoginPage() {
 									name="email"
 									value={formData.email}
 									onChange={handleInputChange}
-									className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+									className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 									placeholder="your@example.com"
+									disabled={isLoading}
 									required
 								/>
 							</div>
@@ -172,14 +187,16 @@ export default function LoginPage() {
 									name="password"
 									value={formData.password}
 									onChange={handleInputChange}
-									className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+									className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 									placeholder="••••••••"
+									disabled={isLoading}
 									required
 								/>
 								<button
 									type="button"
 									onClick={() => setShowPassword(!showPassword)}
-									className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+									disabled={isLoading}
+									className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed">
 									{showPassword ? (
 										<EyeOff className="w-5 h-5" />
 									) : (
@@ -197,7 +214,8 @@ export default function LoginPage() {
 									name="rememberMe"
 									checked={formData.rememberMe}
 									onChange={handleInputChange}
-									className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+									disabled={isLoading}
+									className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:cursor-not-allowed"
 								/>
 								<span className="ml-2 text-sm text-gray-600">Remember me</span>
 							</label>
@@ -211,21 +229,17 @@ export default function LoginPage() {
 						{/* Submit Button */}
 						<Button
 							type="submit"
-							className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 rounded-lg font-medium transition-all transform hover:scale-105">
-							Sign In
+							disabled={isLoading || !formData.email || !formData.password}
+							className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 rounded-lg font-medium transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+							{isLoading ? (
+								<div className="flex items-center justify-center space-x-2">
+									<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+									<span>Signing In...</span>
+								</div>
+							) : (
+								"Sign In"
+							)}
 						</Button>
-
-						{/* Divider */}
-						<div className="relative my-6">
-							<div className="absolute inset-0 flex items-center">
-								<div className="w-full border-t border-gray-300"></div>
-							</div>
-							<div className="relative flex justify-center text-sm">
-								<span className="px-2 bg-white text-gray-500">
-									Or continue with
-								</span>
-							</div>
-						</div>
 					</motion.form>
 
 					{/* Sign Up Link */}

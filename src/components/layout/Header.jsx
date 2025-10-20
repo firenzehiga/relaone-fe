@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Avatar from "@/components/ui/Avatar";
-import { useAuthStore } from "@/stores/useAppStore";
+import { useAuthStore, useLogout } from "@/hooks/useAuth";
 
 /**
  * Komponen Header navigasi utama aplikasi
@@ -30,23 +30,37 @@ export default function Header() {
 	const [userMenuOpen, setUserMenuOpen] = useState(false);
 
 	const navigate = useNavigate();
-	const { user, isAuthenticated, logout } = useAuthStore();
+	const { user, isAuthenticated } = useAuthStore();
+	const logoutMutation = useLogout();
 
-	// Konfigurasi menu navigasi utama
-	const navItems = [
-		{ name: "Beranda", href: "/", icon: Home },
+	const baseNav = [
+		{ name: "Beranda", href: "/home", icon: Home },
 		{ name: "Event", href: "/events", icon: Calendar },
 		{ name: "Organisasi", href: "/organizations", icon: Building },
 	];
+
+	const adminNav = [
+		{ name: "Dashboard", href: "/admin/dashboard", icon: Home },
+	];
+	const orgNav = [
+		{ name: "Dashboard", href: "/organization/dashboard", icon: Home },
+	];
+	const volunteerNav = []; // volunteers use baseNav
+
+	let navItems = baseNav;
+
+	// Show only role-specific menu for admin and organization
+	if (user?.role === "admin") navItems = adminNav;
+	else if (user?.role === "organization") navItems = orgNav;
+	else if (user?.role === "volunteer") navItems = baseNav;
 
 	/**
 	 * Handler untuk logout user
 	 * Memanggil store logout, menutup user menu, dan redirect ke home
 	 */
 	const handleLogout = () => {
-		logout();
+		logoutMutation.mutate();
 		setUserMenuOpen(false);
-		navigate("/");
 	};
 
 	const location = useLocation();
@@ -59,7 +73,7 @@ export default function Header() {
 			<div className="w-full px-4 sm:px-6 lg:px-8">
 				<div className="flex items-center justify-between h-16 max-w-7xl mx-auto">
 					{/* Logo */}
-					<Link to="/" className="flex items-center space-x-2 group">
+					<Link to="/home" className="flex items-center space-x-2 group">
 						<div className="p-2 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl group-hover:scale-110 transition-transform duration-300">
 							<Heart className="text-white" size={20} />
 						</div>
@@ -101,7 +115,7 @@ export default function Header() {
 								<button
 									onClick={() => setUserMenuOpen(!userMenuOpen)}
 									className="flex items-center space-x-2 p-2 rounded-xl hover:bg-emerald-50 transition-colors">
-									<Avatar src={user?.avatar} fallback={user?.name} size="sm" />
+									<Avatar src={user?.avatar} fallback={user?.nama} size="sm" />
 								</button>
 
 								<AnimatePresence>
@@ -118,20 +132,13 @@ export default function Header() {
 												<User size={18} className="mr-3" />
 												<span className="font-medium">Profile</span>
 											</Link>
-											<Link
-												to="/my-registrations"
-												className="flex items-center px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors rounded-lg mx-2"
-												onClick={() => setUserMenuOpen(false)}>
-												<Calendar size={18} className="mr-3" />
-												<span className="font-medium">Pendaftaran Saya</span>
-											</Link>
-											{user?.role === "organizer" && (
+											{user?.role === "volunteer" && (
 												<Link
-													to="/dashboard"
+													to="/my-registrations"
 													className="flex items-center px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors rounded-lg mx-2"
 													onClick={() => setUserMenuOpen(false)}>
-													<Settings size={18} className="mr-3" />
-													<span className="font-medium">Dashboard</span>
+													<Calendar size={18} className="mr-3" />
+													<span className="font-medium">Pendaftaran Saya</span>
 												</Link>
 											)}
 											<hr className="my-2 border-gray-100" />
@@ -148,18 +155,11 @@ export default function Header() {
 						) : (
 							<div className="hidden md:flex items-center space-x-2">
 								<Button
-									variant="ghost"
+									variant="success"
 									size="sm"
 									onClick={() => navigate("/login")}>
 									<LogIn size={16} className="mr-1" />
 									Masuk
-								</Button>
-								<Button
-									variant="success"
-									size="sm"
-									onClick={() => navigate("/register")}>
-									<UserPlus size={16} className="mr-1" />
-									Daftar
 								</Button>
 							</div>
 						)}

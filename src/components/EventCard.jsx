@@ -152,9 +152,13 @@ export default function EventCard({
 			{/* Event Banner */}
 			<div className="relative h-48 overflow-hidden">
 				<img
-					src={event.gambar || event.banner || "https://placehold.co/400"}
-					alt={event.judul || event.title}
+					src={event.gambar || "https://placehold.co/400"}
+					alt={event.judul}
 					className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+					onError={(e) => {
+						e.target.onerror = null;
+						e.target.src = "https://placehold.co/400";
+					}}
 				/>
 				<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
 				<div className="absolute top-3 left-3">

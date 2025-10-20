@@ -10,20 +10,31 @@ import {
 	ArrowLeft,
 	Heart,
 	Users,
+	Phone,
+	Calendar,
+	MapPin,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { useRegister, useAuthStore } from "@/hooks/useAuth";
 
 export default function RegisterPage() {
 	const [formData, setFormData] = useState({
-		fullName: "",
+		nama: "",
 		email: "",
 		password: "",
-		confirmPassword: "",
+		password_confirmation: "",
+		telepon: "",
+		tanggal_lahir: "",
+		jenis_kelamin: "",
+		alamat: "",
 		role: "volunteer",
 		agreeToTerms: false,
 	});
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+	const registerMutation = useRegister();
+	const { isLoading } = useAuthStore();
 
 	const handleInputChange = (e) => {
 		const { name, value, type, checked } = e.target;
@@ -35,8 +46,40 @@ export default function RegisterPage() {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		console.log("Register attempt:", formData);
-		// Handle register logic here
+
+		// Basic validation
+		if (
+			!formData.nama ||
+			!formData.email ||
+			!formData.password ||
+			!formData.password_confirmation
+		) {
+			return;
+		}
+
+		if (formData.password !== formData.password_confirmation) {
+			return;
+		}
+
+		if (!formData.agreeToTerms) {
+			return;
+		}
+
+		// Prepare data for API (remove confirm password and agreeToTerms)
+		const registrationData = {
+			nama: formData.nama,
+			email: formData.email,
+			password: formData.password,
+			password_confirmation: formData.password_confirmation,
+			telepon: formData.telepon || null,
+			tanggal_lahir: formData.tanggal_lahir || null,
+			jenis_kelamin: formData.jenis_kelamin || null,
+			alamat: formData.alamat || null,
+			role: formData.role,
+		};
+
+		// Call register mutation
+		registerMutation.mutate(registrationData);
 	};
 
 	return (
@@ -100,21 +143,22 @@ export default function RegisterPage() {
 						animate={{ y: 0, opacity: 1 }}
 						transition={{ delay: 0.5, duration: 0.5 }}
 						className="text-4xl font-bold mb-4">
-						Join Our Community!
+						Gabung ke komunitas kami!
 					</motion.h1>
 					<motion.p
 						initial={{ y: 20, opacity: 0 }}
 						animate={{ y: 0, opacity: 1 }}
 						transition={{ delay: 0.7, duration: 0.5 }}
 						className="text-xl opacity-90 mb-8">
-						Connect with amazing volunteers
+						membangun relasi dengan relawan hebat
 					</motion.p>
 					<motion.p
 						initial={{ y: 20, opacity: 0 }}
 						animate={{ y: 0, opacity: 1 }}
 						transition={{ delay: 0.9, duration: 0.5 }}
 						className="text-lg opacity-80">
-						Start your volunteer journey today and make meaningful connections!
+						Mulai perjalanan relawan Anda hari ini dan buat koneksi yang
+						berarti!
 					</motion.p>
 				</div>
 
@@ -134,7 +178,7 @@ export default function RegisterPage() {
 				<div className="w-full max-w-md">
 					{/* Back Button */}
 					<Link
-						to="/"
+						to="/home"
 						className="inline-flex items-center text-gray-600 hover:text-gray-800 mb-8 transition-colors">
 						<ArrowLeft className="w-4 h-4 mr-2" />
 						Go Back
@@ -162,20 +206,21 @@ export default function RegisterPage() {
 						{/* Full Name Field */}
 						<div>
 							<label
-								htmlFor="fullName"
+								htmlFor="nama"
 								className="block text-sm font-medium text-gray-700 mb-1">
-								Full Name
+								Full Name *
 							</label>
 							<div className="relative">
 								<User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
 								<input
 									type="text"
-									id="fullName"
-									name="fullName"
-									value={formData.fullName}
+									id="nama"
+									name="nama"
+									value={formData.nama}
 									onChange={handleInputChange}
-									className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+									className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 									placeholder="John Doe"
+									disabled={isLoading}
 									required
 								/>
 							</div>
@@ -186,7 +231,7 @@ export default function RegisterPage() {
 							<label
 								htmlFor="email"
 								className="block text-sm font-medium text-gray-700 mb-1">
-								Email Address
+								Email Address *
 							</label>
 							<div className="relative">
 								<Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -196,19 +241,85 @@ export default function RegisterPage() {
 									name="email"
 									value={formData.email}
 									onChange={handleInputChange}
-									className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+									className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 									placeholder="your@example.com"
+									disabled={isLoading}
 									required
 								/>
 							</div>
 						</div>
 
+						{/* Phone Field */}
+						<div>
+							<label
+								htmlFor="telepon"
+								className="block text-sm font-medium text-gray-700 mb-1">
+								Phone Number
+							</label>
+							<div className="relative">
+								<Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+								<input
+									type="tel"
+									id="telepon"
+									name="telepon"
+									value={formData.telepon}
+									onChange={handleInputChange}
+									className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+									placeholder="+62 812 3456 7890"
+									disabled={isLoading}
+								/>
+							</div>
+						</div>
+
+						{/* Date of Birth Field */}
+						<div>
+							<label
+								htmlFor="tanggal_lahir"
+								className="block text-sm font-medium text-gray-700 mb-1">
+								Date of Birth
+							</label>
+							<div className="relative">
+								<Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+								<input
+									type="date"
+									id="tanggal_lahir"
+									name="tanggal_lahir"
+									value={formData.tanggal_lahir}
+									onChange={handleInputChange}
+									className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+									disabled={isLoading}
+								/>
+							</div>
+						</div>
+
+						{/* Gender Field */}
+						{/* <div>
+							<label
+								htmlFor="jenis_kelamin"
+								className="block text-sm font-medium text-gray-700 mb-1">
+								Gender
+							</label>
+							<div className="relative">
+								<Users className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+								<select
+									id="jenis_kelamin"
+									name="jenis_kelamin"
+									value={formData.jenis_kelamin}
+									onChange={handleInputChange}
+									className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+									disabled={isLoading}>
+									<option value="">Select Gender</option>
+									<option value="laki-laki">Male</option>
+									<option value="perempuan">Female</option>
+								</select>
+							</div>
+						</div> */}
 						{/* Role Selection */}
 						<div>
 							<label
 								htmlFor="role"
 								className="block text-sm font-medium text-gray-700 mb-1">
-								I want to join as
+								Bergabung sebagai *
 							</label>
 							<div className="relative">
 								<Users className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -217,7 +328,9 @@ export default function RegisterPage() {
 									name="role"
 									value={formData.role}
 									onChange={handleInputChange}
-									className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none">
+									className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+									disabled={isLoading}
+									required>
 									<option value="volunteer">Volunteer</option>
 									<option value="organization">Organization</option>
 								</select>
@@ -229,7 +342,7 @@ export default function RegisterPage() {
 							<label
 								htmlFor="password"
 								className="block text-sm font-medium text-gray-700 mb-1">
-								Password
+								Password *
 							</label>
 							<div className="relative">
 								<Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -239,14 +352,17 @@ export default function RegisterPage() {
 									name="password"
 									value={formData.password}
 									onChange={handleInputChange}
-									className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+									className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 									placeholder="••••••••"
+									disabled={isLoading}
+									minLength={8}
 									required
 								/>
 								<button
 									type="button"
 									onClick={() => setShowPassword(!showPassword)}
-									className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+									disabled={isLoading}
+									className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed">
 									{showPassword ? (
 										<EyeOff className="w-5 h-5" />
 									) : (
@@ -259,26 +375,28 @@ export default function RegisterPage() {
 						{/* Confirm Password Field */}
 						<div>
 							<label
-								htmlFor="confirmPassword"
+								htmlFor="password_confirmation"
 								className="block text-sm font-medium text-gray-700 mb-1">
-								Confirm Password
+								Confirm Password *
 							</label>
 							<div className="relative">
 								<Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
 								<input
 									type={showConfirmPassword ? "text" : "password"}
-									id="confirmPassword"
-									name="confirmPassword"
-									value={formData.confirmPassword}
+									id="password_confirmation"
+									name="password_confirmation"
+									value={formData.password_confirmation}
 									onChange={handleInputChange}
-									className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+									className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 									placeholder="••••••••"
+									disabled={isLoading}
 									required
 								/>
 								<button
 									type="button"
 									onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-									className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+									disabled={isLoading}
+									className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed">
 									{showConfirmPassword ? (
 										<EyeOff className="w-5 h-5" />
 									) : (
@@ -286,6 +404,12 @@ export default function RegisterPage() {
 									)}
 								</button>
 							</div>
+							{formData.password_confirmation &&
+								formData.password !== formData.password_confirmation && (
+									<p className="mt-1 text-sm text-red-600">
+										Passwords do not match
+									</p>
+								)}
 						</div>
 
 						{/* Terms Agreement */}
@@ -296,7 +420,8 @@ export default function RegisterPage() {
 								name="agreeToTerms"
 								checked={formData.agreeToTerms}
 								onChange={handleInputChange}
-								className="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+								disabled={isLoading}
+								className="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:cursor-not-allowed"
 								required
 							/>
 							<label
@@ -318,8 +443,24 @@ export default function RegisterPage() {
 						{/* Submit Button */}
 						<Button
 							type="submit"
-							className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white py-3 rounded-lg font-medium transition-all transform hover:scale-105">
-							Create Account
+							disabled={
+								isLoading ||
+								!formData.nama ||
+								!formData.email ||
+								!formData.password ||
+								!formData.password_confirmation ||
+								formData.password !== formData.password_confirmation ||
+								!formData.agreeToTerms
+							}
+							className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white py-3 rounded-lg font-medium transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+							{isLoading ? (
+								<div className="flex items-center justify-center space-x-2">
+									<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+									<span>Creating Account...</span>
+								</div>
+							) : (
+								"Create Account"
+							)}
 						</Button>
 					</motion.form>
 

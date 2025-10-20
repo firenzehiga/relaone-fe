@@ -1,7 +1,8 @@
 import axios from "axios";
 
 // Base API URL - menggunakan Laravel backend yang sudah ada
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+const BASE_URL =
+	import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
 
 /**
  * Instance axios yang sudah dikonfigurasi untuk API calls
@@ -52,7 +53,13 @@ api.interceptors.response.use(
 		// Handle auth errors
 		if (error.response?.status === 401) {
 			localStorage.removeItem("authToken");
-			window.location.href = "/login";
+			// Only redirect if not already on auth pages
+			if (
+				!window.location.pathname.includes("/login") &&
+				!window.location.pathname.includes("/register")
+			) {
+				window.location.href = "/login";
+			}
 		}
 
 		return Promise.reject(error);

@@ -1,11 +1,41 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, Navigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import {
+	useAuthStore,
+	isPathAllowedForRole,
+	getUserDashboard,
+} from "@/hooks/useAuth";
 
-export default function Layout() {
+export default function MainLayout() {
 	const location = useLocation();
+
+	const { isAuthenticated, user } = useAuthStore();
+	const token = localStorage.getItem("authToken");
+
+	// Jika token ada tapi user belum dimuat -> tampilkan loading
+	if (token && isAuthenticated && !user) {
+		return (
+			<div className="min-h-screen flex items-center justify-center bg-gray-50">
+				<div className="flex flex-col items-center space-y-4">
+					<div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+					<p className="text-gray-600 text-sm">Preparing workspace...</p>
+				</div>
+			</div>
+		);
+	}
+
+	// Jika user sudah login dan tidak diizinkan melihat halaman publik ini -> redirect
+	// selalu cek variable roleAllowed di auth.js apakah url terdaftar
+	if (isAuthenticated && user) {
+		const path = location.pathname;
+		const allowed = isPathAllowedForRole(user.role, path);
+		if (!allowed) {
+			return <Navigate to={getUserDashboard(user.role)} replace />;
+		}
+	}
 
 	// Auto scroll to top setiap pindah halaman
 	useEffect(() => {
