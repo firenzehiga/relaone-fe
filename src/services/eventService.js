@@ -41,7 +41,12 @@ export const getEventById = async (id) => {
  * @returns {Promise<any>} Data event baru
  */
 export const createEvent = async (eventData) => {
-	const response = await api.post("/events", eventData);
+	const token = localStorage.getItem("authToken");
+	const response = await api.post("/events", eventData, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
 	return response.data.data || response.data;
 };
 
@@ -55,7 +60,13 @@ export const createEvent = async (eventData) => {
  * @returns {Promise<any>} Data event baru
  */
 export const updateEvent = async (id, eventData) => {
-	const response = await api.put(`/events/${id}`, eventData);
+	const token = localStorage.getItem("authToken");
+	eventData.append("_method", "PUT"); // Laravel method spoofing
+	const response = await api.post(`/events/${id}`, eventData, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
 	return response.data.data || response.data;
 };
 
