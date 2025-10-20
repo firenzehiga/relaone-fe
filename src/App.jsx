@@ -23,6 +23,7 @@ import RegisterPage from "@/pages/Auth/RegisterPage";
 // Modals
 import JoinEventModal from "@/components/JoinEventModal";
 import EventDetailModal from "@/components/EventDetailModal";
+import NotFound from "./components/fallback/NotFound";
 
 /**
  * Komponen utama aplikasi volunteer platform
@@ -45,7 +46,7 @@ function App() {
 
 				{/* ADMIN ROUTES */}
 				<Route
-					path="/admin/*"
+					path="/admin"
 					element={
 						<AdminRoute>
 							<MainLayout />
@@ -66,7 +67,7 @@ function App() {
 				</Route>
 				{/* ORGANIZATION ROUTES */}
 				<Route
-					path="/organization/*"
+					path="/organization"
 					element={
 						<OrganizationRoute>
 							<MainLayout />
@@ -103,6 +104,8 @@ function App() {
 						</GuestRoute>
 					}
 				/>
+				{/* Fallback Route */}
+				<Route path="*" element={<NotFound />} />
 			</Routes>
 
 			{/* Global Modals */}
