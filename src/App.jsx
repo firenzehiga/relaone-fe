@@ -36,14 +36,12 @@ function App() {
 	return (
 		<AuthInitializer>
 			<Routes>
-				{/* Public Routes with MainLayout */}
+				{/* PUBLIC ROUTES (bareng volunteer nanti) */}
 				<Route path="/" element={<MainLayout />}>
 					<Route index element={<Navigate to="/home" replace />} />
 					<Route path="home" element={<LandingPage />} />
 					<Route path="events" element={<EventsPage />} />
 					<Route path="organizations" element={<OrganizationsPage />} />
-
-					{/* Add more routes as needed */}
 				</Route>
 
 				{/* ADMIN ROUTES */}
