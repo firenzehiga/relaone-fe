@@ -51,7 +51,7 @@ export default function RegisterPage() {
 		}));
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 
 		// Basic validation
@@ -80,7 +80,7 @@ export default function RegisterPage() {
 		}
 
 		// Prepare data for API (remove confirm password and agreeToTerms)
-		const registrationData = {
+		const payload = {
 			nama: formData.nama,
 			email: formData.email,
 			password: formData.password,
@@ -90,30 +90,25 @@ export default function RegisterPage() {
 			jenis_kelamin: formData.jenis_kelamin || null,
 			alamat: formData.alamat || null,
 			role: formData.role,
-			// Masukkan fields organisasi jika role adalah organization
-			organization_nama:
-				formData.role === "organization" ? formData.organization_nama : null,
-			organization_deskripsi:
-				formData.role === "organization"
-					? formData.organization_deskripsi
-					: null,
 		};
 
-		// Panggil mutation register
-		registerMutation.mutate(registrationData, {
-			onError: (error) => {
-				// Disini kita asumsikan error response memiliki struktur tertentu
-				const resp = error?.response?.data;
-				if (resp?.errors) {
-					setApiErrors(resp.errors);
-				} else {
-					setApiErrors({ general: [error.message || "Registration failed"] });
-				}
-			},
-			onSuccess: () => {
-				setApiErrors(null);
-			},
-		});
+		// tambahkan field organisasi bila diperlukan
+		if (formData.role === "organization") {
+			payload.organization_nama = formData.organization_nama || "";
+			payload.organization_deskripsi = formData.organization_deskripsi || "";
+		}
+
+		// Panggil mutation register pakai try/catch agar handling lebih sederhana
+		setApiErrors(null); // bersihkan error lama
+		try {
+			await registerMutation.mutateAsync(payload);
+			setApiErrors(null);
+			// pesan sukses ditangani di mutation
+		} catch (error) {
+			console.log(error?.errors);
+			const msg = error?.errors || "Registrasi gagal";
+			setApiErrors({ general: [String(msg)] });
+		}
 	};
 	return (
 		<div className="min-h-screen flex">

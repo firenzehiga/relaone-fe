@@ -15,9 +15,11 @@ export const login = async (credentials) => {
 			throw new Error(response.data.message || "Login failed");
 		}
 	} catch (error) {
+		// Jika ada response dari server, lempar data (mengandung message & errors)
 		if (error.response?.data) {
-			throw new Error(error.response.data.message || "Login failed");
+			throw error.response.data;
 		}
+		// Jika tidak ada response (network/CORS), lempar error asli
 		throw error;
 	}
 };
@@ -37,9 +39,11 @@ export const register = async (userData) => {
 			throw new Error(response.data.message || "Registration failed");
 		}
 	} catch (error) {
+		// Jika ada response dari server, lempar data (mengandung message & errors)
 		if (error.response?.data) {
-			throw new Error(error.response.data.message || "Registration failed");
+			throw error.response.data;
 		}
+		// Jika tidak ada response (network/CORS), lempar error asli
 		throw error;
 	}
 };
@@ -56,6 +60,11 @@ export const logout = async () => {
 	} catch (error) {
 		// Even if logout fails on server, clear local token
 		localStorage.removeItem("authToken");
+		// Jika ada response dari server, lempar data (mengandung message & errors)
+		if (error.response?.data) {
+			throw error.response.data;
+		}
+		// Jika tidak ada response (network/CORS), lempar error asli
 		throw error;
 	}
 };
@@ -73,11 +82,11 @@ export const getCurrentUser = async () => {
 			throw new Error(response.data.message || "Failed to get user profile");
 		}
 	} catch (error) {
+		// Jika ada response dari server, lempar data (mengandung message & errors)
 		if (error.response?.data) {
-			throw new Error(
-				error.response.data.message || "Failed to get user profile"
-			);
+			throw error.response.data;
 		}
+		// Jika tidak ada response (network/CORS), lempar error asli
 		throw error;
 	}
 };
@@ -97,9 +106,11 @@ export const refreshToken = async () => {
 			throw new Error(response.data.message || "Token refresh failed");
 		}
 	} catch (error) {
+		// Jika ada response dari server, lempar data (mengandung message & errors)
 		if (error.response?.data) {
-			throw new Error(error.response.data.message || "Token refresh failed");
+			throw error.response.data;
 		}
+		// Jika tidak ada response (network/CORS), lempar error asli
 		throw error;
 	}
 };

@@ -169,6 +169,7 @@ export const useLogin = () => {
 	const { setAuth, setLoading, setError, clearError } = useAuthStore();
 
 	return useMutation({
+		mutationKey: ["login"],
 		mutationFn: authService.login,
 		onMutate: () => {
 			setLoading(true);
@@ -216,6 +217,7 @@ export const useRegister = () => {
 	const { setAuth, setLoading, setError, clearError } = useAuthStore();
 
 	return useMutation({
+		mutationKey: ["register"],
 		mutationFn: authService.register,
 		onMutate: () => {
 			setLoading(true);
