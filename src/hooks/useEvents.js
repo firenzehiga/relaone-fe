@@ -1,16 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as eventService from "@/services/eventService";
+import { useUserRole } from "./useAuth";
 
 /**
  * Hook untuk mengambil data events
  * @param {Object} params - Query parameters untuk filtering
  * @returns {Object} Query result dengan data, isLoading, error, etc
  */
-export const useEvents = (
-	params = {},
-	{ role, enabled: optEnabled = true } = {}
-) => {
-	const enabled = optEnabled && role !== "admin";
+export const useEvents = (params = {}) => {
+	const currentRole = useUserRole();
+	const enabled = currentRole !== "admin" && currentRole !== "organization"; // supaya kalo admin login, ga fetch events
 
 	return useQuery({
 		queryKey: ["events", params],

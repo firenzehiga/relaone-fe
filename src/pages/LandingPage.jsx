@@ -21,9 +21,7 @@ import Hero from "@/components/Hero";
 
 export default function LandingPage() {
 	const navigate = useNavigate();
-	const { data: events, isLoading: eventsLoading } = useEvents({
-		status: "published",
-	});
+	const { data: events, isLoading: eventsLoading } = useEvents();
 	const { openJoinModal } = useModalStore();
 
 	const [stats, setStats] = useState({
