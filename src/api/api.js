@@ -9,7 +9,6 @@ const BASE_URL =
  */
 const api = axios.create({
 	baseURL: BASE_URL,
-	timeout: 10000, // 10 detik timeout - cepat fail jika server/DB bermasalah
 	headers: {
 		"Content-Type": "application/json",
 		Accept: "application/json",
