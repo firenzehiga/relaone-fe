@@ -13,6 +13,7 @@ import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import { useModalStore } from "@/stores/useAppStore";
 import { useEvents } from "@/hooks/useEvents";
+import { useUserRole } from "@/hooks/useAuth";
 
 /**
  * Modal untuk join event volunteer
@@ -24,11 +25,14 @@ import { useEvents } from "@/hooks/useEvents";
 export default function JoinEventModal() {
 	const { isJoinModalOpen, closeJoinModal, selectedEventId } = useModalStore();
 
-	// TODO: Implement fetch single event by ID
 	// const { data: event, isLoading: eventLoading } = useEvents(selectedEventId);
+	const userRole = useUserRole();
 
 	// Temporary: Get event from events list (not ideal, but works for now)
-	const { data: events, isLoading: eventLoading } = useEvents();
+	const { data: events, isLoading: eventLoading } = useEvents(
+		{},
+		{ role: userRole, enabled: true }
+	);
 	const event = events?.find((e) => e.id === selectedEventId);
 
 	const [notes, setNotes] = useState("");

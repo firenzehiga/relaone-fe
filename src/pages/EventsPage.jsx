@@ -9,6 +9,7 @@ import Skeleton from "@/components/ui/Skeleton";
 import { useEvents } from "@/hooks/useEvents";
 import { useCategory } from "@/hooks/useCategories";
 import { useModalStore } from "@/stores/useAppStore";
+import { useUserRole } from "@/hooks/useAuth";
 
 /**
  * Halaman Events untuk menampilkan daftar event volunteer
@@ -21,13 +22,13 @@ import { useModalStore } from "@/stores/useAppStore";
 export default function EventsPage() {
 	const navigate = useNavigate();
 	const [searchParams, setSearchParams] = useSearchParams();
-
+	const userRole = useUserRole();
 	// Menggunakan TanStack Query hooks untuk data fetching
 	const {
 		data: events,
 		isLoading: eventsLoading,
 		error: eventsError,
-	} = useEvents();
+	} = useEvents({}, { role: userRole, enabled: true });
 
 	const { data: categories, isLoading: categoriesLoading } = useCategory();
 

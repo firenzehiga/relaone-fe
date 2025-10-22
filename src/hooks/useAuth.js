@@ -147,6 +147,10 @@ const useAuthStore = create((set, get) => ({
 	},
 }));
 
+// usage: const userRole = useUserRole();
+export const useUserRole = () =>
+	useAuthStore((state) => state.user?.role ?? "guest");
+
 export const useProfile = () => {
 	const { isAuthenticated } = useAuthStore();
 

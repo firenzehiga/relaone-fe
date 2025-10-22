@@ -6,13 +6,19 @@ import * as eventService from "@/services/eventService";
  * @param {Object} params - Query parameters untuk filtering
  * @returns {Object} Query result dengan data, isLoading, error, etc
  */
-export const useEvents = (params = {}) => {
+export const useEvents = (
+	params = {},
+	{ role, enabled: optEnabled = true } = {}
+) => {
+	const enabled = optEnabled && role !== "admin";
+
 	return useQuery({
 		queryKey: ["events", params],
 		queryFn: async () => {
 			const response = await eventService.getEvents(params);
 			return response;
 		},
+		enabled,
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
