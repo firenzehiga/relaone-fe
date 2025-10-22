@@ -37,7 +37,7 @@ function App() {
 		<>
 			<Routes>
 				{/* PUBLIC ROUTES (bareng volunteer nanti) */}
-				<Route path="/" element={<MainLayout />}>
+				<Route element={<MainLayout />}>
 					<Route index element={<Navigate to="/home" replace />} />
 					<Route path="home" element={<LandingPage />} />
 					<Route path="events" element={<EventsPage />} />
@@ -46,7 +46,7 @@ function App() {
 
 				{/* ADMIN ROUTES */}
 				<Route
-					path="/admin"
+					path="admin"
 					element={
 						<AdminRoute>
 							<MainLayout />
@@ -64,10 +64,14 @@ function App() {
 							</div>
 						}
 					/>
+					<Route path="events">
+						<Route index element={<div>Admin Event List</div>} />
+						<Route path="create" element={<div>Admin Event Create</div>} />
+					</Route>
 				</Route>
 				{/* ORGANIZATION ROUTES */}
 				<Route
-					path="/organization"
+					path="organization"
 					element={
 						<OrganizationRoute>
 							<MainLayout />

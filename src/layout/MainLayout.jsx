@@ -15,17 +15,10 @@ export default function MainLayout() {
 	const { isAuthenticated, user } = useAuthStore();
 	const token = localStorage.getItem("authToken");
 
-	// Jika token ada tapi user belum dimuat -> tampilkan loading
-	if (token && isAuthenticated && !user) {
-		return (
-			<div className="min-h-screen flex items-center justify-center bg-gray-50">
-				<div className="flex flex-col items-center space-y-4">
-					<div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-					<p className="text-gray-600 text-sm">Preparing workspace...</p>
-				</div>
-			</div>
-		);
-	}
+	// Auto scroll to top setiap pindah halaman
+	useEffect(() => {
+		window.scrollTo(0, 0);
+	}, [location.pathname]);
 
 	// Jika user sudah login dan tidak diizinkan melihat halaman publik ini -> redirect
 	// selalu cek variable roleAllowed di auth.js apakah url terdaftar
@@ -36,11 +29,6 @@ export default function MainLayout() {
 			return <Navigate to={getUserDashboard(user.role)} replace />;
 		}
 	}
-
-	// Auto scroll to top setiap pindah halaman
-	useEffect(() => {
-		window.scrollTo(0, 0);
-	}, [location.pathname]);
 
 	return (
 		<div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-white to-blue-50">

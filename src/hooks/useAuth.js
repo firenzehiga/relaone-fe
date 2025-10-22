@@ -312,8 +312,8 @@ export { useAuthStore };
  * @property {string[]} volunteer - Array route yang diizinkan untuk role "volunteer".
  */
 export const roleAllowed = {
-	admin: ["/admin/dashboard"],
-	organization: ["/organization/dashboard"],
+	admin: ["/admin/"],
+	organization: ["/organization/"],
 	volunteer: ["/home", "/events", "/organizations"],
 };
 
