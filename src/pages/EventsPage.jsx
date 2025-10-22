@@ -27,7 +27,7 @@ export default function EventsPage() {
 		data: events,
 		isLoading: eventsLoading,
 		error: eventsError,
-	} = useEvents({ status: "published" });
+	} = useEvents();
 
 	const { data: categories, isLoading: categoriesLoading } = useCategory();
 
@@ -485,7 +485,7 @@ export default function EventsPage() {
 				) : (
 					<div className="text-center py-16">
 						<div className="mx-auto w-20 h-20 bg-gray-100 rounded-full flex items-center justify-between mb-6">
-							<Calendar className="text-gray-400" size={36} />
+							<Calendar className="text-gray-400 ml-5" size={36} />
 						</div>
 						<h3 className="text-2xl font-bold text-gray-900 mb-3">
 							Tidak ada event ditemukan
@@ -493,7 +493,7 @@ export default function EventsPage() {
 						<p className="text-gray-600 mb-6 text-lg">
 							Coba ubah filter pencarian atau kata kunci Anda
 						</p>
-						<Button variant="primary" onClick={clearFilters}>
+						<Button variant="success" onClick={clearFilters}>
 							Hapus Filter
 						</Button>
 					</div>

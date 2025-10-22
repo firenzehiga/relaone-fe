@@ -62,7 +62,7 @@ createRoot(document.getElementById("root")).render(
 					toastOptions={{
 						// Default options for all toasts
 						className: "",
-						duration: 4000,
+						duration: 2000,
 						style: {
 							background: "#fff",
 							color: "#363636",

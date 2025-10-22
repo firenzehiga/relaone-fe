@@ -1,7 +1,11 @@
 import { useOrganizations } from "@/hooks/useOrganizations";
 
 export default function OrganizationsPage() {
-	const { data: organizations, isLoading, error } = useOrganizations();
+	const {
+		data: organizations,
+		isLoading,
+		error,
+	} = useOrganizations({ status_verifikasi: "verified" });
 
 	if (isLoading) {
 		return (

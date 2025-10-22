@@ -179,7 +179,9 @@ export const useLogin = () => {
 			setLoading(false);
 
 			// Show success toast
-			toast.success(`Welcome back, ${data.data.user.nama}!`);
+			toast.success(`Welcome back, ${data.data.user.nama}!`, {
+				duration: 2000,
+			});
 
 			// Invalidate and refetch user profile
 			queryClient.invalidateQueries(["auth", "profile"]);
@@ -225,7 +227,8 @@ export const useRegister = () => {
 
 			// Show success toast
 			toast.success(
-				`Welcome to RelaOne, ${data.data.user.nama}! Your account has been created successfully.`
+				`Selamat datang di RelaOne, ${data.data.user.nama}! ${data.message}`,
+				{ duration: 2000 }
 			);
 
 			// Invalidate and refetch user profile
@@ -271,7 +274,9 @@ export const useLogout = () => {
 			setLoading(false);
 
 			// Show success toast
-			toast.success("You have been logged out successfully");
+			toast.success("You have been logged out successfully", {
+				duration: 2000,
+			});
 
 			// Clear all cached data
 			queryClient.clear();
