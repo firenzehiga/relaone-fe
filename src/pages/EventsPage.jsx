@@ -30,7 +30,7 @@ export default function EventsPage() {
 
 	const { data: categories, isLoading: categoriesLoading } = useCategory();
 
-	const { openJoinModal, openDetailModal } = useModalStore();
+	const { openJoinModal } = useModalStore();
 
 	const [filters, setFilters] = useState({
 		search: searchParams.get("search") || "",
@@ -157,10 +157,7 @@ export default function EventsPage() {
 	 * @param {string|number} eventId - ID event yang akan ditampilkan detailnya
 	 */
 	const handleViewEventDetail = (eventId) => {
-		const event = events?.find((e) => e.id === eventId);
-		if (event) {
-			openDetailModal(event);
-		}
+		navigate(`/events/details/${eventId}`);
 	};
 
 	// Get unique cities for filter
@@ -405,7 +402,6 @@ export default function EventsPage() {
 												),
 											}}
 											onJoin={handleJoinEvent}
-											onViewDetail={handleViewEventDetail}
 										/>
 									</motion.div>
 								))}

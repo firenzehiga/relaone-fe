@@ -7,6 +7,7 @@ import {
 	ExternalLink,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
@@ -19,12 +20,13 @@ import { cn } from "@/utils/cn";
 export default function EventCard({
 	event,
 	onJoin,
-	onViewDetail,
 	className,
 	showOrganizer = true,
 	showMap = false,
 }) {
 	if (!event) return null;
+
+	const navigate = useNavigate();
 
 	/**
 	 * Memformat string tanggal menjadi format Indonesia yang lebih ringkas
@@ -151,24 +153,28 @@ export default function EventCard({
 			)}>
 			{/* Event Banner */}
 			<div className="relative h-48 overflow-hidden">
-				<img
-					src={event.gambar || "https://placehold.co/400"}
-					alt={event.judul}
-					className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-					onError={(e) => {
-						e.target.onerror = null;
-						e.target.src = "https://placehold.co/400";
-					}}
-				/>
-				<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-				<div className="absolute top-3 left-3">
-					<Badge variant={statusBadge.variant}>{statusBadge.text}</Badge>
-				</div>
-				<div className="absolute top-3 right-3">
-					<Badge variant={getCategoryColor(event.category_id)}>
-						{event.category?.nama || "undefined"}
-					</Badge>
-				</div>
+				<Link
+					to={`/events/details/${event.id}`}
+					aria-label={`Lihat detail event ${event.judul}`}>
+					<img
+						src={event.gambar || "https://placehold.co/400"}
+						alt={event.judul}
+						className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+						onError={(e) => {
+							e.target.onerror = null;
+							e.target.src = "https://placehold.co/400";
+						}}
+					/>
+					<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+					<div className="absolute top-3 left-3">
+						<Badge variant={statusBadge.variant}>{statusBadge.text}</Badge>
+					</div>
+					<div className="absolute top-3 right-3">
+						<Badge variant={getCategoryColor(event.category_id)}>
+							{event.category?.nama || "undefined"}
+						</Badge>
+					</div>
+				</Link>
 			</div>
 
 			{/* Event Content */}
@@ -303,13 +309,15 @@ export default function EventCard({
 					</div>
 				)}
 
-				{/* Actions */}
+				{/* Tombol Action */}
 				<div className="flex gap-3">
 					<Button
 						variant="outline"
 						size="sm"
 						className="flex-1"
-						onClick={() => onViewDetail?.(event.id)}>
+						onClick={() => {
+							navigate(`/events/details/${event.id}`);
+						}}>
 						Detail
 					</Button>
 					<Button

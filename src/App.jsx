@@ -15,6 +15,7 @@ import {
 import LandingPage from "@/pages/LandingPage";
 import EventsPage from "@/pages/EventsPage";
 import OrganizationsPage from "@/pages/OrganizationsPage";
+import DetailEventPage from "@/pages/DetailEventPage";
 
 // Auth Pages
 import LoginPage from "@/pages/Auth/LoginPage";
@@ -22,7 +23,6 @@ import RegisterPage from "@/pages/Auth/RegisterPage";
 
 // Modals
 import JoinEventModal from "@/components/JoinEventModal";
-import EventDetailModal from "@/components/EventDetailModal";
 import NotFound from "@/components/fallback/NotFound";
 
 /**
@@ -40,7 +40,10 @@ function App() {
 				<Route element={<MainLayout />}>
 					<Route index element={<Navigate to="/home" replace />} />
 					<Route path="home" element={<LandingPage />} />
-					<Route path="events" element={<EventsPage />} />
+					<Route path="events">
+						<Route index element={<EventsPage />} />
+						<Route path="details/:eventId" element={<DetailEventPage />} />
+					</Route>
 					<Route path="organizations" element={<OrganizationsPage />} />
 				</Route>
 
@@ -114,7 +117,6 @@ function App() {
 
 			{/* Global Modals */}
 			<JoinEventModal />
-			<EventDetailModal />
 		</>
 	);
 }

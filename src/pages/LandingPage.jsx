@@ -94,7 +94,7 @@ export default function LandingPage() {
 	};
 
 	const handleViewEventDetail = (eventId) => {
-		navigate(`/events/${eventId}`);
+		navigate(`/events/details/${eventId}`);
 	};
 
 	return (
@@ -245,11 +245,7 @@ export default function LandingPage() {
 									initial={{ opacity: 0, y: 20 }}
 									animate={{ opacity: 1, y: 0 }}
 									transition={{ delay: index * 0.1 }}>
-									<EventCard
-										event={event}
-										onJoin={handleJoinEvent}
-										onViewDetail={handleViewEventDetail}
-									/>
+									<EventCard event={event} onJoin={handleJoinEvent} />
 								</motion.div>
 							))}
 						</div>
