@@ -332,7 +332,7 @@ export const roleAllowed = {
 export function getUserDashboard(role) {
 	switch (role) {
 		case "admin":
-			return "/admin/dashboard";
+			return "/admin";
 		case "organization":
 			return "/organization/dashboard";
 		case "volunteer":

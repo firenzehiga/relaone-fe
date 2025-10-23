@@ -15,6 +15,8 @@ import {
   LogOut,
   Users,
   MapPin,
+	Home,
+	User2,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Avatar from "@/components/ui/Avatar";
@@ -41,10 +43,15 @@ export default function Header() {
     { name: "Organisasi", href: "/organizations", icon: Building },
   ];
 
-  const adminNav = [
-    { name: "Dashboard", href: "/admin/dashboard", icon: Home },
-  ];
-  const orgNav = [
+	const adminNav = [
+		{ name: "Dashboard", href: "/admin", icon: Home },
+		{ name: "Users", href: "/admin/users", icon: User2 },
+		{ name: "Organizations", href: "/admin/organizations", icon: Building },
+		{ name: "Events", href: "/admin/events", icon: Calendar },
+		{ name: "Event Participants", href: "/admin/event-participants", icon: Users },
+		{ name: "Locations", href: "/admin/locations", icon: MapPin },
+	];
+	const orgNav = [
     {
       name: "Dashboard",
       href: "/organization/dashboard",
@@ -71,7 +78,7 @@ export default function Header() {
       icon: MapPin,
     },
   ];
-  const volunteerNav = []; // volunteers use baseNav
+	const volunteerNav = []; // volunteers use baseNav
 
   let navItems = baseNav;
 
