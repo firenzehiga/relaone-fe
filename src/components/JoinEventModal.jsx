@@ -12,7 +12,7 @@ import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import { useModalStore } from "@/stores/useAppStore";
-import { useEvents } from "@/hooks/useEvents";
+import { useEvents } from "@/_hooks/useEvents";
 
 /**
  * Modal untuk join event volunteer

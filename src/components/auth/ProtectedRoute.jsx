@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { useAuthStore } from "@/hooks/useAuth";
+import { useAuthStore } from "@/_hooks/useAuth";
 
 /**
  * Protected Route component untuk melindungi halaman yang memerlukan authentication

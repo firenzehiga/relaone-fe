@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { create } from "zustand";
 import toast from "react-hot-toast";
-import * as authService from "@/services/authService";
+import * as authService from "@/_services/authService";
 
 /**
  * Baca user yang tersimpan di localStorage (jika ada) saat file dimuat.

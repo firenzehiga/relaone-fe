@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Avatar from "@/components/ui/Avatar";
-import { useAuthStore, useLogout } from "@/hooks/useAuth";
+import { useAuthStore, useLogout } from "@/_hooks/useAuth";
 
 /**
  * Komponen Header navigasi utama aplikasi

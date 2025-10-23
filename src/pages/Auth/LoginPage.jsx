@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, ArrowLeft, Heart } from "lucide-react";
 import Button from "@/components/ui/Button";
-import { useLogin, useAuthStore } from "@/hooks/useAuth";
+import { useLogin, useAuthStore } from "@/_hooks/useAuth";
 
 export default function LoginPage() {
 	const [formData, setFormData] = useState({

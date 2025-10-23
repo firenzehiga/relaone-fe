@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import * as eventService from "@/services/eventService";
+import * as eventService from "@/_services/eventService";
 import { useUserRole } from "./useAuth";
 
 /**

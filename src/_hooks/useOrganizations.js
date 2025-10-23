@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import * as organizationService from "@/services/organizationService";
+import * as organizationService from "@/_services/organizationService";
 
 /**
  * Ambil semua data organisasi (khusus admin).

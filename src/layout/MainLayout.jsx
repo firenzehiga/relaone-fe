@@ -7,7 +7,7 @@ import {
 	useAuthStore,
 	isPathAllowedForRole,
 	getUserDashboard,
-} from "@/hooks/useAuth";
+} from "@/_hooks/useAuth";
 
 export default function MainLayout() {
 	const location = useLocation();

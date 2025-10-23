@@ -23,7 +23,7 @@ import RegisterPage from "@/pages/Auth/RegisterPage";
 // Modals
 import JoinEventModal from "@/components/JoinEventModal";
 import EventDetailModal from "@/components/EventDetailModal";
-import NotFound from "./components/fallback/NotFound";
+import NotFound from "@/components/fallback/NotFound";
 
 /**
  * Komponen utama aplikasi volunteer platform

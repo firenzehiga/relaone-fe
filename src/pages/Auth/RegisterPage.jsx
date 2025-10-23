@@ -15,7 +15,7 @@ import {
 	MapPin,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
-import { useRegister, useAuthStore } from "@/hooks/useAuth";
+import { useRegister, useAuthStore } from "@/_hooks/useAuth";
 
 export default function RegisterPage() {
 	const [formData, setFormData] = useState({

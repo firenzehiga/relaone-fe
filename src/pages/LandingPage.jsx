@@ -15,7 +15,7 @@ import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import EventCard from "@/components/EventCard";
 import Skeleton from "@/components/ui/Skeleton";
-import { useEvents } from "@/hooks/useEvents";
+import { useEvents } from "@/_hooks/useEvents";
 import { useModalStore } from "@/stores/useAppStore";
 import Hero from "@/components/Hero";
 

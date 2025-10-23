@@ -6,8 +6,8 @@ import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import EventCard from "@/components/EventCard";
 import Skeleton from "@/components/ui/Skeleton";
-import { useEvents } from "@/hooks/useEvents";
-import { useCategory } from "@/hooks/useCategories";
+import { useEvents } from "@/_hooks/useEvents";
+import { useCategory } from "@/_hooks/useCategories";
 import { useModalStore } from "@/stores/useAppStore";
 
 /**

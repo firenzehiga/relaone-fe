@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { useAuthStore, getUserDashboard } from "@/hooks/useAuth";
+import { useAuthStore, getUserDashboard } from "@/_hooks/useAuth";
 
 /**
  * Guest Route component untuk halaman yang hanya bisa diakses oleh user yang belum login

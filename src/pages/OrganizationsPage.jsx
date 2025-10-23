@@ -1,4 +1,4 @@
-import { useOrganizations } from "@/hooks/useOrganizations";
+import { useOrganizations } from "@/_hooks/useOrganizations";
 
 export default function OrganizationsPage() {
 	const {
