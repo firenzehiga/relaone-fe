@@ -1,4 +1,4 @@
-import api from "../api";
+import api from "@/_api";
 
 /**
  * Mengambil profile user yang sedang login
