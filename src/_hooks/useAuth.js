@@ -186,6 +186,7 @@ export const useLogin = () => {
 			// Show success toast
 			toast.success(`Welcome back, ${data.data.user.nama}!`, {
 				duration: 2000,
+				position: "top-center",
 			});
 
 			// Invalidate and refetch user profile
@@ -282,6 +283,7 @@ export const useLogout = () => {
 			// Show success toast
 			toast.success("You have been logged out successfully", {
 				duration: 2000,
+				position: "top-center",
 			});
 
 			// Clear all cached data

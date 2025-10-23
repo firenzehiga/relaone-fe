@@ -13,10 +13,7 @@ export default function OrganizationCard({
 		<motion.div
 			whileHover={{ y: -2 }}
 			transition={{ duration: 0.2 }}
-			className={cn(
-				"bg-gray-800 border border-gray-700 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow cursor-pointer",
-				className
-			)}
+			className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
 			onClick={() => onViewProfile?.(organization.id)}>
 			{/* Organization Banner */}
 			<div className="relative h-32 overflow-hidden">

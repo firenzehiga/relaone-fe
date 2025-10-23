@@ -103,3 +103,20 @@ export const useDeleteEventMutation = () => {
 		},
 	});
 };
+
+export const useAdminEvents = (params = {}) => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "admin"; // supaya kalo admin login, ga fetch events
+
+	return useQuery({
+		queryKey: ["adminEvents", params],
+		queryFn: async () => {
+			const response = await eventService.getEvents(params);
+			return response;
+		},
+		enabled,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
+	});
+};

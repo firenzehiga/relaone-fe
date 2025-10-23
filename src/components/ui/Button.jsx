@@ -49,10 +49,8 @@ export default function Button({
 		xl: "px-8 py-4 text-lg",
 	};
 
-	const MotionButton = motion.button;
-
 	return (
-		<MotionButton
+		<motion.button
 			whileHover={{ scale: disabled ? 1 : 1.02 }}
 			whileTap={{ scale: disabled ? 1 : 0.98 }}
 			className={cn(baseClasses, variants[variant], sizes[size], className)}
@@ -77,6 +75,6 @@ export default function Button({
 				</svg>
 			)}
 			{children}
-		</MotionButton>
+		</motion.button>
 	);
 }

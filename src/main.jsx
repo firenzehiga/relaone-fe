@@ -20,10 +20,10 @@ const queryClient = new QueryClient({
 				if (error?.response?.status === 404) return false;
 				if (error?.code === "ECONNABORTED") return false; // Timeout error
 				if (error?.message?.includes("timeout")) return false;
-				// Retry maksimal 2 kali untuk error lainnya (lebih cepat)
-				return failureCount < 2;
+				// Retry maksimal 1 kali untuk error lainnya (lebih cepat)
+				return failureCount < 1;
 			},
-			retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 3000), // Max 3 detik delay
+			retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 2000), // Max 2 detik delay
 		},
 	},
 });

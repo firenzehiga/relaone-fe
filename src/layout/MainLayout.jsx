@@ -33,11 +33,9 @@ export default function MainLayout() {
 	return (
 		<div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-white to-blue-50">
 			<Header />
-			<main className="flex-1">
-				<AnimatePresence mode="wait">
-					<Outlet />
-				</AnimatePresence>
-			</main>
+			<AnimatePresence mode="wait">
+				<Outlet />
+			</AnimatePresence>
 			<Footer />
 		</div>
 	);

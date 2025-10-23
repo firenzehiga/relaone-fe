@@ -1,5 +1,6 @@
 import { Calendar, MapPin, Users, Clock, X } from "lucide-react";
 import { useEffect } from "react";
+import Skeleton from "@/components/ui/Skeleton";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
@@ -18,8 +19,10 @@ export default function DetailEventPage() {
 
 	if (isLoading) {
 		return (
-			<div className="min-h-screen flex items-center justify-center">
-				<div>Loading...</div>
+			<div className="min-h-screen bg-white">
+				<div className="max-w-7xl mx-auto p-6">
+					<Skeleton.Detail />
+				</div>
 			</div>
 		);
 	}
@@ -76,7 +79,7 @@ export default function DetailEventPage() {
 						<div className="rounded-lg overflow-hidden shadow-lg h-full">
 							<img
 								src={
-									event.gambar || event.banner || "https://placehold.co/800x600"
+									event.gambar || event.banner || "https://placehold.co/700x600"
 								}
 								alt={event.judul || event.title}
 								className="w-full h-76 md:h-[640px] object-cover"

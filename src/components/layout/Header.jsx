@@ -16,6 +16,7 @@ import {
 	Users,
 	MapPin,
 	User2,
+	ShieldCheck,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Avatar from "@/components/ui/Avatar";
@@ -112,7 +113,13 @@ export default function Header() {
 					{/* Logo */}
 					<Link to="/home" className="flex items-center space-x-2 group">
 						<div className="p-2 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl group-hover:scale-110 transition-transform duration-300">
-							<Heart className="text-white" size={20} />
+							{user?.role === "admin" ? (
+								<ShieldCheck className="text-white" size={20} />
+							) : user?.role === "organization" ? (
+								<Building className="text-white" size={20} />
+							) : (
+								<Heart className="text-white" size={20} />
+							)}
 						</div>
 						<span className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-600 bg-clip-text text-transparent">
 							RelaOne

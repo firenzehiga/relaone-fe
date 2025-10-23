@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { cn } from "../../utils/cn";
 
 /**
  * Komponen Card dengan animasi hover dan styling modern
@@ -17,12 +16,11 @@ export default function Card({ children, className, hover = true, ...props }) {
 		<motion.div
 			whileHover={hover ? { y: -4, scale: 1.02 } : {}}
 			transition={{ duration: 0.3, ease: "easeOut" }}
-			className={cn(
-				"bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl p-6",
+			className={
+				("bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl p-6",
 				"shadow-lg hover:shadow-2xl transition-all duration-300",
-				"hover:shadow-blue-500/10 border-gradient",
-				className
-			)}
+				"hover:shadow-blue-500/10 border-gradient")
+			}
 			{...props}>
 			{children}
 		</motion.div>

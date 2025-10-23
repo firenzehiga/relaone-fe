@@ -193,7 +193,7 @@ export default function EventsPage() {
 				{/* Header */}
 				<div className="mb-8">
 					<h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-						Event Volunteer
+						Event Relawan
 					</h1>
 					<p className="text-xl text-gray-600">
 						Temukan berbagai kegiatan sosial yang dapat Anda ikuti
@@ -371,7 +371,7 @@ export default function EventsPage() {
 				<div className="flex items-center justify-between mb-6">
 					<p className="text-gray-600 font-medium">
 						{eventsLoading
-							? "Memuat..."
+							? "Sedang Memuat..."
 							: `${filteredEvents.length} event ditemukan`}
 					</p>
 				</div>
