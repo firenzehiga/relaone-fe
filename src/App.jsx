@@ -6,9 +6,9 @@ import MainLayout from "@/layout/MainLayout";
 // Auth Components
 import GuestRoute from "@/components/auth/GuestRoute";
 import {
-  AdminRoute,
-  OrganizationRoute,
-  VolunteerRoute,
+	AdminRoute,
+	OrganizationRoute,
+	VolunteerRoute,
 } from "@/components/auth/ProtectedRoute";
 
 // Pages
@@ -18,47 +18,53 @@ import OrganizationsPage from "@/pages/OrganizationsPage";
 import DetailEventPage from "@/pages/DetailEventPage";
 
 // Auth Pages
-import LoginPage from "@/pages/Auth/LoginPage";
-import RegisterPage from "@/pages/Auth/RegisterPage";
+import LoginPage from "@/pages/auth/LoginPage";
+import RegisterPage from "@/pages/auth/RegisterPage";
 
 // Modals
 import JoinEventModal from "@/components/JoinEventModal";
 import NotFound from "@/components/fallback/NotFound";
 
 // Admin Pages
-import AdminDashboard from "./pages/admin/Dashboard";
+import AdminDashboard from "@/pages/admin/AdminDashboard";
 
-import AdminEvents from "./pages/admin/events/EventReadPage";
-import AdminCreadEvent from "./pages/admin/events/EventCreatePage";
-import AdminLocations from "./pages/admin/locations/LocationReadPage";
-import AdminCreateLocation from "./pages/admin/locations/LocationCreatePage";
-import AdminUsers from "./pages/admin/users/UserReadPage";
-import AdminCreateUsers from "./pages/admin/users/UserCreatePage";
-import AdminEditEvent from "./pages/admin/events/EventEditPage";
-import AdminEditLocation from "./pages/admin/locations/LocationEditPage";
-import AdminEditUser from "./pages/admin/users/UserEditPage";
-import AdminOrganization from "./pages/admin/organizations/OrganizationReadPage";
-import AdminCreateOrganization from "./pages/admin/organizations/OrganizationCreatePage";
-import AdminEditOrganization from "./pages/admin/organizations/OrganizationEditPage";
-import AdminEventsParticipant from "./pages/admin/eventParticipants/EventParticipantReadPage";
-import AdminCreateEventParticipant from "./pages/admin/eventParticipants/EventParticipantCreatePage";
-import AdminEditEventParticipant from "./pages/admin/eventParticipants/EventParticipantEditPage";
+import AdminUser from "@/pages/admin/users/UserRead";
+import AdminUserCreate from "@/pages/admin/users/UserCreate";
+import AdminUserEdit from "@/pages/admin/users/UserEdit";
+
+import AdminOrganization from "@/pages/admin/organizations/OrganizationRead";
+import AdminOrganizationCreate from "@/pages/admin/organizations/OrganizationCreate";
+import AdminOrganizationEdit from "@/pages/admin/organizations/OrganizationEdit";
+
+import AdminEvent from "@/pages/admin/events/EventRead";
+import AdminEventCreate from "@/pages/admin/events/EventCreate";
+import AdminEventEdit from "@/pages/admin/events/EventEdit";
+
+import AdminEventParticipant from "@/pages/admin/event-participants/EventParticipantRead";
+import AdminEventParticipantCreate from "@/pages/admin/event-participants/EventParticipantCreate";
+import AdminEventParticipantEdit from "@/pages/admin/event-participants/EventParticipantEdit";
+
+import AdminLocation from "@/pages/admin/locations/LocationRead";
+import AdminLocationCreate from "@/pages/admin/locations/LocationCreate";
+import AdminLocationEdit from "@/pages/admin/locations/LocationEdit";
+
+import AdminFeedback from "@/pages/admin/feedbacks/FeedbackRead";
+import AdminFeedbackEdit from "@/pages/admin/feedbacks/FeedbackEdit";
 
 // Organization Pages
 import OrganizationsDashboard from "@/pages/organization/OrganizationDashboard";
 
-import EventParticipantRead from "@/pages/organization/event-participants/EventParticipantReadPage";
-import EventParticipantCreate from "@/pages/organization/event-participants/EventParticipantCreatePage";
+import OrganizationEvent from "@/pages/organization/events/EventRead";
+import OrganizationEventCreate from "@/pages/organization/events/EventCreate";
+import OrganizationEventEdit from "@/pages/organization/events/EventEdit";
 
-import EventRead from "@/pages/organization/events/EventReadPage";
-import EventCreate from "@/pages/organization/events/eventCreatePage";
+import OrganizationEventParticipant from "@/pages/organization/event-participants/EventParticipantRead";
 
-import FeedbackRead from "@/pages/organization/feedbacks/FeedbackReadPage";
-import FeedbackCreate from "@/pages/organization/feedbacks/FeedbackCreatePage";
+import OrganizationFeedback from "@/pages/organization/feedbacks/FeedbackRead";
 
-import LocationRead from "@/pages/organization/locations/LocationReadPage";
-import LocationCreate from "@/pages/organization/locations/LocationCreatePage";
-
+import OrganizationLocation from "@/pages/organization/locations/LocationRead";
+import OrganizationLocationCreate from "@/pages/organization/locations/LocationCreate";
+import OrganizationLocationEdit from "@/pages/organization/locations/LocationEdit";
 /**
  * Komponen utama aplikasi volunteer platform
  * Mengatur routing dengan layout yang menggunakan Outlet
@@ -89,70 +95,72 @@ function App() {
 							<MainLayout />
 						</AdminRoute>
 					}>
-					<Route index element={<AdminDashboard />} />
+					<Route path="dashboard" element={<AdminDashboard />} />
 
 					<Route path="events">
-						<Route index element={<AdminEvents />} />
-						<Route path="create" element={<AdminCreadEvent />} />
-						<Route path="edit/:id" element={<AdminEditEvent />} />
+						<Route index element={<AdminEvent />} />
+						<Route path="create" element={<AdminEventCreate />} />
+						<Route path="edit/:id" element={<AdminEventEdit />} />
 					</Route>
-					
-					<Route path="locations">
-						<Route index element={<AdminLocations />} />
-						<Route path="create" element={<AdminCreateLocation />} />
-						<Route path="edit/:id" element={<AdminEditLocation />} />
-					</Route>
-					
+
 					<Route path="users">
-						<Route index element={<AdminUsers />} />
-						<Route path="create" element={<AdminCreateUsers />} />
-						<Route path="edit/:id" element={<AdminEditUser />} />
+						<Route index element={<AdminUser />} />
+						<Route path="create" element={<AdminUserCreate />} />
+						<Route path="edit/:id" element={<AdminUserEdit />} />
 					</Route>
 
 					<Route path="organizations">
 						<Route index element={<AdminOrganization />} />
-						<Route path="create" element={<AdminCreateOrganization />} />
-						<Route path="edit/:id" element={<AdminEditOrganization />} />
+						<Route path="create" element={<AdminOrganizationCreate />} />
+						<Route path="edit/:id" element={<AdminOrganizationEdit />} />
 					</Route>
 
 					<Route path="event-participants">
-						<Route index element={<AdminEventsParticipant />} />
-						<Route path="create" element={<AdminCreateEventParticipant />} />
-						<Route path="edit/:id" element={<AdminEditEventParticipant />} />
+						<Route index element={<AdminEventParticipant />} />
+						<Route path="create" element={<AdminEventParticipantCreate />} />
+						<Route path="edit/:id" element={<AdminEventParticipantEdit />} />
+					</Route>
+					<Route path="locations">
+						<Route index element={<AdminLocation />} />
+						<Route path="create" element={<AdminLocationCreate />} />
+						<Route path="edit/:id" element={<AdminLocationEdit />} />
+					</Route>
+					<Route path="feedbacks">
+						<Route index element={<AdminFeedback />} />
+						<Route path="edit/:id" element={<AdminFeedbackEdit />} />
 					</Route>
 				</Route>
-				
-				 {/* ORGANIZATION ROUTES */}
-        <Route
-          path="organization"
-          element={
-            <OrganizationRoute>
-              <MainLayout />
-            </OrganizationRoute>
-          }
-        >
-          <Route path="dashboard" element={<OrganizationsDashboard />} />
 
-          <Route path="event-participants">
-            <Route index element={<EventParticipantRead />} />
-            <Route path="create" element={<EventParticipantCreate />} />
-          </Route>
+				{/* ORGANIZATION ROUTES */}
+				<Route
+					path="organization"
+					element={
+						<OrganizationRoute>
+							<MainLayout />
+						</OrganizationRoute>
+					}>
+					<Route path="dashboard" element={<OrganizationsDashboard />} />
 
-          <Route path="events">
-            <Route index element={<EventRead />} />
-            <Route path="create" element={<EventCreate />} />
-          </Route>
+					<Route path="event-participants">
+						<Route index element={<OrganizationEventParticipant />} />
+					</Route>
 
-          <Route path="feedbacks">
-            <Route index element={<FeedbackRead />} />
-            <Route path="create" element={<FeedbackCreate />} />
-          </Route>
+					<Route path="events">
+						<Route index element={<OrganizationEvent />} />
+						<Route path="create" element={<OrganizationEventCreate />} />
+						<Route path="edit/:id" element={<OrganizationEventEdit />} />
+					</Route>
 
-          <Route path="locations">
-            <Route index element={<LocationRead />} />
-            <Route path="create" element={<LocationCreate />} />
-          </Route>
-        </Route>
+					<Route path="feedbacks">
+						<Route index element={<OrganizationFeedback />} />
+					</Route>
+
+					<Route path="locations">
+						<Route index element={<OrganizationLocation />} />
+						<Route path="create" element={<OrganizationLocationCreate />} />
+						<Route path="edit/:id" element={<OrganizationLocationEdit />} />
+					</Route>
+				</Route>
 
 				{/* AUTH ROUTES */}
 				<Route
