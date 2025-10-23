@@ -11,7 +11,7 @@ import {
 	VolunteerRoute,
 } from "@/components/auth/ProtectedRoute";
 
-// Pages
+// Volunteer/Public Pages
 import LandingPage from "@/pages/LandingPage";
 import EventsPage from "@/pages/EventsPage";
 import OrganizationsPage from "@/pages/OrganizationsPage";
