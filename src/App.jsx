@@ -18,8 +18,8 @@ import OrganizationsPage from "@/pages/OrganizationsPage";
 import DetailEventPage from "@/pages/DetailEventPage";
 
 // Auth Pages
-import LoginPage from "@/pages/auth/LoginPage";
-import RegisterPage from "@/pages/auth/RegisterPage";
+import LoginPage from "@/pages/authh/LoginPage";
+import RegisterPage from "@/pages/authh/RegisterPage";
 
 // Modals
 import JoinEventModal from "@/components/JoinEventModal";
