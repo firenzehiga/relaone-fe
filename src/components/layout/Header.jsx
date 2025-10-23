@@ -120,7 +120,7 @@ export default function Header() {
 					</Link>
 
 					{/* Desktop Navigation - Centered */}
-					<nav className="hidden md:flex items-center space-x-8 flex-1 justify-center">
+					<nav className="hidden md:flex items-center space-x-4 flex-1 justify-center">
 						{navItems.map((item) => {
 							const active = isActive(item.href);
 							return (
@@ -133,7 +133,7 @@ export default function Header() {
 											: "text-gray-700 hover:text-emerald-600 hover:bg-emerald-50"
 									}`}>
 									<item.icon
-										size={18}
+										size={16}
 										className={`group-hover:scale-110 transition-transform duration-200 ${
 											active ? "text-emerald-600" : ""
 										}`}
