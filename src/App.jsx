@@ -18,53 +18,53 @@ import OrganizationsPage from "@/pages/OrganizationsPage";
 import DetailEventPage from "@/pages/DetailEventPage";
 
 // Auth Pages
-import LoginPage from "@/pages/Auth/LoginPage";
-import RegisterPage from "@/pages/Auth/RegisterPage";
+import LoginPage from "@/pages/auth/LoginPage";
+import RegisterPage from "@/pages/auth/RegisterPage";
 
 // Modals
 import JoinEventModal from "@/components/JoinEventModal";
 import NotFound from "@/components/fallback/NotFound";
 
 // Admin Pages
-import AdminDashboard from "@/pages/Admin/AdminDashboard";
+import AdminDashboard from "@/pages/admin/AdminDashboard";
 
-import AdminUser from "@/pages/Admin/users/UserRead";
-import AdminUserCreate from "@/pages/Admin/users/UserCreate";
-import AdminUserEdit from "@/pages/Admin/users/UserEdit";
+import AdminUser from "@/pages/admin/users/UserRead";
+import AdminUserCreate from "@/pages/admin/users/UserCreate";
+import AdminUserEdit from "@/pages/admin/users/UserEdit";
 
-import AdminOrganization from "@/pages/Admin/organizations/OrganizationRead";
-import AdminOrganizationCreate from "@/pages/Admin/organizations/OrganizationCreate";
-import AdminOrganizationEdit from "@/pages/Admin/organizations/OrganizationEdit";
+import AdminOrganization from "@/pages/admin/organizations/OrganizationRead";
+import AdminOrganizationCreate from "@/pages/admin/organizations/OrganizationCreate";
+import AdminOrganizationEdit from "@/pages/admin/organizations/OrganizationEdit";
 
-import AdminEvent from "@/pages/Admin/events/EventRead";
-import AdminEventCreate from "@/pages/Admin/events/EventCreate";
-import AdminEventEdit from "@/pages/Admin/events/EventEdit";
+import AdminEvent from "@/pages/admin/events/EventRead";
+import AdminEventCreate from "@/pages/admin/events/EventCreate";
+import AdminEventEdit from "@/pages/admin/events/EventEdit";
 
-import AdminEventParticipant from "@/pages/Admin/event-participants/EventParticipantRead";
-import AdminEventParticipantCreate from "@/pages/Admin/event-participants/EventParticipantCreate";
-import AdminEventParticipantEdit from "@/pages/Admin/event-participants/EventParticipantEdit";
+import AdminEventParticipant from "@/pages/admin/event-participants/EventParticipantRead";
+import AdminEventParticipantCreate from "@/pages/admin/event-participants/EventParticipantCreate";
+import AdminEventParticipantEdit from "@/pages/admin/event-participants/EventParticipantEdit";
 
-import AdminLocation from "@/pages/Admin/locations/LocationRead";
-import AdminLocationCreate from "@/pages/Admin/locations/LocationCreate";
-import AdminLocationEdit from "@/pages/Admin/locations/LocationEdit";
+import AdminLocation from "@/pages/admin/locations/LocationRead";
+import AdminLocationCreate from "@/pages/admin/locations/LocationCreate";
+import AdminLocationEdit from "@/pages/admin/locations/LocationEdit";
 
-import AdminFeedback from "@/pages/Admin/feedbacks/FeedbackRead";
-import AdminFeedbackEdit from "@/pages/Admin/feedbacks/FeedbackEdit";
+import AdminFeedback from "@/pages/admin/feedbacks/FeedbackRead";
+import AdminFeedbackEdit from "@/pages/admin/feedbacks/FeedbackEdit";
 
 // Organization Pages
-import OrganizationsDashboard from "@/pages/Organization/OrganizationDashboard";
+import OrganizationsDashboard from "@/pages/organization/OrganizationDashboard";
 
-import OrganizationEvent from "@/pages/Organization/events/EventRead";
-import OrganizationEventCreate from "@/pages/Organization/events/EventCreate";
-import OrganizationEventEdit from "@/pages/Organization/events/EventEdit";
+import OrganizationEvent from "@/pages/organization/events/EventRead";
+import OrganizationEventCreate from "@/pages/organization/events/EventCreate";
+import OrganizationEventEdit from "@/pages/organization/events/EventEdit";
 
-import OrganizationEventParticipant from "@/pages/Organization/event-participants/EventParticipantRead";
+import OrganizationEventParticipant from "@/pages/organization/event-participants/EventParticipantRead";
 
-import OrganizationFeedback from "@/pages/Organization/feedbacks/FeedbackRead";
+import OrganizationFeedback from "@/pages/organization/feedbacks/FeedbackRead";
 
-import OrganizationLocation from "@/pages/Organization/locations/LocationRead";
-import OrganizationLocationCreate from "@/pages/Organization/locations/LocationCreate";
-import OrganizationLocationEdit from "@/pages/Organization/locations/LocationEdit";
+import OrganizationLocation from "@/pages/organization/locations/LocationRead";
+import OrganizationLocationCreate from "@/pages/organization/locations/LocationCreate";
+import OrganizationLocationEdit from "@/pages/organization/locations/LocationEdit";
 /**
  * Komponen utama aplikasi volunteer platform
  * Mengatur routing dengan layout yang menggunakan Outlet
