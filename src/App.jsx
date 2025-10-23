@@ -25,6 +25,24 @@ import RegisterPage from "@/pages/Auth/RegisterPage";
 import JoinEventModal from "@/components/JoinEventModal";
 import NotFound from "@/components/fallback/NotFound";
 
+// Admin Route
+import AdminDashboard from "./pages/admin/Dashboard";
+import AdminEvents from "./pages/admin/events/EventReadPage";
+import AdminCreadEvent from "./pages/admin/events/EventCreatePage";
+import AdminLocations from "./pages/admin/locations/LocationReadPage";
+import AdminCreateLocation from "./pages/admin/locations/LocationCreatePage";
+import AdminUsers from "./pages/admin/users/UserReadPage";
+import AdminCreateUsers from "./pages/admin/users/UserCreatePage";
+import AdminEditEvent from "./pages/admin/events/EventEditPage";
+import AdminEditLocation from "./pages/admin/locations/LocationEditPage";
+import AdminEditUser from "./pages/admin/users/UserEditPage";
+import AdminOrganization from "./pages/admin/organizations/OrganizationReadPage";
+import AdminCreateOrganization from "./pages/admin/organizations/OrganizationCreatePage";
+import AdminEditOrganization from "./pages/admin/organizations/OrganizationEditPage";
+import AdminEventsParticipant from "./pages/admin/eventParticipants/EventParticipantReadPage";
+import AdminCreateEventParticipant from "./pages/admin/eventParticipants/EventParticipantCreatePage";
+import AdminEditEventParticipant from "./pages/admin/eventParticipants/EventParticipantEditPage";
+
 /**
  * Komponen utama aplikasi volunteer platform
  * Mengatur routing dengan layout yang menggunakan Outlet
@@ -55,23 +73,39 @@ function App() {
 							<MainLayout />
 						</AdminRoute>
 					}>
-					<Route
-						path="dashboard"
-						element={
-							<div className="min-h-screen flex items-center justify-center bg-gray-50">
-								<div className="text-center">
-									<h1 className="text-2xl font-bold text-gray-900 mb-4">
-										Admin Dashboard
-									</h1>
-								</div>
-							</div>
-						}
-					/>
+					<Route index element={<AdminDashboard />} />
+
 					<Route path="events">
-						<Route index element={<div>Admin Event List</div>} />
-						<Route path="create" element={<div>Admin Event Create</div>} />
+						<Route index element={<AdminEvents />} />
+						<Route path="create" element={<AdminCreadEvent />} />
+						<Route path="edit/:id" element={<AdminEditEvent />} />
+					</Route>
+					
+					<Route path="locations">
+						<Route index element={<AdminLocations />} />
+						<Route path="create" element={<AdminCreateLocation />} />
+						<Route path="edit/:id" element={<AdminEditLocation />} />
+					</Route>
+					
+					<Route path="users">
+						<Route index element={<AdminUsers />} />
+						<Route path="create" element={<AdminCreateUsers />} />
+						<Route path="edit/:id" element={<AdminEditUser />} />
+					</Route>
+
+					<Route path="organizations">
+						<Route index element={<AdminOrganization />} />
+						<Route path="create" element={<AdminCreateOrganization />} />
+						<Route path="edit/:id" element={<AdminEditOrganization />} />
+					</Route>
+
+					<Route path="event-participants">
+						<Route index element={<AdminEventsParticipant />} />
+						<Route path="create" element={<AdminCreateEventParticipant />} />
+						<Route path="edit/:id" element={<AdminEditEventParticipant />} />
 					</Route>
 				</Route>
+				
 				{/* ORGANIZATION ROUTES */}
 				<Route
 					path="organization"
