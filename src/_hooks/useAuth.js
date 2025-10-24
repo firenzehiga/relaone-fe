@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { create } from "zustand";
 import toast from "react-hot-toast";
 import * as authService from "@/_services/authService";
+import { showToast, toastSuccess } from "@/components/ui/Toast";
 
 /**
  * Baca user yang tersimpan di localStorage (jika ada) saat file dimuat.
@@ -196,7 +197,10 @@ export const useLogin = () => {
 			setLoading(false);
 
 			// Show success toast
-			toast.success(`Welcome back, ${data.data.user.nama}!`, {
+			showToast({
+				type: "success",
+				title: "Login Successful",
+				message: `Welcome back, ${data.data.user.nama}!`,
 				duration: 2000,
 				position: "top-center",
 			});
@@ -293,7 +297,10 @@ export const useLogout = () => {
 			setLoading(false);
 
 			// Show success toast
-			toast.success("You have been logged out successfully", {
+			showToast({
+				type: "success",
+				title: "Logout Successful",
+				message: `You have been logged out successfully`,
 				duration: 2000,
 				position: "top-center",
 			});

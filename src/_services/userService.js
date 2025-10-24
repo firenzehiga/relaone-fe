@@ -1,5 +1,6 @@
 import api from "@/_api";
 
+// ALL USER SERVICES
 /**
  * Mengambil profile user yang sedang login
  */
@@ -25,9 +26,8 @@ export const getUserRegistrations = async () => {
 };
 
 // ADMIN SERVICES
-/**
- * Mengambil semua users.
- *
+/** Mengambil semua users.
+
  * @async
  * @function adminGetUsers
  * @endpoint GET /admin/users

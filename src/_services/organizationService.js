@@ -1,8 +1,7 @@
 import api from "@/_api";
 
 // PUBLIC SERVICES
-/**
- * Mengambil semua organizations.
+/** Mengambil semua organizations.
  *
  * @async
  * @function getOrganizations
@@ -28,8 +27,7 @@ export const getOrganizationById = async (id) => {
 };
 
 // ADMIN SERVICES
-/**
- * Mengambil semua organizations.
+/** Mengambil semua organizations.
  *
  * @async
  * @function adminGetOrganizations
@@ -65,7 +63,7 @@ export const adminGetOrganizationById = async (id) => {
 	return response.data.data || response.data;
 };
 
-/** * Buat organization baru
+/** Buat organization baru
  *
  * @async
  * @function adminCreateOrganization
@@ -74,11 +72,16 @@ export const adminGetOrganizationById = async (id) => {
  * @returns {Promise<any>} Data organization baru
  */
 export const adminCreateOrganization = async (orgData) => {
-	const response = await api.post("/admin/organizations", orgData);
+	const token = localStorage.getItem("authToken");
+	const response = await api.post("/admin/organizations", orgData, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
 	return response.data.data || response.data;
 };
 
-/** * Update organization
+/** Update organization
  *
  * @async
  * @function adminUpdateOrganization
@@ -87,13 +90,17 @@ export const adminCreateOrganization = async (orgData) => {
  * @param {Object} orgData - Data organization baru
  * @returns {Promise<any>} Data organization baru
  */
-
 export const adminUpdateOrganization = async (id, orgData) => {
-	const response = await api.post(`/admin/organizations/${id}`, orgData);
+	const token = localStorage.getItem("authToken");
+	const response = await api.post(`/admin/organizations/${id}`, orgData, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
 	return response.data.data || response.data;
 };
 
-/** * Hapus organization
+/** Hapus organization
  *
  * @async
  * @function adminDeleteOrganization
@@ -102,6 +109,11 @@ export const adminUpdateOrganization = async (id, orgData) => {
  * @returns {Promise<any>} Data organization baru
  */
 export const adminDeleteOrganization = async (id) => {
-	const response = await api.delete(`/admin/organizations/${id}`);
+	const token = localStorage.getItem("authToken");
+	const response = await api.delete(`/admin/organizations/${id}`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
 	return response.data;
 };

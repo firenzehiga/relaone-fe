@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import * as organizationService from "@/_services/organizationService";
 import { useUserRole } from "./useAuth";
-import * as userService from "../_services/userService";
+
 /**
  * Ambil semua data organisasi (khusus admin).
  *
@@ -48,12 +48,15 @@ export const useOrganizationById = (id) => {
  * @features Auto-refetch setiap 1 menit, cache 5 menit
  */
 export const useAdminOrganizations = (params = {}) => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "admin";
 	return useQuery({
 		queryKey: ["adminOrganizations", params],
 		queryFn: async () => {
 			const response = await organizationService.adminGetOrganizations(params);
 			return response;
 		},
+		enabled,
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
@@ -67,13 +70,15 @@ export const useAdminOrganizations = (params = {}) => {
  * @returns {UseQueryResult<Object>} Data detail organization
  */
 export const useAdminOrganizationById = (id) => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "admin" && !!id;
 	return useQuery({
 		queryKey: ["adminOrganizations", id],
 		queryFn: async () => {
 			const response = await organizationService.getOrganizationById(id);
 			return response;
 		},
-		enabled: !!id,
+		enabled,
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
@@ -139,4 +144,3 @@ export const useAdminDeleteOrganizationMutation = () => {
 		},
 	});
 };
-

@@ -1,8 +1,15 @@
 import { useAdminFeedbacks } from "@/_hooks/useFeedbacks";
-import Button from "@/components/ui/Button";
-import { ChevronDown, Loader2, PencilIcon, Plus, Star, Trash } from "lucide-react";
+import {
+	ChevronDown,
+	Loader2,
+	PencilIcon,
+	Plus,
+	Star,
+	Trash,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
+import RatingStars from "@/components/ui/RatingStars";
 
 export default function AdminFeedback() {
 	const {
@@ -17,14 +24,11 @@ export default function AdminFeedback() {
 	const filteredFeedbacks = useMemo(() => {
 		if (!searchFeedback) return feedbacks;
 		const query = searchFeedback.toLowerCase();
-		return feedbacks.filter((feedbackItem => {
+		return feedbacks.filter((feedbackItem) => {
 			const user = String(feedbackItem.user?.nama || "").toLowerCase();
 			const event = String(feedbackItem.event?.judul || "").toLowerCase();
-			return (
-				user.includes(query) ||
-				event.includes(query)
-			);
-		}))
+			return user.includes(query) || event.includes(query);
+		});
 	}, [feedbacks, searchFeedback]);
 
 	const columns = [
@@ -42,29 +46,26 @@ export default function AdminFeedback() {
 			width: "200px",
 		},
 		{
-            name: "Nama Event",
+			name: "Nama Event",
 			selector: (row) => row.event?.judul || "-",
 			sortable: false,
 			wrap: true,
 		},
-        {
-            name: "Rating",
+		{
+			name: "Rating",
 			cell: (row) => {
-                const r = Math.max(0, Math.min(5, Number(row.rating) || 0));
-                return (
-                    <div className="flex items-center space-x-1">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                            <Star
-                                key={i}
-                                className={`w-4 h-4 ${i < r ? "text-yellow-400" : "text-gray-300"}`}
-                            />
-                        ))}
-                    </div>
-                );
-            },
+				const rating = Math.max(0, Math.min(5, Number(row.rating) || 0));
+				return (
+					<RatingStars
+						rating={rating}
+						maxRating={5}
+						size="sm"
+						interactive={false}
+					/>
+				);
+			},
 			sortable: false,
-			wrap: true,
-            width: "200px",
+			width: "220px",
 		},
 		{
 			name: "Aksi",
@@ -88,7 +89,9 @@ export default function AdminFeedback() {
 		<div className="py-8">
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="mb-6">
-					<h1 className="text-2xl font-bold text-gray-900">Admin Feedback List</h1>
+					<h1 className="text-2xl font-bold text-gray-900">
+						Admin Feedback List
+					</h1>
 					<p className="text-gray-600">Kelola data feedback di sini</p>
 				</div>
 
@@ -135,30 +138,18 @@ export default function AdminFeedback() {
 								responsive
 								fixedHeader
 								striped
+								expandOnRowDoubleClicked
 								sortIcon={<ChevronDown />}
 								expandableRows
 								expandableRowsComponent={({ data }) => {
-                                    const r = Math.max(0, Math.min(5, Number(data.rating) || 0));
-                                    return (
-                                        <div className="p-4 bg-gray-50 rounded-md">
-                                            <p className="text-sm text-gray-600">
-                                                <strong>Rating:</strong>
-                                                <span className="ml-2 inline-flex items-center">
-                                                    {Array.from({ length: 5 }).map((_, i) => (
-                                                        <Star
-                                                            key={i}
-                                                            className={`w-4 h-4 ${i < r ? "text-yellow-400" : "text-gray-300"}`}
-                                                        />
-                                                    ))}
-                                                    <span className="ml-2 text-sm text-gray-700">({r})</span>
-                                                </span>
-                                            </p>
-                                            <p className="text-sm text-gray-600">
-                                                <strong>Komentar:</strong> {data.komentar || "-"}
-                                            </p>
-                                        </div>
-                                    );
-                                }}
+									return (
+										<div className="p-4 bg-gray-50 rounded-md">
+											<p className="text-sm text-gray-600">
+												<strong>Komentar:</strong> {data.komentar || "-"}
+											</p>
+										</div>
+									);
+								}}
 							/>
 						</>
 					)}

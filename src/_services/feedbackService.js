@@ -9,12 +9,11 @@ import api from "@/_api";
  * @param {Object} params - Query parameters untuk filtering
  * @returns {Promise} Promise dengan data feedbacks
  */
-
 export const adminGetFeedbacks = async (params = {}) => {
-    const token = localStorage.getItem("authToken");
-    const response = await api.get("/admin/feedbacks", {
-        params, 
-        headers: { Authorization: `Barier ${token}` },
-    });
-    return response.data.data || response.data;
-}
+	const token = localStorage.getItem("authToken");
+	const response = await api.get("/admin/feedbacks", {
+		params,
+		headers: { Authorization: `Bearer ${token}` },
+	});
+	return response.data.data || response.data;
+};

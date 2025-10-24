@@ -60,9 +60,15 @@ export const adminGetEvents = async (params = {}) => {
  * @returns {Promise<any>} Data detail event
  */
 export const adminGetEventById = async (id) => {
-	const response = await api.get(`/admin/events/${id}`);
+	const token = localStorage.getItem("authToken");
+	const response = await api.get(`/admin/events/${id}`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
 	return response.data.data || response.data;
 };
+
 /** * Buat event baru
  *
  * @async
@@ -109,6 +115,11 @@ export const adminUpdateEvent = async (id, eventData) => {
  * @returns {Promise<any>} Data event yang dihapus
  */
 export const adminDeleteEvent = async (id) => {
-	const response = await api.delete(`/admin/events/${id}`);
-	return response.data;
+	const token = localStorage.getItem("authToken");
+	const response = await api.delete(`/admin/events/${id}`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	return response.data.data || response.data;
 };

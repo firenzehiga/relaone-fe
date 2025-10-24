@@ -1,11 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as categoryService from "../_services/categoryService";
 
-/**
- * Custom hooks untuk Categories menggunakan TanStack Query
- * Pattern yang sama dengan struktur hooks yang Anda gunakan
- */
-
+// === PUBLIC HOOKS ===
 /**
  * Hook untuk mengambil data categories
  * @returns {Object} Query result dengan data categories

@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as eventService from "@/_services/eventService";
 import { useUserRole } from "./useAuth";
 
+// === PUBLIC HOOKS ===
 /**
  * Hook untuk mengambil data events
  * @param {Object} params - Query parameters untuk filtering
@@ -44,6 +45,12 @@ export const useEventById = (id) => {
 	});
 };
 
+// === ADMIN HOOKS ===
+/**
+ * Hook untuk mengambil data events (admin)
+ * @param {Object} params - Query parameters untuk filtering
+ * @returns {Object} Query result dengan data, isLoading, error, etc
+ */
 export const useAdminEvents = (params = {}) => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "admin"; // supaya kalo admin login, ga fetch events
@@ -61,14 +68,22 @@ export const useAdminEvents = (params = {}) => {
 	});
 };
 
+/**
+ * Hook untuk mengambil data events berdasarkan ID (admin)
+ * @param {Object} params - Query parameters untuk filtering
+ * @returns {Object} Query result dengan data, isLoading, error, etc
+ */
 export const useAdminEventById = (id) => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "admin" && !!id;
+
 	return useQuery({
 		queryKey: ["adminEvents", id],
 		queryFn: async () => {
 			const response = await eventService.adminGetEventById(id);
 			return response;
 		},
-		enabled: !!id,
+		enabled,
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,

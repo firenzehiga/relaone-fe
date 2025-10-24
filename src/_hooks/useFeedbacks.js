@@ -2,19 +2,25 @@ import * as feedbackService from "@/_services/feedbackService";
 import { useUserRole } from "./useAuth";
 import { useQuery } from "@tanstack/react-query";
 
+// === ADMIN HOOKS ===
+/**
+ * Hook untuk mengambil data feedbacks (admin)
+ * @param {Object} params - Query parameters untuk filtering
+ * @returns {Object} Query result dengan data, isLoading, error, etc
+ */
 export const useAdminFeedbacks = (params = {}) => {
-    const currentRole = useUserRole();
-    const enabled = currentRole === "admin"; // agar jika admin login, tidak fetch feedbacks
+	const currentRole = useUserRole();
+	const enabled = currentRole === "admin"; // agar jika admin login, tidak fetch feedbacks
 
-    return useQuery({
-        queryKey: ["adminFeedbacks", params],
-        queryFn: async () => {
-            const response = await feedbackService.adminGetFeedbacks(params);
-            return response;
-        },
-        enabled,
+	return useQuery({
+		queryKey: ["adminFeedbacks", params],
+		queryFn: async () => {
+			const response = await feedbackService.adminGetFeedbacks(params);
+			return response;
+		},
+		enabled,
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
-    })
-}
+	});
+};
