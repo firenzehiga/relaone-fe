@@ -93,7 +93,7 @@ export default function AdminEvent() {
 		<div className="py-8">
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="mb-6">
-					<h1 className="text-2xl font-bold text-gray-900">Admin Event List</h1>
+					<h1 className="text-2xl font-bold text-gray-900">Data Event</h1>
 					<p className="text-gray-600">Kelola data event di sini</p>
 				</div>
 

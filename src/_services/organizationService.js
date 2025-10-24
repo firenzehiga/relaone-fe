@@ -37,7 +37,13 @@ export const getOrganizationById = async (id) => {
  * @returns {Promise<any>} Data semua organizations.
  */
 export const adminGetOrganizations = async (params = {}) => {
-	const response = await api.get("/admin/organizations", { params });
+	const token = localStorage.getItem("authToken");
+	const response = await api.get("/admin/organizations", {
+		params,
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
 	return response.data.data || response.data;
 };
 
@@ -50,7 +56,12 @@ export const adminGetOrganizations = async (params = {}) => {
  * @returns {Promise<any>} Data detail organization
  */
 export const adminGetOrganizationById = async (id) => {
-	const response = await api.get(`/admin/organizations/${id}`);
+	const token = localStorage.getItem("authToken");
+	const response = await api.get(`/admin/organizations/${id}`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
 	return response.data.data || response.data;
 };
 

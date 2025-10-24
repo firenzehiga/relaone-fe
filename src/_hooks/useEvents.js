@@ -44,66 +44,6 @@ export const useEventById = (id) => {
 	});
 };
 
-/**
- * Buat event baru (admin).
- *
- * @returns {UseMutationResult} Mutation hook
- * @invalidates ["events"]
- */
-export const useCreateEventMutation = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationFn: eventService.createEvent,
-		onSuccess: () => {
-			queryClient.invalidateQueries(["events"]);
-		},
-	});
-};
-
-/**
- * Update event (admin).
- *
- * @returns {UseMutationResult} Mutation hook
- * @param {Object} variables - Parameter update
- * @param {string|number} variables.eventId - ID event
- * @param {Object} variables.payload - Data event baru
- * @invalidates ["events"]
- */
-export const useUpdateEventMutation = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationFn: ({ eventId, payload }) =>
-			eventService.updateEvent(eventId, payload),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries(["formEventPackages"]);
-			queryClient.invalidateQueries(["events"]);
-		},
-	});
-};
-
-/**
- * Hapus event (admin).
- *
- * @returns {UseMutationResult} Mutation hook
- * @invalidates ["mentorEvents"]
- * @optimisticUpdate Cache ["adminEvents"] langsung difilter
- */
-export const useDeleteEventMutation = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationFn: eventService.deleteEvent,
-		onSuccess: (_, id) => {
-			queryClient.setQueryData(["adminEvents"], (oldData) =>
-				oldData.filter((event) => event.id !== id)
-			);
-			queryClient.invalidateQueries(["mentorEvents"]);
-		},
-	});
-};
-
 export const useAdminEvents = (params = {}) => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "admin"; // supaya kalo admin login, ga fetch events
@@ -118,5 +58,79 @@ export const useAdminEvents = (params = {}) => {
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
+	});
+};
+
+export const useAdminEventById = (id) => {
+	return useQuery({
+		queryKey: ["adminEvents", id],
+		queryFn: async () => {
+			const response = await eventService.adminGetEventById(id);
+			return response;
+		},
+		enabled: !!id,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
+	});
+};
+
+/**
+ * Buat event baru (admin).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["events"]
+ */
+export const useAdminCreateEventMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: eventService.createEvent,
+		onSuccess: () => {
+			queryClient.invalidateQueries(["adminEvents"]);
+		},
+	});
+};
+
+/**
+ * Update event (admin).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @param {Object} variables - Parameter update
+ * @param {string|number} variables.eventId - ID event
+ * @param {Object} variables.payload - Data event baru
+ * @invalidates ["events"]
+ */
+export const useAdminUpdateEventMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({ eventId, payload }) =>
+			eventService.updateEvent(eventId, payload),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries(["formEventPackages"]);
+			queryClient.invalidateQueries(["adminEvents"]);
+		},
+	});
+};
+
+/**
+ * Hapus event (admin).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["mentorEvents"]
+ * @optimisticUpdate Cache ["adminEvents"] langsung difilter
+ */
+export const useAdminDeleteEventMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: eventService.deleteEvent,
+		onSuccess: (_, id) => {
+			queryClient.setQueryData(["adminEvents"], (oldData) =>
+				oldData.filter((event) => event.id !== id)
+			);
+			queryClient.invalidateQueries(["mentorEvents"]);
+		},
 	});
 };
