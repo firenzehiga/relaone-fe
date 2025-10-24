@@ -1,5 +1,5 @@
 import { MapPin, ExternalLink, Navigation, Copy } from "lucide-react";
-import Button from "./ui/Button";
+import Button from "@/components/ui/Button";
 
 export default function MapFallback({
 	latitude,

@@ -291,7 +291,7 @@ export default function Header() {
 												}}>
 												<Link
 													to="/register"
-													className="flex items-center space-x-3 px-3 py-3 text-white bg-gradient-to-r from-emerald-500 to-orange-600 hover:from-emerald-600 hover:to-orange-700 rounded-lg transition-colors duration-200 mt-2"
+													className="flex items-center space-x-3 px-3 py-3 text-white bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 rounded-lg transition-colors duration-200 mt-2"
 													onClick={() => setMobileMenuOpen(false)}>
 													<UserPlus size={20} />
 													<span className="font-medium">Daftar</span>

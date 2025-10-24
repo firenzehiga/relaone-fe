@@ -38,7 +38,7 @@ export default function LandingPage() {
 				totalVolunteers: 1240,
 				totalOrganizations: 18,
 			});
-		}, 1000);
+		}, 500);
 	}, []);
 
 	const features = [
@@ -140,7 +140,8 @@ export default function LandingPage() {
 				<div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="text-center mb-16">
 						<h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-							Mengapa Memilih VolunteerHub?
+							Mengapa Memilih Rela
+							<span className="text-emerald-500">O</span>ne?
 						</h2>
 						<p className="text-xl text-gray-600 max-w-3xl mx-auto">
 							Platform terpercaya untuk menghubungkan volunteer dengan kegiatan

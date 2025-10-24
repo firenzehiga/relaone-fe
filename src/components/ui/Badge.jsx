@@ -1,4 +1,4 @@
-import { cn } from "../../utils/cn";
+import { cn } from "@/utils/cn";
 
 /**
  * Komponen Badge untuk menampilkan label atau status dengan berbagai variant warna

@@ -1,4 +1,4 @@
-import { cn } from "../../utils/cn";
+import { cn } from "@/utils/cn";
 
 /**
  * Komponen Avatar untuk menampilkan foto profil pengguna atau inisial nama

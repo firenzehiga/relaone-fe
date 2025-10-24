@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { cn } from "../../utils/cn";
+import { cn } from "@/utils/cn";
 
 /**
  * Komponen Button yang dapat dikustomisasi dengan berbagai variant, size, dan state
