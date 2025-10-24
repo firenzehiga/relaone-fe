@@ -12,25 +12,22 @@ export default function AdminEvent() {
 	} = useAdminEvents();
 
 	// Local state for search/filter
-	const [searchTerm, setSearchTerm] = useState("");
+	const [searchEvent, setSearchEvent] = useState("");
 
 	const filteredEvents = useMemo(() => {
-		if (!searchTerm) return events;
-		const q = searchTerm.toLowerCase();
-		return events.filter((r) => {
+		if (!searchEvent) return events;
+		const query = searchEvent.toLowerCase();
+		return events.filter((eventItem) => {
+			const title = String(eventItem.judul || "").toLowerCase();
+			const description = String(eventItem.deskripsi || "").toLowerCase();
+			const location = String(eventItem.lokasi || "").toLowerCase();
 			return (
-				String(r.judul || "")
-					.toLowerCase()
-					.includes(q) ||
-				String(r.deskripsi || "")
-					.toLowerCase()
-					.includes(q) ||
-				String(r.lokasi || "")
-					.toLowerCase()
-					.includes(q)
+				title.includes(query) ||
+				description.includes(query) ||
+				location.includes(query)
 			);
 		});
-	}, [events, searchTerm]);
+	}, [events, searchEvent]);
 
 	const columns = [
 		{
@@ -88,9 +85,6 @@ export default function AdminEvent() {
 					</button>
 				</div>
 			),
-			ignoreRowClick: true,
-			allowOverflow: true,
-			button: true,
 			width: "140px",
 		},
 	];
@@ -133,8 +127,8 @@ export default function AdminEvent() {
 								<input
 									type="text"
 									placeholder="Cari judul, deskripsi, atau lokasi..."
-									value={searchTerm}
-									onChange={(e) => setSearchTerm(e.target.value)}
+									value={searchEvent}
+									onChange={(e) => setSearchEvent(e.target.value)}
 									className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
 								/>
 							</div>
