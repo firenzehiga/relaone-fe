@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import { useAdminEvents } from "@/_hooks/useEvents";
-import { Plus, Loader2 } from "lucide-react";
+import { ChevronDown, Plus, Loader2, Trash, PencilIcon } from "lucide-react";
 import Button from "@/components/ui/Button";
 
 export default function AdminEvent() {
@@ -14,7 +14,7 @@ export default function AdminEvent() {
 	// Local state for search/filter
 	const [searchTerm, setSearchTerm] = useState("");
 
-	const filtered = useMemo(() => {
+	const filteredEvents = useMemo(() => {
 		if (!searchTerm) return events;
 		const q = searchTerm.toLowerCase();
 		return events.filter((r) => {
@@ -74,6 +74,25 @@ export default function AdminEvent() {
 			sortable: true,
 			width: "220px",
 		},
+		{
+			name: "Aksi",
+			cell: (row) => (
+				<div className="flex items-center space-x-2">
+					<button className="text-sm text-yellow-600 hover:underline">
+						{" "}
+						<PencilIcon className="w-4 h-4 mr-2 hover:text-orange-00" />
+					</button>
+					<button className="text-sm text-red-500 hover:underline">
+						{" "}
+						<Trash className="w-4 h-4 mr-2 hover:text-red-600" />
+					</button>
+				</div>
+			),
+			ignoreRowClick: true,
+			allowOverflow: true,
+			button: true,
+			width: "140px",
+		},
 	];
 
 	return (
@@ -121,12 +140,16 @@ export default function AdminEvent() {
 							</div>
 							<DataTable
 								columns={columns}
-								data={filtered}
+								data={filteredEvents}
 								pagination
+								pointerOnHover
+								title=""
 								highlightOnHover
 								persistTableHead
 								responsive
-								noHeader
+								fixedHeader
+								striped
+								sortIcon={<ChevronDown />}
 								expandableRows
 								expandableRowsComponent={({ data }) => (
 									<div className="p-4 bg-gray-50 rounded-md">

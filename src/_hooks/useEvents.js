@@ -111,7 +111,7 @@ export const useAdminEvents = (params = {}) => {
 	return useQuery({
 		queryKey: ["adminEvents", params],
 		queryFn: async () => {
-			const response = await eventService.getEvents(params);
+			const response = await eventService.adminGetEvents(params);
 			return response;
 		},
 		enabled,

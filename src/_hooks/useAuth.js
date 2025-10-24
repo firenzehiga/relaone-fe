@@ -211,7 +211,7 @@ export const useLogin = () => {
 			setLoading(false);
 			const errorMessage = error.message || "Login failed";
 			setError(errorMessage);
-			toast.error(errorMessage);
+			toast.error(errorMessage, { duration: 2000 });
 		},
 	});
 };
@@ -298,7 +298,7 @@ export const useLogout = () => {
 			setLoading(false);
 			const errorMessage = error.message || "Logout failed";
 			setError(errorMessage);
-			toast.error(errorMessage);
+			toast.error(errorMessage, { duration: 2000 });
 
 			// Clear all cached data
 			queryClient.clear();

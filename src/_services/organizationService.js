@@ -1,5 +1,6 @@
 import api from "@/_api";
 
+// PUBLIC SERVICES
 /**
  * Mengambil semua organizations.
  *
@@ -26,43 +27,70 @@ export const getOrganizationById = async (id) => {
 	return response.data.data || response.data;
 };
 
+// ADMIN SERVICES
+/**
+ * Mengambil semua organizations.
+ *
+ * @async
+ * @function adminGetOrganizations
+ * @endpoint GET /admin/organizations
+ * @returns {Promise<any>} Data semua organizations.
+ */
+export const adminGetOrganizations = async (params = {}) => {
+	const response = await api.get("/admin/organizations", { params });
+	return response.data.data || response.data;
+};
+
+/** Mengambil detail organization berdasarkan ID.
+ *
+ * @async
+ * @function adminGetOrganizationById
+ * @endpoint GET /admin/organizations/{organizationId}
+ * @param {string|number} id - ID organization
+ * @returns {Promise<any>} Data detail organization
+ */
+export const adminGetOrganizationById = async (id) => {
+	const response = await api.get(`/admin/organizations/${id}`);
+	return response.data.data || response.data;
+};
+
 /** * Buat organization baru
  *
  * @async
- * @function createOrganization
- * @endpoint POST /organizations
+ * @function adminCreateOrganization
+ * @endpoint POST /admin/organizations
  * @param {Object} orgData - Data organization baru
  * @returns {Promise<any>} Data organization baru
  */
-export const createOrganization = async (orgData) => {
-	const response = await api.post("/organizations", orgData);
+export const adminCreateOrganization = async (orgData) => {
+	const response = await api.post("/admin/organizations", orgData);
 	return response.data.data || response.data;
 };
 
 /** * Update organization
  *
  * @async
- * @function updateOrganization
- * @endpoint POST method PUT /organizations/{organizationId}
+ * @function adminUpdateOrganization
+ * @endpoint POST /admin/organizations/{organizationId}
  * @param {string|number} id - ID organization
  * @param {Object} orgData - Data organization baru
  * @returns {Promise<any>} Data organization baru
  */
 
-export const updateOrganization = async (id, orgData) => {
-	const response = await api.post(`/organizations/${id}`, orgData);
+export const adminUpdateOrganization = async (id, orgData) => {
+	const response = await api.post(`/admin/organizations/${id}`, orgData);
 	return response.data.data || response.data;
 };
 
 /** * Hapus organization
  *
  * @async
- * @function deleteOrganization
- * @endpoint DELETE /organizations/{organizationId}
+ * @function adminDeleteOrganization
+ * @endpoint DELETE /admin/organizations/{organizationId}
  * @param {string|number} id - ID organization
  * @returns {Promise<any>} Data organization baru
  */
-export const deleteOrganization = async (id) => {
-	const response = await api.delete(`/organizations/${id}`);
+export const adminDeleteOrganization = async (id) => {
+	const response = await api.delete(`/admin/organizations/${id}`);
 	return response.data;
 };
