@@ -98,9 +98,21 @@ const useAuthStore = create((set, get) => ({
 	initializeAuth: async () => {
 		const token = localStorage.getItem("authToken");
 
-		// jika tidak ada token, tandai initialized dan selesai
+		// jika tidak ada token, pastikan kita tidak menampilkan data user yang kadaluarsa
 		if (!token) {
-			set({ initialized: true });
+			try {
+				localStorage.removeItem("authUser");
+			} catch (e) {
+				// ignore storage errors
+			}
+
+			// set state untuk memastikan UI tidak menggunakan role/user lama
+			set({
+				initialized: true,
+				user: null,
+				token: null,
+				isAuthenticated: false,
+			});
 			return;
 		}
 

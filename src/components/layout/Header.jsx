@@ -88,9 +88,11 @@ export default function Header() {
 	let navItems = baseNav;
 
 	// Show only role-specific menu for admin and organization
-	if (user?.role === "admin") navItems = adminNav;
-	else if (user?.role === "organization") navItems = orgNav;
-	else if (user?.role === "volunteer") navItems = baseNav;
+	// Guard by `isAuthenticated` so stale `user` data (from localStorage)
+	// doesn't affect the navigation when token is missing/expired.
+	if (isAuthenticated && user?.role === "admin") navItems = adminNav;
+	else if (isAuthenticated && user?.role === "organization") navItems = orgNav;
+	else if (isAuthenticated && user?.role === "volunteer") navItems = baseNav;
 
 	/**
 	 * Handler untuk logout user
