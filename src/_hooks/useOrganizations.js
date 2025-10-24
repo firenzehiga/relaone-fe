@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import * as organizationService from "@/_services/organizationService";
-
+import { useUserRole } from "./useAuth";
+import * as userService from "../_services/userService";
 /**
  * Ambil semua data organisasi (khusus admin).
  *
@@ -41,18 +42,57 @@ export const useOrganizationById = (id) => {
 };
 
 /**
+ * Ambil semua data organisasi (khusus admin).
+ *
+ * @returns {UseQueryResult<Array>} List organisasi
+ * @features Auto-refetch setiap 1 menit, cache 5 menit
+ */
+export const useAdminOrganizations = (params = {}) => {
+	return useQuery({
+		queryKey: ["adminOrganizations", params],
+		queryFn: async () => {
+			const response = await organizationService.adminGetOrganizations(params);
+			return response;
+		},
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
+	});
+};
+
+/**
+ * Ambil detail organization berdasarkan ID.
+ *
+ * @param {string|number} organizationId - ID organization
+ * @returns {UseQueryResult<Object>} Data detail organization
+ */
+export const useAdminOrganizationById = (id) => {
+	return useQuery({
+		queryKey: ["adminOrganizations", id],
+		queryFn: async () => {
+			const response = await organizationService.getOrganizationById(id);
+			return response;
+		},
+		enabled: !!id,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
+	});
+};
+
+/**
  * Buat organisasi baru (admin).
  *
  * @returns {UseMutationResult} Mutation hook
  * @invalidates ["organizations"]
  */
-export const useCreateOrganizationMutation = () => {
+export const useAdminCreateOrganizationMutation = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
 		mutationFn: createOrganization,
 		onSuccess: () => {
-			queryClient.invalidateQueries(["organizations"]);
+			queryClient.invalidateQueries(["adminOrganizations"]);
 		},
 	});
 };
@@ -66,7 +106,7 @@ export const useCreateOrganizationMutation = () => {
  * @param {Object} variables.payload - Data organisasi baru
  * @invalidates ["organizations"]
  */
-export const useUpdateOrganizationMutation = () => {
+export const useAdminUpdateOrganizationMutation = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
@@ -74,7 +114,7 @@ export const useUpdateOrganizationMutation = () => {
 			updateOrganization(organizationId, payload),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries(["formOrganizationPackages"]);
-			queryClient.invalidateQueries(["organizations"]);
+			queryClient.invalidateQueries(["adminOrganizations"]);
 		},
 	});
 };
@@ -86,7 +126,7 @@ export const useUpdateOrganizationMutation = () => {
  * @invalidates ["mentorOrganizations"]
  * @optimisticUpdate Cache ["adminOrganizations"] langsung difilter
  */
-export const useDeleteOrganizationMutation = () => {
+export const useAdminDeleteOrganizationMutation = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
@@ -99,3 +139,4 @@ export const useDeleteOrganizationMutation = () => {
 		},
 	});
 };
+

@@ -88,9 +88,11 @@ export default function Header() {
 	let navItems = baseNav;
 
 	// Show only role-specific menu for admin and organization
-	if (user?.role === "admin") navItems = adminNav;
-	else if (user?.role === "organization") navItems = orgNav;
-	else if (user?.role === "volunteer") navItems = baseNav;
+	// Guard by `isAuthenticated` so stale `user` data (from localStorage)
+	// doesn't affect the navigation when token is missing/expired.
+	if (isAuthenticated && user?.role === "admin") navItems = adminNav;
+	else if (isAuthenticated && user?.role === "organization") navItems = orgNav;
+	else if (isAuthenticated && user?.role === "volunteer") navItems = baseNav;
 
 	/**
 	 * Handler untuk logout user
@@ -168,10 +170,10 @@ export default function Header() {
 											initial={{ opacity: 0, y: -10 }}
 											animate={{ opacity: 1, y: 0 }}
 											exit={{ opacity: 0, y: -10 }}
-											className="absolute right-0 mt-2 w-56 bg-white/90 backdrop-blur-lg border border-gray-200/50 rounded-2xl shadow-xl py-2">
+											className="absolute right-0 mt-2 w-56 bg-white/90 backdrop-blur-lg border border-gray-200/50 rounded-2xl shadow-xl">
 											<Link
 												to="/profile"
-												className="flex items-center px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors rounded-lg mx-2"
+												className="flex items-center px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors rounded-t-xl"
 												onClick={() => setUserMenuOpen(false)}>
 												<User size={18} className="mr-3" />
 												<span className="font-medium">Profile</span>
@@ -179,16 +181,16 @@ export default function Header() {
 											{user?.role === "volunteer" && (
 												<Link
 													to="/my-registrations"
-													className="flex items-center px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors rounded-lg mx-2"
+													className="flex items-center px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors rounded-lg"
 													onClick={() => setUserMenuOpen(false)}>
 													<Calendar size={18} className="mr-3" />
 													<span className="font-medium">Pendaftaran Saya</span>
 												</Link>
 											)}
-											<hr className="my-2 border-gray-100" />
+											<hr className=" border-gray-100" />
 											<button
 												onClick={handleLogout}
-												className="flex items-center w-full px-4 py-3 text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors rounded-lg mx-2">
+												className="flex items-center w-full px-4 py-3 text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors rounded-b-xl ">
 												<LogOut size={18} className="mr-3" />
 												Logout
 											</button>
