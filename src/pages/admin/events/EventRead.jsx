@@ -37,17 +37,22 @@ export default function AdminEvent() {
 			width: "60px",
 		},
 		{
-			name: "Judul",
+			name: "Nama Event",
 			selector: (row) => row.judul || "-",
 			sortable: true,
 			wrap: true,
 			width: "300px",
 		},
 		{
+			name: "Organisasi",
+			selector: (row) => row.organization?.nama || "-",
+			sortable: true,
+			width: "220px",
+		},
+		{
 			name: "Deskripsi",
 			selector: (row) => row.deskripsi_singkat,
 			sortable: false,
-			wrap: true,
 		},
 		{
 			name: "Tanggal",
@@ -63,14 +68,9 @@ export default function AdminEvent() {
 					  )
 					: "-",
 			sortable: true,
-			width: "170px",
+			width: "150px",
 		},
-		{
-			name: "Organisasi",
-			selector: (row) => row.organization?.nama || "-",
-			sortable: true,
-			width: "220px",
-		},
+
 		{
 			name: "Aksi",
 			cell: (row) => (

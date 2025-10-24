@@ -47,7 +47,7 @@ export default function AdminOrganization() {
 		{
 			name: "Logo",
 			selector: (row) => (
-				<div className="flex items-center space-x-2">
+				<div className="flex items-center mt-1 mb-1">
 					{row.logo ? (
 						<img
 							src={row.logo}
@@ -66,7 +66,18 @@ export default function AdminOrganization() {
 		},
 		{
 			name: "Website",
-			selector: (row) => row.website || "-",
+			selector: (row) =>
+				row.website ? (
+					<a
+						href={row.website}
+						target="_blank"
+						rel="noopener noreferrer"
+						className="text-blue-600 hover:underline">
+						{row.website}
+					</a>
+				) : (
+					"-"
+				),
 			sortable: true,
 			width: "200px",
 		},

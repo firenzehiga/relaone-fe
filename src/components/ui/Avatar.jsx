@@ -64,7 +64,7 @@ export default function Avatar({
 	return (
 		<div
 			className={cn(
-				"rounded-full bg-gray-600 flex items-center justify-center text-gray-200 font-medium border-2 border-gray-600",
+				"rounded-full bg-emerald-600 flex items-center justify-center text-gray-200 font-medium border-2 border-emerald-600",
 				sizes[size],
 				className
 			)}
