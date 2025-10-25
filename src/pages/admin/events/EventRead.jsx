@@ -1,8 +1,23 @@
 import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
-import { useAdminEvents } from "@/_hooks/useEvents";
-import { ChevronDown, Plus, Loader2, Trash, PencilIcon } from "lucide-react";
+import Swal from "sweetalert2";
+import { toast } from "react-hot-toast";
+import {
+	useAdminDeleteEventMutation,
+	useAdminEvents,
+} from "@/_hooks/useEvents";
+import {
+	ChevronDown,
+	Plus,
+	Loader2,
+	Trash,
+	PencilIcon,
+	Trash2,
+	Edit2,
+	Eye,
+} from "lucide-react";
 import Button from "@/components/ui/Button";
+import ActionMenu from "@/components/ui/ActionMenu";
 
 export default function AdminEvent() {
 	const {
@@ -10,6 +25,8 @@ export default function AdminEvent() {
 		isLoading: eventsLoading,
 		error: eventsError,
 	} = useAdminEvents();
+
+	const deleteEventMutation = useAdminDeleteEventMutation();
 
 	// Local state for search/filter
 	const [searchEvent, setSearchEvent] = useState("");
@@ -28,6 +45,44 @@ export default function AdminEvent() {
 			);
 		});
 	}, [events, searchEvent]);
+
+	// Fungsi untuk menangani penghapusan kursus
+	const handleDelete = (id) => {
+		Swal.fire({
+			title: "Apa Anda yakin?",
+			text: "Kamu tidak akan bisa mengembalikan ini!",
+			showCancelButton: true,
+			confirmButtonText: "Ya, hapus!",
+			cancelButtonText: "Batal",
+			customClass: {
+				popup: "bg-white rounded-xl shadow-xl p-5 max-w-md w-full",
+				title: "text-lg font-semibold text-gray-900",
+				content: "text-sm text-gray-600 dark:text-gray-300 mt-1",
+				actions: "flex gap-3 justify-center mt-4",
+				confirmButton:
+					"px-4 py-2 focus:outline-none rounded-md bg-emerald-500 hover:bg-emerald-600 text-white",
+				cancelButton:
+					"px-4 py-2 rounded-md border border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700",
+			},
+			backdrop: true,
+		}).then((result) => {
+			if (result.isConfirmed) {
+				deleteEventMutation.mutate(id, {
+					onSuccess: () => {
+						toast.success("Event berhasil dihapus.", {
+							position: "top-center",
+						});
+					},
+					onError: (err) => {
+						// ambil pesan backend kalau ada, fallback ke err.message
+						const msg =
+							err?.response?.data?.message || "Gagal menghapus event.";
+						toast.error(msg, { position: "top-center" });
+					},
+				}); // Panggil fungsi deleteMutation dengan ID event
+			}
+		});
+	};
 
 	const columns = [
 		{
@@ -53,6 +108,7 @@ export default function AdminEvent() {
 			name: "Deskripsi",
 			selector: (row) => row.deskripsi_singkat,
 			sortable: false,
+			wrap: true,
 		},
 		{
 			name: "Tanggal",
@@ -76,11 +132,12 @@ export default function AdminEvent() {
 			cell: (row) => (
 				<div className="flex items-center space-x-2">
 					<button className="text-sm text-yellow-600 hover:underline">
-						{" "}
 						<PencilIcon className="w-4 h-4 mr-2 hover:text-orange-00" />
 					</button>
-					<button className="text-sm text-red-500 hover:underline">
-						{" "}
+					<button
+						onClick={() => handleDelete(row.id)}
+						className="text-sm text-red-500 hover:underline"
+						disabled={deleteEventMutation.isLoading}>
 						<Trash className="w-4 h-4 mr-2 hover:text-red-600" />
 					</button>
 				</div>

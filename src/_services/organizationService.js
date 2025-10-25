@@ -110,10 +110,15 @@ export const adminUpdateOrganization = async (id, orgData) => {
  */
 export const adminDeleteOrganization = async (id) => {
 	const token = localStorage.getItem("authToken");
-	const response = await api.delete(`/admin/organizations/${id}`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
-	return response.data;
+	try {
+		const response = await api.delete(`/admin/organizations/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data;
+	} catch (error) {
+		console.log("Error deleting organization:", error);
+		throw error;
+	}
 };

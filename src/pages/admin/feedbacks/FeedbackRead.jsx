@@ -1,4 +1,7 @@
-import { useAdminFeedbacks } from "@/_hooks/useFeedbacks";
+import {
+	useAdminDeleteFeedbackMutation,
+	useAdminFeedbacks,
+} from "@/_hooks/useFeedbacks";
 import {
 	ChevronDown,
 	Loader2,
@@ -7,6 +10,8 @@ import {
 	Star,
 	Trash,
 } from "lucide-react";
+import Swal from "sweetalert2";
+import { toast } from "react-hot-toast";
 import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import RatingStars from "@/components/ui/RatingStars";
@@ -18,6 +23,7 @@ export default function AdminFeedback() {
 		error: feedbacksError,
 	} = useAdminFeedbacks();
 
+	const deleteFeedbackMutation = useAdminDeleteFeedbackMutation();
 	// Local state for search/filter
 	const [searchFeedback, setSearchFeedback] = useState("");
 
@@ -30,6 +36,44 @@ export default function AdminFeedback() {
 			return user.includes(query) || event.includes(query);
 		});
 	}, [feedbacks, searchFeedback]);
+
+	// Fungsi untuk menangani penghapusan kursus
+	const handleDelete = (id) => {
+		Swal.fire({
+			title: "Apa Anda yakin?",
+			text: "Kamu tidak akan bisa mengembalikan ini!",
+			showCancelButton: true,
+			confirmButtonText: "Ya, hapus!",
+			cancelButtonText: "Batal",
+			customClass: {
+				popup: "bg-white rounded-xl shadow-xl p-5 max-w-md w-full",
+				title: "text-lg font-semibold text-gray-900",
+				content: "text-sm text-gray-600 dark:text-gray-300 mt-1",
+				actions: "flex gap-3 justify-center mt-4",
+				confirmButton:
+					"px-4 py-2 focus:outline-none rounded-md bg-emerald-500 hover:bg-emerald-600 text-white",
+				cancelButton:
+					"px-4 py-2 rounded-md border border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700",
+			},
+			backdrop: true,
+		}).then((result) => {
+			if (result.isConfirmed) {
+				deleteFeedbackMutation.mutate(id, {
+					onSuccess: () => {
+						toast.success("Feedback berhasil dihapus.", {
+							position: "top-center",
+						});
+					},
+					onError: (err) => {
+						// ambil pesan backend kalau ada, fallback ke err.message
+						const msg =
+							err?.response?.data?.message || "Gagal menghapus feedback.";
+						toast.error(msg, { position: "top-center" });
+					},
+				}); // Panggil fungsi deleteMutation dengan ID event
+			}
+		});
+	};
 
 	const columns = [
 		{
@@ -75,8 +119,10 @@ export default function AdminFeedback() {
 						{" "}
 						<PencilIcon className="w-4 h-4 mr-2 hover:text-orange-00" />
 					</button>
-					<button className="text-sm text-red-500 hover:underline">
-						{" "}
+					<button
+						onClick={() => handleDelete(row.id)}
+						className="text-sm text-red-500 hover:underline"
+						disabled={deleteFeedbackMutation.isLoading}>
 						<Trash className="w-4 h-4 mr-2 hover:text-red-600" />
 					</button>
 				</div>
@@ -89,9 +135,7 @@ export default function AdminFeedback() {
 		<div className="py-8 page-transition">
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="mb-6">
-					<h1 className="text-2xl font-bold text-gray-900">
-						Admin Feedback List
-					</h1>
+					<h1 className="text-2xl font-bold text-gray-900">Data Feedback</h1>
 					<p className="text-gray-600">Kelola data feedback di sini</p>
 				</div>
 

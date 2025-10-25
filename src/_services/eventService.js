@@ -116,10 +116,14 @@ export const adminUpdateEvent = async (id, eventData) => {
  */
 export const adminDeleteEvent = async (id) => {
 	const token = localStorage.getItem("authToken");
-	const response = await api.delete(`/admin/events/${id}`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
-	return response.data.data || response.data;
+	try {
+		await api.delete(`/admin/events/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	} catch (error) {
+		console.log("Error deleting event:", error);
+		throw error;
+	}
 };

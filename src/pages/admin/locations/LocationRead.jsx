@@ -1,5 +1,10 @@
-import { useAdminLocations } from "@/_hooks/useLocations";
+import {
+	useAdminDeleteLocationMutation,
+	useAdminLocations,
+} from "@/_hooks/useLocations";
 import Button from "@/components/ui/Button";
+import Swal from "sweetalert2";
+import { toast } from "react-hot-toast";
 import { ChevronDown, Loader2, PencilIcon, Plus, Trash } from "lucide-react";
 import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
@@ -10,6 +15,8 @@ export default function AdminLocation() {
 		isLoading: locationsLoading,
 		error: locationsError,
 	} = useAdminLocations();
+
+	const deleteLocationMutation = useAdminDeleteLocationMutation();
 
 	// Local state for search/filter
 	const [searchLocation, setSearchLocation] = useState("");
@@ -28,6 +35,44 @@ export default function AdminLocation() {
 			);
 		});
 	}, [locations, searchLocation]);
+
+	// Fungsi untuk menangani penghapusan kursus
+	const handleDelete = (id) => {
+		Swal.fire({
+			title: "Apa Anda yakin?",
+			text: "Kamu tidak akan bisa mengembalikan ini!",
+			showCancelButton: true,
+			confirmButtonText: "Ya, hapus!",
+			cancelButtonText: "Batal",
+			customClass: {
+				popup: "bg-white rounded-xl shadow-xl p-5 max-w-md w-full",
+				title: "text-lg font-semibold text-gray-900",
+				content: "text-sm text-gray-600 dark:text-gray-300 mt-1",
+				actions: "flex gap-3 justify-center mt-4",
+				confirmButton:
+					"px-4 py-2 focus:outline-none rounded-md bg-emerald-500 hover:bg-emerald-600 text-white",
+				cancelButton:
+					"px-4 py-2 rounded-md border border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700",
+			},
+			backdrop: true,
+		}).then((result) => {
+			if (result.isConfirmed) {
+				deleteLocationMutation.mutate(id, {
+					onSuccess: () => {
+						toast.success("Location berhasil dihapus.", {
+							position: "top-center",
+						});
+					},
+					onError: (err) => {
+						// ambil pesan backend kalau ada, fallback ke err.message
+						const msg =
+							err?.response?.data?.message || "Gagal menghapus location.";
+						toast.error(msg, { position: "top-center" });
+					},
+				}); // Panggil fungsi deleteMutation dengan ID event
+			}
+		});
+	};
 
 	const columns = [
 		{
@@ -70,8 +115,10 @@ export default function AdminLocation() {
 						{" "}
 						<PencilIcon className="w-4 h-4 mr-2 hover:text-orange-00" />
 					</button>
-					<button className="text-sm text-red-500 hover:underline">
-						{" "}
+					<button
+						onClick={() => handleDelete(row.id)}
+						className="text-sm text-red-500 hover:underline"
+						disabled={deleteLocationMutation.isConfirmed}>
 						<Trash className="w-4 h-4 mr-2 hover:text-red-600" />
 					</button>
 				</div>
@@ -84,9 +131,7 @@ export default function AdminLocation() {
 		<div className="py-8 page-transition">
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="mb-6">
-					<h1 className="text-2xl font-bold text-gray-900">
-						Admin Location List
-					</h1>
+					<h1 className="text-2xl font-bold text-gray-900">Data Lokasi</h1>
 					<p className="text-gray-600">Kelola data lokasi di sini</p>
 				</div>
 

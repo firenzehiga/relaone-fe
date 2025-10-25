@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as eventParticipantService from "@/_services/eventParticipantService";
 import { useUserRole } from "./useAuth";
 
 /** PUBLIC HOOKS
- * 
+ *
  * Hook untuk mengambil data event participants
  * @param {Object} params - Query parameters untuk filtering
  * @returns {Object} Query result dengan data, isLoading, error, etc
@@ -26,26 +26,44 @@ export const useParticipants = (params = {}) => {
 };
 
 /** ADMIN HOOKS
- * 
+ *
  * Hook untuk mengambil data event participants hanya untuk admin
- * @param {Object} params - Query parameters untuk filtering
  * @returns {Object} Query result dengan data, isLoading, error, etc
  */
-export const useAdminParticipants = (params = {}) => {
+export const useAdminParticipants = () => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "admin"; // agar jika admin login, tidak fetch event participants
 
 	return useQuery({
-		queryKey: ["adminParticipants", params],
+		queryKey: ["adminParticipants"],
 		queryFn: async () => {
-			const response = await eventParticipantService.adminGetParticipants(
-				params
-			);
+			const response = await eventParticipantService.adminGetParticipants();
 			return response;
 		},
 		enabled,
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
+	});
+};
+
+/**
+ * Hapus participant (admin).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["adminParticipants"]
+ * @optimisticUpdate Cache ["adminParticipants"] langsung difilter
+ */
+export const useAdminDeleteParticipantMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: eventParticipantService.adminDeleteParticipant,
+		onSuccess: (_, id) => {
+			queryClient.setQueryData(["adminParticipants"], (oldData) =>
+				oldData.filter((participant) => participant.id !== id)
+			);
+			queryClient.invalidateQueries(["adminParticipants"]);
+		},
 	});
 };

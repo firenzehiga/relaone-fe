@@ -48,17 +48,16 @@ export const useEventById = (id) => {
 // === ADMIN HOOKS ===
 /**
  * Hook untuk mengambil data events (admin)
- * @param {Object} params - Query parameters untuk filtering
  * @returns {Object} Query result dengan data, isLoading, error, etc
  */
-export const useAdminEvents = (params = {}) => {
+export const useAdminEvents = () => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "admin"; // supaya kalo admin login, ga fetch events
 
 	return useQuery({
-		queryKey: ["adminEvents", params],
+		queryKey: ["adminEvents"],
 		queryFn: async () => {
-			const response = await eventService.adminGetEvents(params);
+			const response = await eventService.adminGetEvents();
 			return response;
 		},
 		enabled,
@@ -70,7 +69,6 @@ export const useAdminEvents = (params = {}) => {
 
 /**
  * Hook untuk mengambil data events berdasarkan ID (admin)
- * @param {Object} params - Query parameters untuk filtering
  * @returns {Object} Query result dengan data, isLoading, error, etc
  */
 export const useAdminEventById = (id) => {
@@ -140,12 +138,12 @@ export const useAdminDeleteEventMutation = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: eventService.deleteEvent,
+		mutationFn: eventService.adminDeleteEvent,
 		onSuccess: (_, id) => {
 			queryClient.setQueryData(["adminEvents"], (oldData) =>
 				oldData.filter((event) => event.id !== id)
 			);
-			queryClient.invalidateQueries(["mentorEvents"]);
+			queryClient.invalidateQueries(["adminEvents"]);
 		},
 	});
 };

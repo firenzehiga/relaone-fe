@@ -3,7 +3,7 @@ import * as userService from "../_services/userService";
 import { useUserRole } from "./useAuth";
 
 // === PUBLIC HOOKS ===
-/** 
+/**
  *
  * Hook untuk mengambil data profile user saat ini
  * @param {Object} params - Query parameters untuk filtering
@@ -21,7 +21,7 @@ import { useUserRole } from "./useAuth";
 // 	});
 // };
 
-/** 
+/**
  * Hook untuk mengambil data pendaftaran user saat ini
  */
 // export const useUserRegistrations = () => {
@@ -37,19 +37,18 @@ import { useUserRole } from "./useAuth";
 // };
 
 // === ADMIN HOOKS ===
-/** 
+/**
  * Hook untuk mengambil data semua users (khusus admin)
- * @param {Object} params - Query parameters untuk filtering
  * @returns {Object} Query result dengan data, isLoading, error, etc
  */
-export const useAdminUsers = (params = {}) => {
+export const useAdminUsers = () => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "admin";
 
 	return useQuery({
-		queryKey: ["adminUsers", params],
+		queryKey: ["adminUsers"],
 		queryFn: async () => {
-			const response = await userService.adminGetUsers(params);
+			const response = await userService.adminGetUsers();
 			return response;
 		},
 		enabled,

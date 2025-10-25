@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as organizationService from "@/_services/organizationService";
 import { useUserRole } from "./useAuth";
 
@@ -47,13 +47,13 @@ export const useOrganizationById = (id) => {
  * @returns {UseQueryResult<Array>} List organisasi
  * @features Auto-refetch setiap 1 menit, cache 5 menit
  */
-export const useAdminOrganizations = (params = {}) => {
+export const useAdminOrganizations = () => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "admin";
 	return useQuery({
-		queryKey: ["adminOrganizations", params],
+		queryKey: ["adminOrganizations"],
 		queryFn: async () => {
-			const response = await organizationService.adminGetOrganizations(params);
+			const response = await organizationService.adminGetOrganizations();
 			return response;
 		},
 		enabled,
@@ -135,12 +135,12 @@ export const useAdminDeleteOrganizationMutation = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: deleteOrganization,
+		mutationFn: organizationService.adminDeleteOrganization,
 		onSuccess: (_, id) => {
 			queryClient.setQueryData(["adminOrganizations"], (oldData) =>
 				oldData.filter((organization) => organization.id !== id)
 			);
-			queryClient.invalidateQueries(["mentorOrganizations"]);
+			queryClient.invalidateQueries(["adminOrganizations"]);
 		},
 	});
 };
