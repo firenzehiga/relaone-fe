@@ -9,13 +9,14 @@ import {
 	User,
 	ArrowLeft,
 	Heart,
-	Users,
+	UserSearch,
+	HouseHeart,
 	Phone,
 	Calendar,
-	MapPin,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { useRegister, useAuthStore } from "@/_hooks/useAuth";
+import { RegisterIllustration } from "@/components/common/Illustration";
 
 export default function RegisterPage() {
 	const [formData, setFormData] = useState({
@@ -113,90 +114,7 @@ export default function RegisterPage() {
 	return (
 		<div className="min-h-screen flex">
 			{/* Left Side - Illustration */}
-			<motion.div
-				initial={{ opacity: 0, x: -50 }}
-				animate={{ opacity: 1, x: 0 }}
-				transition={{ duration: 0.6 }}
-				className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 relative overflow-hidden">
-				<div className="absolute inset-0 bg-black/10"></div>
-				<div className="relative z-10 flex flex-col justify-center items-center p-12 text-white text-center">
-					<motion.div
-						initial={{ scale: 0.8, opacity: 0 }}
-						animate={{ scale: 1, opacity: 1 }}
-						transition={{ delay: 0.3, duration: 0.5 }}
-						className="mb-8">
-						{/* Community Illustration */}
-						<div className="w-64 h-64 bg-white/20 rounded-full flex items-center justify-center mb-8 backdrop-blur-sm">
-							<div className="relative">
-								{/* Group of People */}
-								<div className="flex items-center justify-center space-x-4">
-									{/* Person 1 */}
-									<div className="w-16 h-16 bg-yellow-400 rounded-full relative">
-										{/* Eyes */}
-										<div className="absolute top-4 left-3 w-2 h-2 bg-white rounded-full"></div>
-										<div className="absolute top-4 right-3 w-2 h-2 bg-white rounded-full"></div>
-										{/* Smile */}
-										<div className="absolute top-7 left-1/2 transform -translate-x-1/2 w-4 h-2 border-b-2 border-white rounded-full"></div>
-									</div>
-
-									{/* Person 2 (Center - Larger) */}
-									<div className="w-20 h-20 bg-pink-400 rounded-full relative">
-										{/* Eyes */}
-										<div className="absolute top-5 left-4 w-2 h-2 bg-white rounded-full"></div>
-										<div className="absolute top-5 right-4 w-2 h-2 bg-white rounded-full"></div>
-										{/* Smile */}
-										<div className="absolute top-9 left-1/2 transform -translate-x-1/2 w-5 h-2 border-b-2 border-white rounded-full"></div>
-									</div>
-
-									{/* Person 3 */}
-									<div className="w-16 h-16 bg-blue-400 rounded-full relative">
-										{/* Eyes */}
-										<div className="absolute top-4 left-3 w-2 h-2 bg-white rounded-full"></div>
-										<div className="absolute top-4 right-3 w-2 h-2 bg-white rounded-full"></div>
-										{/* Smile */}
-										<div className="absolute top-7 left-1/2 transform -translate-x-1/2 w-4 h-2 border-b-2 border-white rounded-full"></div>
-									</div>
-								</div>
-
-								{/* Hearts floating around */}
-								<div className="absolute -top-4 left-8 w-3 h-3 bg-red-400 transform rotate-45 rounded-sm"></div>
-								<div className="absolute -top-2 right-8 w-2 h-2 bg-pink-300 transform rotate-45 rounded-sm"></div>
-								<div className="absolute -bottom-4 left-12 w-4 h-4 bg-red-300 transform rotate-45 rounded-sm"></div>
-							</div>
-						</div>
-					</motion.div>
-
-					<motion.h1
-						initial={{ y: 20, opacity: 0 }}
-						animate={{ y: 0, opacity: 1 }}
-						transition={{ delay: 0.5, duration: 0.5 }}
-						className="text-4xl font-bold mb-4">
-						Gabung ke komunitas kami!
-					</motion.h1>
-					<motion.p
-						initial={{ y: 20, opacity: 0 }}
-						animate={{ y: 0, opacity: 1 }}
-						transition={{ delay: 0.7, duration: 0.5 }}
-						className="text-xl opacity-90 mb-8">
-						membangun relasi dengan relawan hebat
-					</motion.p>
-					<motion.p
-						initial={{ y: 20, opacity: 0 }}
-						animate={{ y: 0, opacity: 1 }}
-						transition={{ delay: 0.9, duration: 0.5 }}
-						className="text-lg opacity-80">
-						Mulai perjalanan relawan Anda hari ini dan buat koneksi yang
-						berarti!
-					</motion.p>
-				</div>
-
-				{/* Decorative Elements */}
-				<div className="absolute top-20 left-20 w-4 h-4 bg-white/30 rounded-full animate-pulse"></div>
-				<div className="absolute top-40 right-32 w-6 h-6 bg-white/20 rounded-full animate-pulse delay-1000"></div>
-				<div className="absolute bottom-32 left-16 w-8 h-8 bg-white/25 rounded-full animate-pulse delay-500"></div>
-				<div className="absolute bottom-20 right-20 w-3 h-3 bg-white/40 rounded-full animate-pulse delay-700"></div>
-			</motion.div>
-
+			<RegisterIllustration />
 			{/* Right Side - Register Form */}
 			<div
 				initial={{ opacity: 0, x: 50 }}
@@ -248,7 +166,7 @@ export default function RegisterPage() {
 										name="nama"
 										value={formData.nama}
 										onChange={handleInputChange}
-										className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+										className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 										placeholder="John Doe"
 										disabled={isLoading}
 										required
@@ -271,7 +189,7 @@ export default function RegisterPage() {
 										name="email"
 										value={formData.email}
 										onChange={handleInputChange}
-										className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+										className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 										placeholder="your@example.com"
 										disabled={isLoading}
 										required
@@ -279,27 +197,66 @@ export default function RegisterPage() {
 								</div>
 							</div>
 
-							{/* Role */}
+							{/* Role (grouped radios for accessibility) */}
 							<div className="md:col-span-2">
-								<label
-									htmlFor="role"
-									className="block text-sm font-medium text-gray-700 mb-1">
-									Bergabung sebagai *
-								</label>
-								<div className="relative">
-									<Users className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-									<select
-										id="role"
-										name="role"
-										value={formData.role}
-										onChange={handleInputChange}
-										className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none disabled:bg-gray-50 disabled:cursor-not-allowed"
-										disabled={isLoading}
-										required>
-										<option value="volunteer">Volunteer</option>
-										<option value="organization">Organization</option>
-									</select>
-								</div>
+								<fieldset className="space-y-2">
+									<legend className="block text-sm font-medium text-gray-700 mb-1">
+										Bergabung sebagai *
+									</legend>
+
+									<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+										{/* Volunteer option (input as sibling to label so peer styling works) */}
+										<div>
+											<input
+												type="radio"
+												id="volunteer-option"
+												name="role"
+												value="volunteer"
+												checked={formData.role === "volunteer"}
+												onChange={handleInputChange}
+												className="hidden peer"
+												disabled={isLoading}
+												required
+											/>
+											<label
+												htmlFor="volunteer-option"
+												className="inline-flex items-center justify-between w-full p-2 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-sky-500 hover:text-gray-600 peer-checked:text-gray-600 hover:bg-gray-50">
+												<div className="flex items-center gap-3">
+													<div className="flex items-center gap-3">
+														<UserSearch className="w-7 h-7 text-sky-500" />
+														<div className="w-full text-lg font-semibold">
+															Relawan
+														</div>
+													</div>
+												</div>
+											</label>
+										</div>
+
+										{/* Organization option */}
+										<div>
+											<input
+												type="radio"
+												id="organization-option"
+												name="role"
+												value="organization"
+												checked={formData.role === "organization"}
+												onChange={handleInputChange}
+												className="hidden peer"
+												disabled={isLoading}
+											/>
+											<label
+												htmlFor="organization-option"
+												className="inline-flex items-center justify-between w-full p-2 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-sky-500 hover:text-gray-600 peer-checked:text-gray-600 hover:bg-gray-50">
+												<div className="flex items-center gap-3">
+													<HouseHeart className="w-7 h-7 text-sky-500" />
+													<div className="w-full text-lg font-semibold">
+														Organisasi
+													</div>
+												</div>
+											</label>
+										</div>
+									</div>
+								</fieldset>
 							</div>
 
 							{/* Password */}
@@ -317,7 +274,7 @@ export default function RegisterPage() {
 										name="password"
 										value={formData.password}
 										onChange={handleInputChange}
-										className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+										className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 										placeholder="••••••••"
 										disabled={isLoading}
 										minLength={8}
@@ -352,7 +309,7 @@ export default function RegisterPage() {
 										name="password_confirmation"
 										value={formData.password_confirmation}
 										onChange={handleInputChange}
-										className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+										className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 										placeholder="••••••••"
 										disabled={isLoading}
 										required
@@ -400,8 +357,8 @@ export default function RegisterPage() {
 												name="telepon"
 												value={formData.telepon}
 												onChange={handleInputChange}
-												className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
-												placeholder="+62 812 3456 7890"
+												className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+												placeholder="081xxxxxxxxx"
 												disabled={isLoading}
 											/>
 										</div>
@@ -422,7 +379,7 @@ export default function RegisterPage() {
 												name="tanggal_lahir"
 												value={formData.tanggal_lahir}
 												onChange={handleInputChange}
-												className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+												className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 												disabled={isLoading}
 											/>
 										</div>
@@ -441,8 +398,8 @@ export default function RegisterPage() {
 												name="alamat"
 												value={formData.alamat}
 												onChange={handleInputChange}
-												placeholder="alamat"
-												className="w-full pl-3 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+												placeholder="Alamat lengkap"
+												className="w-full pl-3 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 												disabled={isLoading}
 											/>
 										</div>

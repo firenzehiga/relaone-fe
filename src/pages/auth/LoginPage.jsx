@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, ArrowLeft, Heart } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { useLogin, useAuthStore } from "@/_hooks/useAuth";
+import { LoginIllustration } from "@/components/common/Illustration";
 
 export default function LoginPage() {
 	const [formData, setFormData] = useState({
@@ -42,81 +43,7 @@ export default function LoginPage() {
 	return (
 		<div className="min-h-screen flex">
 			{/* Left Side - Illustration */}
-			<motion.div
-				initial={{ opacity: 0, x: -50 }}
-				animate={{ opacity: 1, x: 0 }}
-				transition={{ duration: 0.6 }}
-				className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-emerald-400 via-purple-500 to-pink-400 relative overflow-hidden">
-				<div className="absolute inset-0 bg-black/10"></div>
-				<div className="relative z-10 flex flex-col justify-center items-center p-12 text-white text-center">
-					<motion.div
-						initial={{ scale: 0.8, opacity: 0 }}
-						animate={{ scale: 1, opacity: 1 }}
-						transition={{ delay: 0.3, duration: 0.5 }}
-						className="mb-8">
-						{/* Cute Volunteer Illustration */}
-						<div className="w-64 h-64 bg-white/20 rounded-full flex items-center justify-center mb-8 backdrop-blur-sm">
-							<div className="relative">
-								{/* Cat Character */}
-								<div className="w-32 h-32 bg-orange-400 rounded-full relative">
-									{/* Ears */}
-									<div className="absolute -top-4 left-6 w-6 h-8 bg-orange-400 rounded-full transform rotate-12"></div>
-									<div className="absolute -top-4 right-6 w-6 h-8 bg-orange-400 rounded-full transform -rotate-12"></div>
-									{/* Eyes */}
-									<div className="absolute top-8 left-8 w-4 h-4 bg-white rounded-full">
-										<div className="w-2 h-2 bg-black rounded-full mt-1 ml-1"></div>
-									</div>
-									<div className="absolute top-8 right-8 w-4 h-4 bg-white rounded-full">
-										<div className="w-2 h-2 bg-black rounded-full mt-1 ml-1"></div>
-									</div>
-									{/* Nose */}
-									<div className="absolute top-12 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-pink-300 rounded-full"></div>
-									{/* Mouth */}
-									<div className="absolute top-14 left-1/2 transform -translate-x-1/2 w-6 h-2 border-b-2 border-white rounded-full"></div>
-									{/* Whiskers */}
-									<div className="absolute top-11 left-2 w-6 h-0.5 bg-white rounded"></div>
-									<div className="absolute top-13 left-2 w-6 h-0.5 bg-white rounded"></div>
-									<div className="absolute top-11 right-2 w-6 h-0.5 bg-white rounded"></div>
-									<div className="absolute top-13 right-2 w-6 h-0.5 bg-white rounded"></div>
-								</div>
-								{/* Arms */}
-								<div className="absolute -bottom-2 -left-4 w-8 h-12 bg-orange-400 rounded-full transform rotate-12"></div>
-								<div className="absolute -bottom-2 -right-4 w-8 h-12 bg-orange-400 rounded-full transform -rotate-12"></div>
-							</div>
-						</div>
-					</motion.div>
-
-					<motion.h1
-						initial={{ y: 20, opacity: 0 }}
-						animate={{ y: 0, opacity: 1 }}
-						transition={{ delay: 0.5, duration: 0.5 }}
-						className="text-4xl font-bold mb-4">
-						Selamat Datang!
-					</motion.h1>
-					<motion.p
-						initial={{ y: 20, opacity: 0 }}
-						animate={{ y: 0, opacity: 1 }}
-						transition={{ delay: 0.7, duration: 0.5 }}
-						className="text-xl opacity-90 mb-8">
-						Komunitas relawan ada di sini!
-					</motion.p>
-					<motion.p
-						initial={{ y: 20, opacity: 0 }}
-						animate={{ y: 0, opacity: 1 }}
-						transition={{ delay: 0.9, duration: 0.5 }}
-						className="text-lg opacity-80">
-						Bergabung ke komunitas relawan sekarang dan mulai berkontribusi
-						untuk mengubah dunia!
-					</motion.p>
-				</div>
-
-				{/* Decorative Elements */}
-				<div className="absolute top-20 left-20 w-4 h-4 bg-white/30 rounded-full animate-pulse"></div>
-				<div className="absolute top-40 right-32 w-6 h-6 bg-white/20 rounded-full animate-pulse delay-1000"></div>
-				<div className="absolute bottom-32 left-16 w-8 h-8 bg-white/25 rounded-full animate-pulse delay-500"></div>
-				<div className="absolute bottom-20 right-20 w-3 h-3 bg-white/40 rounded-full animate-pulse delay-700"></div>
-			</motion.div>
-
+			<LoginIllustration />
 			{/* Right Side - Login Form */}
 			<div
 				initial={{ opacity: 0, x: 50 }}
@@ -164,7 +91,7 @@ export default function LoginPage() {
 									name="email"
 									value={formData.email}
 									onChange={handleInputChange}
-									className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+									className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 									placeholder="your@example.com"
 									disabled={isLoading}
 									required
@@ -187,7 +114,7 @@ export default function LoginPage() {
 									name="password"
 									value={formData.password}
 									onChange={handleInputChange}
-									className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+									className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 									placeholder="••••••••"
 									disabled={isLoading}
 									required

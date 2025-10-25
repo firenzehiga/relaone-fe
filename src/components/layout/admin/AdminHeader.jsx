@@ -16,7 +16,6 @@ import {
 	Users,
 	MapPin,
 	User2,
-	ShieldCheck,
 	ChevronDown,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
@@ -179,6 +178,13 @@ export default function AdminHeader() {
 									onClick={() => setUserMenuOpen(!userMenuOpen)}
 									className="flex items-center space-x-2 p-2 rounded-xl hover:bg-emerald-50 transition-colors">
 									<Avatar src={user?.avatar} fallback={user?.nama} size="sm" />
+									<span className="text-sm font-medium text-gray-700 hidden sm:block">
+										{user?.nama}
+									</span>
+									<ChevronDown
+										size={16}
+										className="text-gray-500 hidden sm:block"
+									/>
 								</button>
 
 								<AnimatePresence>
@@ -187,30 +193,31 @@ export default function AdminHeader() {
 											initial={{ opacity: 0, y: -10 }}
 											animate={{ opacity: 1, y: 0 }}
 											exit={{ opacity: 0, y: -10 }}
-											className="absolute right-0 mt-2 w-56 bg-white/90 backdrop-blur-lg border border-gray-200/50 rounded-2xl shadow-xl">
-											<Link
-												to="/profile"
-												className="flex items-center px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors rounded-t-xl"
-												onClick={() => setUserMenuOpen(false)}>
-												<User size={18} className="mr-3" />
-												<span className="font-medium">Profile</span>
-											</Link>
-											{user?.role === "volunteer" && (
-												<Link
-													to="/my-registrations"
-													className="flex items-center px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors rounded-lg"
-													onClick={() => setUserMenuOpen(false)}>
-													<Calendar size={18} className="mr-3" />
-													<span className="font-medium">Pendaftaran Saya</span>
-												</Link>
-											)}
-											<hr className=" border-gray-100" />
-											<button
-												onClick={handleLogout}
-												className="flex items-center w-full px-4 py-3 text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors rounded-b-xl ">
-												<LogOut size={18} className="mr-3" />
-												Logout
-											</button>
+											className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+											<div className="p-3 border-b border-gray-100">
+												<p className="text-sm font-medium text-gray-800">
+													{user?.nama}
+												</p>
+												<p className="text-xs text-gray-500">{user?.email}</p>
+											</div>
+											<div className="p-2">
+												<button className="flex items-center gap-3 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+													<User size={16} />
+													<span>Profile</span>
+												</button>
+												<button className="flex items-center gap-3 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+													<Settings size={16} />
+													<span>Settings</span>
+												</button>
+											</div>
+											<div className="p-2 border-t border-gray-100">
+												<button
+													onClick={handleLogout}
+													className="flex items-center gap-3 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors">
+													<LogOut size={16} />
+													<span>Logout</span>
+												</button>
+											</div>
 										</motion.div>
 									)}
 								</AnimatePresence>
