@@ -17,7 +17,7 @@ export default function AdminEventParticipant() {
 	const filteredParticipants = useMemo(() => {
 		if (!searchParticipant) return participants;
 		const query = searchParticipant.toLowerCase();
-		return participants.filter((participantItem => {
+		return participants.filter((participantItem) => {
 			const peserta = String(participantItem.user?.nama || "").toLowerCase();
 			const event = String(participantItem.event?.judul || "").toLowerCase();
 			const status = String(participantItem.status || "").toLowerCase();
@@ -26,7 +26,7 @@ export default function AdminEventParticipant() {
 				event.includes(query) ||
 				status.includes(query)
 			);
-		}))
+		});
 	}, [participants, searchParticipant]);
 
 	const columns = [
@@ -90,10 +90,12 @@ export default function AdminEventParticipant() {
 	];
 
 	return (
-		<div className="py-8">
+		<div className="py-8 page-transition">
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="mb-6">
-					<h1 className="text-2xl font-bold text-gray-900">Admin Participant List</h1>
+					<h1 className="text-2xl font-bold text-gray-900">
+						Admin Participant List
+					</h1>
 					<p className="text-gray-600">Kelola data partisipan di sini</p>
 				</div>
 
@@ -151,35 +153,32 @@ export default function AdminEventParticipant() {
 											<strong>Nama peserta:</strong> {data.user?.nama || "-"}
 										</p>
 										<p className="text-sm text-gray-600">
-											<strong>Event yang diikuti:</strong> {data.event?.judul || "-"}
+											<strong>Event yang diikuti:</strong>{" "}
+											{data.event?.judul || "-"}
 										</p>
 										<p className="text-sm text-gray-600">
-											<strong>Tanggal daftar:</strong> {
-												data.tanggal_daftar
-												? new Date(data.tanggal_daftar.replace(" ", "T")).toLocaleDateString(
-														"id-ID",
-														{
-															day: "numeric",
-															month: "long",
-															year: "numeric",
-														}
-												)
-												: "-"
-											}
+											<strong>Tanggal daftar:</strong>{" "}
+											{data.tanggal_daftar
+												? new Date(
+														data.tanggal_daftar.replace(" ", "T")
+												  ).toLocaleDateString("id-ID", {
+														day: "numeric",
+														month: "long",
+														year: "numeric",
+												  })
+												: "-"}
 										</p>
 										<p className="text-sm text-gray-600">
-											<strong>Tanggal Konfirmasi:</strong> {
-												data.tanggal_konfirmasi
-												? new Date(data.tanggal_konfirmasi.replace(" ", "T")).toLocaleDateString(
-														"id-ID",
-														{
-															day: "numeric",
-															month: "long",
-															year: "numeric",
-														}
-												)
-												: "Belum dikonfirmasi"
-											}
+											<strong>Tanggal Konfirmasi:</strong>{" "}
+											{data.tanggal_konfirmasi
+												? new Date(
+														data.tanggal_konfirmasi.replace(" ", "T")
+												  ).toLocaleDateString("id-ID", {
+														day: "numeric",
+														month: "long",
+														year: "numeric",
+												  })
+												: "Belum dikonfirmasi"}
 										</p>
 										<p className="text-sm text-gray-600 mt-2">
 											<strong>Catatan:</strong>

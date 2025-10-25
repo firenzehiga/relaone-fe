@@ -47,7 +47,7 @@ export default function AdminUser() {
 		{
 			name: "Foto Profil",
 			selector: (row) => (
-				<div className="flex items-center space-x-2">
+				<div className="flex items-center space-x-2 mt-1 mb-1">
 					{row.foto_profil ? (
 						<img
 							src={row.foto_profil}
@@ -99,44 +99,54 @@ export default function AdminUser() {
 	];
 
 	return (
-		<div className="py-8">
+		<div className="py-8 page-transition">
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="mb-6">
-					<h1 className="text-2xl font-bold text-gray-900">Data Pengguna</h1>
-					<p className="text-gray-600">Kelola data pengguna di sini</p>
+					<h1 className="text-lg md:text-2xl font-bold text-gray-900 sm:text-md">
+						Data Pengguna
+					</h1>
+					<p className="text-sm md:text-base text-gray-600">
+						Kelola data pengguna di sini
+					</p>
 				</div>
 
-				<div className="bg-white rounded-lg shadow p-6">
+				<div className="bg-white rounded-lg shadow p-4 sm:p-6">
 					<div className="flex justify-between items-center mb-4">
-						<h2 className="text-lg font-semibold">Daftar Pengguna</h2>
-						<Button variant="success" size="sm">
-							<Plus className="w-4 h-4 mr-2" /> Tambah Pengguna
+						<h2 className="text-base md:text-lg font-semibold">
+							Daftar Pengguna
+						</h2>
+						<Button
+							variant="success"
+							size="sm"
+							className="px-2 py-1 text-xs md:px-3 md:py-2 md:text-sm">
+							<Plus className="w-3 h-3 md:w-4 md:h-4 mr-2" /> Tambah Pengguna
 						</Button>
 					</div>
 
 					{usersLoading ? (
-						<div className="flex h-96 justify-center py-20">
-							{" "}
-							<Loader2 className="animate-spin h-7 w-7 text-emerald-600" />
+						<div className="flex h-72 md:h-96 justify-center py-20">
+							<Loader2 className="animate-spin h-6 w-6 md:h-7 md:w-7 text-emerald-600" />
 						</div>
 					) : usersError ? (
-						<div className="text-red-600">
+						<div className="text-red-600 text-sm">
 							Error loading users: {usersError.message}
 						</div>
 					) : users.length === 0 ? (
 						<div className="flex flex-col items-center justify-center h-48 text-gray-600">
-							<h3 className="text-lg font-semibold mb-2">No users Available</h3>
-							<p className="text-gray-500">Belum ada data pengguna.</p>
+							<h3 className="text-base md:text-lg font-semibold mb-2">
+								No users Available
+							</h3>
+							<p className="text-sm md:text-base">Belum ada data pengguna.</p>
 						</div>
 					) : (
 						<>
-							<div className="w-80 mb-4">
+							<div className="w-full md:w-80 mb-4">
 								<input
 									type="text"
 									placeholder="Cari nama, email, atau jenis kelamin..."
 									value={searchUser}
 									onChange={(e) => setSearchUser(e.target.value)}
-									className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
+									className="border border-gray-300 rounded-md px-3 py-2 text-sm md:text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
 								/>
 							</div>
 							<DataTable
@@ -153,7 +163,7 @@ export default function AdminUser() {
 								sortIcon={<ChevronDown />}
 								expandableRows
 								expandableRowsComponent={({ data }) => (
-									<div className="p-4 bg-gray-50 rounded-md">
+									<div className="p-3 md:p-4 bg-gray-50 rounded-md text-sm md:text-base">
 										<p className="text-sm text-gray-600">
 											<strong>Alamat:</strong> {data?.alamat || "-"}
 										</p>

@@ -65,6 +65,8 @@ import OrganizationFeedback from "@/pages/organization/feedbacks/FeedbackRead";
 import OrganizationLocation from "@/pages/organization/locations/LocationRead";
 import OrganizationLocationCreate from "@/pages/organization/locations/LocationCreate";
 import OrganizationLocationEdit from "@/pages/organization/locations/LocationEdit";
+import AdminLayout from "./layout/AdminLayout";
+import { ScrollToTop } from "./components/common/ScrollToTop";
 /**
  * Komponen utama aplikasi volunteer platform
  * Mengatur routing dengan layout yang menggunakan Outlet
@@ -75,9 +77,15 @@ import OrganizationLocationEdit from "@/pages/organization/locations/LocationEdi
 function App() {
 	return (
 		<>
+			<ScrollToTop />
 			<Routes>
 				{/* PUBLIC ROUTES (bareng volunteer nanti) */}
-				<Route element={<MainLayout />}>
+				<Route
+					element={
+						<VolunteerRoute>
+							<MainLayout />
+						</VolunteerRoute>
+					}>
 					<Route index element={<Navigate to="/home" replace />} />
 					<Route path="home" element={<LandingPage />} />
 					<Route path="events">
@@ -92,7 +100,7 @@ function App() {
 					path="admin"
 					element={
 						<AdminRoute>
-							<MainLayout />
+							<AdminLayout />
 						</AdminRoute>
 					}>
 					<Route path="dashboard" element={<AdminDashboard />} />

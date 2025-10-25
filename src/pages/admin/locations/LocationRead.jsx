@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 
 export default function AdminLocation() {
-    const {
+	const {
 		data: locations,
 		isLoading: locationsLoading,
 		error: locationsError,
@@ -17,7 +17,7 @@ export default function AdminLocation() {
 	const filteredLocations = useMemo(() => {
 		if (!searchLocation) return locations;
 		const query = searchLocation.toLowerCase();
-		return locations.filter((locationItem => {
+		return locations.filter((locationItem) => {
 			const lokasi = String(locationItem.nama || "").toLowerCase();
 			const kota = String(locationItem.kota || "").toLowerCase();
 			const provinsi = String(locationItem.provinsi || "").toLowerCase();
@@ -26,7 +26,7 @@ export default function AdminLocation() {
 				kota.includes(query) ||
 				provinsi.includes(query)
 			);
-		}))
+		});
 	}, [locations, searchLocation]);
 
 	const columns = [
@@ -43,18 +43,18 @@ export default function AdminLocation() {
 			wrap: true,
 		},
 		{
-            name: "Kota",
+			name: "Kota",
 			selector: (row) => row.kota || "-",
 			sortable: false,
 			wrap: true,
-            width: "200px",
+			width: "200px",
 		},
-        {
-            name: "Provinsi",
+		{
+			name: "Provinsi",
 			selector: (row) => row.provinsi || "-",
 			sortable: false,
 			wrap: true,
-            width: "200px",
+			width: "200px",
 		},
 		{
 			name: "Tipe",
@@ -80,11 +80,13 @@ export default function AdminLocation() {
 		},
 	];
 
-    return (
-		<div className="py-8">
+	return (
+		<div className="py-8 page-transition">
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="mb-6">
-					<h1 className="text-2xl font-bold text-gray-900">Admin Location List</h1>
+					<h1 className="text-2xl font-bold text-gray-900">
+						Admin Location List
+					</h1>
 					<p className="text-gray-600">Kelola data lokasi di sini</p>
 				</div>
 
@@ -147,17 +149,17 @@ export default function AdminLocation() {
 										<p className="text-sm text-gray-600">
 											<strong>Kota:</strong> {data.kota || "-"}
 										</p>
-                                        <p className="text-sm text-gray-600">
+										<p className="text-sm text-gray-600">
 											<strong>Provinsi:</strong> {data.provinsi || "-"}
 										</p>
-                                        <p className="text-sm text-gray-600 mt-2">
+										<p className="text-sm text-gray-600 mt-2">
 											<strong>Koordinat Peta:</strong>
 										</p>
 										<p className="text-sm text-gray-800 mt-1">
 											<strong>Lat:</strong> {data.latitude || 0} <br />
-                                            <strong>Long:</strong> {data.longitude || 0}
+											<strong>Long:</strong> {data.longitude || 0}
 										</p>
-                                        {data.alamat_lengkap && (
+										{data.alamat_lengkap && (
 											<p className="text-sm text-gray-600 mt-2">
 												<strong>Alamat Lengkap:</strong> {data.alamat_lengkap}
 											</p>

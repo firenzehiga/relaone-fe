@@ -90,7 +90,7 @@ export default function AdminEvent() {
 	];
 
 	return (
-		<div className="py-8">
+		<div className="py-8 page-transition">
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="mb-6">
 					<h1 className="text-2xl font-bold text-gray-900">Data Event</h1>

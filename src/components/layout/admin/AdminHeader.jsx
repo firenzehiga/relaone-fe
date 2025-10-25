@@ -17,6 +17,7 @@ import {
 	MapPin,
 	User2,
 	ShieldCheck,
+	ChevronDown,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Avatar from "@/components/ui/Avatar";
@@ -29,56 +30,36 @@ import { useAuthStore, useLogout } from "@/_hooks/useAuth";
  *
  * @returns {JSX.Element} Header navigasi dengan sticky positioning
  */
-export default function Header() {
+export default function AdminHeader() {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+	const [desktopSubmenuOpen, setDesktopSubmenuOpen] = useState(null);
+	const [mobileSubmenusOpen, setMobileSubmenusOpen] = useState({});
 	const [userMenuOpen, setUserMenuOpen] = useState(false);
 
 	const navigate = useNavigate();
 	const { user, isAuthenticated } = useAuthStore();
 	const logoutMutation = useLogout();
 
-	const baseNav = [
-		{ name: "Beranda", href: "/home", icon: Home },
-		{ name: "Event", href: "/events", icon: Calendar },
-		{ name: "Organisasi", href: "/organizations", icon: Building },
-	];
-
-	const orgNav = [
+	const navItems = [
+		{ name: "Dashboard", href: "/admin/dashboard", icon: Home },
+		{ name: "Users", href: "/admin/users", icon: User2 },
+		{ name: "Organizations", href: "/admin/organizations", icon: Building },
 		{
-			name: "Dashboard",
-			href: "/organization/dashboard",
-			icon: Building,
-		},
-		{
-			name: "Event",
-			href: "/organization/events",
+			name: "Manage Events",
+			href: "/admin/events",
 			icon: Calendar,
+			submenu: [
+				{ name: "Events", href: "/admin/events", icon: Calendar },
+				{
+					name: "Participants",
+					href: "/admin/event-participants",
+					icon: Users,
+				},
+				{ name: "Locations", href: "/admin/locations", icon: MapPin },
+			],
 		},
-		{
-			name: "Event Participant",
-			href: "/organization/event-participants",
-			icon: Users,
-		},
-		{
-			name: "Feedback",
-			href: "/organization/feedbacks",
-			icon: Users,
-		},
-		{
-			name: "Location",
-			href: "/organization/locations",
-			icon: MapPin,
-		},
+		{ name: "Feedbacks", href: "/admin/feedbacks", icon: Heart },
 	];
-	const volunteerNav = []; // volunteers use baseNav
-
-	let navItems = baseNav;
-
-	// Show only role-specific menu for admin and organization
-	// Guard by `isAuthenticated` so stale `user` data (from localStorage)
-	// doesn't affect the navigation when token is missing/expired.
-	if (isAuthenticated && user?.role === "organization") navItems = orgNav;
-	else if (isAuthenticated && user?.role === "volunteer") navItems = baseNav;
 
 	/**
 	 * Handler untuk logout user
@@ -94,19 +75,24 @@ export default function Header() {
 		return location.pathname === path;
 	};
 
+	const toggleMobileSubmenu = (name) => {
+		setMobileSubmenusOpen((s) => ({ ...s, [name]: !s[name] }));
+	};
+
 	return (
 		<header className="w-full sticky top-0 z-40 bg-white/90 backdrop-blur-lg border-b border-gray-200/50 shadow-sm">
 			<div className="w-full px-4 sm:px-6 lg:px-8">
 				<div className="flex items-center justify-between h-16 max-w-7xl mx-auto">
 					{/* Logo */}
-					<Link to="/home" className="flex items-center space-x-2 group">
+					<Link
+						to="/admin/dashboard"
+						className="flex items-center space-x-2 group">
 						<div className="p-2 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl group-hover:scale-110 transition-transform duration-300">
-							{user?.role === "organization" ? (
-								<Building className="text-white" size={20} />
-							) : (
-								<Heart className="text-white" size={20} />
-							)}
+							<Building className="text-white" size={20} />
 						</div>
+						<span className="text-xl font-bold bg-gradient-to-r from-gray-600 to-gray-600 bg-clip-text text-transparent">
+							Admin
+						</span>
 						<span className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-600 bg-clip-text text-transparent">
 							RelaOne
 						</span>
@@ -115,7 +101,56 @@ export default function Header() {
 					{/* Desktop Navigation - Centered */}
 					<nav className="hidden md:flex items-center space-x-4 flex-1 justify-center">
 						{navItems.map((item) => {
-							const active = isActive(item.href);
+							const active =
+								isActive(item.href) ||
+								(item.submenu && item.submenu.some((s) => isActive(s.href)));
+							if (item.submenu) {
+								return (
+									<div
+										key={item.name}
+										className="relative"
+										onMouseEnter={() => setDesktopSubmenuOpen(item.name)}
+										onMouseLeave={() => setDesktopSubmenuOpen(null)}>
+										<button
+											className={`transition-all duration-200 flex items-center space-x-2 px-3 py-2 rounded-lg group ${
+												active
+													? "text-emerald-600 bg-emerald-50 font-semibold"
+													: "text-gray-700 hover:text-emerald-600 hover:bg-emerald-50"
+											}`}
+											aria-expanded={desktopSubmenuOpen === item.name}>
+											<item.icon
+												size={16}
+												className={active ? "text-emerald-600" : ""}
+											/>
+											<span className="font-medium">{item.name}</span>
+											<ChevronDown size={14} />
+										</button>
+										<AnimatePresence>
+											{desktopSubmenuOpen === item.name && (
+												<motion.div
+													initial={{ opacity: 0, y: -6 }}
+													animate={{ opacity: 1, y: 0 }}
+													exit={{ opacity: 0, y: -6 }}
+													className="absolute left-0 mt-2 w-44 bg-white border border-gray-100 rounded-lg shadow-lg z-50 overflow-hidden">
+													{item.submenu.map((s) => (
+														<Link
+															key={s.href}
+															to={s.href}
+															className={`flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 ${
+																isActive(s.href)
+																	? "text-emerald-600 bg-emerald-50 font-semibold"
+																	: ""
+															}`}>
+															<s.icon size={14} className="text-gray-500" />
+															<span>{s.name}</span>
+														</Link>
+													))}
+												</motion.div>
+											)}
+										</AnimatePresence>
+									</div>
+								);
+							}
 							return (
 								<Link
 									key={item.name}
@@ -127,9 +162,7 @@ export default function Header() {
 									}`}>
 									<item.icon
 										size={16}
-										className={`group-hover:scale-110 transition-transform duration-200 ${
-											active ? "text-emerald-600" : ""
-										}`}
+										className={active ? "text-emerald-600" : ""}
 									/>
 									<span className="font-medium">{item.name}</span>
 								</Link>
@@ -221,7 +254,63 @@ export default function Header() {
 							<div className="py-4 px-2">
 								<nav className="space-y-1">
 									{navItems.map((item, index) => {
-										const active = isActive(item.href);
+										const active =
+											isActive(item.href) ||
+											(item.submenu &&
+												item.submenu.some((s) => isActive(s.href)));
+										if (item.submenu) {
+											return (
+												<motion.div
+													key={item.name}
+													initial={{ opacity: 0, x: -20 }}
+													animate={{ opacity: 1, x: 0 }}
+													transition={{ delay: index * 0.05, duration: 0.2 }}>
+													<button
+														className={`flex items-center justify-between w-full space-x-3 px-3 py-3 rounded-lg transition-colors duration-200 ${
+															active
+																? "text-emerald-600 bg-emerald-50 font-semibold"
+																: "text-gray-700 hover:text-emerald-600 hover:bg-emerald-50"
+														}`}
+														onClick={() => toggleMobileSubmenu(item.name)}>
+														<div className="flex items-center space-x-3">
+															<item.icon
+																size={20}
+																className={
+																	active ? "text-emerald-600" : "text-gray-500"
+																}
+															/>
+															<span className="font-medium">{item.name}</span>
+														</div>
+														<ChevronDown size={18} />
+													</button>
+													{mobileSubmenusOpen[item.name] && (
+														<div className="pl-6 pt-2 pb-2 space-y-1">
+															{item.submenu.map((s) => (
+																<Link
+																	key={s.href}
+																	to={s.href}
+																	className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors duration-200 ${
+																		isActive(s.href)
+																			? "text-emerald-600 bg-emerald-50 font-semibold"
+																			: "text-gray-700 hover:text-emerald-600 hover:bg-emerald-50"
+																	}`}
+																	onClick={() => setMobileMenuOpen(false)}>
+																	<s.icon
+																		size={18}
+																		className={
+																			isActive(s.href)
+																				? "text-emerald-600"
+																				: "text-gray-500"
+																		}
+																	/>
+																	<span className="font-medium">{s.name}</span>
+																</Link>
+															))}
+														</div>
+													)}
+												</motion.div>
+											);
+										}
 										return (
 											<motion.div
 												key={item.name}

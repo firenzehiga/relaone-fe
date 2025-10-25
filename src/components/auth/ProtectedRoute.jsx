@@ -21,7 +21,15 @@ export default function ProtectedRoute({
 	// Cek token di localStorage secara langsung
 	const token = localStorage.getItem("authToken");
 
-	// Jika tidak ada token, langsung redirect ke login
+	// Apakah kita mengizinkan guest/public? (gunakan string kosong "" untuk publik)
+	const allowGuest = allowedRoles.includes("");
+
+	// Jika guest diizinkan dan user belum login, izinkan akses publik
+	if (allowGuest && (!token || !isAuthenticated)) {
+		return children;
+	}
+
+	// Jika tidak ada token atau belum authenticated => redirect ke login
 	if (!token || !isAuthenticated) {
 		return <Navigate to={redirectTo} state={{ from: location }} replace />;
 	}
@@ -39,7 +47,9 @@ export default function ProtectedRoute({
 	}
 
 	// Jika ada pembatasan role dan user role tidak sesuai
-	if (allowedRoles.length > 0 && user && !allowedRoles.includes(user.role)) {
+	// Abaikan nilai kosong saat melakukan pengecekan role (string kosong = publik)
+	const roleChecks = allowedRoles.filter((allowedRole) => Boolean(allowedRole));
+	if (roleChecks.length > 0 && user && !roleChecks.includes(user.role)) {
 		// Redirect ke dashboard sesuai role user
 		const userDashboard = getUserDashboard(user.role);
 		return <Navigate to={userDashboard} replace />;
@@ -77,7 +87,7 @@ export function OrganizationRoute({ children }) {
  */
 export function VolunteerRoute({ children }) {
 	return (
-		<ProtectedRoute allowedRoles={["volunteer"]}>{children}</ProtectedRoute>
+		<ProtectedRoute allowedRoles={["volunteer", ""]}>{children}</ProtectedRoute>
 	);
 }
 

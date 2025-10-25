@@ -13,6 +13,8 @@ import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import { useModalStore } from "@/stores/useAppStore";
 import { useEvents } from "@/_hooks/useEvents";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/_hooks/useAuth";
 
 /**
  * Modal untuk join event volunteer
@@ -34,7 +36,9 @@ export default function JoinEventModal() {
 	const [agreed, setAgreed] = useState(false);
 	const [success, setSuccess] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-
+	const navigate = useNavigate();
+	const location = useLocation();
+	const { isAuthenticated } = useAuthStore();
 	/**
 	 * Handler untuk submit form join event
 	 * TODO: Implement join mutation when backend ready
@@ -42,6 +46,13 @@ export default function JoinEventModal() {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		if (!agreed || !selectedEventId) return;
+
+		if (!isAuthenticated) {
+			closeJoinModal();
+			// Redirect to login if not authenticated
+			navigate("/login", { state: { from: location }, replace: true });
+			return;
+		}
 
 		setIsSubmitting(true);
 
