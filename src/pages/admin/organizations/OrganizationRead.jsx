@@ -17,7 +17,7 @@ import {
 	Portal,
 	IconButton,
 } from "@chakra-ui/react";
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton, { LinkButton } from "@/components/ui/Button";
 import Swal from "sweetalert2";
 import { showToast } from "@/components/ui/Toast";
 import {
@@ -203,9 +203,12 @@ export default function AdminOrganization() {
 				<div className="bg-white rounded-lg shadow p-6">
 					<div className="flex justify-between items-center mb-4">
 						<h2 className="text-lg font-semibold">Daftar Organisasi</h2>
-						<DynamicButton variant="success" size="sm">
+						<LinkButton
+							to="/admin/organizations/create"
+							variant="success"
+							size="sm">
 							<Plus className="w-4 h-4 mr-2" /> Tambah Organisasi
-						</DynamicButton>
+						</LinkButton>
 					</div>
 
 					{organizationsLoading ? (
