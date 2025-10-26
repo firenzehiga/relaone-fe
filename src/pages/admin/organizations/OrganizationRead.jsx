@@ -1,9 +1,25 @@
 import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
-import { ChevronDown, Plus, Loader2, Trash, PencilIcon } from "lucide-react";
-import Button from "@/components/ui/Button";
+import {
+	ChevronDown,
+	Plus,
+	Loader2,
+	Trash,
+	Eye,
+	EditIcon,
+	EllipsisVerticalIcon,
+} from "lucide-react";
+import {
+	Menu,
+	MenuButton,
+	MenuList,
+	MenuItem,
+	Portal,
+	IconButton,
+} from "@chakra-ui/react";
+import DynamicButton from "@/components/ui/Button";
 import Swal from "sweetalert2";
-import { toast } from "react-hot-toast";
+import { showToast } from "@/components/ui/Toast";
 import {
 	useAdminDeleteOrganizationMutation,
 	useAdminOrganizations,
@@ -67,7 +83,14 @@ export default function AdminOrganization() {
 					onError: (err) => {
 						// ambil pesan backend kalau ada, fallback ke err.message
 						const msg = err?.response?.data?.message || "Terjadi kesalahan";
-						toast.error(msg, { position: "top-center" });
+						showToast({
+							type: "error",
+							tipIcon: "💡",
+							tipText: "Pastikan lokasi tidak terkait dengan data lain.",
+							message: msg,
+							duration: 3000,
+							position: "top-center",
+						});
 					},
 				}); // Panggil fungsi deleteMutation dengan ID event
 			}
@@ -136,17 +159,34 @@ export default function AdminOrganization() {
 		{
 			name: "Aksi",
 			cell: (row) => (
-				<div className="flex items-center space-x-2">
-					<button className="text-sm text-yellow-600 hover:underline">
-						<PencilIcon className="w-4 h-4 mr-2 hover:text-orange-00" />
-					</button>
-					<button
-						onClick={() => handleDelete(row.id)}
-						className="text-sm text-red-500 hover:underline"
-						disabled={deleteOrganizationMutation.organizationsLoading}>
-						<Trash className="w-4 h-4 mr-2 hover:text-red-600" />
-					</button>
-				</div>
+				<Menu>
+					<MenuButton
+						as={IconButton}
+						aria-label="Options"
+						icon={<EllipsisVerticalIcon />}
+						variant="ghost"
+					/>
+					<Portal>
+						<MenuList className="font-semibold">
+							<MenuItem
+								icon={<Eye className="text-blue-500 hover:text-blue-600" />}>
+								Lihat
+							</MenuItem>
+							<MenuItem
+								icon={
+									<EditIcon className="text-yellow-500 hover:text-yellow-600" />
+								}>
+								Edit
+							</MenuItem>
+							<MenuItem
+								onClick={() => handleDelete(row.id)}
+								disabled={deleteOrganizationMutation.isLoading}
+								icon={<Trash className="text-red-500 hover:text-red-600" />}>
+								Hapus
+							</MenuItem>
+						</MenuList>
+					</Portal>
+				</Menu>
 			),
 			width: "140px",
 		},
@@ -163,9 +203,9 @@ export default function AdminOrganization() {
 				<div className="bg-white rounded-lg shadow p-6">
 					<div className="flex justify-between items-center mb-4">
 						<h2 className="text-lg font-semibold">Daftar Organisasi</h2>
-						<Button variant="success" size="sm">
+						<DynamicButton variant="success" size="sm">
 							<Plus className="w-4 h-4 mr-2" /> Tambah Organisasi
-						</Button>
+						</DynamicButton>
 					</div>
 
 					{organizationsLoading ? (

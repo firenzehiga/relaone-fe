@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import Button from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
 import { cn } from "@/utils/cn";
@@ -217,22 +217,22 @@ export default function EventCard({
 								</div>
 							)}
 							<div className="flex gap-2 mt-2">
-								<Button
+								<DynamicButton
 									variant="outline"
 									size="xs"
 									onClick={() => window.open(getGoogleMapsUrl(), "_blank")}
 									className="flex items-center gap-1 text-xs px-2 py-1">
 									<ExternalLink size={12} />
 									Lihat di Maps
-								</Button>
-								<Button
+								</DynamicButton>
+								<DynamicButton
 									variant="success"
 									size="xs"
 									onClick={() => window.open(getDirectionsUrl(), "_blank")}
 									className="flex items-center gap-1 text-xs px-2 py-1">
 									<Navigation size={12} />
 									Petunjuk Arah
-								</Button>
+								</DynamicButton>
 							</div>
 						</div>
 					</div>
@@ -265,22 +265,22 @@ export default function EventCard({
 									{event.latitude}, {event.longitude}
 								</p>
 								<div className="flex gap-2 justify-center">
-									<Button
+									<DynamicButton
 										variant="success"
 										size="sm"
 										onClick={() => window.open(getGoogleMapsUrl(), "_blank")}
 										className="flex items-center gap-1">
 										<ExternalLink size={14} />
 										Buka di Maps
-									</Button>
-									<Button
+									</DynamicButton>
+									<DynamicButton
 										variant="outline"
 										size="sm"
 										onClick={() => window.open(getDirectionsUrl(), "_blank")}
 										className="flex items-center gap-1">
 										<Navigation size={14} />
 										Petunjuk Arah
-									</Button>
+									</DynamicButton>
 								</div>
 							</div>
 
@@ -311,7 +311,7 @@ export default function EventCard({
 
 				{/* Tombol Action */}
 				<div className="flex gap-3">
-					<Button
+					<DynamicButton
 						variant="outline"
 						size="sm"
 						className="flex-1"
@@ -319,15 +319,15 @@ export default function EventCard({
 							navigate(`/events/details/${event.id}`);
 						}}>
 						Detail
-					</Button>
-					<Button
+					</DynamicButton>
+					<DynamicButton
 						variant="success"
 						size="sm"
 						className="flex-1"
 						disabled={event.status === "full" || event.status === "cancelled"}
 						onClick={() => onJoin?.(event.id)}>
 						{event.status === "full" ? "Penuh" : "Daftar"}
-					</Button>
+					</DynamicButton>
 				</div>
 			</div>
 		</motion.div>

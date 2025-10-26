@@ -11,7 +11,7 @@ import {
 	BookOpen,
 	Stethoscope,
 } from "lucide-react";
-import Button from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import EventCard from "@/components/EventCard";
 import Skeleton from "@/components/ui/Skeleton";
@@ -226,10 +226,12 @@ export default function LandingPage() {
 								Kegiatan sosial yang sedang dibuka untuk pendaftaran
 							</p>
 						</div>
-						<Button variant="outline" onClick={() => navigate("/events")}>
+						<DynamicButton
+							variant="outline"
+							onClick={() => navigate("/events")}>
 							Lihat Semua
 							<ArrowRight size={16} className="ml-2" />
-						</Button>
+						</DynamicButton>
 					</div>
 
 					{eventsLoading ? (
@@ -269,19 +271,19 @@ export default function LandingPage() {
 							membuat perubahan positif untuk masyarakat.
 						</p>
 						<div className="flex flex-col sm:flex-row gap-4 justify-center">
-							<Button
+							<DynamicButton
 								size="lg"
 								variant="secondary"
 								onClick={() => navigate("/register")}>
 								Daftar Sekarang
-							</Button>
-							<Button
+							</DynamicButton>
+							<DynamicButton
 								size="lg"
 								variant="secondary"
 								className="border-white text-black hover:bg-white hover:text-emerald-600"
 								onClick={() => navigate("/events")}>
 								Jelajahi Event
-							</Button>
+							</DynamicButton>
 						</div>
 					</motion.div>
 				</div>

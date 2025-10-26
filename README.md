@@ -21,7 +21,7 @@ Frontend aplikasi volunteer management system menggunakan React 18 + Vite.
 
 ```bash
 git clone https://github.com/firenzehiga/humanify
-cd volunteer
+cd nama-folder
 ```
 
 ### 2. Install Dependencies
@@ -46,7 +46,6 @@ Update konfigurasi di file `.env`:
 ```env
 VITE_API_BASE_URL=http://localhost:8000/api
 VITE_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
-VITE_APP_NAME=Volunteer Management System
 ```
 
 ### 4. Start Development Server

@@ -1,5 +1,5 @@
 import { MapPin, ExternalLink, Navigation, Copy } from "lucide-react";
-import Button from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/Button";
 
 export default function MapFallback({
 	latitude,
@@ -59,33 +59,33 @@ export default function MapFallback({
 
 				{showActions && (
 					<div className="flex gap-2 justify-center flex-wrap">
-						<Button
+						<DynamicButton
 							variant="primary"
 							size={size === "sm" ? "xs" : "sm"}
 							onClick={() => window.open(getGoogleMapsUrl(), "_blank")}
 							className="flex items-center gap-1">
 							<ExternalLink size={size === "sm" ? 12 : 14} />
 							{size === "sm" ? "Maps" : "Buka di Maps"}
-						</Button>
+						</DynamicButton>
 
-						<Button
+						<DynamicButton
 							variant="outline"
 							size={size === "sm" ? "xs" : "sm"}
 							onClick={() => window.open(getDirectionsUrl(), "_blank")}
 							className="flex items-center gap-1">
 							<Navigation size={size === "sm" ? 12 : 14} />
 							{size === "sm" ? "Rute" : "Petunjuk Arah"}
-						</Button>
+						</DynamicButton>
 
 						{size !== "sm" && (
-							<Button
+							<DynamicButton
 								variant="ghost"
 								size="sm"
 								onClick={copyCoordinates}
 								className="flex items-center gap-1">
 								<Copy size={14} />
 								Copy Koordinat
-							</Button>
+							</DynamicButton>
 						)}
 					</div>
 				)}

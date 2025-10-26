@@ -9,7 +9,7 @@ import {
 	Clock,
 } from "lucide-react";
 import Modal from "@/components/ui/Modal";
-import Button from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import { useModalStore } from "@/stores/useAppStore";
 import { useEvents } from "@/_hooks/useEvents";
@@ -269,22 +269,22 @@ export default function JoinEventModal() {
 
 						{/* Actions */}
 						<div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-100">
-							<Button
+							<DynamicButton
 								type="button"
 								variant="outline"
 								onClick={handleClose}
 								disabled={isSubmitting}
 								className="flex-1 order-2 sm:order-1">
 								Batal
-							</Button>
-							<Button
+							</DynamicButton>
+							<DynamicButton
 								type="submit"
 								variant="primary"
 								disabled={!agreed || isSubmitting}
 								loading={isSubmitting}
 								className="flex-1 order-1 sm:order-2">
 								{isSubmitting ? "Mendaftarkan..." : "✨ Daftar Sekarang"}
-							</Button>
+							</DynamicButton>
 						</div>
 					</form>
 				</div>

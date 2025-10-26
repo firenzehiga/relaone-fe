@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, Filter, Calendar, MapPin, Map } from "lucide-react";
-import Button from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import EventCard from "@/components/EventCard";
 import Skeleton from "@/components/ui/Skeleton";
@@ -178,9 +178,11 @@ export default function EventsPage() {
 							{eventsError.message ||
 								"Terjadi kesalahan saat mengambil data events"}
 						</p>
-						<Button onClick={() => window.location.reload()} variant="primary">
+						<DynamicButton
+							onClick={() => window.location.reload()}
+							variant="primary">
 							Coba Lagi
-						</Button>
+						</DynamicButton>
 					</div>
 				</div>
 			</div>
@@ -221,38 +223,41 @@ export default function EventsPage() {
 
 					{/* Filter Toggle */}
 					<div className="flex items-center justify-between">
-						<Button
+						<DynamicButton
 							variant="ghost"
 							onClick={() => setShowFilters(!showFilters)}
 							className="flex items-center text-gray-700">
 							<Filter size={16} className="mr-2" />
 							Filter {showFilters ? "▲" : "▼"}
-						</Button>
+						</DynamicButton>
 
 						<div className="flex items-center gap-2">
 							{/* View Mode Toggle */}
 							<div className="flex bg-gray-100 rounded-lg p-1">
-								<Button
+								<DynamicButton
 									variant={viewMode === "grid" ? "success" : "ghost"}
 									size="xs"
 									onClick={() => setViewMode("grid")}
 									className="px-3 py-1">
 									Grid
-								</Button>
-								<Button
+								</DynamicButton>
+								<DynamicButton
 									variant={viewMode === "map" ? "success" : "ghost"}
 									size="xs"
 									onClick={() => setViewMode("map")}
 									className="px-3 py-1">
 									<Map size={14} className="mr-1" />
 									Peta
-								</Button>
+								</DynamicButton>
 							</div>
 
 							{(filters.category || filters.date || filters.city) && (
-								<Button variant="outline" onClick={clearFilters} size="sm">
+								<DynamicButton
+									variant="outline"
+									onClick={clearFilters}
+									size="sm">
 									Hapus Filter
-								</Button>
+								</DynamicButton>
 							)}
 						</div>
 					</div>
@@ -454,19 +459,19 @@ export default function EventsPage() {
 															</span>
 														</div>
 														<div className="flex gap-2">
-															<Button
+															<DynamicButton
 																variant="outline"
 																size="xs"
 																onClick={() => handleViewEventDetail(event.id)}>
 																Detail
-															</Button>
-															<Button
+															</DynamicButton>
+															<DynamicButton
 																variant="primary"
 																size="xs"
 																onClick={() => handleJoinEvent(event.id)}
 																disabled={event.status === "full"}>
 																{event.status === "full" ? "Penuh" : "Daftar"}
-															</Button>
+															</DynamicButton>
 														</div>
 													</div>
 												</div>
@@ -488,9 +493,9 @@ export default function EventsPage() {
 						<p className="text-gray-600 mb-6 text-lg">
 							Coba ubah filter pencarian atau kata kunci Anda
 						</p>
-						<Button variant="success" onClick={clearFilters}>
+						<DynamicButton variant="success" onClick={clearFilters}>
 							Hapus Filter
-						</Button>
+						</DynamicButton>
 					</div>
 				)}
 			</div>

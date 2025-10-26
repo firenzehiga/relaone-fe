@@ -9,7 +9,7 @@ import {
 	Copy,
 	Eye,
 } from "lucide-react";
-import Button from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 
 export default function LocationPicker({
@@ -316,7 +316,7 @@ export default function LocationPicker({
 													{location.city}, {location.province}
 												</p>
 											</div>
-											<Button
+											<DynamicButton
 												variant="ghost"
 												size="xs"
 												onClick={(e) => {
@@ -327,7 +327,7 @@ export default function LocationPicker({
 													);
 												}}>
 												<ExternalLink size={12} />
-											</Button>
+											</DynamicButton>
 										</div>
 									</div>
 								))}
@@ -362,14 +362,14 @@ export default function LocationPicker({
 								)}
 							</div>
 
-							<Button
+							<DynamicButton
 								variant="primary"
 								onClick={handleProcessMapLink}
 								disabled={!mapLink.trim()}
 								className="w-full">
 								<MapPin size={16} className="mr-2" />
 								Proses Link/Koordinat
-							</Button>
+							</DynamicButton>
 
 							<div className="bg-blue-50 rounded-lg p-4">
 								<h4 className="font-medium text-blue-900 mb-2">
@@ -434,7 +434,7 @@ export default function LocationPicker({
 
 							{/* Quick Actions */}
 							<div className="grid grid-cols-2 gap-2">
-								<Button
+								<DynamicButton
 									variant="outline"
 									size="sm"
 									onClick={() => {
@@ -451,8 +451,8 @@ export default function LocationPicker({
 									className="flex items-center justify-center gap-1">
 									<Copy size={14} />
 									Paste dari Clipboard
-								</Button>
-								<Button
+								</DynamicButton>
+								<DynamicButton
 									variant="outline"
 									size="sm"
 									onClick={() =>
@@ -461,7 +461,7 @@ export default function LocationPicker({
 									className="flex items-center justify-center gap-1">
 									<ExternalLink size={14} />
 									Buka Google Maps
-								</Button>
+								</DynamicButton>
 							</div>
 						</div>
 					</div>

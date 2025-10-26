@@ -1,5 +1,5 @@
 import { useOrganizations } from "@/_hooks/useOrganizations";
-import Button from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/Button";
 
 export default function OrganizationsPage() {
 	const {
@@ -54,9 +54,11 @@ export default function OrganizationsPage() {
 							{error.message ||
 								"Terjadi kesalahan saat mengambil data organizations."}
 						</p>
-						<Button onClick={() => window.location.reload()} variant="primary">
+						<DynamicButton
+							onClick={() => window.location.reload()}
+							variant="primary">
 							Coba Lagi
-						</Button>
+						</DynamicButton>
 					</div>
 				</div>
 			</div>

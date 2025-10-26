@@ -11,13 +11,20 @@ import {
 	Plus,
 	Loader2,
 	Trash,
-	PencilIcon,
-	Trash2,
-	Edit2,
 	Eye,
+	EditIcon,
+	EllipsisVerticalIcon,
 } from "lucide-react";
-import Button from "@/components/ui/Button";
-import ActionMenu from "@/components/ui/ActionMenu";
+import {
+	Menu,
+	MenuButton,
+	MenuList,
+	MenuItem,
+	Portal,
+	IconButton,
+} from "@chakra-ui/react";
+import DynamicButton, { LinkButton } from "@/components/ui/Button";
+import { Link } from "react-router-dom";
 
 export default function AdminEvent() {
 	const {
@@ -130,17 +137,34 @@ export default function AdminEvent() {
 		{
 			name: "Aksi",
 			cell: (row) => (
-				<div className="flex items-center space-x-2">
-					<button className="text-sm text-yellow-600 hover:underline">
-						<PencilIcon className="w-4 h-4 mr-2 hover:text-orange-00" />
-					</button>
-					<button
-						onClick={() => handleDelete(row.id)}
-						className="text-sm text-red-500 hover:underline"
-						disabled={deleteEventMutation.isLoading}>
-						<Trash className="w-4 h-4 mr-2 hover:text-red-600" />
-					</button>
-				</div>
+				<Menu>
+					<MenuButton
+						as={IconButton}
+						aria-label="Options"
+						icon={<EllipsisVerticalIcon />}
+						variant="ghost"
+					/>
+					<Portal>
+						<MenuList className="font-semibold">
+							<MenuItem
+								icon={<Eye className="text-blue-500 hover:text-blue-600" />}>
+								Lihat
+							</MenuItem>
+							<MenuItem
+								icon={
+									<EditIcon className="text-yellow-500 hover:text-yellow-600" />
+								}>
+								Edit
+							</MenuItem>
+							<MenuItem
+								onClick={() => handleDelete(row.id)}
+								disabled={deleteEventMutation.isLoading}
+								icon={<Trash className="text-red-500 hover:text-red-600" />}>
+								Hapus
+							</MenuItem>
+						</MenuList>
+					</Portal>
+				</Menu>
 			),
 			width: "140px",
 		},
@@ -157,9 +181,9 @@ export default function AdminEvent() {
 				<div className="bg-white rounded-lg shadow p-6">
 					<div className="flex justify-between items-center mb-4">
 						<h2 className="text-lg font-semibold">Daftar Event</h2>
-						<Button variant="success" size="sm">
+						<LinkButton variant="success" to="/admin/events/create">
 							<Plus className="w-4 h-4 mr-2" /> Tambah Event
-						</Button>
+						</LinkButton>
 					</div>
 
 					{eventsLoading ? (
@@ -198,7 +222,6 @@ export default function AdminEvent() {
 								highlightOnHover
 								persistTableHead
 								responsive
-								fixedHeader
 								striped
 								sortIcon={<ChevronDown />}
 								expandableRows

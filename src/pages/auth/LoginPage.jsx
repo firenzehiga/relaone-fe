@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, ArrowLeft, Heart } from "lucide-react";
-import Button from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/Button";
 import { useLogin, useAuthStore } from "@/_hooks/useAuth";
 import { LoginIllustration } from "@/components/common/Illustration";
 
@@ -154,7 +154,7 @@ export default function LoginPage() {
 						</div>
 
 						{/* Submit Button */}
-						<Button
+						<DynamicButton
 							type="submit"
 							disabled={isLoading || !formData.email || !formData.password}
 							className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 rounded-lg font-medium transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
@@ -166,7 +166,7 @@ export default function LoginPage() {
 							) : (
 								"Sign In"
 							)}
-						</Button>
+						</DynamicButton>
 					</motion.form>
 
 					{/* Sign Up Link */}

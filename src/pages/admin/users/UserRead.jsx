@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import { ChevronDown, Plus, Loader2, Trash, PencilIcon } from "lucide-react";
-import Button from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import { useAdminUsers } from "@/_hooks/useUsers";
 
@@ -115,12 +115,12 @@ export default function AdminUser() {
 						<h2 className="text-base md:text-lg font-semibold">
 							Daftar Pengguna
 						</h2>
-						<Button
+						<DynamicButton
 							variant="success"
 							size="sm"
 							className="px-2 py-1 text-xs md:px-3 md:py-2 md:text-sm">
 							<Plus className="w-3 h-3 md:w-4 md:h-4 mr-2" /> Tambah Pengguna
-						</Button>
+						</DynamicButton>
 					</div>
 
 					{usersLoading ? (

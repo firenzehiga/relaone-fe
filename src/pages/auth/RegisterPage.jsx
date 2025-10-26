@@ -14,7 +14,7 @@ import {
 	Phone,
 	Calendar,
 } from "lucide-react";
-import Button from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/Button";
 import { useRegister, useAuthStore } from "@/_hooks/useAuth";
 import { RegisterIllustration } from "@/components/common/Illustration";
 
@@ -530,7 +530,7 @@ export default function RegisterPage() {
 						</div>
 
 						{/* Submit Button */}
-						<Button
+						<DynamicButton
 							type="submit"
 							disabled={
 								isLoading ||
@@ -550,7 +550,7 @@ export default function RegisterPage() {
 							) : (
 								"Create Account"
 							)}
-						</Button>
+						</DynamicButton>
 					</motion.form>
 
 					{/* Sign In Link */}

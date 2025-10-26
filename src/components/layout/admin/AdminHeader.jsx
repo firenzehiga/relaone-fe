@@ -18,7 +18,7 @@ import {
 	User2,
 	ChevronDown,
 } from "lucide-react";
-import Button from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/Button";
 import Avatar from "@/components/ui/Avatar";
 import { useAuthStore, useLogout } from "@/_hooks/useAuth";
 
@@ -224,13 +224,13 @@ export default function AdminHeader() {
 							</div>
 						) : (
 							<div className="hidden md:flex items-center space-x-2">
-								<Button
+								<DynamicButton
 									variant="success"
 									size="sm"
 									onClick={() => navigate("/login")}>
 									<LogIn size={16} className="mr-1" />
 									Masuk
-								</Button>
+								</DynamicButton>
 							</div>
 						)}
 

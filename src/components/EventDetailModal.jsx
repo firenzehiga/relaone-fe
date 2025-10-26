@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
-import Button from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
 import { useModalStore } from "@/stores/useAppStore";
@@ -131,9 +131,12 @@ export default function EventDetailModal() {
 										Detail Event
 									</h2>
 								</div>
-								<Button variant="ghost" size="sm" onClick={closeDetailModal}>
+								<DynamicButton
+									variant="ghost"
+									size="sm"
+									onClick={closeDetailModal}>
 									<X size={20} />
-								</Button>
+								</DynamicButton>
 							</div>
 
 							{/* Scrollable Content */}
@@ -301,13 +304,13 @@ export default function EventDetailModal() {
 
 							{/* Action Buttons */}
 							<div className="p-6 border-t border-gray-200 flex gap-3">
-								<Button
+								<DynamicButton
 									variant="outline"
 									onClick={closeDetailModal}
 									className="flex-1">
 									Tutup
-								</Button>
-								<Button
+								</DynamicButton>
+								<DynamicButton
 									variant="primary"
 									onClick={handleJoinEvent}
 									disabled={
@@ -319,7 +322,7 @@ export default function EventDetailModal() {
 										: event.status === "cancelled"
 										? "Event Dibatalkan"
 										: "Daftar Sekarang"}
-								</Button>
+								</DynamicButton>
 							</div>
 						</motion.div>
 					</div>

@@ -1,6 +1,6 @@
 import GridShape from "@/components/common/GridShape";
 import { useNavigate } from "react-router-dom";
-import Button from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/Button";
 import { ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
@@ -26,7 +26,7 @@ export default function NotFound() {
 						We can’t seem to find the page you are looking for!
 					</p>
 
-					<Button
+					<DynamicButton
 						size="lg"
 						variant="success"
 						onClick={() => navigate("/home")}
@@ -36,7 +36,7 @@ export default function NotFound() {
 							className="mr-2 group-hover:-translate-x-1 transition-transform"
 						/>
 						Kembali
-					</Button>
+					</DynamicButton>
 				</div>
 				{/* <!-- Footer --> */}
 				<p className="absolute text-sm text-center text-gray-500 -translate-x-1/2 bottom-6 left-1/2 dark:text-gray-400">

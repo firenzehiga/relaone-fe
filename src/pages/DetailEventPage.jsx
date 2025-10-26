@@ -1,7 +1,7 @@
 import { Calendar, MapPin, Users, Clock, X } from "lucide-react";
 import { useEffect } from "react";
 import Skeleton from "@/components/ui/Skeleton";
-import Button from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
 import { useEventById } from "@/_hooks/useEvents";
@@ -110,10 +110,13 @@ export default function DetailEventPage() {
 							</div>
 
 							<div className="md:col-span-1 flex flex-col items-end gap-2 self-start">
-								<Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
+								<DynamicButton
+									variant="ghost"
+									size="sm"
+									onClick={() => navigate(-1)}>
 									Kembali
-								</Button>
-								<Button
+								</DynamicButton>
+								<DynamicButton
 									variant="primary"
 									onClick={handleJoinEvent}
 									disabled={
@@ -124,7 +127,7 @@ export default function DetailEventPage() {
 										: event.status === "cancelled"
 										? "Event Dibatalkan"
 										: "Daftar Sekarang"}
-								</Button>
+								</DynamicButton>
 							</div>
 						</div>
 

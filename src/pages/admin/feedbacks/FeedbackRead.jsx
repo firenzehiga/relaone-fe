@@ -4,12 +4,21 @@ import {
 } from "@/_hooks/useFeedbacks";
 import {
 	ChevronDown,
-	Loader2,
-	PencilIcon,
 	Plus,
-	Star,
+	Loader2,
 	Trash,
+	Eye,
+	EditIcon,
+	EllipsisVerticalIcon,
 } from "lucide-react";
+import {
+	Menu,
+	MenuButton,
+	MenuList,
+	MenuItem,
+	Portal,
+	IconButton,
+} from "@chakra-ui/react";
 import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
 import { useMemo, useState } from "react";
@@ -114,18 +123,34 @@ export default function AdminFeedback() {
 		{
 			name: "Aksi",
 			cell: (row) => (
-				<div className="flex items-center space-x-2">
-					<button className="text-sm text-yellow-600 hover:underline">
-						{" "}
-						<PencilIcon className="w-4 h-4 mr-2 hover:text-orange-00" />
-					</button>
-					<button
-						onClick={() => handleDelete(row.id)}
-						className="text-sm text-red-500 hover:underline"
-						disabled={deleteFeedbackMutation.isLoading}>
-						<Trash className="w-4 h-4 mr-2 hover:text-red-600" />
-					</button>
-				</div>
+				<Menu>
+					<MenuButton
+						as={IconButton}
+						aria-label="Options"
+						icon={<EllipsisVerticalIcon />}
+						variant="ghost"
+					/>
+					<Portal>
+						<MenuList className="font-semibold">
+							<MenuItem
+								icon={<Eye className="text-blue-500 hover:text-blue-600" />}>
+								Lihat
+							</MenuItem>
+							<MenuItem
+								icon={
+									<EditIcon className="text-yellow-500 hover:text-yellow-600" />
+								}>
+								Edit
+							</MenuItem>
+							<MenuItem
+								onClick={() => handleDelete(row.id)}
+								disabled={deleteFeedbackMutation.isLoading}
+								icon={<Trash className="text-red-500 hover:text-red-600" />}>
+								Hapus
+							</MenuItem>
+						</MenuList>
+					</Portal>
+				</Menu>
 			),
 			width: "140px",
 		},

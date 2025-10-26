@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import Button from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/Button";
 export default function Hero() {
 	const navigate = useNavigate();
 
@@ -32,7 +32,7 @@ export default function Hero() {
 							positif untuk masyarakat.
 						</p>
 						<div className="flex flex-col sm:flex-row gap-4">
-							<Button
+							<DynamicButton
 								size="lg"
 								variant="success"
 								onClick={() => navigate("/events")}
@@ -42,13 +42,13 @@ export default function Hero() {
 									size={20}
 									className="ml-2 group-hover:translate-x-1 transition-transform"
 								/>
-							</Button>
-							<Button
+							</DynamicButton>
+							<DynamicButton
 								size="lg"
 								variant="outline"
 								onClick={() => navigate("/register")}>
 								Buat Event
-							</Button>
+							</DynamicButton>
 						</div>
 					</motion.div>
 

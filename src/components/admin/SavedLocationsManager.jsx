@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, MapPin, Star, ExternalLink } from "lucide-react";
-import Button from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 import Badge from "@/components/ui/Badge";
 
@@ -143,10 +143,10 @@ export default function SavedLocationsManager({ organizationId }) {
 							Kelola lokasi yang sering digunakan untuk event
 						</p>
 					</div>
-					<Button variant="primary" onClick={handleAddLocation}>
+					<DynamicButton variant="primary" onClick={handleAddLocation}>
 						<Plus size={16} className="mr-2" />
 						Tambah Lokasi
-					</Button>
+					</DynamicButton>
 				</div>
 			</div>
 
@@ -162,9 +162,9 @@ export default function SavedLocationsManager({ organizationId }) {
 						<p className="text-gray-600 mb-4">
 							Mulai tambahkan lokasi yang sering Anda gunakan
 						</p>
-						<Button variant="primary" onClick={handleAddLocation}>
+						<DynamicButton variant="primary" onClick={handleAddLocation}>
 							Tambah Lokasi Pertama
-						</Button>
+						</DynamicButton>
 					</div>
 				) : (
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -196,13 +196,13 @@ export default function SavedLocationsManager({ organizationId }) {
 										</p>
 									</div>
 									<div className="flex gap-1 ml-2">
-										<Button
+										<DynamicButton
 											variant="ghost"
 											size="xs"
 											onClick={() => handleEditLocation(location)}>
 											<Edit size={14} />
-										</Button>
-										<Button
+										</DynamicButton>
+										<DynamicButton
 											variant="ghost"
 											size="xs"
 											onClick={() =>
@@ -212,26 +212,26 @@ export default function SavedLocationsManager({ organizationId }) {
 												)
 											}>
 											<ExternalLink size={14} />
-										</Button>
-										<Button
+										</DynamicButton>
+										<DynamicButton
 											variant="ghost"
 											size="xs"
 											onClick={() => handleDeleteLocation(location.id)}
 											className="text-red-600 hover:text-red-700">
 											<Trash2 size={14} />
-										</Button>
+										</DynamicButton>
 									</div>
 								</div>
 
 								<div className="flex items-center justify-between text-xs text-gray-500">
 									<span>Digunakan {location.usage_count} kali</span>
 									{!location.is_default && (
-										<Button
+										<DynamicButton
 											variant="outline"
 											size="xs"
 											onClick={() => handleSetDefault(location.id)}>
 											Set Default
-										</Button>
+										</DynamicButton>
 									)}
 								</div>
 							</div>
@@ -399,12 +399,14 @@ export default function SavedLocationsManager({ organizationId }) {
 				</div>
 
 				<div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
-					<Button variant="outline" onClick={() => setShowAddModal(false)}>
+					<DynamicButton
+						variant="outline"
+						onClick={() => setShowAddModal(false)}>
 						Batal
-					</Button>
-					<Button variant="primary" onClick={handleSaveLocation}>
+					</DynamicButton>
+					<DynamicButton variant="primary" onClick={handleSaveLocation}>
 						{editingLocation ? "Update" : "Simpan"}
-					</Button>
+					</DynamicButton>
 				</div>
 			</Modal>
 		</div>
