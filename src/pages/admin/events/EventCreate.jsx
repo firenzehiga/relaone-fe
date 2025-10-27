@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { parseApiError } from "@/utils/cn";
+import { parseApiError } from "@/utils";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";

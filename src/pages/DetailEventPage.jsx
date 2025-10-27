@@ -8,7 +8,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useModalStore } from "@/stores/useAppStore";
 import { AsyncImage } from "loadable-image";
 import { Fade } from "transitions-kit";
-import { getImageUrl } from "@/utils/cn";
+import { getImageUrl } from "@/utils";
 
 /**
  * Halaman detail event (full page) yang menggantikan modal.

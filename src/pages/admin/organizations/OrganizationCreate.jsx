@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useAdminOrganizationUsers } from "@/_hooks/useUsers";
 import { useAdminCreateOrganizationMutation } from "@/_hooks/useOrganizations";
-import { parseApiError } from "@/utils/cn";
+import { parseApiError } from "@/utils";
 import DynamicButton from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
 

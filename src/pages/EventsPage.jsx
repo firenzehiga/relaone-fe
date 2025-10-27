@@ -9,7 +9,7 @@ import Skeleton from "@/components/ui/Skeleton";
 import { useEvents } from "@/_hooks/useEvents";
 import { useCategory } from "@/_hooks/useCategories";
 import { useModalStore } from "@/stores/useAppStore";
-import { getImageUrl } from "@/utils/cn";
+import { getImageUrl } from "@/utils";
 import { AsyncImage } from "loadable-image";
 import { Fade } from "transitions-kit";
 
@@ -31,7 +31,11 @@ export default function EventsPage() {
 		error: eventsError,
 	} = useEvents();
 
-	const { data: categories, isLoading: categoriesLoading } = useCategory();
+	const {
+		data: categories,
+		isLoading: categoriesLoading,
+		error: categoriesError,
+	} = useCategory();
 
 	const { openJoinModal } = useModalStore();
 
@@ -195,7 +199,7 @@ export default function EventsPage() {
 	};
 
 	// Error state handling
-	if (eventsError) {
+	if (eventsError || categoriesError) {
 		return (
 			<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-slate-50 via-white to-blue-50">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -388,14 +392,14 @@ export default function EventsPage() {
 				{/* Results Count */}
 				<div className="flex items-center justify-between mb-6">
 					<p className="text-gray-600 font-medium">
-						{eventsLoading
+						{eventsLoading || categoriesLoading
 							? "Sedang Memuat..."
 							: `${filteredEvents.length} event ditemukan`}
 					</p>
 				</div>
 
 				{/* Events Display */}
-				{eventsLoading ? (
+				{eventsLoading || categoriesLoading ? (
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 						{Array.from({ length: 6 }).map((_, i) => (
 							<Skeleton.EventCard key={i} />

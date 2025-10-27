@@ -25,7 +25,7 @@ import {
 } from "@chakra-ui/react";
 import DynamicButton, { LinkButton } from "@/components/ui/Button";
 import { Link } from "react-router-dom";
-import { parseApiError } from "@/utils/cn";
+import { parseApiError } from "@/utils";
 
 export default function AdminEvent() {
 	const {

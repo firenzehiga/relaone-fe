@@ -25,7 +25,7 @@ import {
 	useAdminOrganizations,
 } from "@/_hooks/useOrganizations";
 import Badge from "@/components/ui/Badge";
-import { getImageUrl, parseApiError } from "@/utils/cn";
+import { getImageUrl, parseApiError } from "@/utils";
 
 export default function AdminOrganization() {
 	const {

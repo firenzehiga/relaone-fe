@@ -25,7 +25,7 @@ import {
 } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
-import { parseApiError } from "@/utils/cn";
+import { parseApiError } from "@/utils";
 import toast from "react-hot-toast";
 
 export default function AdminLocation() {

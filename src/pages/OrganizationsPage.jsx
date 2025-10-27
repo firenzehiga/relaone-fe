@@ -1,11 +1,13 @@
 import { useOrganizations } from "@/_hooks/useOrganizations";
 import DynamicButton from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
-import { getImageUrl } from "@/utils/cn";
+import { getImageUrl } from "@/utils";
+import { AsyncImage } from "loadable-image";
+import { Fade } from "transitions-kit";
 
 export default function OrganizationsPage() {
 	const {
-		data: organizations,
+		data: organizations = [],
 		isLoading,
 		error,
 	} = useOrganizations({ status_verifikasi: "verified" });
@@ -52,13 +54,15 @@ export default function OrganizationsPage() {
 				</div>
 
 				<div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
-					{(organizations || []).map((org) => (
+					{organizations.map((org) => (
 						<article
 							key={org.id}
 							className="flex flex-col md:flex-row gap-4 p-6 bg-white rounded-xl border shadow-sm">
 							<div className="flex-shrink-0 w-full md:w-36 h-36 md:h-36 rounded-lg bg-sky-50 border overflow-hidden flex items-center justify-center">
 								{org.logo ? (
-									<img
+									<AsyncImage
+										loading="lazy"
+										Transition={Fade}
 										src={getImageUrl(`organizations/${org.logo}`)}
 										alt={`${org.nama} logo`}
 										className="object-cover w-full h-full"
@@ -68,7 +72,7 @@ export default function OrganizationsPage() {
 									/>
 								) : (
 									<div className="text-sky-700 font-bold text-xl">
-										{String(org.nama || "")
+										{String(org.nama || "Anonymous")
 											.split(" ")
 											.map((s) => s[0])
 											.slice(0, 2)

@@ -10,7 +10,15 @@ import { Link, useNavigate } from "react-router-dom";
 import DynamicButton from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
-import { cn, getImageUrl } from "@/utils/cn";
+import {
+	cn,
+	formatDate,
+	formatTime,
+	getImageUrl,
+	getGoogleMapsUrl,
+	getDirectionsUrl,
+	getStaticMapUrl,
+} from "@/utils";
 import { AsyncImage } from "loadable-image";
 import { Fade } from "transitions-kit";
 /**
@@ -21,39 +29,11 @@ export default function EventCard({
 	event,
 	onJoin,
 	className,
-	showOrganizer = true,
-	showMap = false,
+	showOrganizer = false,
 }) {
 	if (!event) return null;
 
 	const navigate = useNavigate();
-
-	/**
-	 * Memformat string tanggal menjadi format Indonesia yang lebih ringkas
-	 *
-	 * @param {string} dateString - String tanggal dalam format apapun yang bisa di-parse Date
-	 * @returns {string} Tanggal dalam format "DD MMM YYYY"
-	 */
-	const formatDate = (dateString) => {
-		const date = new Date(dateString);
-		return date.toLocaleDateString("id-ID", {
-			day: "numeric",
-			month: "short",
-			year: "numeric",
-		});
-	};
-
-	/**
-	 * Memformat string waktu dengan mengambil jam dan menit saja
-	 * Menangani case dimana timeString bisa undefined/null
-	 *
-	 * @param {string} timeString - String waktu dalam format HH:MM:SS atau HH:MM
-	 * @returns {string} Waktu dalam format HH:MM
-	 */
-	const formatTime = (timeString) => {
-		if (!timeString) return "00:00";
-		return timeString.slice(0, 5);
-	};
 
 	/**
 	 * Mendapatkan konfigurasi badge berdasarkan status event
@@ -92,52 +72,6 @@ export default function EventCard({
 		return colors[categoryId] || "default";
 	};
 
-	/**
-	 * Generate URL Google Maps untuk melihat lokasi event
-	 * Prioritas menggunakan koordinat lat/lng, jika tidak ada fallback ke alamat
-	 *
-	 * @returns {string} URL Google Maps untuk melihat lokasi
-	 */
-	const getGoogleMapsUrl = () => {
-		if (event.location?.latitude && event.location?.longitude) {
-			return `https://www.google.com/maps/search/?api=1&query=${event.location.latitude},${event.location.longitude}`;
-		}
-		if (event.latitude && event.longitude) {
-			return `https://www.google.com/maps/search/?api=1&query=${event.latitude},${event.longitude}`;
-		}
-		return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-			event.location?.alamat || event.address
-		)}`;
-	};
-
-	/**
-	 * Generate URL Google Maps untuk mendapatkan petunjuk arah ke lokasi event
-	 * Prioritas menggunakan koordinat lat/lng, jika tidak ada fallback ke alamat
-	 *
-	 * @returns {string} URL Google Maps untuk mendapatkan petunjuk arah
-	 */
-	const getDirectionsUrl = () => {
-		if (event.location?.latitude && event.location?.longitude) {
-			return `https://www.google.com/maps/dir/?api=1&destination=${event.location.latitude},${event.location.longitude}`;
-		}
-		if (event.latitude && event.longitude) {
-			return `https://www.google.com/maps/dir/?api=1&destination=${event.latitude},${event.longitude}`;
-		}
-		return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-			event.location?.alamat || event.address
-		)}`;
-	};
-
-	const getStaticMapUrl = () => {
-		const lat = event.location?.latitude || event.latitude;
-		const lng = event.location?.longitude || event.longitude;
-
-		if (!lat || !lng) return null;
-
-		const zoom = event.map_zoom_level || 15;
-		return `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${zoom}&size=400x200&maptype=roadmap&markers=color:red%7Clabel:E%7C${lat},${lng}&key=YOUR_GOOGLE_MAPS_API_KEY`;
-	};
-
 	const statusBadge = getStatusBadge(event.status);
 	const slotsRemaining =
 		(event.maks_peserta || event.capacity) -
@@ -156,8 +90,8 @@ export default function EventCard({
 
 	return (
 		<motion.div
-			whileHover={{ y: -6, scale: 1.02 }}
-			transition={{ duration: 0.3, ease: "easeOut" }}
+			whileHover={{ y: -6, scale: 1.0 }}
+			transition={{ duration: 0.1, ease: "easeOut" }}
 			className={cn(
 				"bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:shadow-emerald-500/10",
 				className
@@ -196,7 +130,7 @@ export default function EventCard({
 					{event.judul}
 				</h3>
 
-				<p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
+				<p className="text-gray-600 text-sm mb-4 line-clamp-1 leading-relaxed">
 					{event.deskripsi}
 				</p>
 
@@ -233,7 +167,7 @@ export default function EventCard({
 								<DynamicButton
 									variant="outline"
 									size="xs"
-									onClick={() => window.open(getGoogleMapsUrl(), "_blank")}
+									onClick={() => window.open(getGoogleMapsUrl(event), "_blank")}
 									className="flex items-center gap-1 text-xs px-2 py-1">
 									<ExternalLink size={12} />
 									Lihat di Maps
@@ -241,7 +175,7 @@ export default function EventCard({
 								<DynamicButton
 									variant="success"
 									size="xs"
-									onClick={() => window.open(getDirectionsUrl(), "_blank")}
+									onClick={() => window.open(getDirectionsUrl(event), "_blank")}
 									className="flex items-center gap-1 text-xs px-2 py-1">
 									<Navigation size={12} />
 									Petunjuk Arah
@@ -262,67 +196,22 @@ export default function EventCard({
 						)}
 						{isFull && (
 							<span className="text-red-600 ml-2 font-bold text-xs bg-red-50 px-2 py-1 rounded-full">
-								Penuh
+								batas terpenuhi
 							</span>
 						)}
 					</div>
 				</div>
 
-				{/* Location Info & Map Preview */}
-				{showMap && event.latitude && event.longitude && (
-					<div className="mb-6">
-						<div className="bg-gradient-to-br from-emerald-50 to-emerald-50 rounded-lg h-48 flex flex-col items-center justify-center relative overflow-hidden">
-							<div className="text-center z-10">
-								<div className="bg-white rounded-full p-3 shadow-sm mb-3 inline-flex">
-									<MapPin size={28} className="text-emerald-600" />
-								</div>
-								<h4 className="font-semibold text-gray-900 mb-1">
-									{event.location}
-								</h4>
-								<p className="text-sm text-gray-600 mb-3">
-									{event.latitude}, {event.longitude}
-								</p>
-								<div className="flex gap-2 justify-center">
-									<DynamicButton
-										variant="success"
-										size="sm"
-										onClick={() => window.open(getGoogleMapsUrl(), "_blank")}
-										className="flex items-center gap-1">
-										<ExternalLink size={14} />
-										Buka di Maps
-									</DynamicButton>
-									<DynamicButton
-										variant="outline"
-										size="sm"
-										onClick={() => window.open(getDirectionsUrl(), "_blank")}
-										className="flex items-center gap-1">
-										<Navigation size={14} />
-										Petunjuk Arah
-									</DynamicButton>
-								</div>
-							</div>
-
-							{/* Background pattern */}
-							<div className="absolute inset-0 opacity-10">
-								<div className="absolute top-2 left-2 w-2 h-2 bg-emerald-400 rounded-full"></div>
-								<div className="absolute top-4 right-6 w-1 h-1 bg-emerald-400 rounded-full"></div>
-								<div className="absolute bottom-6 left-8 w-1.5 h-1.5 bg-emerald-400 rounded-full"></div>
-								<div className="absolute bottom-3 right-3 w-2 h-2 bg-emerald-400 rounded-full"></div>
-							</div>
-						</div>
-					</div>
-				)}
-
 				{/* Organizer */}
-				{showOrganizer && event.organizer && (
+				{showOrganizer && event.organization && (
 					<div className="flex items-center mb-6 pb-4 border-b border-gray-100">
 						<Avatar
-							src={event.organizer.avatar}
-							fallback={event.organizer.name}
+							src={event.organization.logo}
+							fallback={event.organization.nama}
 							size="sm"
 						/>
 						<span className="text-gray-700 text-sm ml-3 font-semibold">
-							oleh {event.organizer.name}
+							oleh {event.organization.nama}
 						</span>
 					</div>
 				)}

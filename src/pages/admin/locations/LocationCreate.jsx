@@ -1,6 +1,6 @@
 import { useAdminCreateLocationMutation } from "@/_hooks/useLocations";
 import DynamicButton from "@/components/ui/Button";
-import { parseApiError } from "@/utils/cn";
+import { parseApiError } from "@/utils";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";

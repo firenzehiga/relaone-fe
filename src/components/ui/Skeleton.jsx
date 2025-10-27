@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { cn } from "@/utils/cn";
+import { cn } from "@/utils";
 import { Loader2 } from "lucide-react";
 
 export default function Skeleton({ className, ...props }) {
@@ -20,7 +20,7 @@ export default function Skeleton({ className, ...props }) {
 }
 
 // Preset skeleton components
-const SkeletonCard = ({ className }) => {
+function SkeletonCard({ className }) {
 	return (
 		<div className={cn("bg-slate-200 border rounded-lg p-6", className)}>
 			<Skeleton className="h-4 w-3/4 mb-4" />
@@ -32,9 +32,9 @@ const SkeletonCard = ({ className }) => {
 			</div>
 		</div>
 	);
-};
+}
 
-const SkeletonEventCard = ({ className }) => {
+function SkeletonEventCard({ className }) {
 	return (
 		<div
 			className={cn(
@@ -53,7 +53,7 @@ const SkeletonEventCard = ({ className }) => {
 			</div>
 		</div>
 	);
-};
+}
 
 function SkeletonLine({ className }) {
 	return <Skeleton className={cn("h-4 w-full", className)} />;
@@ -78,7 +78,7 @@ Skeleton.Line = SkeletonLine;
 Skeleton.Text = SkeletonText;
 
 // Detail page skeleton (slate accent)
-const SkeletonDetail = () => {
+function SkeletonDetail() {
 	return (
 		<div className="min-h-screen bg-white">
 			<div className="max-w-7xl mx-auto p-6">
@@ -151,11 +151,11 @@ const SkeletonDetail = () => {
 			</div>
 		</div>
 	);
-};
+}
 
 Skeleton.Detail = SkeletonDetail;
 
-const FormSkeleton = ({ title = "", rows = 6 }) => {
+function FormSkeleton({ title = "", rows = 6 }) {
 	return (
 		<div className="max-w-7xl mx-auto p-6">
 			<div className="bg-white shadow-lg rounded-lg p-6" style={{ width: 950 }}>
@@ -190,10 +190,10 @@ const FormSkeleton = ({ title = "", rows = 6 }) => {
 			</div>
 		</div>
 	);
-};
+}
 Skeleton.FormSkeleton = FormSkeleton;
 
-const OrgSkeleton = () => {
+function OrgSkeleton() {
 	return (
 		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-slate-50 via-white to-blue-50">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -225,5 +225,5 @@ const OrgSkeleton = () => {
 			</div>
 		</div>
 	);
-};
+}
 Skeleton.OrgSkeleton = OrgSkeleton;

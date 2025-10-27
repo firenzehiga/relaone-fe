@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { MapPin, Users, Calendar } from "lucide-react";
-import { cn } from "@/utils/cn";
+import { cn } from "@/utils";
 
 export default function OrganizationCard({
 	organization,
@@ -18,11 +18,11 @@ export default function OrganizationCard({
 				className
 			)}
 			onClick={() => onViewProfile?.(organization.id)}>
-			{/* Organization Banner */}
+			{/* Organization Logo */}
 			<div className="relative h-32 overflow-hidden">
 				<img
-					src={organization.banner}
-					alt={organization.name}
+					src={organization.logo}
+					alt={organization.nama}
 					className="w-full h-full object-cover"
 				/>
 				<div className="absolute inset-0 bg-black bg-opacity-40" />
@@ -34,7 +34,7 @@ export default function OrganizationCard({
 				<div className="absolute -top-8 left-4">
 					<img
 						src={organization.logo}
-						alt={organization.name}
+						alt={organization.nama}
 						className="w-16 h-16 rounded-full border-4 border-gray-800 object-cover"
 					/>
 				</div>
