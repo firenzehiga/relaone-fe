@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { parseApiError } from "@/utils/cn";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import * as eventService from "@/_services/eventService";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 import DynamicButton from "@/components/ui/Button";
 import { useAdminLocations } from "@/_hooks/useLocations";
@@ -11,6 +10,7 @@ import { useAuthStore } from "@/_hooks/useAuth";
 import { useAdminCreateEventMutation } from "@/_hooks/useEvents";
 import { Loader2 } from "lucide-react";
 import { useAdminCategory } from "@/_hooks/useCategories";
+import Skeleton from "@/components/ui/Skeleton";
 export default function AdminEventCreate() {
 	const navigate = useNavigate();
 	const { user } = useAuthStore();
@@ -197,6 +197,14 @@ export default function AdminEventCreate() {
 			setSubmitting(false);
 		}
 	};
+
+	if (locationsLoading || organizationsLoading || categoriesLoading) {
+		return <Skeleton.FormSkeleton title="Loading..." />;
+	}
+
+	if (locationsError || organizationsError || categoriesError) {
+		return <div>{locationsError || organizationsError || categoriesError}</div>;
+	}
 
 	return (
 		<div className="max-w-7xl mx-auto p-6">

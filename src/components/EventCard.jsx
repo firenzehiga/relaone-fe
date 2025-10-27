@@ -143,6 +143,17 @@ export default function EventCard({
 		(event.maks_peserta || event.capacity) -
 		(event.peserta_saat_ini || event.registered || 0);
 
+	// Alur penutupan pendaftaran:
+	// - event cancelled  -> closed
+	// - no slots remaining -> closed
+	// - event date has already arrived (registration closed on or after start date)
+	const isCancelled = event.status === "cancelled";
+	const isFull = slotsRemaining <= 0;
+	const eventStart = event.tanggal_mulai ? new Date(event.tanggal_mulai) : null;
+	const now = new Date();
+	const isStartedOrPast = eventStart ? now >= eventStart : false;
+	const registrationClosed = isCancelled || isFull || isStartedOrPast;
+
 	return (
 		<motion.div
 			whileHover={{ y: -6, scale: 1.02 }}
@@ -249,6 +260,11 @@ export default function EventCard({
 								{slotsRemaining} slot tersisa
 							</span>
 						)}
+						{isFull && (
+							<span className="text-red-600 ml-2 font-bold text-xs bg-red-50 px-2 py-1 rounded-full">
+								Penuh
+							</span>
+						)}
 					</div>
 				</div>
 
@@ -326,9 +342,15 @@ export default function EventCard({
 						variant="success"
 						size="sm"
 						className="flex-1"
-						disabled={event.status === "full" || event.status === "cancelled"}
+						disabled={registrationClosed}
 						onClick={() => onJoin?.(event.id)}>
-						{event.status === "full" ? "Penuh" : "Daftar"}
+						{isCancelled
+							? "Dibatalkan"
+							: isFull
+							? "Penuh"
+							: isStartedOrPast
+							? "Pendaftaran Ditutup"
+							: "Daftar"}
 					</DynamicButton>
 				</div>
 			</div>

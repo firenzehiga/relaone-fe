@@ -7,6 +7,7 @@ import { useAdminOrganizationUsers } from "@/_hooks/useUsers";
 import { useAdminCreateOrganizationMutation } from "@/_hooks/useOrganizations";
 import { parseApiError } from "@/utils/cn";
 import DynamicButton from "@/components/ui/Button";
+import Skeleton from "@/components/ui/Skeleton";
 
 export default function AdminOrganizationCreate() {
 	const navigate = useNavigate();
@@ -106,6 +107,10 @@ export default function AdminOrganizationCreate() {
 		} finally {
 			setSubmitting(false);
 		}
+	}
+
+	if (organizationUsersLoading) {
+		return <Skeleton.FormSkeleton title="Loading..." />;
 	}
 
 	return (

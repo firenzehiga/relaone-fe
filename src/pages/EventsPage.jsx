@@ -9,6 +9,9 @@ import Skeleton from "@/components/ui/Skeleton";
 import { useEvents } from "@/_hooks/useEvents";
 import { useCategory } from "@/_hooks/useCategories";
 import { useModalStore } from "@/stores/useAppStore";
+import { getImageUrl } from "@/utils/cn";
+import { AsyncImage } from "loadable-image";
+import { Fade } from "transitions-kit";
 
 /**
  * Halaman Events untuk menampilkan daftar event volunteer
@@ -35,7 +38,6 @@ export default function EventsPage() {
 	const [filters, setFilters] = useState({
 		search: searchParams.get("search") || "",
 		category: searchParams.get("category") || "",
-		status: "published",
 		tanggal_mulai: "",
 		city: "",
 	});
@@ -51,8 +53,8 @@ export default function EventsPage() {
 	useEffect(() => {
 		if (!events) return;
 
-		let filtered = events.filter((event) => event.status === filters.status);
-
+		// Exclude draft events from public listing
+		let filtered = events.filter((event) => event.status !== "draft");
 		if (filters.search) {
 			filtered = filtered.filter(
 				(event) =>
@@ -104,10 +106,10 @@ export default function EventsPage() {
 		const newFilters = { ...filters, [key]: value };
 		setFilters(newFilters);
 
-		// Update URL params
+		// Update URL params (only include active filters)
 		const newParams = new URLSearchParams();
 		Object.entries(newFilters).forEach(([k, v]) => {
-			if (v && k !== "status") {
+			if (v) {
 				newParams.set(k, v);
 			}
 		});
@@ -122,12 +124,16 @@ export default function EventsPage() {
 		setFilters({
 			search: "",
 			category: "",
-			status: "published",
 			tanggal_mulai: "",
 			city: "",
 		});
 		setSearchParams({});
 	};
+
+	// Whether any user-applied filter is active (used to show Clear Filter button and empty-state behavior)
+	const hasActiveFilters = Boolean(
+		filters.search || filters.category || filters.tanggal_mulai || filters.city
+	);
 
 	/**
 	 * Handler untuk membuka modal pendaftaran event
@@ -164,6 +170,29 @@ export default function EventsPage() {
 	const availableCities = [
 		...new Set(events?.map((event) => event.location?.kota).filter(Boolean)),
 	];
+
+	// Helpers to determine registration availability per event
+	const slotsRemainingFor = (event) =>
+		(event.maks_peserta || event.capacity) -
+		(event.peserta_saat_ini || event.registered || 0);
+
+	const isRegistrationClosedFor = (event) => {
+		const slots = slotsRemainingFor(event);
+		const start = event.tanggal_mulai ? new Date(event.tanggal_mulai) : null;
+		const now = new Date();
+		// closed when cancelled, no slots, or the event date has arrived/passed
+		return (
+			event.status === "cancelled" || slots <= 0 || (start && now >= start)
+		);
+	};
+
+	const registrationLabelFor = (event) => {
+		if (event.status === "cancelled") return "Dibatalkan";
+		if (slotsRemainingFor(event) <= 0) return "Penuh";
+		const start = event.tanggal_mulai ? new Date(event.tanggal_mulai) : null;
+		if (start && new Date() >= start) return "Pendaftaran Ditutup";
+		return "Daftar";
+	};
 
 	// Error state handling
 	if (eventsError) {
@@ -251,7 +280,7 @@ export default function EventsPage() {
 								</DynamicButton>
 							</div>
 
-							{(filters.category || filters.date || filters.city) && (
+							{hasActiveFilters && (
 								<DynamicButton
 									variant="outline"
 									onClick={clearFilters}
@@ -323,30 +352,14 @@ export default function EventsPage() {
 									/>
 								</div>
 
-								{/* Status Filter */}
-								<div>
-									<label className="block text-gray-900 font-semibold mb-2">
-										Status
-									</label>
-									<select
-										value={filters.status}
-										onChange={(e) =>
-											handleFilterChange("status", e.target.value)
-										}
-										className="w-full px-3 py-3 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-										<option value="published">Terbuka</option>
-										<option value="full">Penuh</option>
-										<option value="draft">Draft</option>
-										<option value="cancelled">Dibatalkan</option>
-									</select>
-								</div>
+								{/* status filter removed by design - public listing should not expose status filter */}
 							</div>
 						</motion.div>
 					)}
 				</div>
 
 				{/* Active Filters */}
-				{(filters.category || filters.search || filters.tanggal_mulai) && (
+				{hasActiveFilters && (
 					<div className="flex flex-wrap items-center gap-2 mb-6">
 						<span className="text-gray-600 text-sm font-medium">
 							Filter aktif:
@@ -440,11 +453,18 @@ export default function EventsPage() {
 											transition={{ delay: index * 0.05 }}>
 											<div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
 												<div className="flex gap-4">
-													<img
-														src={event.gambar || "/api/placeholder/80/80"}
+													<AsyncImage
+														loading="lazy"
+														transition={Fade}
+														src={getImageUrl(`events/${event.gambar}`)}
 														alt={event.judul}
 														className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
+														onError={(e) => {
+															e.target.onerror = null;
+															e.target.src = "https://placehold.co/400";
+														}}
 													/>
+
 													<div className="flex-1 min-w-0">
 														<h3 className="font-semibold text-gray-900 line-clamp-1 mb-1">
 															{event.judul}
@@ -461,16 +481,16 @@ export default function EventsPage() {
 														<div className="flex gap-2">
 															<DynamicButton
 																variant="outline"
-																size="xs"
+																size="sm"
 																onClick={() => handleViewEventDetail(event.id)}>
 																Detail
 															</DynamicButton>
 															<DynamicButton
 																variant="primary"
-																size="xs"
+																size="sm"
 																onClick={() => handleJoinEvent(event.id)}
-																disabled={event.status === "full"}>
-																{event.status === "full" ? "Penuh" : "Daftar"}
+																disabled={isRegistrationClosedFor(event)}>
+																{registrationLabelFor(event)}
 															</DynamicButton>
 														</div>
 													</div>

@@ -1,5 +1,4 @@
 import { Calendar, MapPin, Users, Clock, X } from "lucide-react";
-import { useEffect } from "react";
 import Skeleton from "@/components/ui/Skeleton";
 import DynamicButton from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
@@ -21,13 +20,7 @@ export default function DetailEventPage() {
 	const { openJoinModal } = useModalStore();
 
 	if (isLoading) {
-		return (
-			<div className="min-h-screen bg-white">
-				<div className="max-w-7xl mx-auto p-6">
-					<Skeleton.Detail />
-				</div>
-			</div>
-		);
+		return <Skeleton.Detail />;
 	}
 
 	if (error || !event) {
@@ -72,6 +65,16 @@ export default function DetailEventPage() {
 	const slotsRemaining =
 		(event.maks_peserta || event.capacity) -
 		(event.peserta_saat_ini || event.registered || 0);
+	// Alur penutupan pendaftaran:
+	// - event cancelled  -> closed
+	// - no slots remaining -> closed
+	// - event date has already arrived (registration closed on or after start date)
+	const isCancelled = event.status === "cancelled";
+	const isFull = slotsRemaining <= 0;
+	const eventStart = event.tanggal_mulai ? new Date(event.tanggal_mulai) : null;
+	const now = new Date();
+	const isStartedOrPast = eventStart ? now >= eventStart : false;
+	const registrationClosed = isCancelled || isFull || isStartedOrPast;
 
 	return (
 		<div className="min-h-screen bg-white">
@@ -120,20 +123,21 @@ export default function DetailEventPage() {
 								<DynamicButton
 									variant="ghost"
 									size="sm"
-									onClick={() => navigate(-1)}>
+									disa
+									onClick={() => navigate("/events")}>
 									Kembali
 								</DynamicButton>
 								<DynamicButton
 									variant="primary"
 									onClick={handleJoinEvent}
-									disabled={
-										event.status === "full" || event.status === "cancelled"
-									}>
-									{event.status === "full"
-										? "Event Penuh"
-										: event.status === "cancelled"
-										? "Event Dibatalkan"
-										: "Daftar Sekarang"}
+									disabled={registrationClosed}>
+									{isCancelled
+										? "Dibatalkan"
+										: isFull
+										? "Penuh"
+										: isStartedOrPast
+										? "Pendaftaran Ditutup"
+										: "Daftar"}
 								</DynamicButton>
 							</div>
 						</div>
