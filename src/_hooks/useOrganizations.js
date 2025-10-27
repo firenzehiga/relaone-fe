@@ -95,7 +95,7 @@ export const useAdminCreateOrganizationMutation = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: createOrganization,
+		mutationFn: organizationService.adminCreateOrganization,
 		onSuccess: () => {
 			queryClient.invalidateQueries(["adminOrganizations"]);
 		},

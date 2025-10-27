@@ -18,6 +18,24 @@ export const adminGetLocations = async (params = {}) => {
 	return response.data.data || response.data;
 };
 
+/** * Buat location baru
+ *
+ * @async
+ * @function adminCreateLocation
+ * @endpoint POST /admin/locations
+ * @param {Object} locationData - Data location baru
+ * @returns {Promise<any>} Data location baru
+ */
+export const adminCreateLocation = async (locationData) => {
+	const token = localStorage.getItem("authToken");
+	const response = await api.post("/admin/locations", locationData, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	return response.data.data || response.data;
+};
+
 /** Hapus location
  *
  * @async

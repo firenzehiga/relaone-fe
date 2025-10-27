@@ -25,6 +25,7 @@ import {
 	useAdminOrganizations,
 } from "@/_hooks/useOrganizations";
 import Badge from "@/components/ui/Badge";
+import { getImageUrl, parseApiError } from "@/utils/cn";
 
 export default function AdminOrganization() {
 	const {
@@ -82,7 +83,7 @@ export default function AdminOrganization() {
 					},
 					onError: (err) => {
 						// ambil pesan backend kalau ada, fallback ke err.message
-						const msg = err?.response?.data?.message || "Terjadi kesalahan";
+						const msg = parseApiError(err) || "Terjadi kesalahan";
 						showToast({
 							type: "error",
 							tipIcon: "💡",
@@ -117,7 +118,7 @@ export default function AdminOrganization() {
 				<div className="flex items-center mt-1 mb-1">
 					{row.logo ? (
 						<img
-							src={row.logo}
+							src={getImageUrl(`organizations/${row.logo}`)}
 							alt={row.nama || "logo"}
 							className="w-16 h-16 rounded-md object-cover border border-gray-200"
 						/>

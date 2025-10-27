@@ -1,5 +1,6 @@
 import { useOrganizations } from "@/_hooks/useOrganizations";
 import DynamicButton from "@/components/ui/Button";
+import { getImageUrl } from "@/utils/cn";
 
 export default function OrganizationsPage() {
 	const {
@@ -86,9 +87,8 @@ export default function OrganizationsPage() {
 							className="flex flex-col md:flex-row gap-4 p-6 bg-white rounded-xl border shadow-sm">
 							<div className="flex-shrink-0 w-full md:w-36 h-36 md:h-36 rounded-lg bg-sky-50 border overflow-hidden flex items-center justify-center">
 								{org.logo ? (
-									// if logo is a url
 									<img
-										src={org.logo}
+										src={getImageUrl(`organizations/${org.logo}`)}
 										alt={`${org.nama} logo`}
 										className="object-cover w-full h-full"
 										onError={(e) => {

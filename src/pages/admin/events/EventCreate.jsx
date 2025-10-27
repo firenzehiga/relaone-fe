@@ -1,28 +1,69 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Image as ImageIcon, UserCircle2Icon } from "lucide-react";
+import { parseApiError } from "@/utils/cn";
 import { toast } from "react-hot-toast";
-
+import { useNavigate } from "react-router-dom";
+import * as eventService from "@/_services/eventService";
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
+import DynamicButton from "@/components/ui/Button";
+import { useAdminLocations } from "@/_hooks/useLocations";
+import { useAdminOrganizations } from "@/_hooks/useOrganizations";
+import { useAuthStore } from "@/_hooks/useAuth";
+import { useAdminCreateEventMutation } from "@/_hooks/useEvents";
+import { Loader2 } from "lucide-react";
+import { useAdminCategory } from "@/_hooks/useCategories";
 export default function AdminEventCreate() {
+	const navigate = useNavigate();
+	const { user } = useAuthStore();
 	const [formData, setFormData] = useState({
-		title: "",
-		description: "",
-		category: "",
-		date: "",
-		type: "in-person",
+		judul: "",
+		deskripsi: "",
+		deskripsi_singkat: "",
+		tanggal_mulai: "",
+		tanggal_selesai: "",
+		waktu_mulai: "",
+		waktu_selesai: "",
+		maks_peserta: "",
 		gambar: null,
+		status: "draft",
+		persyaratan: [],
+		manfaat: [],
+		nama_kontak: "",
+		telepon_kontak: "",
+		email_kontak: "",
+		batas_pendaftaran: "",
+		category_id: "",
+		organization_id: "",
+		location_id: "",
+		user_id: user.id,
 	});
-	const [previewUrl, setPreviewUrl] = useState(null);
+	const [persyaratanInput, setPersyaratanInput] = useState("");
+	const [manfaatInput, setManfaatInput] = useState("");
+
 	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState("");
 	const fileInputRef = useRef(null);
+	const [previewUrl, setPreviewUrl] = useState("");
 
-	useEffect(() => {
-		return () => {
-			if (previewUrl) URL.revokeObjectURL(previewUrl);
-		};
-	}, [previewUrl]);
+	const createEventMutation = useAdminCreateEventMutation();
+	const {
+		data: locations = [],
+		isLoading: locationsLoading,
+		error: locationsError,
+	} = useAdminLocations();
 
-	function handleChange(e) {
+	const {
+		data: organizations = [],
+		isLoading: organizationsLoading,
+		error: organizationsError,
+	} = useAdminOrganizations();
+
+	const {
+		data: categories = [],
+		isLoading: categoriesLoading,
+		error: categoriesError,
+	} = useAdminCategory();
+
+	const handleChange = (e) => {
 		const { name, value, files } = e.target;
 		// file input validation
 		if (name === "gambar") {
@@ -35,7 +76,7 @@ export default function AdminEventCreate() {
 
 			if (!allowed.includes(file.type)) {
 				toast.error(
-					"File harus berupa gambar JPEG/PNG (webp tidak diperbolehkan).",
+					"File harus berupa gambar JPEG/PNG/JPG (webp tidak diperbolehkan).",
 					{ position: "top-center" }
 				);
 				return;
@@ -48,48 +89,95 @@ export default function AdminEventCreate() {
 			}
 
 			setError("");
-			if (previewUrl) URL.revokeObjectURL(previewUrl);
 			setFormData((s) => ({ ...s, [name]: file }));
-			setPreviewUrl(URL.createObjectURL(file));
 		} else {
 			setFormData((s) => ({ ...s, [name]: value }));
 		}
-	}
+	};
 
-	function removeImage() {
-		if (previewUrl) URL.revokeObjectURL(previewUrl);
-		setFormData((s) => ({ ...s, gambar: null }));
-		setPreviewUrl(null);
-		if (fileInputRef.current) fileInputRef.current.value = "";
-	}
+	// buat preview gambar saat file diubah
+	useEffect(() => {
+		let url;
+		if (formData.gambar instanceof File) {
+			url = URL.createObjectURL(formData.gambar);
+			setPreviewUrl(url);
+		} else setPreviewUrl("");
+		return () => {
+			if (url) URL.revokeObjectURL(url);
+		};
+	}, [formData.gambar]);
 
-	function handleDrop(e) {
+	// persyaratan handlers (array)
+	const addPersyaratan = () => {
+		const v = persyaratanInput && persyaratanInput.trim();
+		if (!v) return;
+		setFormData((s) => ({ ...s, persyaratan: [...s.persyaratan, v] }));
+		setPersyaratanInput("");
+	};
+	const updatePersyaratan = (idx, value) => {
+		setFormData((s) => ({
+			...s,
+			persyaratan: s.persyaratan.map((p, i) => (i === idx ? value : p)),
+		}));
+	};
+	const removePersyaratan = (idx) => {
+		setFormData((s) => ({
+			...s,
+			persyaratan: s.persyaratan.filter((_, i) => i !== idx),
+		}));
+	};
+
+	// manfaat handlers (array)
+	const addManfaat = () => {
+		const v = manfaatInput && manfaatInput.trim();
+		if (!v) return;
+		setFormData((s) => ({ ...s, manfaat: [...s.manfaat, v] }));
+		setManfaatInput("");
+	};
+	const updateManfaat = (idx, value) => {
+		setFormData((s) => ({
+			...s,
+			manfaat: s.manfaat.map((m, i) => (i === idx ? value : m)),
+		}));
+	};
+	const removeManfaat = (idx) => {
+		setFormData((s) => ({
+			...s,
+			manfaat: s.manfaat.filter((_, i) => i !== idx),
+		}));
+	};
+
+	const handleDrop = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
 		const dt = e.dataTransfer;
 		if (!dt?.files?.length) return;
 		const file = dt.files[0];
-		if (!file.type.startsWith("image/")) {
-			setError("File harus berupa gambar (jpg/png).");
+
+		const allowed = ["image/jpeg", "image/png", "image/jpg"];
+		const maxSize = 2 * 1024 * 1024;
+		if (!allowed.includes(file.type)) {
+			toast.error("File harus berupa gambar JPEG/PNG/JPG.", {
+				position: "top-center",
+			});
 			return;
 		}
-		setError("");
-		if (previewUrl) URL.revokeObjectURL(previewUrl);
-		setFormData((s) => ({ ...s, image: file }));
-		setPreviewUrl(URL.createObjectURL(file));
-	}
-
-	function handleDragOver(e) {
-		e.preventDefault();
-	}
-
-	async function handleSubmit(e) {
-		e.preventDefault();
-		setError("");
-		if (!formData.title.trim()) {
-			setError("Nama event wajib diisi.");
+		if (file.size > maxSize) {
+			toast.error("Ukuran file maksimal 2MB.", { position: "top-center" });
 			return;
 		}
+
+		setError("");
+		setFormData((s) => ({ ...s, gambar: file }));
+	};
+
+	const handleDragOver = (e) => {
+		e.preventDefault();
+	};
+
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		setError("");
 		setSubmitting(true);
 		try {
 			const payload = new FormData();
@@ -97,34 +185,24 @@ export default function AdminEventCreate() {
 				payload.append(key, formData[key]);
 			}
 
-			// TODO: ganti URL berikut dengan endpoint backend Anda
-			// const res = await fetch('/api/events', { method: 'POST', body: payload });
-			// if (!res.ok) throw new Error('Gagal menyimpan event');
+			await createEventMutation.mutateAsync(payload);
 
-			// Simulate success
-			await new Promise((r) => setTimeout(r, 600));
-			setFormData({
-				title: "",
-				description: "",
-				category: "",
-				date: "",
-				type: "in-person",
-				image: null,
-			});
-			removeImage();
-			alert("Event berhasil dibuat (simulasi)");
+			toast.success("Event berhasil dibuat", { position: "top-center" });
+			navigate("/admin/events");
 		} catch (err) {
-			setError(err.message || "Terjadi kesalahan saat menyimpan.");
+			const message = parseApiError(err);
+			toast.error(message, { position: "top-center" });
+			setError(message);
 		} finally {
 			setSubmitting(false);
 		}
-	}
+	};
 
 	return (
-		<div className="max-w-5xl mx-auto p-6">
-			<div className="bg-white shadow-sm rounded-lg p-6">
-				<header className="mb-6">
-					<h1 className="text-2xl font-semibold text-gray-900">
+		<div className="max-w-7xl mx-auto p-6">
+			<div className="bg-white shadow-xl rounded-lg p-6">
+				<header className="mb-8">
+					<h1 className="text-2xl font-semibold text-gray-900 mb-2">
 						Buat Event Baru
 					</h1>
 					<p className="text-sm text-gray-500 mt-1">
@@ -139,186 +217,510 @@ export default function AdminEventCreate() {
 						</div>
 					)}
 
-					<div>
-						<label
-							htmlFor="title"
-							className="block text-sm font-medium text-gray-700">
-							Nama Event
-						</label>
-						<input
-							id="title"
-							name="title"
-							value={formData.title}
-							onChange={handleChange}
-							type="text"
-							placeholder="Contoh: Bersih Pantai"
-							className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-						/>
-					</div>
+					<Tabs variant="enclosed" colorScheme="green" isFitted>
+						<TabList>
+							<Tab className="font-semibold">Informasi Event</Tab>
+							<Tab className="font-semibold">Jadwal Kegiatan</Tab>
+							<Tab className="font-semibold">Penanggung Jawab</Tab>
+						</TabList>
 
-					{/* grid: category | date | type */}
-					<div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-						<div>
-							<label
-								htmlFor="category"
-								className="block text-sm font-medium text-gray-700">
-								Kategori
-							</label>
-							<select
-								id="category"
-								name="category"
-								value={formData.category}
-								onChange={handleChange}
-								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-								<option value="">Pilih kategori</option>
-								<option value="environment">Environment</option>
-								<option value="education">Education</option>
-								<option value="health">Health</option>
-								<option value="community">Community</option>
-							</select>
-						</div>
-
-						<div>
-							<label
-								htmlFor="date"
-								className="block text-sm font-medium text-gray-700">
-								Tanggal
-							</label>
-							<input
-								id="date"
-								name="date"
-								type="date"
-								value={formData.date}
-								onChange={handleChange}
-								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-							/>
-						</div>
-
-						<div>
-							<fieldset>
-								<legend className="text-sm font-medium text-gray-700">
-									Tipe Event
-								</legend>
-								<div className="mt-2 flex gap-4 items-center">
-									<label className="inline-flex items-center gap-2">
-										<input
-											type="radio"
-											name="type"
-											value="in-person"
-											checked={formData.type === "in-person"}
-											onChange={handleChange}
-											className="form-radio text-indigo-600"
-										/>
-										<span className="text-sm text-gray-700">In-Person</span>
+						<TabPanels className="mt-6" style={{ minHeight: 420, width: 900 }}>
+							<TabPanel>
+								{/* Judul & Deskripsi */}
+								<div className="mb-4">
+									<label
+										htmlFor="judul"
+										className="block text-sm font-medium text-gray-700">
+										Nama Event
 									</label>
-									<label className="inline-flex items-center gap-2">
-										<input
-											type="radio"
-											name="type"
-											value="online"
-											checked={formData.type === "online"}
-											onChange={handleChange}
-											className="form-radio text-indigo-600"
-										/>
-										<span className="text-sm text-gray-700">Online</span>
-									</label>
-								</div>
-							</fieldset>
-						</div>
-					</div>
-					<div>
-						<label
-							htmlFor="description"
-							className="block text-sm font-medium text-gray-700">
-							Deskripsi
-						</label>
-						<textarea
-							id="description"
-							name="description"
-							value={formData.description}
-							onChange={handleChange}
-							rows={4}
-							placeholder="Tulis deskripsi singkat tentang event"
-							className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-						/>
-					</div>
-
-					<div>
-						<label className="block text-sm font-medium text-gray-700">
-							Gambar Event
-						</label>
-
-						<div
-							onDrop={handleDrop}
-							onDragOver={handleDragOver}
-							className="mt-2 flex items-center gap-4">
-							<div className="w-40 h-28 flex items-center justify-center rounded-md border-2 border-dashed border-gray-200 bg-gray-50 overflow-hidden">
-								{previewUrl ? (
-									<img
-										src={previewUrl}
-										alt="preview"
-										className="w-full h-full object-cover"
+									<input
+										id="judul"
+										name="judul"
+										value={formData.judul}
+										onChange={handleChange}
+										type="text"
+										required
+										placeholder="Contoh: Bersih Pantai"
+										className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 									/>
-								) : (
-									<div className="text-gray-300 flex flex-col items-center">
-										<ImageIcon className="size-8" />
-										<span className="text-xs">Preview</span>
-									</div>
-								)}
-							</div>
-
-							<div className="flex-1">
-								<p className="text-sm text-gray-500">
-									PNG, JPG, GIF — maksimal 10MB
-								</p>
-								<div className="mt-3 flex gap-3">
-									<label className="inline-flex items-center px-3 py-2 bg-white border rounded-md text-sm text-gray-700 hover:bg-gray-50 cursor-pointer">
-										Pilih Gambar
-										<input
-											ref={fileInputRef}
-											name="gambar"
-											id="gambar"
-											type="file"
-											accept="image/*"
-											onChange={handleChange}
-											className="sr-only"
-										/>
-									</label>
-
-									{previewUrl && (
-										<button
-											type="button"
-											onClick={removeImage}
-											className="inline-flex items-center px-3 py-2 bg-red-50 text-red-700 border rounded-md text-sm hover:bg-red-100">
-											Hapus
-										</button>
-									)}
 								</div>
-								<p className="mt-2 text-xs text-gray-400">
-									Kamu juga bisa seret & lepas gambar ke area ini.
-								</p>
-							</div>
-						</div>
-					</div>
 
-					<div className="flex items-center justify-end gap-3">
-						<button
-							type="button"
-							onClick={() => {
-								setTitle("");
-								setDescription("");
-								removeImage();
-							}}
-							className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md">
-							Batal
-						</button>
-						<button
-							type="submit"
-							disabled={submitting}
-							className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500 disabled:opacity-60">
-							{submitting ? "Menyimpan..." : "Simpan Event"}
-						</button>
-					</div>
+								<div className="mb-4">
+									<label
+										htmlFor="deskripsi"
+										className="block text-sm font-medium text-gray-700">
+										Deskripsi
+									</label>
+									<textarea
+										id="deskripsi"
+										name="deskripsi"
+										value={formData.deskripsi}
+										onChange={handleChange}
+										required
+										rows={4}
+										placeholder="Tulis deskripsi lengkap mengenai event ini..."
+										className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+									/>
+								</div>
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+									<div className="mb-4">
+										<label
+											htmlFor="deskripsi_singkat"
+											className="block text-sm font-medium text-gray-700">
+											Deskripsi Singkat
+										</label>
+										<input
+											id="deskripsi_singkat"
+											name="deskripsi_singkat"
+											value={formData.deskripsi_singkat}
+											onChange={handleChange}
+											type="text"
+											required
+											placeholder="Contoh: Bersih Pantai"
+											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+										/>
+									</div>
+									<div className="mb-4">
+										<label
+											htmlFor="category_id"
+											className="block text-sm font-medium text-gray-700">
+											Kategori Kegiatan
+										</label>
+										<select
+											id="category_id"
+											name="category_id"
+											value={formData.category_id}
+											onChange={handleChange}
+											required
+											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+											<option value="">Pilih Kategori</option>
+											{categories.map((category) => (
+												<option key={category.id} value={category.id}>
+													{category.nama}
+												</option>
+											))}
+										</select>
+									</div>
+								</div>
+								<div className="mb-4">
+									<label className="block text-sm font-medium text-gray-700">
+										Gambar Event
+									</label>
+									<div
+										onDrop={handleDrop}
+										onDragOver={handleDragOver}
+										className="mt-2 flex items-center gap-4">
+										<div className="flex-1">
+											<p className="text-sm text-gray-500">
+												PNG / JPG — maksimal 2MB. (webp tidak diperbolehkan)
+											</p>
+											<div className="mt-3 flex gap-3">
+												<label className="inline-flex items-center px-3 py-2 bg-white border rounded-md text-sm text-gray-700 hover:bg-gray-50 cursor-pointer">
+													Pilih Gambar
+													<input
+														ref={fileInputRef}
+														name="gambar"
+														id="gambar"
+														type="file"
+														accept="image/*"
+														required
+														onChange={handleChange}
+														className="sr-only"
+													/>
+												</label>
+											</div>
+											{formData.gambar && (
+												<div className="ml-4 flex flex-col items-center">
+													{previewUrl ? (
+														<img
+															src={previewUrl}
+															alt={formData.gambar.name}
+															className="w-60 h-40 object-cover rounded border"
+														/>
+													) : (
+														<div className="w-40 h-28 bg-gray-100 rounded flex items-center justify-center border text-xs text-gray-500">
+															Preview...
+														</div>
+													)}
+													<div className="mt-2 text-sm text-gray-700 truncate w-70 text-center">
+														{formData.gambar.name}
+													</div>
+												</div>
+											)}
+											<p className="mt-2 text-xs text-gray-400">
+												Kamu juga bisa seret & lepas gambar ke area ini.
+											</p>
+										</div>
+									</div>
+								</div>
+							</TabPanel>
+							<TabPanel>
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+									<div className="mb-4">
+										<label
+											htmlFor="tanggal_mulai"
+											className="block text-sm font-medium text-gray-700">
+											Tanggal Mulai
+										</label>
+										<input
+											id="tanggal_mulai"
+											name="tanggal_mulai"
+											type="date"
+											value={formData.tanggal_mulai}
+											onChange={handleChange}
+											required
+											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+										/>
+									</div>
+									<div>
+										<label
+											htmlFor="tanggal_selesai"
+											className="block text-sm font-medium text-gray-700">
+											Tanggal Selesai
+										</label>
+										<input
+											id="tanggal_selesai"
+											name="tanggal_selesai"
+											type="date"
+											value={formData.tanggal_selesai}
+											onChange={handleChange}
+											required
+											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+										/>
+									</div>
+								</div>
+
+								{/* Waktu & Kapasitas */}
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+									<div className="mb-4">
+										<label
+											htmlFor="waktu_mulai"
+											className="block text-sm font-medium text-gray-700">
+											Waktu Mulai
+										</label>
+										<input
+											id="waktu_mulai"
+											name="waktu_mulai"
+											type="time"
+											value={formData.waktu_mulai}
+											onChange={handleChange}
+											required
+											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+										/>
+									</div>
+									<div>
+										<label
+											htmlFor="waktu_selesai"
+											className="block text-sm font-medium text-gray-700">
+											Waktu Selesai
+										</label>
+										<input
+											id="waktu_selesai"
+											name="waktu_selesai"
+											type="time"
+											value={formData.waktu_selesai}
+											onChange={handleChange}
+											required
+											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+										/>
+									</div>
+								</div>
+
+								<div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+									<div className="mb-4">
+										<label
+											htmlFor="batas_pendaftaran"
+											className="block text-sm font-medium text-gray-700">
+											Batas Pendaftaran
+										</label>
+										<input
+											id="batas_pendaftaran"
+											name="batas_pendaftaran"
+											type="date"
+											value={formData.batas_pendaftaran}
+											onChange={handleChange}
+											required
+											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+										/>
+									</div>
+									<div>
+										<label
+											htmlFor="maks_peserta"
+											className="block text-sm font-medium text-gray-700">
+											Maks Peserta
+										</label>
+										<input
+											id="maks_peserta"
+											name="maks_peserta"
+											type="number"
+											min="0"
+											value={formData.maks_peserta}
+											onChange={handleChange}
+											required
+											placeholder="Misal: 50"
+											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+										/>
+									</div>
+									<div>
+										<label
+											htmlFor="location_id"
+											className="block text-sm font-medium text-gray-700">
+											Lokasi
+										</label>
+										<select
+											id="location_id"
+											name="location_id"
+											value={formData.location_id}
+											onChange={handleChange}
+											required
+											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+											<option value="">Pilih Lokasi</option>
+											{locations.map((location) => (
+												<option key={location.id} value={location.id}>
+													{location.nama}
+												</option>
+											))}
+										</select>
+									</div>
+									<div>
+										<label
+											htmlFor="organization_id"
+											className="block text-sm font-medium text-gray-700">
+											Organisasi
+										</label>
+										<select
+											id="organization_id"
+											name="organization_id"
+											value={formData.organization_id}
+											onChange={handleChange}
+											required
+											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+											<option value="">Pilih Organisasi</option>
+											{organizations.map((organization) => (
+												<option key={organization.id} value={organization.id}>
+													{organization.nama}
+												</option>
+											))}
+										</select>
+									</div>
+								</div>
+
+								{/* Persyaratan & Manfaat (list inputs) */}
+								<div className="grid grid-cols-1 gap-6 md:grid-cols-2 mt-4">
+									<div>
+										<label className="block text-sm font-medium text-gray-700">
+											Persyaratan
+										</label>
+										<div className="mt-2 space-y-2">
+											{formData.persyaratan &&
+											formData.persyaratan.length > 0 ? (
+												formData.persyaratan.map((p, idx) => (
+													<div key={idx} className="flex items-center gap-2">
+														<input
+															type="text"
+															className="flex-1 rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+															value={p}
+															onChange={(e) =>
+																updatePersyaratan(idx, e.target.value)
+															}
+														/>
+														<button
+															type="button"
+															onClick={() => removePersyaratan(idx)}
+															className="px-2 py-1 text-sm text-red-600 bg-red-50 rounded">
+															Hapus
+														</button>
+													</div>
+												))
+											) : (
+												<div className="text-sm text-gray-400">
+													Belum ada persyaratan. Tambahkan di bawah.
+												</div>
+											)}
+
+											<div className="flex items-center gap-2">
+												<input
+													type="text"
+													placeholder="Tambahkan persyaratan, misal: Minimal lulusan SMA"
+													className="flex-1 rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+													value={persyaratanInput}
+													onChange={(e) => setPersyaratanInput(e.target.value)}
+													onKeyDown={(e) => {
+														if (e.key === "Enter") {
+															e.preventDefault();
+															addPersyaratan();
+														}
+													}}
+												/>
+												<DynamicButton
+													variant="success"
+													type="button"
+													onClick={addPersyaratan}>
+													Tambah
+												</DynamicButton>
+											</div>
+										</div>
+									</div>
+
+									<div>
+										<label className="block text-sm font-medium text-gray-700">
+											Manfaat
+										</label>
+										<div className="mt-2 space-y-2">
+											{formData.manfaat && formData.manfaat.length > 0 ? (
+												formData.manfaat.map((m, idx) => (
+													<div key={idx} className="flex items-center gap-2">
+														<input
+															type="text"
+															className="flex-1 rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+															value={m}
+															onChange={(e) =>
+																updateManfaat(idx, e.target.value)
+															}
+														/>
+														<button
+															type="button"
+															onClick={() => removeManfaat(idx)}
+															className="px-2 py-1 text-sm text-red-600 bg-red-50 rounded">
+															Hapus
+														</button>
+													</div>
+												))
+											) : (
+												<div className="text-sm text-gray-400">
+													Belum ada manfaat. Tambahkan di bawah.
+												</div>
+											)}
+
+											<div className="flex items-center gap-2">
+												<input
+													type="text"
+													placeholder="Tambahkan manfaat, misal: Mendapatkan sertifikat"
+													className="flex-1 rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+													value={manfaatInput}
+													onChange={(e) => setManfaatInput(e.target.value)}
+													onKeyDown={(e) => {
+														if (e.key === "Enter") {
+															e.preventDefault();
+															addManfaat();
+														}
+													}}
+												/>
+												<DynamicButton
+													variant="success"
+													type="button"
+													onClick={addManfaat}>
+													Tambah
+												</DynamicButton>
+											</div>
+										</div>
+									</div>
+								</div>
+							</TabPanel>
+							<TabPanel>
+								{/* Kontak */}
+								<div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+									<div>
+										<label
+											htmlFor="nama_kontak"
+											className="block text-sm font-medium text-gray-700">
+											Nama Kontak
+										</label>
+										<input
+											id="nama_kontak"
+											name="nama_kontak"
+											type="text"
+											value={formData.nama_kontak}
+											onChange={handleChange}
+											required
+											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+										/>
+									</div>
+
+									<div>
+										<label
+											htmlFor="telepon_kontak"
+											className="block text-sm font-medium text-gray-700">
+											Telepon Kontak
+										</label>
+										<input
+											id="telepon_kontak"
+											name="telepon_kontak"
+											type="text"
+											value={formData.telepon_kontak}
+											onChange={handleChange}
+											placeholder="08xxxxxxxxxx"
+											required
+											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+										/>
+									</div>
+
+									<div className="mb-4">
+										<label
+											htmlFor="email_kontak"
+											className="block text-sm font-medium text-gray-700">
+											Email Kontak
+										</label>
+										<input
+											id="email_kontak"
+											name="email_kontak"
+											type="email"
+											value={formData.email_kontak}
+											onChange={handleChange}
+											required
+											placeholder="nama@contoh.com"
+											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+										/>
+									</div>
+								</div>
+
+								<div className="grid grid-cols-1 gap-4 md:grid-cols-3 items-start">
+									<div>
+										<label
+											htmlFor="status"
+											className="block text-sm font-medium text-gray-700">
+											Status
+										</label>
+										<select
+											id="status"
+											name="status"
+											value={formData.status}
+											onChange={handleChange}
+											required
+											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+											<option value="draft">Draft</option>
+											<option value="published">Published</option>
+										</select>
+									</div>
+								</div>
+							</TabPanel>
+						</TabPanels>
+					</Tabs>
+					<>
+						<div className="flex items-center justify-end gap-3">
+							<button
+								type="button"
+								onClick={() => {
+									navigate("/admin/events");
+								}}
+								className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md">
+								Batal
+							</button>
+							<button
+								type="submit"
+								disabled={submitting}
+								className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500">
+								{submitting ? (
+									<>
+										<Loader2 className="animate-spin h-4 w-4 mr-1 mb-1 inline" />
+										Menyimpan data....
+									</>
+								) : (
+									"Simpan Event"
+								)}
+							</button>
+						</div>
+					</>
 				</form>
 			</div>
 		</div>

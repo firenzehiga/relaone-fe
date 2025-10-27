@@ -79,7 +79,7 @@ export const adminGetEventById = async (id) => {
  */
 export const adminCreateEvent = async (eventData) => {
 	const token = localStorage.getItem("authToken");
-	const response = await api.post("/events", eventData, {
+	const response = await api.post("/admin/events", eventData, {
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},

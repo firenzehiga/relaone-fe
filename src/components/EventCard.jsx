@@ -2,7 +2,6 @@ import {
 	Calendar,
 	MapPin,
 	Users,
-	Clock,
 	Navigation,
 	ExternalLink,
 } from "lucide-react";
@@ -11,8 +10,9 @@ import { Link, useNavigate } from "react-router-dom";
 import DynamicButton from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
-import { cn } from "@/utils/cn";
-
+import { cn, getImageUrl } from "@/utils/cn";
+import { AsyncImage } from "loadable-image";
+import { Fade } from "transitions-kit";
 /**
  * Komponen EventCard untuk menampilkan informasi singkat suatu event volunteer
  * Menampilkan informasi seperti judul, tanggal, lokasi, peserta, dan tombol aksi
@@ -156,8 +156,10 @@ export default function EventCard({
 				<Link
 					to={`/events/details/${event.id}`}
 					aria-label={`Lihat detail event ${event.judul}`}>
-					<img
-						src={event.gambar || "https://placehold.co/400"}
+					<AsyncImage
+						loading="lazy"
+						transition={Fade}
+						src={getImageUrl(`events/${event.gambar}`)}
 						alt={event.judul}
 						className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
 						onError={(e) => {

@@ -25,6 +25,7 @@ import {
 } from "@chakra-ui/react";
 import DynamicButton, { LinkButton } from "@/components/ui/Button";
 import { Link } from "react-router-dom";
+import { parseApiError } from "@/utils/cn";
 
 export default function AdminEvent() {
 	const {
@@ -82,8 +83,7 @@ export default function AdminEvent() {
 					},
 					onError: (err) => {
 						// ambil pesan backend kalau ada, fallback ke err.message
-						const msg =
-							err?.response?.data?.message || "Gagal menghapus event.";
+						const msg = parseApiError(err) || "Gagal menghapus event.";
 						toast.error(msg, { position: "top-center" });
 					},
 				}); // Panggil fungsi deleteMutation dengan ID event
@@ -112,7 +112,7 @@ export default function AdminEvent() {
 			width: "220px",
 		},
 		{
-			name: "Deskripsi",
+			name: "Deskripsi Singkat",
 			selector: (row) => row.deskripsi_singkat,
 			sortable: false,
 			wrap: true,

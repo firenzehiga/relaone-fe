@@ -43,3 +43,21 @@ export const adminGetUsers = async (params = {}) => {
 	});
 	return response.data.data || response.data;
 };
+
+/** Mengambil semua users.
+
+ * @async
+ * @function adminGetUsers
+ * @endpoint GET /admin/users
+ * @returns {Promise<any>} Data semua users.
+ */
+export const adminGetOrganizationUsers = async (params = {}) => {
+	const token = localStorage.getItem("authToken");
+	const response = await api.get("/admin/organization-users", {
+		params,
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	return response.data.data || response.data;
+};

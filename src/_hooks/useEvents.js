@@ -13,7 +13,7 @@ export const useEvents = (params = {}) => {
 	const enabled = currentRole !== "admin" && currentRole !== "organization"; // supaya kalo admin login, ga fetch events
 
 	return useQuery({
-		queryKey: ["events", params],
+		queryKey: ["events"],
 		queryFn: async () => {
 			const response = await eventService.getEvents(params);
 			return response;
@@ -98,9 +98,10 @@ export const useAdminCreateEventMutation = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: eventService.createEvent,
+		mutationFn: eventService.adminCreateEvent,
 		onSuccess: () => {
 			queryClient.invalidateQueries(["adminEvents"]);
+			queryClient.invalidateQueries(["events"]);
 		},
 	});
 };

@@ -25,6 +25,23 @@ export const useAdminLocations = () => {
 };
 
 /**
+ * Buat location baru (admin).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["locations"]
+ */
+export const useAdminCreateLocationMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: locationService.adminCreateLocation,
+		onSuccess: () => {
+			queryClient.invalidateQueries(["adminLocations"]);
+		},
+	});
+};
+
+/**
  * Hapus location (admin).
  *
  * @returns {UseMutationResult} Mutation hook

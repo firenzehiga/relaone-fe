@@ -57,3 +57,24 @@ export const useAdminUsers = () => {
 		retry: 1,
 	});
 };
+
+/**
+ * Hook untuk mengambil data semua organisasi users (khusus admin)
+ * @returns {Object} Query result dengan data, isLoading, error, etc
+ */
+export const useAdminOrganizationUsers = () => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "admin";
+
+	return useQuery({
+		queryKey: ["adminOrganizationUsers"],
+		queryFn: async () => {
+			const response = await userService.adminGetOrganizationUsers();
+			return response;
+		},
+		enabled,
+		// staleTime: 1 * 60 * 1000,
+		// cacheTime: 5 * 60 * 1000,
+		// retry: 1,
+	});
+};

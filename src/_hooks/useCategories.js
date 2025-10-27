@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as categoryService from "../_services/categoryService";
+import { useUserRole } from "./useAuth";
 
 // === PUBLIC HOOKS ===
 /**
@@ -30,6 +31,22 @@ export const useCategoryById = (id) => {
 		enabled: !!id,
 		staleTime: 10 * 60 * 1000,
 		retry: 2,
+	});
+};
+
+// === ADMIN HOOKS ===
+export const useAdminCategory = () => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "admin";
+	return useQuery({
+		queryKey: ["adminCategories"],
+		queryFn: async () => {
+			const response = await categoryService.adminGetCategories();
+			return response;
+		},
+		enabled,
+		staleTime: 10 * 60 * 1000, // 10 minutes (categories jarang berubah)
+		retry: 1,
 	});
 };
 

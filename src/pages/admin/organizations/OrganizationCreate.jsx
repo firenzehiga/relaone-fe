@@ -1,18 +1,36 @@
 import React, { useRef, useState, useEffect } from "react";
-import { UserCircle2Icon } from "lucide-react";
+import { UserCircle2Icon, Loader2 } from "lucide-react";
 import { Input, InputGroup, InputLeftAddon } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { useAdminOrganizationUsers } from "@/_hooks/useUsers";
+import { useAdminCreateOrganizationMutation } from "@/_hooks/useOrganizations";
+import { parseApiError } from "@/utils/cn";
+import DynamicButton from "@/components/ui/Button";
 
 export default function AdminOrganizationCreate() {
 	const navigate = useNavigate();
 	const [formData, setFormData] = useState({
-		name: "",
-		description: "",
+		nama: "",
+		deskripsi: "",
+		telepon: "",
+		email: "",
 		website: "",
 		logo: null,
+		status_verifikasi: "pending",
+		user_id: "",
 	});
+	const [submitting, setSubmitting] = useState(false);
 	const [previewUrl, setPreviewUrl] = useState(null);
 	const fileRef = useRef(null);
+
+	const {
+		data: organizationUsers = [],
+		isLoading: organizationUsersLoading,
+		error: organizationUsersError,
+	} = useAdminOrganizationUsers();
+
+	const createOrganizationMutation = useAdminCreateOrganizationMutation();
 
 	useEffect(() => {
 		return () => {
@@ -25,26 +43,42 @@ export default function AdminOrganizationCreate() {
 		if (name === "logo" && files) {
 			const file = files[0];
 			if (!file) return;
-			if (!file.type.startsWith("image/")) return;
+
+			const allowed = ["image/jpeg", "image/png", "image/jpg"];
+			const maxSize = 2 * 1024 * 1024;
+			if (!allowed.includes(file.type)) {
+				toast.error("Logo harus berupa gambar JPEG/PNG/JPG.", {
+					position: "top-center",
+				});
+				return;
+			}
+			if (file.size > maxSize) {
+				toast.error("Ukuran logo maksimal 2MB.", { position: "top-center" });
+				return;
+			}
+
 			if (previewUrl) URL.revokeObjectURL(previewUrl);
 			setFormData((s) => ({ ...s, [name]: file }));
 			setPreviewUrl(URL.createObjectURL(file));
+		} else if (name === "user_id") {
+			// jika user dipilih sebagai kontak, autofill telepon dan email tapi tetap bisa diedit
+			const selected = organizationUsers.find(
+				(user) => String(user.id) === String(value)
+			);
+			setFormData((s) => ({
+				...s,
+				user_id: value,
+				telepon: selected?.telepon || "",
+				email: selected?.email || "",
+			}));
 		} else {
 			setFormData((s) => ({ ...s, [name]: value }));
 		}
 	}
 
-	function removeLogo() {
-		if (previewUrl) URL.revokeObjectURL(previewUrl);
-		setFormData((s) => ({ ...s, logo: null }));
-		setPreviewUrl(null);
-		if (fileRef.current) fileRef.current.value = "";
-	}
-
-	function handleSubmit(e) {
+	async function handleSubmit(e) {
 		e.preventDefault();
-		if (!formData.name.trim()) return alert("Nama organisasi wajib diisi");
-
+		setSubmitting(true);
 		try {
 			const payload = new FormData();
 			// normalize website
@@ -55,25 +89,27 @@ export default function AdminOrganizationCreate() {
 				: "";
 			const dataToAppend = { ...formData, website };
 			for (const key in dataToAppend) {
-				payload.append(key, dataToAppend[key]);
+				const val = dataToAppend[key];
+				if (val === null || val === undefined) continue;
+				payload.append(key, val);
 			}
 
-			// TODO: kirim payload ke backend
-			console.log("submit payload", { ...dataToAppend });
-			alert("Organisasi disimpan (simulasi)");
+			const result = await createOrganizationMutation.mutateAsync(payload);
+			console.log("Created organization:", result);
+			toast.success("Organisasi berhasil dibuat", { position: "top-center" });
 
-			// reset
-			setFormData({ name: "", description: "", website: "", logo: null });
-			removeLogo();
 			navigate("/admin/organizations");
 		} catch (err) {
+			const message = parseApiError(err);
+			toast.error(message, { position: "top-center" });
 			console.error(err);
-			alert("Gagal menyimpan organisasi.");
+		} finally {
+			setSubmitting(false);
 		}
 	}
 
 	return (
-		<div className="max-w-4xl mx-auto p-6">
+		<div className="max-w-6xl mx-auto p-6">
 			<div className="bg-white shadow-sm rounded-lg p-6">
 				<header className="mb-6">
 					<h1 className="text-2xl font-semibold text-gray-900">
@@ -91,8 +127,8 @@ export default function AdminOrganizationCreate() {
 								Nama Organisasi
 							</label>
 							<input
-								name="name"
-								value={formData.name}
+								name="nama"
+								value={formData.nama}
 								onChange={handleChange}
 								type="text"
 								placeholder="Contoh: Komunitas Bersih Pantai"
@@ -111,6 +147,8 @@ export default function AdminOrganizationCreate() {
 									/>
 									<Input
 										name="website"
+										type="text"
+										required
 										value={formData.website}
 										onChange={handleChange}
 										placeholder="yoursite.com"
@@ -119,7 +157,74 @@ export default function AdminOrganizationCreate() {
 							</div>
 						</div>
 					</div>
-
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<div>
+							<label className="block text-sm font-medium text-gray-700">
+								Kontak
+							</label>
+							<select
+								name="user_id"
+								value={formData.user_id}
+								required
+								onChange={handleChange}
+								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+								<option value="">Pilih kontak (nama / telepon)</option>
+								{organizationUsers.map((user) => (
+									<option key={user.id} value={user.id}>
+										{(user.nama || user.name || user.email) +
+											" — " +
+											(user.telepon || user.email)}
+									</option>
+								))}
+							</select>
+						</div>
+						<div>
+							<label className="block text-sm font-medium text-gray-700">
+								Status Akun
+							</label>
+							<select
+								name="status_verifikasi"
+								value={formData.status_verifikasi}
+								required
+								onChange={handleChange}
+								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+								<option value="">Pilih status</option>
+								<option value="pending">Pending</option>
+								<option value="verified">Disetujui</option>
+								<option value="rejected">Ditolak</option>
+							</select>
+						</div>
+					</div>
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<div>
+							<label className="block text-sm font-medium text-gray-700">
+								Telepon
+							</label>
+							<input
+								name="telepon"
+								value={formData.telepon}
+								onChange={handleChange}
+								placeholder="pilih kontak untuk mengisi otomatis"
+								disabled
+								required
+								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
+							/>
+						</div>
+						<div>
+							<label className="block text-sm font-medium text-gray-700">
+								Email
+							</label>
+							<input
+								name="email"
+								value={formData.email}
+								onChange={handleChange}
+								placeholder="pilih kontak untuk mengisi otomatis"
+								disabled
+								required
+								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
+							/>
+						</div>
+					</div>
 					<div>
 						<label className="block text-sm font-medium text-gray-700">
 							Deskripsi
@@ -129,6 +234,7 @@ export default function AdminOrganizationCreate() {
 							value={formData.description}
 							onChange={handleChange}
 							rows={4}
+							required
 							className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 							placeholder="Deskripsi singkat organisasi"
 						/>
@@ -159,18 +265,11 @@ export default function AdminOrganizationCreate() {
 											ref={fileRef}
 											onChange={handleChange}
 											type="file"
-											accept="image/*"
+											accept="image/jpeg,image/png,image/jpg"
+											required
 											className="sr-only"
 										/>
 									</label>
-									{previewUrl && (
-										<button
-											type="button"
-											onClick={removeLogo}
-											className="text-sm text-red-600">
-											Hapus
-										</button>
-									)}
 								</div>
 							</div>
 						</div>
@@ -179,23 +278,26 @@ export default function AdminOrganizationCreate() {
 					</div>
 
 					<div className="flex items-center justify-end gap-3">
-						<button
+						<DynamicButton
 							type="button"
+							variant="secondary"
 							onClick={() => {
-								setName("");
-								setDescription("");
-								setWebsiteName("");
-								setWebsiteDomain(".com");
-								removeLogo();
 								navigate("/admin/organizations");
-							}}
-							className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md">
+							}}>
 							Batal
-						</button>
+						</DynamicButton>
 						<button
 							type="submit"
+							disabled={submitting}
 							className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500">
-							Simpan Organisasi
+							{submitting ? (
+								<>
+									<Loader2 className="animate-spin h-4 w-4 mr-1 mb-1 inline" />
+									Menyimpan data....
+								</>
+							) : (
+								"Simpan Organisasi"
+							)}
 						</button>
 					</div>
 				</form>

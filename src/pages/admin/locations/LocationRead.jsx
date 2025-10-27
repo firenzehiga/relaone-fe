@@ -2,7 +2,7 @@ import {
 	useAdminDeleteLocationMutation,
 	useAdminLocations,
 } from "@/_hooks/useLocations";
-import DynamicButton from "@/components/ui/Button";
+import { LinkButton } from "@/components/ui/Button";
 import Swal from "sweetalert2";
 import { showToast } from "@/components/ui/Toast";
 import {
@@ -25,6 +25,8 @@ import {
 } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
+import { parseApiError } from "@/utils/cn";
+import toast from "react-hot-toast";
 
 export default function AdminLocation() {
 	const {
@@ -82,8 +84,7 @@ export default function AdminLocation() {
 					},
 					onError: (err) => {
 						// ambil pesan backend kalau ada, fallback ke err.message
-						const msg =
-							err?.response?.data?.message || "Gagal menghapus location.";
+						const msg = parseApiError(err) || "Gagal menghapus location.";
 						showToast({
 							type: "error",
 							tipIcon: "💡",
@@ -178,9 +179,12 @@ export default function AdminLocation() {
 				<div className="bg-white rounded-lg shadow p-6">
 					<div className="flex justify-between items-center mb-4">
 						<h2 className="text-lg font-semibold">Daftar Lokasi</h2>
-						<DynamicButton variant="success" size="sm">
+						<LinkButton
+							to="/admin/locations/create"
+							variant="success"
+							size="sm">
 							<Plus className="w-4 h-4 mr-2" /> Tambah Lokasi
-						</DynamicButton>
+						</LinkButton>
 					</div>
 
 					{locationsLoading ? (
