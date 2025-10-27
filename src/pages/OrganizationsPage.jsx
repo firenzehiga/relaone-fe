@@ -1,5 +1,6 @@
 import { useOrganizations } from "@/_hooks/useOrganizations";
 import DynamicButton from "@/components/ui/Button";
+import Skeleton from "@/components/ui/Skeleton";
 import { getImageUrl } from "@/utils/cn";
 
 export default function OrganizationsPage() {
@@ -8,6 +9,10 @@ export default function OrganizationsPage() {
 		isLoading,
 		error,
 	} = useOrganizations({ status_verifikasi: "verified" });
+
+	if (isLoading) {
+		return <Skeleton.OrgSkeleton />;
+	}
 
 	if (error) {
 		return (
