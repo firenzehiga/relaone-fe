@@ -8,26 +8,9 @@ import "@/index.css";
 import App from "@/App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { useAuthStore } from "@/_hooks/useAuth";
-/**
- * Konfigurasi React Query Client untuk manajemen state server
- * Mengatur default options untuk caching, retry logic, dan error handling
- */
-const queryClient = new QueryClient({
-	defaultOptions: {
-		queries: {
-			staleTime: 1000 * 60 * 5, // 5 minutes - data akan dianggap fresh selama 5 menit
-			retry: (failureCount, error) => {
-				// Jangan retry jika error 404 (Not Found) atau timeout
-				if (error?.response?.status === 404) return false;
-				if (error?.code === "ECONNABORTED") return false; // Timeout error
-				if (error?.message?.includes("timeout")) return false;
-				// Retry maksimal 1 kali untuk error lainnya (lebih cepat)
-				return failureCount < 1;
-			},
-			retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 2000), // Max 2 detik delay
-		},
-	},
-});
+
+
+const queryClient = new QueryClient();
 
 /**
  * Entry point aplikasi React

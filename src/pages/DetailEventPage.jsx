@@ -7,6 +7,9 @@ import Avatar from "@/components/ui/Avatar";
 import { useEventById } from "@/_hooks/useEvents";
 import { useParams, useNavigate } from "react-router-dom";
 import { useModalStore } from "@/stores/useAppStore";
+import { AsyncImage } from "loadable-image";
+import { Fade } from "transitions-kit";
+import { getImageUrl } from "@/utils/cn";
 
 /**
  * Halaman detail event (full page) yang menggantikan modal.
@@ -77,12 +80,16 @@ export default function DetailEventPage() {
 					{/* Left: Image */}
 					<div className="md:col-span-5">
 						<div className="rounded-lg overflow-hidden shadow-lg h-full">
-							<img
-								src={
-									event.gambar || event.banner || "https://placehold.co/700x600"
-								}
-								alt={event.judul || event.title}
+							<AsyncImage
+								loading="lazy"
+								transition={Fade}
+								src={getImageUrl(`events/${event.gambar}`)}
+								alt={event.judul}
 								className="w-full h-76 md:h-[640px] object-cover"
+								onError={(e) => {
+									e.target.onerror = null;
+									e.target.src = "https://placehold.co/400";
+								}}
 							/>
 						</div>
 					</div>

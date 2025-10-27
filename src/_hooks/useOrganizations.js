@@ -47,13 +47,13 @@ export const useOrganizationById = (id) => {
  * @returns {UseQueryResult<Array>} List organisasi
  * @features Auto-refetch setiap 1 menit, cache 5 menit
  */
-export const useAdminOrganizations = () => {
+export const useAdminOrganizations = (params = {}) => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "admin";
 	return useQuery({
 		queryKey: ["adminOrganizations"],
 		queryFn: async () => {
-			const response = await organizationService.adminGetOrganizations();
+			const response = await organizationService.adminGetOrganizations(params);
 			return response;
 		},
 		enabled,
