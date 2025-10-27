@@ -17,6 +17,7 @@ export default function Badge({
 	variant = "default",
 	size = "sm",
 	className,
+	color, // optional hex color, e.g. "#10B981"
 	...props
 }) {
 	const variants = {
@@ -35,14 +36,68 @@ export default function Badge({
 		lg: "px-4 py-2 text-base",
 	};
 
+	// If a hex color is provided, use inline styles derived from it so
+	// badge can reflect arbitrary category colors (hex codes) while
+	// keeping existing variant classes as a fallback.
+	const hexToRgb = (hex) => {
+		if (!hex) throw new Error("Invalid hex");
+		let h = hex.replace("#", "").trim();
+		if (h.length === 3) {
+			h = h
+				.split("")
+				.map((c) => c + c)
+				.join("");
+		}
+		const int = parseInt(h, 16);
+		return {
+			r: (int >> 16) & 255,
+			g: (int >> 8) & 255,
+			b: int & 255,
+		};
+	};
+
+	const hexToRgba = (hex, alpha = 1) => {
+		try {
+			const { r, g, b } = hexToRgb(hex);
+			return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+		} catch (e) {
+			return hex;
+		}
+	};
+
+	// Choose black or white text depending on background luminance.
+	const getContrastColor = (hex) => {
+		try {
+			const { r, g, b } = hexToRgb(hex);
+			const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+			return yiq >= 128 ? "#224403" : "#ffffff";
+		} catch (e) {
+			return "#000000";
+		}
+	};
+
+	// Use the raw hex color as the badge background when provided.
+	// This preserves the original color hue/intensity the DB stores
+	// instead of blending it with white via a low-alpha rgba.
+	// Border uses a translucent variant for subtle separation.
+	const customStyle = color
+		? {
+				backgroundColor: color,
+				color: getContrastColor(color),
+				borderColor: hexToRgba(color, 0.2),
+		  }
+		: undefined;
+
 	return (
 		<span
 			className={cn(
 				"inline-flex items-center font-medium rounded-full",
-				variants[variant],
+				// only apply the variant classes when no explicit color is provided
+				!color && variants[variant],
 				sizes[size],
 				className
 			)}
+			style={customStyle}
 			{...props}>
 			{children}
 		</span>

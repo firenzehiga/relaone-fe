@@ -67,6 +67,9 @@ import OrganizationLocationCreate from "@/pages/organization/locations/LocationC
 import OrganizationLocationEdit from "@/pages/organization/locations/LocationEdit";
 import AdminLayout from "./layout/AdminLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
+import AdminCategory from "./pages/admin/categories/CategoryRead";
+import AdminCategoryCreate from "./pages/admin/categories/CategoryCreate";
+import AdminCategoryEdit from "./pages/admin/categories/CategoryEdit";
 /**
  * Komponen utama aplikasi volunteer platform
  * Mengatur routing dengan layout yang menggunakan Outlet
@@ -132,6 +135,11 @@ function App() {
 						<Route index element={<AdminLocation />} />
 						<Route path="create" element={<AdminLocationCreate />} />
 						<Route path="edit/:id" element={<AdminLocationEdit />} />
+					</Route>
+					<Route path="categories">
+						<Route index element={<AdminCategory />} />
+						<Route path="create" element={<AdminCategoryCreate />} />
+						<Route path="edit/:id" element={<AdminCategoryEdit />} />
 					</Route>
 					<Route path="feedbacks">
 						<Route index element={<AdminFeedback />} />

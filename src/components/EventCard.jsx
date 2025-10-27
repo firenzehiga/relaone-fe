@@ -54,23 +54,8 @@ export default function EventCard({
 		return statusConfig[status] || statusConfig.published;
 	};
 
-	/**
-	 * Mendapatkan warna badge berdasarkan kategori event
-	 *
-	 * @param {number} categoryId - ID kategori event
-	 * @returns {string} Variant warna untuk badge kategori
-	 */
-	const getCategoryColor = (categoryId) => {
-		const colors = {
-			1: "success", // Environment
-			2: "primary", // Education
-			3: "danger", // Health
-			4: "secondary", // Social
-			5: "warning", // Youth
-			6: "primary", // Technology
-		};
-		return colors[categoryId] || "default";
-	};
+	// Note: category color will now come from `event.category?.warna` (hex)
+	// and be passed directly to the `Badge` component as a `color` prop.
 
 	const statusBadge = getStatusBadge(event.status);
 	const slotsRemaining =
@@ -117,7 +102,7 @@ export default function EventCard({
 						<Badge variant={statusBadge.variant}>{statusBadge.text}</Badge>
 					</div>
 					<div className="absolute top-3 right-3">
-						<Badge variant={getCategoryColor(event.category_id)}>
+						<Badge color={event.category?.warna}>
 							{event.category?.nama || "undefined"}
 						</Badge>
 					</div>

@@ -17,6 +17,7 @@ import {
 	MapPin,
 	User2,
 	ChevronDown,
+	SwatchBook,
 } from "lucide-react";
 import DynamicButton from "@/components/ui/Button";
 import Avatar from "@/components/ui/Avatar";
@@ -55,6 +56,7 @@ export default function AdminHeader() {
 					icon: Users,
 				},
 				{ name: "Locations", href: "/admin/locations", icon: MapPin },
+				{ name: "Categories", href: "/admin/categories", icon: SwatchBook },
 			],
 		},
 		{ name: "Feedbacks", href: "/admin/feedbacks", icon: Heart },

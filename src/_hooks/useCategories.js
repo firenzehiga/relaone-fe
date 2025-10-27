@@ -93,14 +93,14 @@ export const useUpdateCategory = () => {
  * Hook untuk delete category
  * @returns {Object} Mutation object dengan mutate, isLoading, error, etc
  */
-export const useDeleteCategory = () => {
+export const useAdminDeleteCategory = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: categoryService.deleteCategory,
+		mutationFn: categoryService.adminDeleteCategory,
 		onSuccess: () => {
 			// Invalidate categories list
-			queryClient.invalidateQueries({ queryKey: ["categories"] });
+			queryClient.invalidateQueries({ queryKey: ["adminCategories"] });
 		},
 		onError: (error) => {
 			console.error("Failed to delete category:", error);
