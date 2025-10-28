@@ -74,17 +74,22 @@ export const adminGetEventById = async (id) => {
  * @async
  * @function adminCreateEvent
  * @endpoint POST /admin/events
- * @param {Object} eventData - Data event baru
+ * @param {Object} data - Data event baru
  * @returns {Promise<any>} Data event baru
  */
-export const adminCreateEvent = async (eventData) => {
+export const adminCreateEvent = async (data) => {
 	const token = localStorage.getItem("authToken");
-	const response = await api.post("/admin/events", eventData, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
-	return response.data.data || response.data;
+	try {
+		const response = await api.post("/admin/events", data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error creating event:", error);
+		throw error;
+	}
 };
 
 /** * Update event
@@ -93,17 +98,22 @@ export const adminCreateEvent = async (eventData) => {
  * @function adminUpdateEvent
  * @endpoint POST method PUT /admin/events/{eventId}
  * @param {string|number} id - ID event
- * @param {Object} eventData - Data event baru
+ * @param {Object} data - Data event baru
  * @returns {Promise<any>} Data event baru
  */
-export const adminUpdateEvent = async (id, eventData) => {
+export const adminUpdateEvent = async (id, data) => {
 	const token = localStorage.getItem("authToken");
-	const response = await api.post(`/admin/events/${id}`, eventData, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
-	return response.data.data || response.data;
+	try {
+		const response = await api.post(`/admin/events/${id}`, data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error updating event:", error);
+		throw error;
+	}
 };
 
 /** * Hapus event

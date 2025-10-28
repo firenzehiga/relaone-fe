@@ -1,6 +1,13 @@
 import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
-import { ChevronDown, Plus, Loader2, Trash, PencilIcon } from "lucide-react";
+import {
+	ChevronDown,
+	Plus,
+	Loader2,
+	Trash,
+	PencilIcon,
+	AlertCircle,
+} from "lucide-react";
 import DynamicButton from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import { useAdminUsers } from "@/_hooks/useUsers";
@@ -101,15 +108,6 @@ export default function AdminUser() {
 	return (
 		<div className="py-8 page-transition">
 			<div className="max-w-6xl mx-auto px-4">
-				<div className="mb-6">
-					<h1 className="text-lg md:text-2xl font-bold text-gray-900 sm:text-md">
-						Data Pengguna
-					</h1>
-					<p className="text-sm md:text-base text-gray-600">
-						Kelola data pengguna di sini
-					</p>
-				</div>
-
 				<div className="bg-white rounded-lg shadow p-4 sm:p-6">
 					<div className="flex justify-between items-center mb-4">
 						<h2 className="text-base md:text-lg font-semibold">
@@ -151,7 +149,7 @@ export default function AdminUser() {
 							</div>
 							<DataTable
 								columns={columns}
-								data={filteredUsers}
+								data={Array.isArray(filteredUsers) ? filteredUsers : []}
 								pagination
 								pointerOnHover
 								title=""
@@ -199,6 +197,21 @@ export default function AdminUser() {
 										)}
 									</div>
 								)}
+								noDataComponent={
+									<div className="flex flex-col items-center justify-center h-64 text-gray-600">
+										<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+										<h3 className="text-lg font-semibold mb-2">
+											{searchUser
+												? "No Matching Users Found"
+												: "No Users Available"}
+										</h3>
+										<p className="text-gray-500 mb-4 text-center">
+											{searchUser
+												? "Tidak ada pengguna yang sesuai dengan pencarian."
+												: "Belum ada data pengguna."}
+										</p>
+									</div>
+								}
 							/>
 						</>
 					)}

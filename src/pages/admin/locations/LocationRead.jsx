@@ -13,7 +13,7 @@ import {
 	Eye,
 	EditIcon,
 	EllipsisVerticalIcon,
-	LucideShieldQuestion,
+	AlertCircle,
 } from "lucide-react";
 import {
 	Menu,
@@ -27,12 +27,16 @@ import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import { parseApiError } from "@/utils";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
+import FetchLoader from "@/components/ui/FetchLoader";
+import Badge from "@/components/ui/Badge";
 
 export default function AdminLocation() {
 	const {
 		data: locations,
 		isLoading: locationsLoading,
 		error: locationsError,
+		isFetching: locationsRefetching,
 	} = useAdminLocations();
 
 	const deleteLocationMutation = useAdminDeleteLocationMutation();
@@ -128,7 +132,17 @@ export default function AdminLocation() {
 		},
 		{
 			name: "Tipe",
-			selector: (row) => row.tipe || "-",
+			selector: (row) => (
+				<>
+					{row.tipe === "event" ? (
+						<Badge variant={"primary"}>Event</Badge>
+					) : row.tipe === "organization" ? (
+						<Badge variant={"warning"}>Kantor</Badge>
+					) : (
+						<Badge variant={"secondary"}>Lainnya</Badge>
+					)}
+				</>
+			),
 			sortable: true,
 			width: "150px",
 		},
@@ -144,16 +158,14 @@ export default function AdminLocation() {
 					/>
 					<Portal>
 						<MenuList className="font-semibold">
-							<MenuItem
-								icon={<Eye className="text-blue-500 hover:text-blue-600" />}>
-								Lihat
-							</MenuItem>
-							<MenuItem
-								icon={
-									<EditIcon className="text-yellow-500 hover:text-yellow-600" />
-								}>
-								Edit
-							</MenuItem>
+							<Link to={`/admin/locations/edit/${row.id}`}>
+								<MenuItem
+									icon={
+										<EditIcon className="text-yellow-500 hover:text-yellow-600" />
+									}>
+									Edit
+								</MenuItem>
+							</Link>
 							<MenuItem
 								onClick={() => handleDelete(row.id)}
 								disabled={deleteLocationMutation.isLoading}
@@ -171,11 +183,10 @@ export default function AdminLocation() {
 	return (
 		<div className="py-8 page-transition">
 			<div className="max-w-6xl mx-auto px-4">
-				<div className="mb-6">
+				{/* <div className="mb-6">
 					<h1 className="text-2xl font-bold text-gray-900">Data Lokasi</h1>
 					<p className="text-gray-600">Kelola data lokasi di sini</p>
-				</div>
-
+				</div> */}
 				<div className="bg-white rounded-lg shadow p-6">
 					<div className="flex justify-between items-center mb-4">
 						<h2 className="text-lg font-semibold">Daftar Lokasi</h2>
@@ -205,6 +216,8 @@ export default function AdminLocation() {
 						</div>
 					) : (
 						<>
+							{locationsRefetching && <FetchLoader />}
+
 							<div className="w-80 mb-4">
 								<input
 									type="text"
@@ -216,7 +229,7 @@ export default function AdminLocation() {
 							</div>
 							<DataTable
 								columns={columns}
-								data={filteredLocations}
+								data={Array.isArray(filteredLocations) ? filteredLocations : []}
 								pagination
 								pointerOnHover
 								title=""
@@ -255,6 +268,21 @@ export default function AdminLocation() {
 										)}
 									</div>
 								)}
+								noDataComponent={
+									<div className="flex flex-col items-center justify-center h-64 text-gray-600">
+										<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+										<h3 className="text-lg font-semibold mb-2">
+											{searchLocation
+												? "No Matching Locations Found"
+												: "No Locations Available"}
+										</h3>
+										<p className="text-gray-500 mb-4 text-center">
+											{searchLocation
+												? "Tidak ada lokasi yang sesuai dengan pencarian."
+												: "Belum ada data lokasi"}
+										</p>
+									</div>
+								}
 							/>
 						</>
 					)}

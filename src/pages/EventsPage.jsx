@@ -57,8 +57,8 @@ export default function EventsPage() {
 	useEffect(() => {
 		if (!events) return;
 
-		// Exclude draft events from public listing
-		let filtered = events.filter((event) => event.status !== "draft");
+		// tampilkan hanya event yang bukan draft secara default
+		let filtered = events.filter((event) => event.status !== "draft" );
 		if (filters.search) {
 			filtered = filtered.filter(
 				(event) =>
@@ -71,7 +71,7 @@ export default function EventsPage() {
 						.includes(filters.search.toLowerCase())
 			);
 		}
-
+		
 		if (filters.category) {
 			const category = categories?.find(
 				(cat) =>

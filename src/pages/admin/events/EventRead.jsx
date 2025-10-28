@@ -14,6 +14,7 @@ import {
 	Eye,
 	EditIcon,
 	EllipsisVerticalIcon,
+	AlertCircle,
 } from "lucide-react";
 import {
 	Menu,
@@ -25,13 +26,15 @@ import {
 } from "@chakra-ui/react";
 import DynamicButton, { LinkButton } from "@/components/ui/Button";
 import { Link } from "react-router-dom";
-import { parseApiError } from "@/utils";
+import { getImageUrl, parseApiError } from "@/utils";
+import FetchLoader from "@/components/ui/FetchLoader";
 
 export default function AdminEvent() {
 	const {
 		data: events,
 		isLoading: eventsLoading,
 		error: eventsError,
+		isFetching: eventsRefetching,
 	} = useAdminEvents();
 
 	const deleteEventMutation = useAdminDeleteEventMutation();
@@ -106,6 +109,27 @@ export default function AdminEvent() {
 			width: "300px",
 		},
 		{
+			name: "Banner",
+			selector: (row) => (
+				<div className="flex items-center mt-1 mb-1">
+					{row.gambar ? (
+						<img
+							src={getImageUrl(`events/${row.gambar}`)}
+							alt={row.nama || "Banner"}
+							className="w-16 h-16 rounded-md object-cover border border-gray-200"
+						/>
+					) : (
+						<div className="w-16 h-16 rounded-md bg-gray-100 flex items-center justify-center text-xs text-gray-500 border border-gray-200">
+							No Image
+						</div>
+					)}
+				</div>
+			),
+			sortable: true,
+			width: "150px",
+		},
+
+		{
 			name: "Organisasi",
 			selector: (row) => row.organization?.nama || "-",
 			sortable: true,
@@ -116,22 +140,6 @@ export default function AdminEvent() {
 			selector: (row) => row.deskripsi_singkat,
 			sortable: false,
 			wrap: true,
-		},
-		{
-			name: "Tanggal",
-			selector: (row) =>
-				row.tanggal_mulai
-					? new Date(row.tanggal_mulai.replace(" ", "T")).toLocaleDateString(
-							"id-ID",
-							{
-								day: "numeric",
-								month: "long",
-								year: "numeric",
-							}
-					  )
-					: "-",
-			sortable: true,
-			width: "150px",
 		},
 
 		{
@@ -146,16 +154,14 @@ export default function AdminEvent() {
 					/>
 					<Portal>
 						<MenuList className="font-semibold">
-							<MenuItem
-								icon={<Eye className="text-blue-500 hover:text-blue-600" />}>
-								Lihat
-							</MenuItem>
-							<MenuItem
-								icon={
-									<EditIcon className="text-yellow-500 hover:text-yellow-600" />
-								}>
-								Edit
-							</MenuItem>
+							<Link to={`/admin/events/edit/${row.id}`}>
+								<MenuItem
+									icon={
+										<EditIcon className="text-yellow-500 hover:text-yellow-600" />
+									}>
+									Edit
+								</MenuItem>
+							</Link>
 							<MenuItem
 								onClick={() => handleDelete(row.id)}
 								disabled={deleteEventMutation.isLoading}
@@ -173,14 +179,9 @@ export default function AdminEvent() {
 	return (
 		<div className="py-8 page-transition">
 			<div className="max-w-6xl mx-auto px-4">
-				<div className="mb-6">
-					<h1 className="text-2xl font-bold text-gray-900">Data Event</h1>
-					<p className="text-gray-600">Kelola data event di sini</p>
-				</div>
-
 				<div className="bg-white rounded-lg shadow p-6">
 					<div className="flex justify-between items-center mb-4">
-						<h2 className="text-lg font-semibold">Daftar Event</h2>
+						<h2 className="text-lg font-semibold">Daftar Event/Kegiatan</h2>
 						<LinkButton variant="success" to="/admin/events/create">
 							<Plus className="w-4 h-4 mr-2" /> Tambah Event
 						</LinkButton>
@@ -204,6 +205,7 @@ export default function AdminEvent() {
 						</div>
 					) : (
 						<>
+							{eventsRefetching && <FetchLoader />}
 							<div className="w-80 mb-4">
 								<input
 									type="text"
@@ -215,10 +217,11 @@ export default function AdminEvent() {
 							</div>
 							<DataTable
 								columns={columns}
-								data={filteredEvents}
+								data={Array.isArray(filteredEvents) ? filteredEvents : []}
 								pagination
 								pointerOnHover
 								title=""
+								fixedHeader
 								highlightOnHover
 								persistTableHead
 								responsive
@@ -243,6 +246,21 @@ export default function AdminEvent() {
 										)}
 									</div>
 								)}
+								noDataComponent={
+									<div className="flex flex-col items-center justify-center h-64 text-gray-600">
+										<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+										<h3 className="text-lg font-semibold mb-2">
+											{searchEvent
+												? "No Matching Events Found"
+												: "No Events Available"}
+										</h3>
+										<p className="text-gray-500 mb-4 text-center">
+											{searchEvent
+												? "Tidak ada event yang sesuai dengan pencarian."
+												: "Belum ada data event"}
+										</p>
+									</div>
+								}
 							/>
 						</>
 					)}

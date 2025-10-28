@@ -237,8 +237,8 @@ export default function AdminOrganizationCreate() {
 							Deskripsi
 						</label>
 						<textarea
-							name="description"
-							value={formData.description}
+							name="deskripsi"
+							value={formData.deskripsi}
 							onChange={handleChange}
 							rows={4}
 							required

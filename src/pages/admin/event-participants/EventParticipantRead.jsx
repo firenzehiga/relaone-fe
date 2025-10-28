@@ -4,7 +4,7 @@ import {
 } from "@/_hooks/useParticipants";
 import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
-import DynamicButton from "@/components/ui/Button";
+import { LinkButton } from "@/components/ui/Button";
 import {
 	ChevronDown,
 	Plus,
@@ -13,6 +13,7 @@ import {
 	Eye,
 	EditIcon,
 	EllipsisVerticalIcon,
+	AlertCircle,
 } from "lucide-react";
 import {
 	Menu,
@@ -24,12 +25,15 @@ import {
 } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
+import { Link } from "react-router-dom";
+import FetchLoader from "@/components/ui/FetchLoader";
 
 export default function AdminEventParticipant() {
 	const {
 		data: participants,
 		isLoading: participantsLoading,
 		error: participantsError,
+		isFetching: participantsRefetching,
 	} = useAdminParticipants();
 
 	const deleteParticipantMutation = useAdminDeleteParticipantMutation();
@@ -144,16 +148,16 @@ export default function AdminEventParticipant() {
 					/>
 					<Portal>
 						<MenuList className="font-semibold">
-							<MenuItem
-								icon={<Eye className="text-blue-500 hover:text-blue-600" />}>
-								Lihat
-							</MenuItem>
-							<MenuItem
-								icon={
-									<EditIcon className="text-yellow-500 hover:text-yellow-600" />
-								}>
-								Edit
-							</MenuItem>
+							<Link
+								to={`/admin/event-participants/edit/${row.id}`}
+								className="w-full">
+								<MenuItem
+									icon={
+										<EditIcon className="text-yellow-500 hover:text-yellow-600" />
+									}>
+									Edit
+								</MenuItem>
+							</Link>
 							<MenuItem
 								onClick={() => handleDelete(row.id)}
 								disabled={deleteParticipantMutation.isLoading}
@@ -169,21 +173,17 @@ export default function AdminEventParticipant() {
 	];
 
 	return (
-		<div className="py-8 page-transition">
+		<div className="py-8 page-transition min-h-screen">
 			<div className="max-w-6xl mx-auto px-4">
-				<div className="mb-6">
-					<h1 className="text-2xl font-bold text-gray-900">
-						Data Partisipan Event
-					</h1>
-					<p className="text-gray-600">Kelola data partisipan di sini</p>
-				</div>
-
 				<div className="bg-white rounded-lg shadow p-6">
 					<div className="flex justify-between items-center mb-4">
 						<h2 className="text-lg font-semibold">Daftar Participant</h2>
-						<DynamicButton variant="success" size="sm">
+						<LinkButton
+							to="/admin/event-participants/create"
+							variant="success"
+							size="sm">
 							<Plus className="w-4 h-4 mr-2" /> Tambah Event Participant
-						</DynamicButton>
+						</LinkButton>
 					</div>
 
 					{participantsLoading ? (
@@ -204,6 +204,7 @@ export default function AdminEventParticipant() {
 						</div>
 					) : (
 						<>
+							{participantsRefetching && <FetchLoader />}
 							<div className="w-80 mb-4">
 								<input
 									type="text"
@@ -215,7 +216,11 @@ export default function AdminEventParticipant() {
 							</div>
 							<DataTable
 								columns={columns}
-								data={filteredParticipants}
+								data={
+									Array.isArray(filteredParticipants)
+										? filteredParticipants
+										: []
+								}
 								pagination
 								pointerOnHover
 								title=""
@@ -267,6 +272,21 @@ export default function AdminEventParticipant() {
 										</p>
 									</div>
 								)}
+								noDataComponent={
+									<div className="flex flex-col items-center justify-center h-64 text-gray-600">
+										<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+										<h3 className="text-lg font-semibold mb-2">
+											{searchParticipant
+												? "No Matching Participants Found"
+												: "No Participants Available"}
+										</h3>
+										<p className="text-gray-500 mb-4 text-center">
+											{searchParticipant
+												? "Tidak ada peserta yang sesuai dengan pencarian."
+												: "Belum ada data peserta"}
+										</p>
+									</div>
+								}
 							/>
 						</>
 					)}

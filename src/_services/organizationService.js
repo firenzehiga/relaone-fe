@@ -68,17 +68,22 @@ export const adminGetOrganizationById = async (id) => {
  * @async
  * @function adminCreateOrganization
  * @endpoint POST /admin/organizations
- * @param {Object} orgData - Data organization baru
+ * @param {Object} data - Data organization baru
  * @returns {Promise<any>} Data organization baru
  */
-export const adminCreateOrganization = async (orgData) => {
+export const adminCreateOrganization = async (data) => {
 	const token = localStorage.getItem("authToken");
-	const response = await api.post("/admin/organizations", orgData, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
-	return response.data.data || response.data;
+	try {
+		const response = await api.post("/admin/organizations", data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error creating organization:", error);
+		throw error;
+	}
 };
 
 /** Update organization
@@ -87,17 +92,22 @@ export const adminCreateOrganization = async (orgData) => {
  * @function adminUpdateOrganization
  * @endpoint POST /admin/organizations/{organizationId}
  * @param {string|number} id - ID organization
- * @param {Object} orgData - Data organization baru
+ * @param {Object} data - Data organization baru
  * @returns {Promise<any>} Data organization baru
  */
-export const adminUpdateOrganization = async (id, orgData) => {
+export const adminUpdateOrganization = async (id, data) => {
 	const token = localStorage.getItem("authToken");
-	const response = await api.post(`/admin/organizations/${id}`, orgData, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
-	return response.data.data || response.data;
+	try {
+		const response = await api.post(`/admin/organizations/${id}`, data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error updating organization:", error);
+		throw error;
+	}
 };
 
 /** Hapus organization

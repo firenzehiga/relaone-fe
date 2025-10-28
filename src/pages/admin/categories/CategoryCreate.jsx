@@ -1,4 +1,4 @@
-import { useAdminCreateLocationMutation } from "@/_hooks/useLocations";
+import { useAdminCreateCategoryMutation } from "@/_hooks/useCategories";
 import DynamicButton from "@/components/ui/Button";
 import { parseApiError } from "@/utils";
 import {
@@ -7,10 +7,10 @@ import {
 	Heart,
 	Leaf,
 	Users,
-	MapPin,
 	BookOpen,
-	Zap,
+	Stethoscope,
 } from "lucide-react";
+import * as Lucide from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -22,21 +22,19 @@ export default function AdminCategoryCreate() {
 		deskripsi: "",
 		icon: "",
 		warna: "",
-		is_active: "",
+		is_active: 1,
 	});
 	const [submitting, setSubmitting] = useState(false);
 
-	const createLocationMutation = useAdminCreateLocationMutation();
+	const createCategoryMutation = useAdminCreateCategoryMutation();
 	// Generic change handler
 	const handleChange = (e) => {
 		const { name, value } = e.target;
-		// keep numeric zoom as number
 		setFormData((s) => ({ ...s, [name]: value }));
 	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		setParseError("");
 		setSubmitting(true);
 		try {
 			const payload = new FormData();
@@ -44,10 +42,10 @@ export default function AdminCategoryCreate() {
 				payload.append(key, formData[key]);
 			}
 
-			await createLocationMutation.mutateAsync(payload);
+			await createCategoryMutation.mutateAsync(payload);
 
-			toast.success("Location berhasil dibuat", { position: "top-center" });
-			navigate("/admin/locations");
+			toast.success("Category berhasil dibuat", { position: "top-center" });
+			navigate("/admin/categories");
 		} catch (err) {
 			const message = parseApiError(err);
 			toast.error(message, { position: "top-center" });
@@ -60,7 +58,7 @@ export default function AdminCategoryCreate() {
 	return (
 		<div className="max-w-6xl mx-auto p-6">
 			<div
-				className="bg-white shadow-lg rounded-lg p-6"
+				className="bg-white shadow-xl rounded-lg p-6"
 				style={{ minHeight: 520, width: 900 }}>
 				<header className="mb-6">
 					<h1 className="text-2xl font-semibold text-gray-900">
@@ -81,7 +79,7 @@ export default function AdminCategoryCreate() {
 								onChange={handleChange}
 								type="text"
 								required
-								placeholder="Contoh: Lapangan RW 05"
+								placeholder="Contoh:Pendidikan"
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 							/>
 						</div>
@@ -119,14 +117,14 @@ export default function AdminCategoryCreate() {
 					</div>
 					<div>
 						<label className="block text-sm font-medium text-gray-700">
-							Deskripsi
+							Deskripsi Singkat
 						</label>
 						<textarea
 							name="deskripsi"
 							value={formData.deskripsi}
 							onChange={handleChange}
 							required
-							placeholder="Contoh: Lapangan RW 05"
+							placeholder="Contoh: Aksi Peduli Lingkungan"
 							className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 						/>
 					</div>
@@ -136,15 +134,15 @@ export default function AdminCategoryCreate() {
 						<label className="block text-sm font-medium text-gray-700 mb-2">
 							Icon Kategori
 						</label>
-						<div className="flex flex-wrap gap-2">
+						{/* quick picks */}
+						<div className="flex flex-wrap gap-2 mb-3">
 							{Object.entries({
 								Activity,
 								Heart,
 								Leaf,
 								Users,
-								MapPin,
 								BookOpen,
-								Zap,
+								Stethoscope,
 							}).map(([key, IconComp]) => {
 								const selected = formData.icon === key;
 								return (
@@ -163,60 +161,81 @@ export default function AdminCategoryCreate() {
 								);
 							})}
 						</div>
-						<div className="mt-2 text-sm text-gray-500">
-							Pilih icon yang paling cocok untuk kategori. Nama icon akan
-							disimpan sebagai string (mis. <code>Leaf</code>).
+
+						{/* free-text Lucide icon name */}
+						<div className="flex gap-2 items-center mb-2">
+							<input
+								type="text"
+								name="icon"
+								value={formData.icon}
+								onChange={(e) =>
+									setFormData((s) => ({ ...s, icon: e.target.value }))
+								}
+								placeholder="Ketik nama icon Lucide, mis. Camera"
+								className="flex-1 rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+							/>
+							<button
+								type="button"
+								onClick={() => setFormData((s) => ({ ...s, icon: "" }))}
+								className="px-3 py-2 bg-gray-100 rounded-md text-sm">
+								Clear
+							</button>
 						</div>
+
+						<div className="mt-2 text-sm text-gray-500">
+							Pilih icon dari pilihan cepat atau ketik nama icon Lucide. Sistem
+							akan menyimpan nama komponen (case-sensitive), mis.{" "}
+							<code>Leaf</code>.<p></p>
+							<p>
+								<a
+									href="https://lucide.dev/icons/"
+									target="_blank"
+									rel="noreferrer"
+									className="text-blue-600 underline ml-1">
+									Dokumentasi Lucide Icon:
+								</a>
+								<span className="ml-2 font-semibold text-black">
+									Klik Icon Lalu pilih tombol "Copy Component Name"
+								</span>
+							</p>
+						</div>
+
 						{formData.icon && (
 							<div className="mt-3 flex items-center gap-3">
 								<span className="text-sm font-medium">Preview:</span>
 								{(() => {
-									const Comp = {
-										Activity,
-										Heart,
-										Leaf,
-										Users,
-										MapPin,
-										BookOpen,
-										Zap,
-									}[formData.icon];
-									return Comp ? <Comp size={24} /> : null;
+									const Comp = Lucide[formData.icon];
+									return Comp ? (
+										<Comp size={24} />
+									) : (
+										<span className="text-sm text-gray-500">
+											Nama icon tidak ditemukan
+										</span>
+									);
 								})()}
 							</div>
 						)}
 					</div>
-
-					{/* is_active radio buttons */}
-					<div>
-						<span className="block text-sm font-medium text-gray-700 mb-2">
+					<div className="mb-4">
+						<label
+							htmlFor="category_id"
+							className="block text-sm font-medium text-gray-700">
 							Status Kategori
-						</span>
-						<div className="flex items-center gap-6">
-							<label className="inline-flex items-center gap-2">
-								<input
-									type="radio"
-									name="is_active"
-									value="true"
-									checked={formData.is_active === "true"}
-									onChange={handleChange}
-									className="form-radio h-4 w-4 text-indigo-600"
-								/>
-								<span className="text-sm text-gray-700">Aktif</span>
-							</label>
-							<label className="inline-flex items-center gap-2">
-								<input
-									type="radio"
-									name="is_active"
-									value="false"
-									checked={formData.is_active === "false"}
-									onChange={handleChange}
-									className="form-radio h-4 w-4 text-indigo-600"
-								/>
-								<span className="text-sm text-gray-700">Tidak Aktif</span>
-							</label>
-						</div>
+						</label>
+						<select
+							id="is_active"
+							name="is_active"
+							value={formData.is_active}
+							onChange={handleChange}
+							required
+							className="mt-1 block w-1/4 rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+							<option value="" disabled>
+								Status Kategori
+							</option>
+							<option value={1}>Aktif</option>
+							<option value={0}>Tidak Aktif</option>
+						</select>
 					</div>
-
 					<div className="flex items-center justify-end gap-3">
 						<DynamicButton
 							type="button"
@@ -234,7 +253,7 @@ export default function AdminCategoryCreate() {
 									Menyimpan data....
 								</>
 							) : (
-								"Simpan Lokasi"
+								"Simpan Kategori"
 							)}
 						</button>
 					</div>

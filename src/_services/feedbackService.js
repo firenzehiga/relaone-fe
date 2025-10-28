@@ -18,6 +18,48 @@ export const adminGetFeedbacks = async (params = {}) => {
 	return response.data.data || response.data;
 };
 
+/** Mengambil detail feedback berdasarkan ID.
+ *
+ * @async
+ * @function adminGetFeedbackById
+ * @endpoint GET /admin/feedbacks/{feedbackId}
+ * @param {string|number} id - ID feedback
+ * @returns {Promise<any>} Data detail feedback
+ */
+export const adminGetFeedbackById = async (id) => {
+	const token = localStorage.getItem("authToken");
+	const response = await api.get(`/admin/feedbacks/${id}`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	return response.data.data || response.data;
+};
+
+/** * Update feedback
+ *
+ * @async
+ * @function adminUpdateFeedback
+ * @endpoint POST method PUT /admin/feedbacks/{feedbackId}
+ * @param {string|number} id - ID feedback
+ * @param {Object} data - Data feedback baru
+ * @returns {Promise<any>} Data feedback baru
+ */
+export const adminUpdateFeedback = async (id, data) => {
+	const token = localStorage.getItem("authToken");
+	try {
+		const response = await api.post(`/admin/feedbacks/${id}`, data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error updating event:", error);
+		throw error;
+	}
+};
+
 /** Hapus feedback
  *
  * @async

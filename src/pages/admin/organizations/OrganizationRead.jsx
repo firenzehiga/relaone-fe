@@ -8,6 +8,7 @@ import {
 	Eye,
 	EditIcon,
 	EllipsisVerticalIcon,
+	AlertCircle,
 } from "lucide-react";
 import {
 	Menu,
@@ -26,12 +27,15 @@ import {
 } from "@/_hooks/useOrganizations";
 import Badge from "@/components/ui/Badge";
 import { getImageUrl, parseApiError } from "@/utils";
+import { Link } from "react-router-dom";
+import FetchLoader from "@/components/ui/FetchLoader";
 
 export default function AdminOrganization() {
 	const {
 		data: organizations,
 		isLoading: organizationsLoading,
 		error: organizationsError,
+		isFetching: organizationsRefetching,
 	} = useAdminOrganizations();
 
 	const deleteOrganizationMutation = useAdminDeleteOrganizationMutation();
@@ -137,7 +141,7 @@ export default function AdminOrganization() {
 			selector: (row) =>
 				row.website ? (
 					<a
-						href={row.website}
+						href={`https://${row.website}`}
 						target="_blank"
 						rel="noopener noreferrer"
 						className="text-blue-600 hover:underline">
@@ -152,7 +156,15 @@ export default function AdminOrganization() {
 		{
 			name: "Status Verifikasi",
 			selector: (row) => (
-				<Badge variant={"primary"}>{row.status_verifikasi || "-"}</Badge>
+				<>
+					{row.status_verifikasi === "verified" ? (
+						<Badge variant={"success"}>Disetujui</Badge>
+					) : row.status_verifikasi === "pending" ? (
+						<Badge variant={"warning"}>Pending</Badge>
+					) : (
+						<Badge variant={"danger"}>Ditolak</Badge>
+					)}
+				</>
 			),
 			sortable: true,
 			width: "140px",
@@ -169,16 +181,14 @@ export default function AdminOrganization() {
 					/>
 					<Portal>
 						<MenuList className="font-semibold">
-							<MenuItem
-								icon={<Eye className="text-blue-500 hover:text-blue-600" />}>
-								Lihat
-							</MenuItem>
-							<MenuItem
-								icon={
-									<EditIcon className="text-yellow-500 hover:text-yellow-600" />
-								}>
-								Edit
-							</MenuItem>
+							<Link to={`/admin/organizations/edit/${row.id}`}>
+								<MenuItem
+									icon={
+										<EditIcon className="text-yellow-500 hover:text-yellow-600" />
+									}>
+									Edit
+								</MenuItem>
+							</Link>
 							<MenuItem
 								onClick={() => handleDelete(row.id)}
 								disabled={deleteOrganizationMutation.isLoading}
@@ -196,11 +206,6 @@ export default function AdminOrganization() {
 	return (
 		<div className="py-8 page-transition">
 			<div className="max-w-6xl mx-auto px-4">
-				<div className="mb-6">
-					<h1 className="text-2xl font-bold text-gray-900">Data Organisasi</h1>
-					<p className="text-gray-600">Kelola data organisasi di sini</p>
-				</div>
-
 				<div className="bg-white rounded-lg shadow p-6">
 					<div className="flex justify-between items-center mb-4">
 						<h2 className="text-lg font-semibold">Daftar Organisasi</h2>
@@ -230,6 +235,8 @@ export default function AdminOrganization() {
 						</div>
 					) : (
 						<>
+							{organizationsRefetching && <FetchLoader />}
+
 							<div className="w-80 mb-4">
 								<input
 									type="text"
@@ -241,7 +248,11 @@ export default function AdminOrganization() {
 							</div>
 							<DataTable
 								columns={columns}
-								data={filteredOrganizations}
+								data={
+									Array.isArray(filteredOrganizations)
+										? filteredOrganizations
+										: []
+								}
 								pagination
 								pointerOnHover
 								title=""
@@ -278,6 +289,21 @@ export default function AdminOrganization() {
 										</p>
 									</div>
 								)}
+								noDataComponent={
+									<div className="flex flex-col items-center justify-center h-64 text-gray-600">
+										<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+										<h3 className="text-lg font-semibold mb-2">
+											{searchOrganization
+												? "No Matching Organizations Found"
+												: "No Organizations Available"}
+										</h3>
+										<p className="text-gray-500 mb-4 text-center">
+											{searchOrganization
+												? "Tidak ada organisasi yang sesuai dengan pencarian."
+												: "Belum ada data organisasi."}
+										</p>
+									</div>
+								}
 							/>
 						</>
 					)}

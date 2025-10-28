@@ -25,6 +25,48 @@ export const useAdminFeedbacks = () => {
 };
 
 /**
+ * Hook untuk mengambil data feedback berdasarkan ID (admin)
+ * @returns {Object} Query result dengan data, isLoading, error, etc
+ */
+export const useAdminFeedbackById = (id) => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "admin" && !!id;
+
+	return useQuery({
+		queryKey: ["adminFeedbacks", id],
+		queryFn: async () => {
+			const response = await feedbackService.adminGetFeedbackById(id);
+			return response;
+		},
+		enabled,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
+	});
+};
+
+/**
+ * Update feedback (admin).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @param {Object} variables - Parameter update
+ * @param {string|number} variables.feedbackId - ID feedback
+ * @param {Object} variables.data - Data feedback baru
+ * @invalidates ["feedbacks"]
+ */
+export const useAdminUpdateFeedbackMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({ id, data }) => feedbackService.adminUpdateFeedback(id, data),
+		onSuccess: (_, id) => {
+			queryClient.invalidateQueries(["adminFeedbacks"]);
+			queryClient.invalidateQueries(["adminFeedbacks", id]);
+		},
+	});
+};
+
+/**
  * Hapus feedback (admin).
  *
  * @returns {UseMutationResult} Mutation hook

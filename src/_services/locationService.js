@@ -18,22 +18,63 @@ export const adminGetLocations = async (params = {}) => {
 	return response.data.data || response.data;
 };
 
-/** * Buat location baru
+/** Mengambil detail lokasi berdasarkan ID.
  *
  * @async
- * @function adminCreateLocation
- * @endpoint POST /admin/locations
- * @param {Object} locationData - Data location baru
- * @returns {Promise<any>} Data location baru
+ * @function adminGetLocationById
+ * @endpoint GET /admin/locations/{locationId}
+ * @param {string|number} id - ID lokasi
  */
-export const adminCreateLocation = async (locationData) => {
+export const adminGetLocationById = async (id) => {
 	const token = localStorage.getItem("authToken");
-	const response = await api.post("/admin/locations", locationData, {
+	const response = await api.get(`/admin/locations/${id}`, {
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},
 	});
 	return response.data.data || response.data;
+};
+
+/** * Buat location baru
+ *
+ * @async
+ * @function adminCreateLocation
+ * @endpoint POST /admin/locations
+ * @param {Object} data - Data location baru
+ * @returns {Promise<any>} Data location baru
+ */
+export const adminCreateLocation = async (data) => {
+	const token = localStorage.getItem("authToken");
+	const response = await api.post("/admin/locations", data, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	return response.data.data || response.data;
+};
+
+/** * Update location
+ *
+ * @async
+ * @function adminUpdateLocation
+ * @endpoint POST method PUT /admin/locations/{locationId}
+ * @param {string|number} id - ID location
+ * @param {Object} data - Data location baru
+ * @returns {Promise<any>} Data location baru
+ */
+export const adminUpdateLocation = async (id, data) => {
+	const token = localStorage.getItem("authToken");
+	try {
+		const response = await api.post(`/admin/locations/${id}`, data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error updating event:", error);
+		throw error;
+	}
 };
 
 /** Hapus location

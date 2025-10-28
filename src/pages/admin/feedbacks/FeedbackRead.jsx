@@ -10,6 +10,7 @@ import {
 	Eye,
 	EditIcon,
 	EllipsisVerticalIcon,
+	AlertCircle,
 } from "lucide-react";
 import {
 	Menu,
@@ -24,12 +25,15 @@ import { toast } from "react-hot-toast";
 import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import RatingStars from "@/components/ui/RatingStars";
+import { Link } from "react-router-dom";
+import FetchLoader from "@/components/ui/FetchLoader";
 
 export default function AdminFeedback() {
 	const {
 		data: feedbacks,
 		isLoading: feedbacksLoading,
 		error: feedbacksError,
+		isFetching: feedbacksRefetching,
 	} = useAdminFeedbacks();
 
 	const deleteFeedbackMutation = useAdminDeleteFeedbackMutation();
@@ -132,16 +136,14 @@ export default function AdminFeedback() {
 					/>
 					<Portal>
 						<MenuList className="font-semibold">
-							<MenuItem
-								icon={<Eye className="text-blue-500 hover:text-blue-600" />}>
-								Lihat
-							</MenuItem>
-							<MenuItem
-								icon={
-									<EditIcon className="text-yellow-500 hover:text-yellow-600" />
-								}>
-								Edit
-							</MenuItem>
+							<Link to={`/admin/feedbacks/edit/${row.id}`}>
+								<MenuItem
+									icon={
+										<EditIcon className="text-yellow-500 hover:text-yellow-600" />
+									}>
+									Edit
+								</MenuItem>
+							</Link>
 							<MenuItem
 								onClick={() => handleDelete(row.id)}
 								disabled={deleteFeedbackMutation.isLoading}
@@ -159,11 +161,6 @@ export default function AdminFeedback() {
 	return (
 		<div className="py-8 page-transition">
 			<div className="max-w-6xl mx-auto px-4">
-				<div className="mb-6">
-					<h1 className="text-2xl font-bold text-gray-900">Data Feedback</h1>
-					<p className="text-gray-600">Kelola data feedback di sini</p>
-				</div>
-
 				<div className="bg-white rounded-lg shadow p-6">
 					<div className="flex justify-between items-center mb-4">
 						<h2 className="text-lg font-semibold">Daftar Feedback</h2>
@@ -187,6 +184,8 @@ export default function AdminFeedback() {
 						</div>
 					) : (
 						<>
+							{feedbacksRefetching && <FetchLoader />}
+
 							<div className="w-80 mb-4">
 								<input
 									type="text"
@@ -198,7 +197,7 @@ export default function AdminFeedback() {
 							</div>
 							<DataTable
 								columns={columns}
-								data={filteredFeedbacks}
+								data={Array.isArray(filteredFeedbacks) ? filteredFeedbacks : []}
 								pagination
 								pointerOnHover
 								title=""
@@ -219,6 +218,21 @@ export default function AdminFeedback() {
 										</div>
 									);
 								}}
+								noDataComponent={
+									<div className="flex flex-col items-center justify-center h-64 text-gray-600">
+										<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+										<h3 className="text-lg font-semibold mb-2">
+											{searchFeedback
+												? "No Matching Feedback Found"
+												: "No Feedback Available"}
+										</h3>
+										<p className="text-gray-500 mb-4 text-center">
+											{searchFeedback
+												? "Tidak ada feedback yang sesuai dengan pencarian."
+												: "Belum ada data feedback"}
+										</p>
+									</div>
+								}
 							/>
 						</>
 					)}

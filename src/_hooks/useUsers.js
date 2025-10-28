@@ -78,3 +78,24 @@ export const useAdminOrganizationUsers = () => {
 		// retry: 1,
 	});
 };
+
+/**
+ * Hook untuk mengambil data semua volunteer users (khusus admin)
+ * @returns {Object} Query result dengan data, isLoading, error, etc
+ */
+export const useAdminVolunteerUsers = () => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "admin";
+
+	return useQuery({
+		queryKey: ["adminVolunteerUsers"],
+		queryFn: async () => {
+			const response = await userService.adminGetVolunteerUsers();
+			return response;
+		},
+		enabled,
+		// staleTime: 1 * 60 * 1000,
+		// cacheTime: 5 * 60 * 1000,
+		// retry: 1,
+	});
+};

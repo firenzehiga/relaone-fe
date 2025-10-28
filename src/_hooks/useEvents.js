@@ -19,9 +19,9 @@ export const useEvents = (params = {}) => {
 			return response;
 		},
 		enabled,
-		staleTime: 1 * 60 * 1000,
-		cacheTime: 5 * 60 * 1000,
-		retry: 1,
+		// staleTime: 1 * 60 * 1000,
+		// cacheTime: 5 * 60 * 1000,
+		// retry: 1,
 	});
 };
 
@@ -33,7 +33,7 @@ export const useEvents = (params = {}) => {
  */
 export const useEventById = (id) => {
 	return useQuery({
-		queryKey: ["events", id],
+		queryKey: ["detailEvent"],
 		queryFn: async () => {
 			const response = await eventService.getEventById(id);
 			return response;
@@ -112,18 +112,20 @@ export const useAdminCreateEventMutation = () => {
  * @returns {UseMutationResult} Mutation hook
  * @param {Object} variables - Parameter update
  * @param {string|number} variables.eventId - ID event
- * @param {Object} variables.payload - Data event baru
+ * @param {Object} variables.data - Data event baru
  * @invalidates ["events"]
  */
 export const useAdminUpdateEventMutation = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: ({ eventId, payload }) =>
-			eventService.updateEvent(eventId, payload),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries(["formEventPackages"]);
+		mutationFn: ({ id, data }) => eventService.adminUpdateEvent(id, data),
+		onSuccess: (_, id) => {
 			queryClient.invalidateQueries(["adminEvents"]);
+			queryClient.invalidateQueries(["adminEvents", id]);
+			// query key publik
+			queryClient.invalidateQueries(["events"]);
+			queryClient.invalidateQueries(["detailEvent"]);
 		},
 	});
 };

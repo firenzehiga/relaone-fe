@@ -72,12 +72,17 @@ export const adminGetCategoryById = async (id) => {
  */
 export const adminCreateCategory = async (data) => {
 	const token = localStorage.getItem("authToken");
-	const response = await api.post("/admin/categories", data, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
-	return response.data.data || response.data;
+	try {
+		const response = await api.post("/admin/categories", data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error creating category:", error);
+		throw error;
+	}
 };
 
 /** Update category berdasarkan ID
@@ -91,12 +96,17 @@ export const adminCreateCategory = async (data) => {
  */
 export const adminUpdateCategory = async (id, data) => {
 	const token = localStorage.getItem("authToken");
-	const response = await api.put(`/admin/categories/${id}`, data, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
-	return response.data.data || response.data;
+	try {
+		const response = await api.post(`/admin/categories/${id}`, data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error updating category:", error);
+		throw error;
+	}
 };
 
 /** Hapus category berdasarkan ID

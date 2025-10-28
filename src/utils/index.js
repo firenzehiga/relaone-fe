@@ -73,6 +73,19 @@ export const formatTime = (timeString) => {
 	return timeString.slice(0, 5);
 };
 
+// helper: normalize backend date/time -> input friendly
+export const toInputDate = (s) => {
+	if (!s) return "";
+	if (typeof s !== "string") s = String(s);
+	if (s.includes("T")) return s.split("T")[0];
+	if (s.includes(" ")) return s.split(" ")[0];
+	try {
+		return new Date(s).toISOString().slice(0, 10);
+	} catch {
+		return "";
+	}
+};
+
 // GOOGLE MAPS UTILITIES
 /**
  * Generate URL Google Maps untuk melihat lokasi event

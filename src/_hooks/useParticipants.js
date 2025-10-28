@@ -48,6 +48,68 @@ export const useAdminParticipants = () => {
 };
 
 /**
+ * Ambil detail participant berdasarkan ID.
+ *
+ * @param {string|number} participantId - ID participant
+ * @returns {UseQueryResult<Object>} Data detail participant
+ */
+export const useAdminParticipantById = (id) => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "admin" && !!id;
+	return useQuery({
+		queryKey: ["adminParticipants", id],
+		queryFn: async () => {
+			const response = await eventParticipantService.adminGetParticipantById(
+				id
+			);
+			return response;
+		},
+		enabled,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
+	});
+};
+
+/**
+ * Buat participant baru (admin).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["participants"]
+ */
+export const useAdminCreateParticipantMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: eventParticipantService.adminCreateParticipant,
+		onSuccess: () => {
+			queryClient.invalidateQueries(["adminParticipants"]);
+		},
+	});
+};
+
+/**
+ * Update participant (admin).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @param {Object} variables - Parameter update
+ * @param {string|number} variables.participantId - ID participant
+ * @param {Object} variables.payload - Data participant baru
+ */
+export const useAdminUpdateParticipantMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({ id, data }) =>
+			eventParticipantService.adminUpdateParticipant(id, data),
+		onSuccess: async (_, id) => {
+			await queryClient.invalidateQueries(["adminParticipants"]);
+			await queryClient.invalidateQueries(["adminParticipants", id]);
+		},
+	});
+};
+
+/**
  * Hapus participant (admin).
  *
  * @returns {UseMutationResult} Mutation hook

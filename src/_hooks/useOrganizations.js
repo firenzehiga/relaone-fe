@@ -115,11 +115,11 @@ export const useAdminUpdateOrganizationMutation = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: ({ organizationId, payload }) =>
-			updateOrganization(organizationId, payload),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries(["formOrganizationPackages"]);
-			queryClient.invalidateQueries(["adminOrganizations"]);
+		mutationFn: ({ id, data }) =>
+			organizationService.adminUpdateOrganization(id, data),
+		onSuccess: async (_, id) => {
+			await queryClient.invalidateQueries(["adminOrganizations"]);
+			await queryClient.invalidateQueries(["adminOrganizations", id]);
 		},
 	});
 };

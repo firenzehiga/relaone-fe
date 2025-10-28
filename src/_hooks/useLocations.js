@@ -25,6 +25,28 @@ export const useAdminLocations = () => {
 };
 
 /**
+ * Ambil detail lokasi berdasarkan ID.
+ *
+ * @param {string|number} locationId - ID lokasi
+ * @returns {UseQueryResult<Object>} Data detail lokasi
+ */
+export const useAdminLocationById = (id) => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "admin" && !!id;
+	return useQuery({
+		queryKey: ["adminLocations", id],
+		queryFn: async () => {
+			const response = await locationService.adminGetLocationById(id);
+			return response;
+		},
+		enabled,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
+	});
+};
+
+/**
  * Buat location baru (admin).
  *
  * @returns {UseMutationResult} Mutation hook
@@ -37,6 +59,26 @@ export const useAdminCreateLocationMutation = () => {
 		mutationFn: locationService.adminCreateLocation,
 		onSuccess: () => {
 			queryClient.invalidateQueries(["adminLocations"]);
+		},
+	});
+};
+
+/**
+ * Update lokasi (admin).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @param {Object} variables - Parameter update
+ * @param {string|number} variables.locationId - ID lokasi
+ * @param {Object} variables.payload - Data lokasi baru
+ */
+export const useAdminUpdateLocationMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({ id, data }) => locationService.adminUpdateLocation(id, data),
+		onSuccess: async (_, id) => {
+			await queryClient.invalidateQueries(["adminLocations"]);
+			await queryClient.invalidateQueries(["adminLocations", id]);
 		},
 	});
 };
