@@ -228,25 +228,24 @@ export default function AdminCategory() {
 								fixedHeader
 								striped
 								sortIcon={<ChevronDown />}
+								noDataComponent={
+									<div className="flex flex-col items-center justify-center h-64 text-gray-600">
+										<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+										<h3 className="text-lg font-semibold mb-2">
+											{searchCategory
+												? "No Matching Categories Found"
+												: "No Categories Available"}
+										</h3>
+										<p className="text-gray-500 mb-4 text-center">
+											{searchCategory
+												? "Tidak ada kategori yang sesuai dengan pencarian."
+												: "Belum ada data kategori"}
+										</p>
+									</div>
+								}
 							/>
 						</>
 					)}
-					noDataComponent=
-					{
-						<div className="flex flex-col items-center justify-center h-64 text-gray-600">
-							<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
-							<h3 className="text-lg font-semibold mb-2">
-								{searchCategory
-									? "No Matching Categories Found"
-									: "No Categories Available"}
-							</h3>
-							<p className="text-gray-500 mb-4 text-center">
-								{searchCategory
-									? "Tidak ada kategori yang sesuai dengan pencarian."
-									: "Belum ada data kategori"}
-							</p>
-						</div>
-					}
 				</div>
 			</div>
 		</div>

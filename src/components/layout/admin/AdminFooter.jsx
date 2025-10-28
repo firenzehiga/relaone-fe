@@ -4,7 +4,7 @@ export default function AdminFooter() {
 	const currentYear = new Date().getFullYear();
 
 	return (
-		<footer className="bg-white border-t border-gray-200 py-4 px-6">
+		<footer className="bg-white border-t bottom-0 w-full border-gray-200 py-4 px-6">
 			<div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-600">
 				<div className="flex items-center gap-1">
 					<span>Made with </span>
