@@ -52,11 +52,13 @@ textarea {
 
 /* Mobile touch interactions */
 @media (hover: none) and (pointer: coarse) {
+
 	/* Mobile-specific styles */
 	button,
 	a,
 	[role="button"] {
-		min-height: 44px; /* iOS touch target size */
+		min-height: 44px;
+		/* iOS touch target size */
 		touch-action: manipulation;
 	}
 
@@ -76,6 +78,7 @@ textarea {
 
 /* Desktop hover enhancements */
 @media (hover: hover) and (pointer: fine) {
+
 	/* Desktop-specific smooth hovers */
 	.transition-all {
 		transition-duration: 200ms;
@@ -151,6 +154,7 @@ textarea {
 		opacity: 0;
 		transform: translateY(20px);
 	}
+
 	to {
 		opacity: 1;
 		transform: translateY(0);
@@ -167,4 +171,24 @@ textarea {
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	background-clip: text;
+}
+
+/* Hint: apply to animated elements (.motion-...) if you use classes */
+.motion-anim {
+	will-change: transform, opacity;
+	transform: translateZ(0);
+}
+
+/* Respect user preference */
+@media (prefers-reduced-motion: reduce) {
+	.motion-anim, .animated, motion div {
+		animation: none !important;
+		transition: none !important;
+	}
+}
+
+/* Optional: ensure heavy background images don't reflow */
+.bg-illustration {
+	backface-visibility: hidden;
+	-webkit-font-smoothing: antialiased;
 }

@@ -45,11 +45,7 @@ export default function LoginPage() {
 			{/* Left Side - Illustration */}
 			<LoginIllustration />
 			{/* Right Side - Login Form */}
-			<div
-				initial={{ opacity: 0, x: 50 }}
-				animate={{ opacity: 1, x: 0 }}
-				transition={{ duration: 0.6 }}
-				className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
+			<div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
 				<div className="w-full max-w-md">
 					{/* Back Button */}
 					<Link
