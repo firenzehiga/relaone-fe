@@ -183,10 +183,6 @@ export default function AdminLocation() {
 	return (
 		<div className="py-8 page-transition">
 			<div className="max-w-6xl mx-auto px-4">
-				{/* <div className="mb-6">
-					<h1 className="text-2xl font-bold text-gray-900">Data Lokasi</h1>
-					<p className="text-gray-600">Kelola data lokasi di sini</p>
-				</div> */}
 				<div className="bg-white rounded-lg shadow p-6">
 					<div className="flex justify-between items-center mb-4">
 						<h2 className="text-lg font-semibold">Daftar Lokasi</h2>
