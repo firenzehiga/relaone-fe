@@ -10,11 +10,7 @@ import api from "@/_api";
  * @returns {Promise} Promise dengan data feedbacks
  */
 export const adminGetFeedbacks = async (params = {}) => {
-	const token = localStorage.getItem("authToken");
-	const response = await api.get("/admin/feedbacks", {
-		params,
-		headers: { Authorization: `Bearer ${token}` },
-	});
+	const response = await api.get("/admin/feedbacks", { params });
 	return response.data.data || response.data;
 };
 
@@ -27,12 +23,7 @@ export const adminGetFeedbacks = async (params = {}) => {
  * @returns {Promise<any>} Data detail feedback
  */
 export const adminGetFeedbackById = async (id) => {
-	const token = localStorage.getItem("authToken");
-	const response = await api.get(`/admin/feedbacks/${id}`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
+	const response = await api.get(`/admin/feedbacks/${id}`);
 	return response.data.data || response.data;
 };
 
@@ -46,13 +37,8 @@ export const adminGetFeedbackById = async (id) => {
  * @returns {Promise<any>} Data feedback baru
  */
 export const adminUpdateFeedback = async (id, data) => {
-	const token = localStorage.getItem("authToken");
 	try {
-		const response = await api.post(`/admin/feedbacks/${id}`, data, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
+		const response = await api.post(`/admin/feedbacks/${id}`, data);
 		return response.data.data || response.data;
 	} catch (error) {
 		console.log("Error updating event:", error);
@@ -69,13 +55,8 @@ export const adminUpdateFeedback = async (id, data) => {
  * @returns {Promise<any>} Data feedback yang dihapus
  */
 export const adminDeleteFeedback = async (id) => {
-	const token = localStorage.getItem("authToken");
 	try {
-		const response = await api.delete(`/admin/feedbacks/${id}`, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
+		const response = await api.delete(`/admin/feedbacks/${id}`);
 		return response.data;
 	} catch (error) {
 		console.log("Error deleting feedback:", error);

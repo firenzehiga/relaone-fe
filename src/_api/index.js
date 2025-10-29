@@ -13,6 +13,7 @@ const api = axios.create({
 
 /**
  * Request interceptor untuk menambahkan auth token
+ * Jadi tidak perlu menambahkan header Authorization di setiap request manual
  */
 api.interceptors.request.use(
 	(config) => {

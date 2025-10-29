@@ -10,11 +10,7 @@ import api from "@/_api";
  * @returns {Promise} Promise dengan data locations
  */
 export const adminGetLocations = async (params = {}) => {
-	const token = localStorage.getItem("authToken");
-	const response = await api.get("/admin/locations", {
-		params,
-		headers: { Authorization: `Bearer ${token}` },
-	});
+	const response = await api.get("/admin/locations", { params });
 	return response.data.data || response.data;
 };
 
@@ -26,12 +22,7 @@ export const adminGetLocations = async (params = {}) => {
  * @param {string|number} id - ID lokasi
  */
 export const adminGetLocationById = async (id) => {
-	const token = localStorage.getItem("authToken");
-	const response = await api.get(`/admin/locations/${id}`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
+	const response = await api.get(`/admin/locations/${id}`);
 	return response.data.data || response.data;
 };
 
@@ -44,12 +35,7 @@ export const adminGetLocationById = async (id) => {
  * @returns {Promise<any>} Data location baru
  */
 export const adminCreateLocation = async (data) => {
-	const token = localStorage.getItem("authToken");
-	const response = await api.post("/admin/locations", data, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
+	const response = await api.post("/admin/locations", data);
 	return response.data.data || response.data;
 };
 
@@ -63,13 +49,8 @@ export const adminCreateLocation = async (data) => {
  * @returns {Promise<any>} Data location baru
  */
 export const adminUpdateLocation = async (id, data) => {
-	const token = localStorage.getItem("authToken");
 	try {
-		const response = await api.post(`/admin/locations/${id}`, data, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
+		const response = await api.post(`/admin/locations/${id}`, data);
 		return response.data.data || response.data;
 	} catch (error) {
 		console.log("Error updating event:", error);
@@ -86,13 +67,8 @@ export const adminUpdateLocation = async (id, data) => {
  * @returns {Promise<any>} Data location yang dihapus
  */
 export const adminDeleteLocation = async (id) => {
-	const token = localStorage.getItem("authToken");
 	try {
-		const response = await api.delete(`/admin/locations/${id}`, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
+		const response = await api.delete(`/admin/locations/${id}`);
 		return response.data;
 	} catch (error) {
 		console.log("Error deleting location:", error);

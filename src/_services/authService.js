@@ -53,12 +53,7 @@ export const register = async (userData) => {
  */
 export const logout = async () => {
 	try {
-		const token = localStorage.getItem("authToken");
-		const response = await api.post(
-			"/logout",
-			{},
-			{ headers: { Authorization: `Bearer ${token}` } }
-		); // Remove token from localStorage
+		const response = await api.post("/logout"); // Remove token from localStorage
 		localStorage.removeItem("authToken");
 		return response.data;
 	} catch (error) {

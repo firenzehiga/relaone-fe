@@ -24,11 +24,7 @@ export const getParticipants = async (params = {}) => {
  * @returns {Promise} Promise dengan data participants
  */
 export const adminGetParticipants = async (params = {}) => {
-	const token = localStorage.getItem("authToken");
-	const response = await api.get("/admin/event-participants", {
-		params,
-		headers: { Authorization: `Bearer ${token}` },
-	});
+	const response = await api.get("/admin/event-participants", { params });
 	return response.data.data || response.data;
 };
 
@@ -41,12 +37,7 @@ export const adminGetParticipants = async (params = {}) => {
  * @returns {Promise<any>} Data detail participant
  */
 export const adminGetParticipantById = async (id) => {
-	const token = localStorage.getItem("authToken");
-	const response = await api.get(`/admin/event-participants/${id}`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
+	const response = await api.get(`/admin/event-participants/${id}`);
 	return response.data.data || response.data;
 };
 
@@ -59,13 +50,8 @@ export const adminGetParticipantById = async (id) => {
  * @returns {Promise<any>} Data participant baru
  */
 export const adminCreateParticipant = async (data) => {
-	const token = localStorage.getItem("authToken");
 	try {
-		const response = await api.post("/admin/event-participants", data, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
+		const response = await api.post("/admin/event-participants", data);
 		return response.data.data || response.data;
 	} catch (error) {
 		console.log("Error creating event:", error);
@@ -83,13 +69,8 @@ export const adminCreateParticipant = async (data) => {
  * @returns {Promise<any>} Data participant baru
  */
 export const adminUpdateParticipant = async (id, data) => {
-	const token = localStorage.getItem("authToken");
 	try {
-		const response = await api.post(`/admin/event-participants/${id}`, data, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
+		const response = await api.post(`/admin/event-participants/${id}`, data);
 		return response.data.data || response.data;
 	} catch (error) {
 		console.log("Error updating event:", error);
@@ -106,13 +87,8 @@ export const adminUpdateParticipant = async (id, data) => {
  * @returns {Promise<any>} Data participant baru
  */
 export const adminDeleteParticipant = async (id) => {
-	const token = localStorage.getItem("authToken");
 	try {
-		const response = await api.delete(`/admin/event-participants/${id}`, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
+		const response = await api.delete(`/admin/event-participants/${id}`);
 		return response.data;
 	} catch (error) {
 		console.log("Error deleting participant:", error);

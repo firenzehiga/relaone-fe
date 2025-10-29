@@ -34,13 +34,7 @@ export const getUserRegistrations = async () => {
  * @returns {Promise<any>} Data semua users.
  */
 export const adminGetUsers = async (params = {}) => {
-	const token = localStorage.getItem("authToken");
-	const response = await api.get("/admin/users", {
-		params,
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
+	const response = await api.get("/admin/users", { params });
 	return response.data.data || response.data;
 };
 
@@ -52,13 +46,7 @@ export const adminGetUsers = async (params = {}) => {
  * @returns {Promise<any>} Data semua users.
  */
 export const adminGetOrganizationUsers = async (params = {}) => {
-	const token = localStorage.getItem("authToken");
-	const response = await api.get("/admin/organization-users", {
-		params,
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
+	const response = await api.get("/admin/organization-users");
 	return response.data.data || response.data;
 };
 
@@ -70,12 +58,6 @@ export const adminGetOrganizationUsers = async (params = {}) => {
  * @returns {Promise<any>} Data semua users.
  */
 export const adminGetVolunteerUsers = async (params = {}) => {
-	const token = localStorage.getItem("authToken");
-	const response = await api.get("/admin/volunteer-users", {
-		params,
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
+	const response = await api.get("/admin/volunteer-users");
 	return response.data.data || response.data;
 };

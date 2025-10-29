@@ -54,12 +54,7 @@ export const adminGetOrganizations = async (params = {}) => {
  * @returns {Promise<any>} Data detail organization
  */
 export const adminGetOrganizationById = async (id) => {
-	const token = localStorage.getItem("authToken");
-	const response = await api.get(`/admin/organizations/${id}`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
+	const response = await api.get(`/admin/organizations/${id}`);
 	return response.data.data || response.data;
 };
 
@@ -72,13 +67,8 @@ export const adminGetOrganizationById = async (id) => {
  * @returns {Promise<any>} Data organization baru
  */
 export const adminCreateOrganization = async (data) => {
-	const token = localStorage.getItem("authToken");
 	try {
-		const response = await api.post("/admin/organizations", data, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
+		const response = await api.post("/admin/organizations", data);
 		return response.data.data || response.data;
 	} catch (error) {
 		console.log("Error creating organization:", error);
@@ -96,13 +86,8 @@ export const adminCreateOrganization = async (data) => {
  * @returns {Promise<any>} Data organization baru
  */
 export const adminUpdateOrganization = async (id, data) => {
-	const token = localStorage.getItem("authToken");
 	try {
-		const response = await api.post(`/admin/organizations/${id}`, data, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
+		const response = await api.post(`/admin/organizations/${id}`, data);
 		return response.data.data || response.data;
 	} catch (error) {
 		console.log("Error updating organization:", error);
@@ -119,13 +104,8 @@ export const adminUpdateOrganization = async (id, data) => {
  * @returns {Promise<any>} Data organization baru
  */
 export const adminDeleteOrganization = async (id) => {
-	const token = localStorage.getItem("authToken");
 	try {
-		const response = await api.delete(`/admin/organizations/${id}`, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
+		const response = await api.delete(`/admin/organizations/${id}`);
 		return response.data;
 	} catch (error) {
 		console.log("Error deleting organization:", error);

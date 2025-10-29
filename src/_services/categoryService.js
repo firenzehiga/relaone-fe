@@ -35,12 +35,7 @@ export const getCategoryById = async (id) => {
  * @returns {Promise<any>} Data semua categories.
  */
 export const adminGetCategories = async () => {
-	const token = localStorage.getItem("authToken");
-	const response = await api.get("/admin/categories", {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
+	const response = await api.get("/admin/categories");
 	return response.data.data || response.data;
 };
 
@@ -53,12 +48,7 @@ export const adminGetCategories = async () => {
  * @returns {Promise<any>} Data detail category
  */
 export const adminGetCategoryById = async (id) => {
-	const token = localStorage.getItem("authToken");
-	const response = await api.get(`/admin/categories/${id}`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
+	const response = await api.get(`/admin/categories/${id}`);
 	return response.data.data || response.data;
 };
 
@@ -71,13 +61,8 @@ export const adminGetCategoryById = async (id) => {
  * @returns {Promise<any>} Data category baru
  */
 export const adminCreateCategory = async (data) => {
-	const token = localStorage.getItem("authToken");
 	try {
-		const response = await api.post("/admin/categories", data, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
+		const response = await api.post("/admin/categories", data);
 		return response.data.data || response.data;
 	} catch (error) {
 		console.log("Error creating category:", error);
@@ -95,13 +80,8 @@ export const adminCreateCategory = async (data) => {
  * @returns {Promise<any>} Data category baru
  */
 export const adminUpdateCategory = async (id, data) => {
-	const token = localStorage.getItem("authToken");
 	try {
-		const response = await api.post(`/admin/categories/${id}`, data, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
+		const response = await api.post(`/admin/categories/${id}`, data);
 		return response.data.data || response.data;
 	} catch (error) {
 		console.log("Error updating category:", error);
