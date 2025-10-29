@@ -79,13 +79,31 @@ export default function AdminUser() {
 		},
 		{
 			name: "Role",
-			selector: (row) => <Badge variant={"primary"}>{row.role || "-"}</Badge>,
+			selector: (row) => (
+				<>
+					{row.role === "admin" ? (
+						<Badge variant={"warning"}>Admin</Badge>
+					) : row.role === "organization" ? (
+						<Badge variant={"primary"}>Organization</Badge>
+					) : (
+						<Badge variant={"secondary"}>Volunteer</Badge>
+					)}
+				</>
+			),
 			sortable: true,
 			width: "140px",
 		},
 		{
 			name: "Status",
-			selector: (row) => <Badge variant={"primary"}>{row.status || "-"}</Badge>,
+			selector: (row) => (
+				<>
+					{row.status === "active" ? (
+						<Badge variant={"success"}>Active</Badge>
+					) : (
+						<Badge variant={"danger"}>Inactive</Badge>
+					)}
+				</>
+			),
 			sortable: true,
 			width: "120px",
 		},
