@@ -10,7 +10,6 @@ import {
 	Plus,
 	Loader2,
 	Trash,
-	Eye,
 	EditIcon,
 	EllipsisVerticalIcon,
 	AlertCircle,
@@ -30,7 +29,7 @@ import FetchLoader from "@/components/ui/FetchLoader";
 
 export default function AdminEventParticipant() {
 	const {
-		data: participants,
+		data: participants = [],
 		isLoading: participantsLoading,
 		error: participantsError,
 		isFetching: participantsRefetching,
@@ -172,6 +171,21 @@ export default function AdminEventParticipant() {
 		},
 	];
 
+	if (participantsError) {
+		return (
+			<div className="flex flex-col items-center justify-center h-[40vh] text-gray-600">
+				<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+				<h3 className="text-lg font-semibold mb-2">Error</h3>
+				<p className="text-gray-500 mb-4 text-center">
+					Gagal mengambil data participant.
+				</p>
+				<p className="text-red-500 mb-4 text-center font-semibold">
+					{participantsError.message}
+				</p>
+			</div>
+		);
+	}
+
 	return (
 		<div className="py-8 page-transition min-h-screen">
 			<div className="max-w-6xl mx-auto px-4">
@@ -191,17 +205,6 @@ export default function AdminEventParticipant() {
 							{" "}
 							<Loader2 className="animate-spin h-7 w-7 text-emerald-600" />
 						</div>
-					) : participantsError ? (
-						<div className="text-red-600">
-							Error loading participants: {participantsError.message}
-						</div>
-					) : participants.length === 0 ? (
-						<div className="flex flex-col items-center justify-center h-48 text-gray-600">
-							<h3 className="text-lg font-semibold mb-2">
-								No Participant Available
-							</h3>
-							<p className="text-gray-500">Belum ada data event participant.</p>
-						</div>
 					) : (
 						<>
 							{participantsRefetching && <FetchLoader />}
@@ -216,11 +219,7 @@ export default function AdminEventParticipant() {
 							</div>
 							<DataTable
 								columns={columns}
-								data={
-									Array.isArray(filteredParticipants)
-										? filteredParticipants
-										: []
-								}
+								data={filteredParticipants}
 								pagination
 								pointerOnHover
 								title=""

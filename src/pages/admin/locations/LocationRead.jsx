@@ -180,6 +180,21 @@ export default function AdminLocation() {
 		},
 	];
 
+	if (locationsError) {
+		return (
+			<div className="flex flex-col items-center justify-center h-[40vh] text-gray-600">
+				<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+				<h3 className="text-lg font-semibold mb-2">Error</h3>
+				<p className="text-gray-500 mb-4 text-center">
+					Gagal mengambil data lokasi.
+				</p>
+				<p className="text-red-500 mb-4 text-center font-semibold">
+					{locationsError.message}
+				</p>
+			</div>
+		);
+	}
+
 	return (
 		<div className="py-8 page-transition">
 			<div className="max-w-6xl mx-auto px-4">
@@ -199,17 +214,6 @@ export default function AdminLocation() {
 							{" "}
 							<Loader2 className="animate-spin h-7 w-7 text-emerald-600" />
 						</div>
-					) : locationsError ? (
-						<div className="text-red-600">
-							Error loading locations: {locationsError.message}
-						</div>
-					) : locations.length === 0 ? (
-						<div className="flex flex-col items-center justify-center h-48 text-gray-600">
-							<h3 className="text-lg font-semibold mb-2">
-								No location Available
-							</h3>
-							<p className="text-gray-500">Belum ada data lokasi.</p>
-						</div>
 					) : (
 						<>
 							{locationsRefetching && <FetchLoader />}
@@ -225,7 +229,7 @@ export default function AdminLocation() {
 							</div>
 							<DataTable
 								columns={columns}
-								data={Array.isArray(filteredLocations) ? filteredLocations : []}
+								data={filteredLocations}
 								pagination
 								pointerOnHover
 								title=""

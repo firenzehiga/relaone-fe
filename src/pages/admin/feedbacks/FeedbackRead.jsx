@@ -30,7 +30,7 @@ import FetchLoader from "@/components/ui/FetchLoader";
 
 export default function AdminFeedback() {
 	const {
-		data: feedbacks,
+		data: feedbacks = [],
 		isLoading: feedbacksLoading,
 		error: feedbacksError,
 		isFetching: feedbacksRefetching,
@@ -48,7 +48,12 @@ export default function AdminFeedback() {
 			const event = String(feedbackItem.event?.judul || "").toLowerCase();
 			return user.includes(query) || event.includes(query);
 		});
-	}, [feedbacks, searchFeedback]);
+	}, [searchFeedback]);
+
+	// const filteredFeedbacks = feedbacks.filter((p) => {
+	// 	const lower = searchFeedback.toLowerCase();
+	// 	return p.user?.nama?.toLowerCase().includes(lower);
+	// });
 
 	// Fungsi untuk menangani penghapusan kursus
 	const handleDelete = (id) => {
@@ -158,6 +163,21 @@ export default function AdminFeedback() {
 		},
 	];
 
+	if (feedbacksError) {
+		return (
+			<div className="flex flex-col items-center justify-center h-[40vh] text-gray-600">
+				<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+				<h3 className="text-lg font-semibold mb-2">Error</h3>
+				<p className="text-gray-500 mb-4 text-center">
+					Gagal mengambil data feedback.
+				</p>
+				<p className="text-red-500 mb-4 text-center font-semibold">
+					{feedbacksError.message}
+				</p>
+			</div>
+		);
+	}
+
 	return (
 		<div className="py-8 page-transition">
 			<div className="max-w-6xl mx-auto px-4">
@@ -168,19 +188,7 @@ export default function AdminFeedback() {
 
 					{feedbacksLoading ? (
 						<div className="flex h-96 justify-center py-20">
-							{" "}
 							<Loader2 className="animate-spin h-7 w-7 text-emerald-600" />
-						</div>
-					) : feedbacksError ? (
-						<div className="text-red-600">
-							Error loading feedbacks: {feedbacksError.message}
-						</div>
-					) : feedbacks.length === 0 ? (
-						<div className="flex flex-col items-center justify-center h-48 text-gray-600">
-							<h3 className="text-lg font-semibold mb-2">
-								No feedback Available
-							</h3>
-							<p className="text-gray-500">Belum ada data feedback.</p>
 						</div>
 					) : (
 						<>
@@ -197,7 +205,7 @@ export default function AdminFeedback() {
 							</div>
 							<DataTable
 								columns={columns}
-								data={Array.isArray(filteredFeedbacks) ? filteredFeedbacks : []}
+								data={filteredFeedbacks}
 								pagination
 								pointerOnHover
 								title=""

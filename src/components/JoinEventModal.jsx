@@ -30,7 +30,7 @@ export default function JoinEventModal() {
 
 	// Temporary: Get event from events list (not ideal, but works for now)
 	const { data: events, isLoading: eventLoading } = useEvents();
-	const event = events?.find((e) => e.id === selectedEventId);
+	const event = events?.find((e) => e.id === selectedEventId) || null;
 
 	const [notes, setNotes] = useState("");
 	const [agreed, setAgreed] = useState(false);

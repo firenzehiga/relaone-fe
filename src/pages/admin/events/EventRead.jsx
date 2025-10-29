@@ -31,7 +31,7 @@ import FetchLoader from "@/components/ui/FetchLoader";
 
 export default function AdminEvent() {
 	const {
-		data: events,
+		data: events = [],
 		isLoading: eventsLoading,
 		error: eventsError,
 		isFetching: eventsRefetching,
@@ -176,6 +176,21 @@ export default function AdminEvent() {
 		},
 	];
 
+	if (eventsError) {
+		return (
+			<div className="flex flex-col items-center justify-center h-[40vh] text-gray-600">
+				<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+				<h3 className="text-lg font-semibold mb-2">Error</h3>
+				<p className="text-gray-500 mb-4 text-center">
+					Gagal mengambil data event.
+				</p>
+				<p className="text-red-500 mb-4 text-center font-semibold">
+					{eventsError.message}
+				</p>
+			</div>
+		);
+	}
+
 	return (
 		<div className="py-8 page-transition">
 			<div className="max-w-6xl mx-auto px-4">
@@ -192,17 +207,6 @@ export default function AdminEvent() {
 							{" "}
 							<Loader2 className="animate-spin h-7 w-7 text-emerald-600" />
 						</div>
-					) : eventsError ? (
-						<div className="text-red-600">
-							Error loading events: {eventsError.message}
-						</div>
-					) : events.length === 0 ? (
-						<div className="flex flex-col items-center justify-center h-48 text-gray-600">
-							<h3 className="text-lg font-semibold mb-2">
-								No Events Available
-							</h3>
-							<p className="text-gray-500">Belum ada data event.</p>
-						</div>
 					) : (
 						<>
 							{eventsRefetching && <FetchLoader />}
@@ -217,7 +221,7 @@ export default function AdminEvent() {
 							</div>
 							<DataTable
 								columns={columns}
-								data={Array.isArray(filteredEvents) ? filteredEvents : []}
+								data={filteredEvents}
 								pagination
 								pointerOnHover
 								title=""

@@ -11,12 +11,14 @@ import {
 import DynamicButton from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import { useAdminUsers } from "@/_hooks/useUsers";
+import FetchLoader from "@/components/ui/FetchLoader";
 
 export default function AdminUser() {
 	const {
-		data: users,
+		data: users = [],
 		isLoading: usersLoading,
 		error: usersError,
+		isFetching: usersRefetching,
 	} = useAdminUsers();
 
 	// Local state for search/filter
@@ -123,6 +125,21 @@ export default function AdminUser() {
 		},
 	];
 
+	if (usersError) {
+		return (
+			<div className="flex flex-col items-center justify-center h-[40vh] text-gray-600">
+				<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+				<h3 className="text-lg font-semibold mb-2">Error</h3>
+				<p className="text-gray-500 mb-4 text-center">
+					Gagal mengambil data pengguna.
+				</p>
+				<p className="text-red-500 mb-4 text-center font-semibold">
+					{usersError.message}
+				</p>
+			</div>
+		);
+	}
+
 	return (
 		<div className="py-8 page-transition">
 			<div className="max-w-6xl mx-auto px-4">
@@ -143,19 +160,10 @@ export default function AdminUser() {
 						<div className="flex h-72 md:h-96 justify-center py-20">
 							<Loader2 className="animate-spin h-6 w-6 md:h-7 md:w-7 text-emerald-600" />
 						</div>
-					) : usersError ? (
-						<div className="text-red-600 text-sm">
-							Error loading users: {usersError.message}
-						</div>
-					) : users.length === 0 ? (
-						<div className="flex flex-col items-center justify-center h-48 text-gray-600">
-							<h3 className="text-base md:text-lg font-semibold mb-2">
-								No users Available
-							</h3>
-							<p className="text-sm md:text-base">Belum ada data pengguna.</p>
-						</div>
 					) : (
 						<>
+							{usersRefetching && <FetchLoader />}
+
 							<div className="w-full md:w-80 mb-4">
 								<input
 									type="text"

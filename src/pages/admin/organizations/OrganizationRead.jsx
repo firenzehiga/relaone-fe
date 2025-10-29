@@ -18,7 +18,7 @@ import {
 	Portal,
 	IconButton,
 } from "@chakra-ui/react";
-import DynamicButton, { LinkButton } from "@/components/ui/Button";
+import { LinkButton } from "@/components/ui/Button";
 import Swal from "sweetalert2";
 import { showToast } from "@/components/ui/Toast";
 import {
@@ -32,7 +32,7 @@ import FetchLoader from "@/components/ui/FetchLoader";
 
 export default function AdminOrganization() {
 	const {
-		data: organizations,
+		data: organizations = [],
 		isLoading: organizationsLoading,
 		error: organizationsError,
 		isFetching: organizationsRefetching,
@@ -203,6 +203,21 @@ export default function AdminOrganization() {
 		},
 	];
 
+	if (organizationsError) {
+		return (
+			<div className="flex flex-col items-center justify-center h-[40vh] text-gray-600">
+				<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+				<h3 className="text-lg font-semibold mb-2">Error</h3>
+				<p className="text-gray-500 mb-4 text-center">
+					Gagal mengambil data organisasi.
+				</p>
+				<p className="text-red-500 mb-4 text-center font-semibold">
+					{organizationsError.message}
+				</p>
+			</div>
+		);
+	}
+
 	return (
 		<div className="py-8 page-transition">
 			<div className="max-w-6xl mx-auto px-4">
@@ -222,17 +237,6 @@ export default function AdminOrganization() {
 							{" "}
 							<Loader2 className="animate-spin h-7 w-7 text-emerald-600" />
 						</div>
-					) : organizationsError ? (
-						<div className="text-red-600">
-							Error loading organizations: {organizationsError.message}
-						</div>
-					) : organizations.length === 0 ? (
-						<div className="flex flex-col items-center justify-center h-48 text-gray-600">
-							<h3 className="text-lg font-semibold mb-2">
-								No Organizations Available
-							</h3>
-							<p className="text-gray-500">Belum ada data organisasi.</p>
-						</div>
 					) : (
 						<>
 							{organizationsRefetching && <FetchLoader />}
@@ -248,11 +252,7 @@ export default function AdminOrganization() {
 							</div>
 							<DataTable
 								columns={columns}
-								data={
-									Array.isArray(filteredOrganizations)
-										? filteredOrganizations
-										: []
-								}
+								data={filteredOrganizations}
 								pagination
 								pointerOnHover
 								title=""

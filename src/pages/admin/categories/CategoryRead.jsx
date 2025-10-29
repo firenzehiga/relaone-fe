@@ -31,7 +31,7 @@ import FetchLoader from "@/components/ui/FetchLoader";
 
 export default function AdminCategory() {
 	const {
-		data: categories,
+		data: categories = [],
 		isLoading: categoriesLoading,
 		error: categoriesError,
 		isFetching: categoriesRefetching,
@@ -171,6 +171,21 @@ export default function AdminCategory() {
 		},
 	];
 
+	if (categoriesError) {
+		return (
+			<div className="flex flex-col items-center justify-center h-[40vh] text-gray-600">
+				<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+				<h3 className="text-lg font-semibold mb-2">Error</h3>
+				<p className="text-gray-500 mb-4 text-center">
+					Gagal mengambil data kategori.
+				</p>
+				<p className="text-red-500 mb-4 text-center font-semibold">
+					{categoriesError.message}
+				</p>
+			</div>
+		);
+	}
+
 	return (
 		<div className="py-8 page-transition">
 			<div className="max-w-6xl mx-auto px-4">
@@ -190,20 +205,9 @@ export default function AdminCategory() {
 						<div className="flex h-72 md:h-96 justify-center py-20">
 							<Loader2 className="animate-spin h-6 w-6 md:h-7 md:w-7 text-emerald-600" />
 						</div>
-					) : categoriesError ? (
-						<div className="text-red-600 text-sm">
-							Error loading categories: {categoriesError.message}
-						</div>
-					) : categories.length === 0 ? (
-						<div className="flex flex-col items-center justify-center h-48 text-gray-600">
-							<h3 className="text-base md:text-lg font-semibold mb-2">
-								No categories Available
-							</h3>
-							<p className="text-sm md:text-base">Belum ada data kategori.</p>
-						</div>
 					) : (
 						<>
-							{categoriesLoading && <FetchLoader />}
+							{categoriesRefetching && <FetchLoader />}
 
 							<div className="w-full md:w-80 mb-4">
 								<input
@@ -216,9 +220,7 @@ export default function AdminCategory() {
 							</div>
 							<DataTable
 								columns={columns}
-								data={
-									Array.isArray(filteredCategories) ? filteredCategories : []
-								}
+								data={filteredCategories}
 								pagination
 								pointerOnHover
 								title=""
