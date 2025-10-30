@@ -4,9 +4,9 @@ Frontend aplikasi volunteer management system menggunakan React 18 + Vite.
 
 ## 🔗 Related Repositories
 
-- **Backend API**: [humanify-backend](https://github.com/firenzehiga/humanify-backend) - REST API server untuk volunteer activity manager
+- **Backend API**: [relaone-backend](https://github.com/firenzehiga/relaone-be) - REST API server untuk volunteer activity manager
 
-> **Note**: Aplikasi ini adalah bagian dari ekosistem Humanify - platform volunteer management yang terdiri dari web frontend, dan backend API.
+> **Note**: Aplikasi ini adalah bagian dari ekosistem RelaOne - platform volunteer management yang terdiri dari web frontend, dan backend API.
 
 
 ## 🚀 Requirements
