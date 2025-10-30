@@ -18,6 +18,30 @@ export const cn = (...classes) => {
 	return classes.filter(Boolean).join(" ");
 };
 
+/**
+ * Mengembalikan URL gambar dari path yang diberikan
+ * Untuk menampilkan gambar dari storage backend
+ * @param {string} path - Path gambar yang akan digabungkan
+ * @returns {string} URL gambar yang sudah digabungkan
+ * Menggunakan import.meta.env.VITE_IMG_STORAGE_URL untuk menggabungkan URL basis
+ * Jika path kosong, maka akan mengembalikan string kosong
+ * Digunakan di berbagai tempat untuk menggabungkan URL gambar
+ */
+export const getImageUrl = (path) => {
+	const baseUrl =
+		import.meta.env.VITE_IMG_STORAGE_URL || "http://localhost:8000/storage/";
+	if (!path) return "";
+	return `${baseUrl}${path}`;
+};
+
+/*
+ * Parse error response dari API menjadi string pesan yang mudah dibaca
+ * Karena biasanya response error dari backend bisa dalam bentuk object
+ * jadi kalau lgsg ditampilkan suka error
+ * @param {Object} err - Error object dari axios atau fetch
+ * @returns {string} Pesan error yang sudah diformat
+ * Dipakai di Handle Submit onError di banyak tempat atau HandleDelete
+ */
 export const parseApiError = (err) => {
 	const data = err?.response?.data ?? err;
 	if (!data) return "Terjadi kesalahan";
@@ -37,13 +61,6 @@ export const parseApiError = (err) => {
 		flatten(data) ||
 		JSON.stringify(data)
 	);
-};
-
-export const getImageUrl = (path) => {
-	const baseUrl =
-		import.meta.env.VITE_IMG_STORAGE_URL || "http://localhost:8000/storage/";
-	if (!path) return "";
-	return `${baseUrl}${path}`;
 };
 
 /**
@@ -135,4 +152,95 @@ export const getStaticMapUrl = (event = {}) => {
 	if (!lat || !lng) return null;
 	const zoom = event.map_zoom_level || 15;
 	return `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${zoom}&size=400x200&maptype=roadmap&markers=color:red%7Clabel:E%7C${lat},${lng}&key=YOUR_GOOGLE_MAPS_API_KEY`;
+};
+
+/*
+ * Parse Google Maps URL untuk mengekstrak latitude, longitude, zoom level, dan place name
+ * Mendukung berbagai format URL Google Maps
+ * @param {string} url - URL Google Maps yang akan diparsing
+ * @returns {object|null
+ * Helper Untuk Form Create/Edit data Locations di Admin maupun Organizers
+ */
+export const parseGoogleMapsUrl = (url) => {
+	try {
+		if (!url || typeof url !== "string") return null;
+		const u = url.trim();
+
+		// Ini untuk mengambil koordinat dari pola @lat,lng,zoomz
+		const atMatch = u.match(/@(-?\d+\.\d+),(-?\d+\.\d+),(\d+(?:\.\d+)?)z/);
+		if (atMatch) {
+			return {
+				latitude: atMatch[1],
+				longitude: atMatch[2],
+				zoom_level: Math.round(Number(atMatch[3])),
+				place: extractPlaceFromPath(u),
+			};
+		}
+
+		// Ini untuk mengambil koordinat dari pola !3dlat!4dlng
+		const dMatch = u.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+		if (dMatch) {
+			return {
+				latitude: dMatch[1],
+				longitude: dMatch[2],
+				zoom_level: 15,
+				place: extractPlaceFromPath(u),
+			};
+		}
+
+		// Ini untuk mengambil koordinat dari parameter q=
+		const qMatch = u.match(/[?&]q=\s*(-?\d+\.\d+),(-?\d+\.\d+)/);
+		if (qMatch) {
+			return {
+				latitude: qMatch[1],
+				longitude: qMatch[2],
+				zoom_level: 15,
+				place: extractPlaceFromPath(u),
+			};
+		}
+
+		// Ini untuk mengambil koordinat dari URL Google Maps
+		const llMatch = u.match(/[?&]ll=\s*(-?\d+\.\d+),(-?\d+\.\d+)/);
+		if (llMatch) {
+			return {
+				latitude: llMatch[1],
+				longitude: llMatch[2],
+				zoom_level: 15,
+				place: extractPlaceFromPath(u),
+			};
+		}
+
+		// Ini untuk mengambil koordinat langsung dari URL jika ada
+		const anyMatch = u.match(/(-?\d+\.\d+),(-?\d+\.\d+)/);
+		if (anyMatch) {
+			return {
+				latitude: anyMatch[1],
+				longitude: anyMatch[2],
+				zoom_level: 15,
+				place: extractPlaceFromPath(u),
+			};
+		}
+
+		return null;
+	} catch (err) {
+		console.error("parseGoogleMapsUrl error", err);
+		return null;
+	}
+};
+
+export const extractPlaceFromPath = (url) => {
+	try {
+		const m = url.match(/\/place\/([^\/]+)/);
+		if (m && m[1]) {
+			return decodeURIComponent(m[1].replace(/\+/g, " "));
+		}
+		// Jika tidak ada, coba pola lain
+		const m2 = url.match(/\/maps\/(?:place\/)?([^@\/]*)/);
+		if (m2 && m2[1]) {
+			return decodeURIComponent(m2[1].replace(/\+/g, " "));
+		}
+	} catch (e) {
+		// ignore
+	}
+	return "";
 };

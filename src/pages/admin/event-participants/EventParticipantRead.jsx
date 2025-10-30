@@ -26,6 +26,8 @@ import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom";
 import FetchLoader from "@/components/ui/FetchLoader";
+import { parseApiError } from "@/utils";
+import Badge from "@/components/ui/Badge";
 
 export default function AdminEventParticipant() {
 	const {
@@ -84,8 +86,7 @@ export default function AdminEventParticipant() {
 					},
 					onError: (err) => {
 						// ambil pesan backend kalau ada, fallback ke err.message
-						const msg =
-							err?.response?.data?.message || "Gagal menghapus participant.";
+						const msg = parseApiError(err) || "Gagal menghapus participant.";
 						toast.error(msg, { position: "top-center" });
 					},
 				}); // Panggil fungsi deleteMutation dengan ID event
@@ -131,7 +132,21 @@ export default function AdminEventParticipant() {
 		},
 		{
 			name: "Status",
-			selector: (row) => row.status || "-",
+			selector: (row) => (
+				<>
+					{row.status === "registered" ? (
+						<Badge variant={"warning"}>Sudah Daftar</Badge>
+					) : row.status === "confirmed" ? (
+						<Badge variant={"primary"}>Dikonfirmasi</Badge>
+					) : row.status === "attended" ? (
+						<Badge variant={"success"}>Hadir</Badge>
+					) : row.status === "absent" ? (
+						<Badge variant={"danger"}>Tidak Hadir</Badge>
+					) : (
+						<Badge variant={"secondary"}>{row.status || "-"}</Badge>
+					)}
+				</>
+			),
 			sortable: true,
 			width: "150px",
 		},

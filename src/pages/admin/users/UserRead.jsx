@@ -141,7 +141,7 @@ export default function AdminUser() {
 	}
 
 	return (
-		<div className="py-8 page-transition">
+		<div className="py-8 page-transition min-h-screen">
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="bg-white rounded-lg shadow p-4 sm:p-6">
 					<div className="flex justify-between items-center mb-4">

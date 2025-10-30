@@ -1,6 +1,6 @@
 import { useAdminCreateLocationMutation } from "@/_hooks/useLocations";
 import DynamicButton from "@/components/ui/Button";
-import { parseApiError } from "@/utils";
+import { parseApiError, parseGoogleMapsUrl } from "@/utils";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
@@ -58,92 +58,6 @@ export default function AdminLocationCreate() {
 		} finally {
 			setSubmitting(false);
 		}
-	};
-
-	// Try to parse common Google Maps url formats to extract lat,lng,zoom and a label
-	const parseGoogleMapsUrl = (url) => {
-		try {
-			if (!url || typeof url !== "string") return null;
-			const u = url.trim();
-
-			// Try to find @lat,lng,zoom pattern
-			const atMatch = u.match(/@(-?\d+\.\d+),(-?\d+\.\d+),(\d+(?:\.\d+)?)z/);
-			if (atMatch) {
-				return {
-					latitude: atMatch[1],
-					longitude: atMatch[2],
-					zoom_level: Math.round(Number(atMatch[3])),
-					place: extractPlaceFromPath(u),
-				};
-			}
-
-			// Try !3d<lat>!4d<long> pattern
-			const dMatch = u.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
-			if (dMatch) {
-				return {
-					latitude: dMatch[1],
-					longitude: dMatch[2],
-					zoom_level: 15,
-					place: extractPlaceFromPath(u),
-				};
-			}
-
-			// Try q=lat,lng or ?q=lat,lng
-			const qMatch = u.match(/[?&]q=\s*(-?\d+\.\d+),(-?\d+\.\d+)/);
-			if (qMatch) {
-				return {
-					latitude: qMatch[1],
-					longitude: qMatch[2],
-					zoom_level: 15,
-					place: extractPlaceFromPath(u),
-				};
-			}
-
-			// Try ll=lat,lng
-			const llMatch = u.match(/[?&]ll=\s*(-?\d+\.\d+),(-?\d+\.\d+)/);
-			if (llMatch) {
-				return {
-					latitude: llMatch[1],
-					longitude: llMatch[2],
-					zoom_level: 15,
-					place: extractPlaceFromPath(u),
-				};
-			}
-
-			// Last resort: search any lat,long pair anywhere in the URL
-			const anyMatch = u.match(/(-?\d+\.\d+),(-?\d+\.\d+)/);
-			if (anyMatch) {
-				return {
-					latitude: anyMatch[1],
-					longitude: anyMatch[2],
-					zoom_level: 15,
-					place: extractPlaceFromPath(u),
-				};
-			}
-
-			return null;
-		} catch (err) {
-			console.error("parseGoogleMapsUrl error", err);
-			return null;
-		}
-	};
-
-	// helper to extract a place label from a /place/<label>/ path segment (decoded)
-	const extractPlaceFromPath = (url) => {
-		try {
-			const m = url.match(/\/place\/([^\/]+)/);
-			if (m && m[1]) {
-				return decodeURIComponent(m[1].replace(/\+/g, " "));
-			}
-			// If nothing, try to extract after /maps/ and before @ or /data
-			const m2 = url.match(/\/maps\/(?:place\/)?([^@\/]*)/);
-			if (m2 && m2[1]) {
-				return decodeURIComponent(m2[1].replace(/\+/g, " "));
-			}
-		} catch (e) {
-			// ignore
-		}
-		return "";
 	};
 
 	const handleParse = () => {

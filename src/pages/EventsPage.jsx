@@ -26,13 +26,13 @@ export default function EventsPage() {
 	const [searchParams, setSearchParams] = useSearchParams();
 	// Menggunakan TanStack Query hooks untuk data fetching
 	const {
-		data: events,
+		data: events = [],
 		isLoading: eventsLoading,
 		error: eventsError,
 	} = useEvents();
 
 	const {
-		data: categories,
+		data: categories = [],
 		isLoading: categoriesLoading,
 		error: categoriesError,
 	} = useCategory();
@@ -58,7 +58,7 @@ export default function EventsPage() {
 		if (!events) return;
 
 		// tampilkan hanya event yang bukan draft secara default
-		let filtered = events.filter((event) => event.status !== "draft" );
+		let filtered = events.filter((event) => event.status !== "draft");
 		if (filters.search) {
 			filtered = filtered.filter(
 				(event) =>
@@ -71,7 +71,7 @@ export default function EventsPage() {
 						.includes(filters.search.toLowerCase())
 			);
 		}
-		
+
 		if (filters.category) {
 			const category = categories?.find(
 				(cat) =>
@@ -208,8 +208,7 @@ export default function EventsPage() {
 							❌ Gagal Memuat Events
 						</h2>
 						<p className="text-gray-600 mb-6">
-							{eventsError.message ||
-								"Terjadi kesalahan saat mengambil data events"}
+							{eventsError?.message || categoriesError?.message}
 						</p>
 						<DynamicButton
 							onClick={() => window.location.reload()}

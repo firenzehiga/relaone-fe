@@ -113,6 +113,10 @@ export default function AdminOrganizationCreate() {
 		return <Skeleton.FormSkeleton title="Loading..." />;
 	}
 
+	if (organizationUsersError) {
+		return <div>Error: {organizationUsersError?.message}</div>;
+	}
+
 	return (
 		<div className="max-w-6xl mx-auto p-6">
 			<div

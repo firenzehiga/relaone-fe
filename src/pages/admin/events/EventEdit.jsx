@@ -258,7 +258,13 @@ export default function AdminEventEdit() {
 	}
 
 	if (locationsError || organizationsError || categoriesError) {
-		return <div>{locationsError || organizationsError || categoriesError}</div>;
+		return (
+			<div>
+				{locationsError?.message ||
+					organizationsError?.message ||
+					categoriesError?.message}
+			</div>
+		);
 	}
 
 	return (

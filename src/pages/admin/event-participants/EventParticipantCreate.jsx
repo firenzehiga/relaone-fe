@@ -24,9 +24,16 @@ export default function AdminEventParticipantCreate() {
 
 	const [submitting, setSubmitting] = useState(false);
 
-	const { data: events = [], isLoading: eventsLoading } = useAdminEvents();
-	const { data: volunteers = [], isLoading: volunteersLoading } =
-		useAdminVolunteerUsers();
+	const {
+		data: events = [],
+		isLoading: eventsLoading,
+		error: eventsError,
+	} = useAdminEvents();
+	const {
+		data: volunteers = [],
+		isLoading: volunteersLoading,
+		error: volunteersError,
+	} = useAdminVolunteerUsers();
 
 	const createMutation = useAdminCreateParticipantMutation();
 
@@ -84,6 +91,10 @@ export default function AdminEventParticipantCreate() {
 
 	if (eventsLoading || volunteersLoading)
 		return <Skeleton.FormSkeleton title="Loading..." />;
+
+	if (eventsError || volunteersError) {
+		return <p>Error: {eventsError?.message || volunteersError?.message}</p>;
+	}
 
 	return (
 		<div className="max-w-6xl mx-auto p-6">
