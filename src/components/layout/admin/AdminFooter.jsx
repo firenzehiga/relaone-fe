@@ -4,7 +4,7 @@ export default function AdminFooter() {
 	const currentYear = new Date().getFullYear();
 
 	return (
-		<footer className="bg-white border-t bottom-0 w-full border-gray-200 py-4 px-6">
+		<footer className="bg-slate-100 border-t bottom-0 w-full border-gray-200 py-4 px-6">
 			<div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-600">
 				<div className="flex items-center gap-1">
 					<span>Made with </span>
@@ -21,7 +21,7 @@ export default function AdminFooter() {
 						Terms of Service
 					</a>
 					<span className="text-gray-300">|</span>
-					<span>{currentYear} Admin Panel</span>
+					<span>{currentYear} RelaOne Panel</span>
 				</div>
 			</div>
 		</footer>

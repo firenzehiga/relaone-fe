@@ -1,15 +1,16 @@
-import { Outlet, useLocation, Navigate } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
-import { useEffect } from "react";
+import { Outlet } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-
+import { useUserRole } from "@/_hooks/useAuth";
+import AdminFooter from "@/components/layout/admin/AdminFooter";
 export default function MainLayout() {
+	const currentRole = useUserRole();
+
 	return (
-		<div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-white to-blue-50">
+		<div className="flex flex-col bg-gradient-to-br from-slate-50 via-white to-blue-50">
 			<Header />
 			<Outlet />
-			<Footer />
+			{currentRole === "organization" ? <AdminFooter /> : <Footer />}
 		</div>
 	);
 }

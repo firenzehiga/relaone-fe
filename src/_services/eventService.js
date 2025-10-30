@@ -127,3 +127,20 @@ export const orgGetEvents = async (params = {}) => {
 	const response = await api.get("/organization/events", { params });
 	return response.data.data || response.data;
 };
+
+/** * Hapus event
+ *
+ * @async
+ * @function adminDeleteEvent
+ * @endpoint DELETE /admin/events/{eventId}
+ * @param {string|number} id - ID event
+ * @returns {Promise<any>} Data event yang dihapus
+ */
+export const orgDeleteEvent = async (id) => {
+	try {
+		await api.delete(`/organization/events/${id}`);
+	} catch (error) {
+		console.log("Error deleting event:", error);
+		throw error;
+	}
+};

@@ -177,3 +177,25 @@ export const useOrgEvents = () => {
 		retry: 1,
 	});
 };
+
+/**
+ * Hapus event (organization).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["mentorEvents"]
+ * @optimisticUpdate Cache ["orgEvents"] langsung difilter
+ */
+export const useOrgDeleteEventMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: eventService.orgDeleteEvent,
+		onSuccess: (_, id) => {
+			queryClient.setQueryData(["orgEvents"], (oldData) =>
+				oldData.filter((event) => event.id !== id)
+			);
+			queryClient.invalidateQueries(["orgEvents"]);
+			queryClient.invalidateQueries(["events"]);
+		},
+	});
+};

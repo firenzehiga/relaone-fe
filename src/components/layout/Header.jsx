@@ -50,22 +50,22 @@ export default function Header() {
 			icon: Building,
 		},
 		{
-			name: "Event",
+			name: "Events",
 			href: "/organization/events",
 			icon: Calendar,
 		},
 		{
-			name: "Event Participant",
+			name: "Event Participants",
 			href: "/organization/event-participants",
 			icon: Users,
 		},
 		{
-			name: "Feedback",
+			name: "Feedbacks",
 			href: "/organization/feedbacks",
 			icon: Users,
 		},
 		{
-			name: "Location",
+			name: "Locations",
 			href: "/organization/locations",
 			icon: MapPin,
 		},
@@ -148,7 +148,7 @@ export default function Header() {
 									<Avatar src={user?.avatar} fallback={user?.nama} size="sm" />
 								</button>
 
-								<AnimatePresence>
+								<AnimatePresence mode="wait">
 									{userMenuOpen && (
 										<motion.div
 											initial={{ opacity: 0, y: -10 }}
@@ -204,7 +204,7 @@ export default function Header() {
 				</div>
 
 				{/* Mobile Menu */}
-				<AnimatePresence>
+				<AnimatePresence mode="wait">
 					{mobileMenuOpen && (
 						<motion.div
 							initial={{ opacity: 0, scaleY: 0 }}
