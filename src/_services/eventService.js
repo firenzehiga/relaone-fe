@@ -43,11 +43,7 @@ export const getEventById = async (id) => {
  * @returns {Promise} Promise dengan data events
  */
 export const adminGetEvents = async (params = {}) => {
-	const token = localStorage.getItem("authToken");
-	const response = await api.get("/admin/events", {
-		params,
-		headers: { Authorization: `Bearer ${token}` },
-	});
+	const response = await api.get("/admin/events", { params });
 	return response.data.data || response.data;
 };
 
@@ -116,4 +112,18 @@ export const adminDeleteEvent = async (id) => {
 		console.log("Error deleting event:", error);
 		throw error;
 	}
+};
+
+// ORGANIZATION SERVICES
+/** Mengambil semua events dengan optional filtering
+ *
+ * @async
+ * @function orgGetEvents
+ * @endpoint GET /organization/events
+ * @param {Object} params - Query parameters untuk filtering
+ * @returns {Promise} Promise dengan data events
+ */
+export const orgGetEvents = async (params = {}) => {
+	const response = await api.get("/organization/events", { params });
+	return response.data.data || response.data;
 };

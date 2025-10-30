@@ -32,13 +32,17 @@ export const useEvents = (params = {}) => {
  * @returns {UseQueryResult<Object>} Data detail event
  */
 export const useEventById = (id) => {
+	const currentRole = useUserRole();
+	const enabled =
+		currentRole !== "admin" && currentRole !== "organization" && !!id; // supaya kalo admin login, ga fetch events
+
 	return useQuery({
-		queryKey: ["detailEvent"],
+		queryKey: ["detailEvent", id],
 		queryFn: async () => {
 			const response = await eventService.getEventById(id);
 			return response;
 		},
-		enabled: !!id,
+		enabled,
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
@@ -125,7 +129,7 @@ export const useAdminUpdateEventMutation = () => {
 			queryClient.invalidateQueries(["adminEvents", id]);
 			// query key publik
 			queryClient.invalidateQueries(["events"]);
-			queryClient.invalidateQueries(["detailEvent"]);
+			queryClient.invalidateQueries(["detailEvent", id]);
 		},
 	});
 };
@@ -147,6 +151,29 @@ export const useAdminDeleteEventMutation = () => {
 				oldData.filter((event) => event.id !== id)
 			);
 			queryClient.invalidateQueries(["adminEvents"]);
+			queryClient.invalidateQueries(["events"]);
 		},
+	});
+};
+
+// === ORGANIZATION HOOKS ===
+/**
+ * Hook untuk mengambil data events (organization)
+ * @returns {Object} Query result dengan data, isLoading, error, etc
+ */
+export const useOrgEvents = () => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "organization"; // supaya kalo organization login, ga fetch events
+
+	return useQuery({
+		queryKey: ["orgEvents"],
+		queryFn: async () => {
+			const response = await eventService.orgGetEvents();
+			return response;
+		},
+		enabled,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
 	});
 };

@@ -16,7 +16,12 @@ import { getImageUrl } from "@/utils";
 export default function DetailEventPage() {
 	const { eventId } = useParams();
 	const navigate = useNavigate();
-	const { data: event = [], isLoading, error } = useEventById(eventId);
+	const {
+		data: event = [],
+		isLoading,
+		isFetching,
+		error,
+	} = useEventById(eventId);
 	const { openJoinModal } = useModalStore();
 
 	const formatDate = (dateString) => {
@@ -64,7 +69,7 @@ export default function DetailEventPage() {
 	const isStartedOrPast = eventStart ? now >= eventStart : false;
 	const registrationClosed = isCancelled || isFull || isStartedOrPast;
 
-	if (isLoading) {
+	if (isLoading || (isFetching && String(event?.id) !== String(eventId))) {
 		return <Skeleton.Detail />;
 	}
 

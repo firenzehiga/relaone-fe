@@ -226,12 +226,14 @@ export default function AdminEventEdit() {
 			const payload = new FormData();
 			payload.append("_method", "PUT");
 			for (const key in formData) {
+				const value = formData[key];
 				if (key === "gambar") {
-					if (formData.gambar instanceof File) {
-						payload.append("gambar", formData.gambar);
-					}
+					if (value instanceof File) payload.append("gambar", value);
+				} else if (Array.isArray(value)) {
+					// send arrays as JSON so backend can decode back to array
+					payload.append(key, JSON.stringify(value));
 				} else {
-					payload.append(key, formData[key]);
+					payload.append(key, value ?? "");
 				}
 			}
 

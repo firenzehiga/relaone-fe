@@ -182,7 +182,11 @@ export default function AdminEventCreate() {
 		try {
 			const payload = new FormData();
 			for (const key in formData) {
-				payload.append(key, formData[key]);
+				if (Array.isArray(formData[key])) {
+					payload.append(key, JSON.stringify(formData[key])); // Kondisi khusus untuk persyaratan dan manfaat agar backend dapat menguraikannya kembali ke array
+				} else {
+					payload.append(key, formData[key] ?? "");
+				}
 			}
 
 			await createEventMutation.mutateAsync(payload);
