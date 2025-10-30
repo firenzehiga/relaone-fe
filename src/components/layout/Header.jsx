@@ -74,12 +74,25 @@ export default function Header() {
 
 	let navItems = baseNav;
 
-	// Show only role-specific menu for admin and organization
-	// Guard by `isAuthenticated` so stale `user` data (from localStorage)
-	// doesn't affect the navigation when token is missing/expired.
-	if (isAuthenticated && user?.role === "organization") navItems = orgNav;
-	else if (isAuthenticated && user?.role === "volunteer") navItems = baseNav;
-
+	// Hanya tampilkan menu sesuai role user
+	// Jangan tampilkan menu jika user belum login.
+	// Jika verifikasi organisasi masih "pending", hanya tampilkan Dashboard.
+	if (isAuthenticated && user?.role === "organization") {
+		// mengecek status verifikasi organisasi dari authUser di local storage
+		const orgStatus =
+			user?.organization?.status_verifikasi ?? user?.status_verifikasi;
+		if (orgStatus === "pending") {
+			navItems = [
+				{
+					name: "Dashboard",
+					href: "/organization/dashboard",
+					icon: Building,
+				},
+			];
+		} else {
+			navItems = orgNav;
+		}
+	} else if (isAuthenticated && user?.role === "volunteer") navItems = baseNav;
 	/**
 	 * Handler untuk logout user
 	 * Memanggil store logout, menutup user menu, dan redirect ke home
@@ -154,7 +167,7 @@ export default function Header() {
 											initial={{ opacity: 0, y: -10 }}
 											animate={{ opacity: 1, y: 0 }}
 											exit={{ opacity: 0, y: -10 }}
-											className="absolute right-0 mt-2 w-56 bg-white/90 backdrop-blur-lg border border-gray-200/50 rounded-2xl shadow-xl">
+											className="absolute right-0 mt-2 w-56 bg-white backdrop-blur-lg border border-gray-200/50 rounded-2xl shadow-xl">
 											<Link
 												to="/profile"
 												className="flex items-center px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors rounded-t-xl"
