@@ -16,12 +16,7 @@ import { getImageUrl } from "@/utils";
 export default function DetailEventPage() {
 	const { eventId } = useParams();
 	const navigate = useNavigate();
-	const {
-		data: event = [],
-		isLoading,
-		isFetching,
-		error,
-	} = useEventById(eventId);
+	const { data: event, isLoading, isFetching, error } = useEventById(eventId);
 	const { openJoinModal } = useModalStore();
 
 	const formatDate = (dateString) => {

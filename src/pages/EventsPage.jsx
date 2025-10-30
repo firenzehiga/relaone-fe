@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, Filter, Calendar, MapPin, Map } from "lucide-react";
@@ -46,59 +46,53 @@ export default function EventsPage() {
 		city: "",
 	});
 
-	const [filteredEvents, setFilteredEvents] = useState([]);
 	const [showFilters, setShowFilters] = useState(false);
 	const [viewMode, setViewMode] = useState("grid"); // grid, list, map
 
-	/**
-	 * Effect untuk melakukan filtering events berdasarkan kriteria yang dipilih
-	 * Dijalankan setiap kali data events atau filter berubah
-	 */
-	useEffect(() => {
-		if (!events) return;
+	const filteredEvents = useMemo(() => {
+		if (!events.length) return [];
+		const q = (filters.search || "").toLowerCase().trim();
 
-		// tampilkan hanya event yang bukan draft secara default
-		let filtered = events.filter((event) => event.status !== "draft");
-		if (filters.search) {
-			filtered = filtered.filter(
-				(event) =>
-					event.judul.toLowerCase().includes(filters.search.toLowerCase()) ||
-					event.deskripsi
-						.toLowerCase()
-						.includes(filters.search.toLowerCase()) ||
-					event.location.alamat
-						.toLowerCase()
-						.includes(filters.search.toLowerCase())
+		let list = events.filter((e) => e.status !== "draft");
+
+		if (q) {
+			list = list.filter((e) =>
+				(
+					(String(e.judul) || "") +
+					" " +
+					(String(e.deskripsi) || "") +
+					" " +
+					(String(e.location?.alamat) || "")
+				)
+					.toLowerCase()
+					.includes(q)
 			);
 		}
 
 		if (filters.category) {
-			const category = categories?.find(
-				(cat) =>
-					cat.nama.toLowerCase() === filters.category.toLowerCase() ||
-					cat.id.toString() === filters.category
-			);
-			if (category) {
-				filtered = filtered.filter(
-					(event) => event.category_id === category.id
-				);
-			}
+			list = list.filter((e) => e.category_id?.toString() === filters.category);
 		}
 
 		if (filters.tanggal_mulai) {
-			filtered = filtered.filter(
-				(event) => event.tanggal_mulai === filters.tanggal_mulai
-			);
+			list = list.filter((e) => e.tanggal_mulai === filters.tanggal_mulai);
 		}
 
 		if (filters.city) {
-			filtered = filtered.filter((event) =>
-				event.location?.kota.toLowerCase().includes(filters.city.toLowerCase())
+			const cityQ = filters.city.toLowerCase();
+			list = list.filter((e) =>
+				(String(e.location?.kota) || "").toLowerCase().includes(cityQ)
 			);
 		}
 
-		setFilteredEvents(filtered);
-	}, [events, categories, filters]);
+		return list;
+	}, [
+		events,
+		categories,
+		filters.search,
+		filters.category,
+		filters.tanggal_mulai,
+		filters.city,
+	]);
 
 	/**
 	 * Handler untuk mengubah filter dan sinkronisasi dengan URL search params
