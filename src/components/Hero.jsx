@@ -18,6 +18,7 @@ export default function Hero() {
 						initial={{ opacity: 0, x: -50 }}
 						animate={{ opacity: 1, x: 0 }}
 						transition={{ duration: 0.8 }}
+						exit={{ opacity: 0 }}
 						className="flex flex-col justify-center">
 						<h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-4 lg:mb-6 leading-tight">
 							Bergabung dalam
@@ -56,6 +57,7 @@ export default function Hero() {
 						initial={{ opacity: 0, x: 50 }}
 						animate={{ opacity: 1, x: 0 }}
 						transition={{ duration: 0.8, delay: 0.2 }}
+						exit={{ opacity: 0 }}
 						className="relative">
 						<div className="relative">
 							<img

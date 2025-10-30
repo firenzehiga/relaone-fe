@@ -16,7 +16,12 @@ import { getImageUrl } from "@/utils";
 export default function DetailEventPage() {
 	const { eventId } = useParams();
 	const navigate = useNavigate();
-	const { data: event, isLoading, isFetching, error } = useEventById(eventId);
+	const {
+		data: event = null,
+		isLoading,
+		isFetching,
+		error,
+	} = useEventById(eventId);
 	const { openJoinModal } = useModalStore();
 
 	const formatDate = (dateString) => {
@@ -44,6 +49,18 @@ export default function DetailEventPage() {
 		return statusConfig[status] || statusConfig.published;
 	};
 
+	if (isLoading || (isFetching && String(event?.id) !== String(eventId))) {
+		return <Skeleton.Detail />;
+	}
+
+	if (error || !event) {
+		return (
+			<div className="min-h-screen flex items-center justify-center">
+				<div>Event tidak ditemukan.</div>
+			</div>
+		);
+	}
+
 	const handleJoinEvent = () => {
 		openJoinModal(event.id);
 		// navigate to home or keep on page depending on modal behavior; keep here
@@ -63,18 +80,6 @@ export default function DetailEventPage() {
 	const now = new Date();
 	const isStartedOrPast = eventStart ? now >= eventStart : false;
 	const registrationClosed = isCancelled || isFull || isStartedOrPast;
-
-	if (isLoading || (isFetching && String(event?.id) !== String(eventId))) {
-		return <Skeleton.Detail />;
-	}
-
-	if (error || !event) {
-		return (
-			<div className="min-h-screen flex items-center justify-center">
-				<div>Event tidak ditemukan.</div>
-			</div>
-		);
-	}
 
 	return (
 		<div className="min-h-screen bg-white">
