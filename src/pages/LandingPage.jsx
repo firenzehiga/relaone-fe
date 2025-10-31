@@ -89,8 +89,14 @@ export default function LandingPage() {
 	const featuredEvents =
 		events?.filter((event) => event.status === "published").slice(0, 3) || [];
 
+	/**
+	 * Handler untuk membuka modal pendaftaran event
+	 *
+	 * @param {string|number} eventId - ID event yang akan didaftari
+	 */
 	const handleJoinEvent = (eventId) => {
-		openJoinModal(eventId);
+		const evt = events.find((e) => String(e.id) === String(eventId)) || null;
+		openJoinModal(evt);
 	};
 
 	const handleViewEventDetail = (eventId) => {

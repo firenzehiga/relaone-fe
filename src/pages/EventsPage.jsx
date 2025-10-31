@@ -135,24 +135,13 @@ export default function EventsPage() {
 
 	/**
 	 * Handler untuk membuka modal pendaftaran event
-	 * Menggunakan TanStack Query mutation untuk join event
 	 *
 	 * @param {string|number} eventId - ID event yang akan didaftari
 	 */
-	const handleJoinEvent = async (eventId) => {
-		try {
-			// Bisa langsung join atau buka modal tergantung flow yang diinginkan
-			openJoinModal(eventId);
-
-			// Alternatif: langsung join tanpa modal
-			// await joinEventMutation.mutateAsync({
-			//   eventId,
-			//   userData: { notes: "Interested to join!" }
-			// });
-		} catch (error) {
-			console.error("Failed to join event:", error);
-			// Handle error (bisa tambah toast notification)
-		}
+	const handleJoinEvent = (eventId) => {
+		// find the event object in the current list and pass it to the modal
+		const evt = events.find((e) => String(e.id) === String(eventId)) || null;
+		openJoinModal(evt);
 	};
 
 	/**
@@ -485,7 +474,7 @@ export default function EventsPage() {
 															<DynamicButton
 																variant="primary"
 																size="sm"
-																onClick={() => handleJoinEvent(event.id)}
+																onClick={() => openJoinModal(event.id, event)}
 																disabled={isRegistrationClosedFor(event)}>
 																{registrationLabelFor(event)}
 															</DynamicButton>

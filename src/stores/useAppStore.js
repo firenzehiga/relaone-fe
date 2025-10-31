@@ -145,10 +145,18 @@ export const useModalStore = create((set) => ({
 	selectedEventDetail: null,
 
 	// ACTIONS - Join Modal
-	openJoinModal: (eventId) =>
-		set({ isJoinModalOpen: true, selectedEventId: eventId }),
+	// accept optional full event object to avoid waiting for API fetch
+	openJoinModal: (event = null) =>
+		set({
+			isJoinModalOpen: true,
+			selectedEventDetail: event,
+		}),
 
-	closeJoinModal: () => set({ isJoinModalOpen: false, selectedEventId: null }),
+	closeJoinModal: () =>
+		set({
+			isJoinModalOpen: false,
+			selectedEventDetail: null,
+		}),
 
 	// ACTIONS - Detail Modal
 	openDetailModal: (event) =>

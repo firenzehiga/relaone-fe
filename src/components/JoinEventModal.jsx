@@ -11,10 +11,13 @@ import {
 import Modal from "@/components/ui/Modal";
 import DynamicButton from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
-import { useModalStore } from "@/stores/useAppStore";
-import { useEvents } from "@/_hooks/useEvents";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/_hooks/useAuth";
+import { useVolunteerJoinEventMutation } from "@/_hooks/useParticipants";
+import { parseApiError } from "@/utils";
+import { showToast } from "./ui/Toast";
+import { useEventById } from "@/_hooks/useEvents";
+import { useModalStore } from "@/stores/useAppStore";
 
 /**
  * Modal untuk join event volunteer
@@ -24,52 +27,82 @@ import { useAuthStore } from "@/_hooks/useAuth";
  * @returns {JSX.Element} Modal untuk pendaftaran event
  */
 export default function JoinEventModal() {
-	const { isJoinModalOpen, closeJoinModal, selectedEventId } = useModalStore();
-
-	// const { data: event, isLoading: eventLoading } = useEvents(selectedEventId);
-
-	// Temporary: Get event from events list (not ideal, but works for now)
-	const { data: events, isLoading: eventLoading } = useEvents();
-	const event = events?.find((e) => e.id === selectedEventId) || null;
-
-	const [notes, setNotes] = useState("");
+	const navigate = useNavigate();
+	const location = useLocation();
+	const { isAuthenticated, user } = useAuthStore();
+	// read modal state + selected event directly from store
+	const {
+		isJoinModalOpen,
+		closeJoinModal,
+		selectedEventDetail: event,
+	} = useModalStore();
 	const [agreed, setAgreed] = useState(false);
 	const [success, setSuccess] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const navigate = useNavigate();
-	const location = useLocation();
-	const { isAuthenticated } = useAuthStore();
-	/**
-	 * Handler untuk submit form join event
-	 * TODO: Implement join mutation when backend ready
-	 */
-	const handleSubmit = (e) => {
+
+	const joinMutation = useVolunteerJoinEventMutation(); // mutation hook untuk join event
+
+	// fetch fresh detail only when modal is open; use store event as initialData
+	const { data: freshEvent, refetch: refetchEvent } = useEventById(event?.id, {
+		enabled: !!event?.id && !!isJoinModalOpen,
+	});
+
+	// pakai freshEvent jika sudah ada, fallback ke store event
+	const participantsFromEvent =
+		freshEvent?.participants ?? event?.participants ?? [];
+	const alreadyRegistered =
+		!!user?.id &&
+		participantsFromEvent.some((p) => Number(p.user_id) === Number(user.id));
+	const [formData, setFormData] = useState({
+		catatan: "",
+	});
+
+	const handleChange = (e) => {
+		const { name, value } = e.target;
+		setFormData((s) => ({ ...s, [name]: value }));
+	};
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		if (!agreed || !selectedEventId) return;
+		if (!agreed || !event?.id) return;
 
 		if (!isAuthenticated) {
 			closeJoinModal();
-			// Redirect to login if not authenticated
 			navigate("/login", { state: { from: location }, replace: true });
 			return;
 		}
-
 		setIsSubmitting(true);
 
-		// TODO: Implement actual join event API call
-		// Simulate API call for now
-		setTimeout(() => {
-			setIsSubmitting(false);
+		try {
+			const payload = {
+				event_id: event.id,
+				user_id: user?.id,
+				catatan: formData.catatan || "",
+			};
+			await joinMutation.mutateAsync(payload);
+			// tunggu refetch detail agar participants / alreadyRegistered ter-update segera
+			if (refetchEvent) await refetchEvent();
 			setSuccess(true);
-
-			// Close modal after success animation
+			// tutup modal setelah animasi sukses singkat
 			setTimeout(() => {
 				setSuccess(false);
-				setNotes("");
 				setAgreed(false);
+				// reset form and close modal
+				setFormData({ catatan: "" });
 				closeJoinModal();
-			}, 2000);
-		}, 1500);
+			}, 1500);
+		} catch (err) {
+			const msg = parseApiError(err);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error(err);
+		} finally {
+			setIsSubmitting(false);
+		}
 	};
 
 	/**
@@ -77,25 +110,13 @@ export default function JoinEventModal() {
 	 */
 	const handleClose = () => {
 		if (!isSubmitting) {
-			setNotes("");
 			setAgreed(false);
 			setSuccess(false);
+			setFormData({ catatan: "" });
 			closeJoinModal();
 		}
 	};
-
-	// Loading state saat fetch event detail
-	if (eventLoading) {
-		return (
-			<Modal isOpen={isJoinModalOpen} onClose={handleClose} size="lg">
-				<div className="text-center py-8">
-					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-					<p className="text-gray-600">Memuat detail event...</p>
-				</div>
-			</Modal>
-		);
-	}
-
+	// If no event passed, render nothing
 	if (!event) return null;
 
 	return (
@@ -103,7 +124,7 @@ export default function JoinEventModal() {
 			isOpen={isJoinModalOpen}
 			onClose={handleClose}
 			title="Daftar Event Volunteer"
-			size="lg">
+			size="xl">
 			{success ? (
 				<motion.div
 					initial={{ opacity: 0, scale: 0.8 }}
@@ -196,29 +217,55 @@ export default function JoinEventModal() {
 					</div>
 
 					<form onSubmit={handleSubmit} className="space-y-6">
-						{/* Requirements */}
-						{event.persyaratan && (
-							<div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
-								<h4 className="font-bold text-amber-800 mb-3 flex items-center">
-									<AlertCircle size={20} className="mr-2" />
-									Persyaratan Event
-								</h4>
-								<div className="text-amber-700 text-sm leading-relaxed">
-									{Array.isArray(event.persyaratan) ? (
-										<ul className="space-y-2">
-											{event.persyaratan.map((req, index) => (
-												<li key={index} className="flex items-start gap-2">
-													<span className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0"></span>
-													<span>{req}</span>
-												</li>
-											))}
-										</ul>
-									) : (
-										<div className="whitespace-pre-line">
-											{event.persyaratan}
+						{(event.persyaratan || event.manfaat) && (
+							<div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+								{/* Requirements */}
+								{event.persyaratan && (
+									<div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
+										<h4 className="font-bold text-amber-800 mb-3 flex items-center">
+											📋 Persyaratan
+										</h4>
+										<div className="text-amber-700 text-sm leading-relaxed">
+											{Array.isArray(event.persyaratan) ? (
+												<ul className="space-y-2">
+													{event.persyaratan.map((req, index) => (
+														<li key={index} className="flex items-start gap-2">
+															<span className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0"></span>
+															<span>{req}</span>
+														</li>
+													))}
+												</ul>
+											) : (
+												<div className="whitespace-pre-line">
+													{event.persyaratan}
+												</div>
+											)}
 										</div>
-									)}
-								</div>
+									</div>
+								)}
+								{event.manfaat && (
+									<div className="bg-green-50 border border-green-200 rounded-xl p-5">
+										<h4 className="font-bold text-green-800 mb-3 flex items-center">
+											📋 Manfaat
+										</h4>
+										<div className="text-green-700 text-sm leading-relaxed">
+											{Array.isArray(event.manfaat) ? (
+												<ul className="space-y-2">
+													{event.manfaat.map((benefit, index) => (
+														<li key={index} className="flex items-start gap-2">
+															<span className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></span>
+															<span>{benefit}</span>
+														</li>
+													))}
+												</ul>
+											) : (
+												<div className="whitespace-pre-line">
+													{event.manfaat}
+												</div>
+											)}
+										</div>
+									</div>
+								)}
 							</div>
 						)}
 
@@ -226,13 +273,11 @@ export default function JoinEventModal() {
 						<div>
 							<label className="block text-gray-900 font-semibold mb-3">
 								Catatan & Motivasi
-								<span className="text-gray-500 font-normal text-sm ml-1">
-									(Opsional)
-								</span>
 							</label>
 							<textarea
-								value={notes}
-								onChange={(e) => setNotes(e.target.value)}
+								name="catatan"
+								value={formData.catatan}
+								onChange={handleChange}
 								placeholder="Ceritakan pengalaman relevan atau motivasi Anda untuk mengikuti event ini..."
 								className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all duration-200"
 								rows={4}
@@ -279,11 +324,15 @@ export default function JoinEventModal() {
 							</DynamicButton>
 							<DynamicButton
 								type="submit"
-								variant="primary"
-								disabled={!agreed || isSubmitting}
+								variant={alreadyRegistered ? "outline" : "primary"}
+								disabled={!agreed || isSubmitting || alreadyRegistered}
 								loading={isSubmitting}
 								className="flex-1 order-1 sm:order-2">
-								{isSubmitting ? "Mendaftarkan..." : "✨ Daftar Sekarang"}
+								{alreadyRegistered
+									? "Sudah Daftar"
+									: isSubmitting
+									? "Mendaftarkan..."
+									: "✨ Daftar Sekarang"}
 							</DynamicButton>
 						</div>
 					</form>

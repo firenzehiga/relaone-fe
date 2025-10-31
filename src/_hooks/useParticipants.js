@@ -25,6 +25,33 @@ export const useParticipants = (params = {}) => {
 	});
 };
 
+/** VOLUNTEER HOOKS
+ * Join event sebagai participant.
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["participants"]
+ */
+export const useVolunteerJoinEventMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: eventParticipantService.volunteerJoinEvent,
+		// onSuccess gets (data, variables)
+		onSuccess: async (_data, variables) => {
+			const eventId = variables?.id;
+			console.log("Invalidating queries after joining event:", eventId);
+			if (eventId) {
+				// sesuaikan key dengan useEventById (mis. ["detailEvent", id])
+				await queryClient.invalidateQueries(["detailEvent", eventId]);
+			}
+			queryClient.invalidateQueries(["participants"]);
+			queryClient.invalidateQueries(["adminParticipants"]);
+			queryClient.invalidateQueries(["events"]);
+			queryClient.invalidateQueries(["adminEvents"]);
+		},
+	});
+};
+
 /** ADMIN HOOKS
  *
  * Hook untuk mengambil data event participants hanya untuk admin

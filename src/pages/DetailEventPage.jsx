@@ -61,9 +61,13 @@ export default function DetailEventPage() {
 		);
 	}
 
+	/**
+	 * Handler untuk membuka modal pendaftaran event
+	 *
+	 * tidak usah pakai event id
+	 */
 	const handleJoinEvent = () => {
-		openJoinModal(event.id);
-		// navigate to home or keep on page depending on modal behavior; keep here
+		openJoinModal(event);
 	};
 
 	const statusBadge = getStatusBadge(event.status);

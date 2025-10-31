@@ -14,6 +14,25 @@ export const getParticipants = async (params = {}) => {
 	return response.data.data || response.data;
 };
 
+// VOLUNTEER SERVICES
+/** * Join event sebagai participant
+ *
+ * @async
+ * @function adminCreateParticipant
+ * @endpoint POST /admin/event-participants
+ * @param {Object} data - Data participant baru
+ * @returns {Promise<any>} Data participant baru
+ */
+export const volunteerJoinEvent = async (data) => {
+	try {
+		const response = await api.post(`/volunteer/events/join`, data);
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error joining event:", error);
+		throw error;
+	}
+};
+
 // ADMIN SERVICES
 /** Mengambil semua event participants dengan optional filtering
  *
