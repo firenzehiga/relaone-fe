@@ -13,6 +13,7 @@ import {
 	HouseHeart,
 	Phone,
 	Calendar,
+	Users,
 } from "lucide-react";
 import DynamicButton from "@/components/ui/Button";
 import { useRegister, useAuthStore } from "@/_hooks/useAuth";
@@ -137,12 +138,9 @@ export default function RegisterPage() {
 							animate={{ y: 0, opacity: 1 }}
 							transition={{ delay: 0.2, duration: 0.5 }}
 							className="mb-8">
-							<h2 className="text-3xl font-bold text-gray-900 mb-2">
+							<h2 className="text-3xl font-bold text-gray-900">
 								Create Account
 							</h2>
-							<p className="text-gray-600">
-								Join our volunteer community today
-							</p>
 						</motion.div>
 
 						{/* Register Form */}
@@ -178,7 +176,7 @@ export default function RegisterPage() {
 								</div>
 
 								{/* Email */}
-								<div className="md:col-span-2">
+								<div>
 									<label
 										htmlFor="email"
 										className="block text-sm font-medium text-gray-700 mb-1">
@@ -196,6 +194,89 @@ export default function RegisterPage() {
 											placeholder="your@example.com"
 											disabled={isLoading}
 											required
+										/>
+									</div>
+								</div>
+								{/* Phone */}
+								<div>
+									<label
+										htmlFor="telepon"
+										className="block text-sm font-medium text-gray-700 mb-1">
+										Phone Number
+									</label>
+									<div className="relative">
+										<Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+										<input
+											type="tel"
+											id="telepon"
+											name="telepon"
+											value={formData.telepon}
+											onChange={handleInputChange}
+											className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+											placeholder="081xxxxxxxxx"
+											disabled={isLoading}
+										/>
+									</div>
+								</div>
+
+								{/* Date of Birth */}
+								<div>
+									<label
+										htmlFor="tanggal_lahir"
+										className="block text-sm font-medium text-gray-700 mb-1">
+										Date of Birth
+									</label>
+									<div className="relative">
+										<Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+										<input
+											type="date"
+											id="tanggal_lahir"
+											name="tanggal_lahir"
+											value={formData.tanggal_lahir}
+											onChange={handleInputChange}
+											className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+											disabled={isLoading}
+										/>
+									</div>
+								</div>
+								{/* Gender Field */}
+								<div>
+									<label
+										htmlFor="jenis_kelamin"
+										className="block text-sm font-medium text-gray-700 mb-1">
+										Gender
+									</label>
+									<div className="relative">
+										<Users className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+										<select
+											id="jenis_kelamin"
+											name="jenis_kelamin"
+											value={formData.jenis_kelamin}
+											onChange={handleInputChange}
+											className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+											disabled={isLoading}>
+											<option value="">Select Gender</option>
+											<option value="laki-laki">Laki-Laki</option>
+											<option value="perempuan">Perempuan</option>
+										</select>
+									</div>
+								</div>
+								{/* Address (span full) */}
+								<div className="md:col-span-2">
+									<label
+										htmlFor="alamat"
+										className="block text-sm font-medium text-gray-700 mb-1">
+										Address
+									</label>
+									<div className="relative">
+										<textarea
+											id="alamat"
+											name="alamat"
+											value={formData.alamat}
+											onChange={handleInputChange}
+											placeholder="Alamat lengkap"
+											className="w-full pl-3 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+											disabled={isLoading}
 										/>
 									</div>
 								</div>
@@ -223,7 +304,7 @@ export default function RegisterPage() {
 												/>
 												<label
 													htmlFor="volunteer-option"
-													className="inline-flex items-center justify-between w-full p-2 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-sky-500 hover:text-gray-600 peer-checked:text-gray-600 hover:bg-gray-50">
+													className="inline-flex items-center justify-between w-3/4 p-2 text-gray-500 bg-white border-2 border-gray-200 rounded-full cursor-pointer peer-checked:border-sky-500 hover:text-gray-600 peer-checked:text-gray-600 hover:bg-gray-50">
 													<div className="flex items-center gap-3">
 														<div className="flex items-center gap-3">
 															<UserSearch className="w-7 h-7 text-sky-500" />
@@ -249,7 +330,7 @@ export default function RegisterPage() {
 												/>
 												<label
 													htmlFor="organization-option"
-													className="inline-flex items-center justify-between w-full p-2 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-sky-500 hover:text-gray-600 peer-checked:text-gray-600 hover:bg-gray-50">
+													className="inline-flex items-center justify-between w-3/4 p-2 text-gray-500 bg-white border-2 border-gray-200 rounded-full cursor-pointer peer-checked:border-sky-500 hover:text-gray-600 peer-checked:text-gray-600 hover:bg-gray-50">
 													<div className="flex items-center gap-3">
 														<HouseHeart className="w-7 h-7 text-sky-500" />
 														<div className="w-full text-lg font-semibold">
@@ -339,79 +420,63 @@ export default function RegisterPage() {
 										)}
 								</div>
 							</div>
+							{/* Organization-specific fields (shown only when role === 'organization') */}
+							{formData.role === "organization" && (
+								<div className="mt-2">
+									<details className="bg-gray-50 border border-gray-100 rounded-lg p-3">
+										<summary className="cursor-pointer font-medium">
+											More info (Organization Details)
+										</summary>
+										<div className="mt-4">
+											<div className="border border-gray-100 rounded-lg p-3 bg-white shadow-sm">
+												<div className="space-y-3">
+													<div>
+														<label
+															htmlFor="organization_nama"
+															className="block text-sm font-medium text-gray-700 mb-1">
+															Organization Name *
+														</label>
+														<input
+															type="text"
+															id="organization_nama"
+															name="organization_nama"
+															value={formData.organization_nama}
+															onChange={handleInputChange}
+															className="w-full pl-3 pr-4 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+															placeholder="Your organization name"
+															disabled={isLoading}
+														/>
+														{submitAttempted && !formData.organization_nama && (
+															<p className="mt-1 text-sm text-red-600">
+																Organization name is required.
+															</p>
+														)}
+													</div>
 
+													<div>
+														<label
+															htmlFor="organization_deskripsi"
+															className="block text-sm font-medium text-gray-700 mb-1">
+															Organization Description
+														</label>
+														<textarea
+															id="organization_deskripsi"
+															name="organization_deskripsi"
+															value={formData.organization_deskripsi}
+															onChange={handleInputChange}
+															className="w-full pl-3 pr-4 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+															placeholder="A short description (optional)"
+															disabled={isLoading}
+															rows={2}
+														/>
+													</div>
+												</div>
+											</div>
+										</div>
+									</details>
+								</div>
+							)}
 							{/* Collapsible more-info for optional fields */}
-							<div className="mt-2">
-								<details className="bg-gray-50 border border-gray-100 rounded-lg p-3">
-									<summary className="cursor-pointer font-medium">
-										More info (optional)
-									</summary>
-									<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-										{/* Phone */}
-										<div>
-											<label
-												htmlFor="telepon"
-												className="block text-sm font-medium text-gray-700 mb-1">
-												Phone Number
-											</label>
-											<div className="relative">
-												<Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-												<input
-													type="tel"
-													id="telepon"
-													name="telepon"
-													value={formData.telepon}
-													onChange={handleInputChange}
-													className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
-													placeholder="081xxxxxxxxx"
-													disabled={isLoading}
-												/>
-											</div>
-										</div>
-
-										{/* Date of Birth */}
-										<div>
-											<label
-												htmlFor="tanggal_lahir"
-												className="block text-sm font-medium text-gray-700 mb-1">
-												Date of Birth
-											</label>
-											<div className="relative">
-												<Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-												<input
-													type="date"
-													id="tanggal_lahir"
-													name="tanggal_lahir"
-													value={formData.tanggal_lahir}
-													onChange={handleInputChange}
-													className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
-													disabled={isLoading}
-												/>
-											</div>
-										</div>
-
-										{/* Address (span full) */}
-										<div className="md:col-span-2">
-											<label
-												htmlFor="alamat"
-												className="block text-sm font-medium text-gray-700 mb-1">
-												Address
-											</label>
-											<div className="relative">
-												<textarea
-													id="alamat"
-													name="alamat"
-													value={formData.alamat}
-													onChange={handleInputChange}
-													placeholder="Alamat lengkap"
-													className="w-full pl-3 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
-													disabled={isLoading}
-												/>
-											</div>
-										</div>
-									</div>
-								</details>
-							</div>
 							{/* API / validation errors */}
 							{apiErrors && (
 								<div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded">
@@ -435,77 +500,6 @@ export default function RegisterPage() {
 								</div>
 							)}
 
-							{/* Gender Field */}
-							{/* <div>
-							<label
-								htmlFor="jenis_kelamin"
-								className="block text-sm font-medium text-gray-700 mb-1">
-								Gender
-							</label>
-							<div className="relative">
-								<Users className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-								<select
-									id="jenis_kelamin"
-									name="jenis_kelamin"
-									value={formData.jenis_kelamin}
-									onChange={handleInputChange}
-									className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none disabled:bg-gray-50 disabled:cursor-not-allowed"
-									disabled={isLoading}>
-									<option value="">Select Gender</option>
-									<option value="laki-laki">Male</option>
-									<option value="perempuan">Female</option>
-								</select>
-							</div>
-						</div> */}
-							{/* Organization-specific fields (shown only when role === 'organization') */}
-							{formData.role === "organization" && (
-								<div className="mt-4">
-									<div className="border border-gray-100 rounded-lg p-3 bg-white shadow-sm">
-										<div className="space-y-3">
-											<div>
-												<label
-													htmlFor="organization_nama"
-													className="block text-sm font-medium text-gray-700 mb-1">
-													Organization Name *
-												</label>
-												<input
-													type="text"
-													id="organization_nama"
-													name="organization_nama"
-													value={formData.organization_nama}
-													onChange={handleInputChange}
-													className="w-full pl-3 pr-4 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
-													placeholder="Your organization name"
-													disabled={isLoading}
-												/>
-												{submitAttempted && !formData.organization_nama && (
-													<p className="mt-1 text-sm text-red-600">
-														Organization name is required.
-													</p>
-												)}
-											</div>
-
-											<div>
-												<label
-													htmlFor="organization_deskripsi"
-													className="block text-sm font-medium text-gray-700 mb-1">
-													Organization Description
-												</label>
-												<textarea
-													id="organization_deskripsi"
-													name="organization_deskripsi"
-													value={formData.organization_deskripsi}
-													onChange={handleInputChange}
-													className="w-full pl-3 pr-4 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
-													placeholder="A short description (optional)"
-													disabled={isLoading}
-													rows={2}
-												/>
-											</div>
-										</div>
-									</div>
-								</div>
-							)}
 							{/* Terms Agreement */}
 							<div className="flex items-start">
 								<input
@@ -539,6 +533,7 @@ export default function RegisterPage() {
 							{/* Submit Button */}
 							<DynamicButton
 								type="submit"
+								variant="success"
 								disabled={
 									isLoading ||
 									!formData.nama ||

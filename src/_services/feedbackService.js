@@ -63,3 +63,17 @@ export const adminDeleteFeedback = async (id) => {
 		throw error;
 	}
 };
+
+// ORGANIZATION SERVICES
+/** Mengambil semua feedbacks dengan optional filtering
+ *
+ * @async
+ * @function orgGetFeedbacks
+ * @endpoint GET /organization/feedbacks
+ * @param {Object} params - Query parameters untuk filtering
+ * @returns {Promise} Promise dengan data feedbacks
+ */
+export const orgGetFeedbacks = async () => {
+	const response = await api.get("/organization/feedbacks");
+	return response.data.data || response.data;
+};

@@ -75,3 +75,17 @@ export const adminDeleteLocation = async (id) => {
 		throw error;
 	}
 };
+
+// ORGANIZATION SERVICES
+/** Mengambil semua locations dengan optional filtering
+ *
+ * @async
+ * @function orgGetLocations
+ * @endpoint GET /organization/locations
+ * @param {Object} params - Query parameters untuk filtering
+ * @returns {Promise} Promise dengan data locations
+ */
+export const orgGetLocations = async () => {
+	const response = await api.get("/organization/locations");
+	return response.data.data || response.data;
+};

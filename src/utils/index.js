@@ -73,7 +73,7 @@ export const formatDate = (dateString) => {
 	const date = new Date(dateString);
 	return date.toLocaleDateString("id-ID", {
 		day: "numeric",
-		month: "short",
+		month: "long",
 		year: "numeric",
 	});
 };
@@ -110,33 +110,58 @@ export const toInputDate = (s) => {
  *
  * @returns {string} URL Google Maps untuk melihat lokasi
  */
-export const getGoogleMapsUrl = (event = {}) => {
-	if (event.location?.latitude && event.location?.longitude) {
-		return `https://www.google.com/maps/search/?api=1&query=${event.location.latitude},${event.location.longitude}`;
+export const getGoogleMapsUrl = (event = {}, { preferAddress = true } = {}) => {
+	// prefer address when available (default)
+	const address =
+		event.location?.alamat ||
+		event.address ||
+		(typeof event.location === "string" ? event.location : "");
+	if (preferAddress && address) {
+		return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+			address
+		)}`;
 	}
-	if (event.latitude && event.longitude) {
-		return `https://www.google.com/maps/search/?api=1&query=${event.latitude},${event.longitude}`;
+
+	// fallback to coordinates if present
+	const lat = event.location?.latitude ?? event.latitude;
+	const lng = event.location?.longitude ?? event.longitude;
+	if (lat && lng) {
+		return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
 	}
+
+	// final fallback to any address string (could be empty)
 	return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-		event.location?.alamat || event.address || event.location || ""
+		address
 	)}`;
 };
-
 /**
  * Generate URL Google Maps untuk mendapatkan petunjuk arah ke lokasi event
  * Prioritas menggunakan koordinat lat/lng, jika tidak ada fallback ke alamat
  *
  * @returns {string} URL Google Maps untuk mendapatkan petunjuk arah
  */
-export const getDirectionsUrl = (event = {}) => {
-	if (event.location?.latitude && event.location?.longitude) {
-		return `https://www.google.com/maps/dir/?api=1&destination=${event.location.latitude},${event.location.longitude}`;
+export const getDirectionsUrl = (event = {}, { preferAddress = true } = {}) => {
+	// prefer address when available (default)
+	const address =
+		event.location?.alamat ||
+		event.address ||
+		(typeof event.location === "string" ? event.location : "");
+	if (preferAddress && address) {
+		return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+			address
+		)}`;
 	}
-	if (event.latitude && event.longitude) {
-		return `https://www.google.com/maps/dir/?api=1&destination=${event.latitude},${event.longitude}`;
+
+	// fallback to coordinates if present
+	const lat = event.location?.latitude ?? event.latitude;
+	const lng = event.location?.longitude ?? event.longitude;
+	if (lat && lng) {
+		return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
 	}
+
+	// final fallback to any address string (could be empty)
 	return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-		event.location?.alamat || event.address || event.location || ""
+		address
 	)}`;
 };
 

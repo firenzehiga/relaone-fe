@@ -131,8 +131,8 @@ export const orgGetEvents = async (params = {}) => {
 /** * Hapus event
  *
  * @async
- * @function adminDeleteEvent
- * @endpoint DELETE /admin/events/{eventId}
+ * @function orgDeleteEvent
+ * @endpoint DELETE /organization/events/{eventId}
  * @param {string|number} id - ID event
  * @returns {Promise<any>} Data event yang dihapus
  */

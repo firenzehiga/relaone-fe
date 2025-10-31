@@ -163,7 +163,7 @@ export const useAdminDeleteEventMutation = () => {
  */
 export const useOrgEvents = () => {
 	const currentRole = useUserRole();
-	const enabled = currentRole === "organization"; // supaya kalo organization login, ga fetch events
+	const enabled = currentRole === "organization";
 
 	return useQuery({
 		queryKey: ["orgEvents"],

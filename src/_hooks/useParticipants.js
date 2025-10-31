@@ -59,7 +59,7 @@ export const useVolunteerJoinEventMutation = () => {
  */
 export const useAdminParticipants = () => {
 	const currentRole = useUserRole();
-	const enabled = currentRole === "admin"; // agar jika admin login, tidak fetch event participants
+	const enabled = currentRole === "admin";
 
 	return useQuery({
 		queryKey: ["adminParticipants"],
@@ -154,5 +154,27 @@ export const useAdminDeleteParticipantMutation = () => {
 			);
 			queryClient.invalidateQueries(["adminParticipants"]);
 		},
+	});
+};
+
+/** ORGANIZATION HOOKS
+ *
+ * Hook untuk mengambil data event participants hanya untuk organization
+ * @returns {Object} Query result dengan data, isLoading, error, etc
+ */
+export const useOrgParticipants = () => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "organization";
+
+	return useQuery({
+		queryKey: ["orgParticipants"],
+		queryFn: async () => {
+			const response = await eventParticipantService.orgGetParticipants();
+			return response;
+		},
+		enabled,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
 	});
 };

@@ -9,7 +9,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
  */
 export const useAdminLocations = () => {
 	const currentRole = useUserRole();
-	const enabled = currentRole === "admin"; // agar jika admin login, tidak fetch locations
+	const enabled = currentRole === "admin";
 
 	return useQuery({
 		queryKey: ["adminLocations"],
@@ -101,5 +101,27 @@ export const useAdminDeleteLocationMutation = () => {
 			);
 			queryClient.invalidateQueries(["adminLocations"]);
 		},
+	});
+};
+
+// === ORGANIZATION HOOKS ===
+/**
+ * Hook untuk mengambil data locations (organization)
+ * @returns {Object} Query result dengan data, isLoading, error, etc
+ */
+export const useOrgLocations = () => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "organization";
+
+	return useQuery({
+		queryKey: ["orgLocations"],
+		queryFn: async () => {
+			const response = await locationService.orgGetLocations();
+			return response;
+		},
+		enabled,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
 	});
 };

@@ -86,3 +86,25 @@ export const useAdminDeleteFeedbackMutation = () => {
 		},
 	});
 };
+
+// === ORGANIZATION HOOKS ===
+/**
+ * Hook untuk mengambil data feedbacks (organization)
+ * @returns {Object} Query result dengan data, isLoading, error, etc
+ */
+export const useOrgFeedbacks = () => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "organization";
+
+	return useQuery({
+		queryKey: ["orgFeedbacks"],
+		queryFn: async () => {
+			const response = await feedbackService.orgGetFeedbacks();
+			return response;
+		},
+		enabled,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
+	});
+};

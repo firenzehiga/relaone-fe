@@ -246,44 +246,76 @@ export default function AdminEventParticipant() {
 								sortIcon={<ChevronDown />}
 								expandableRows
 								expandableRowsComponent={({ data }) => (
-									<div className="p-4 bg-gray-50 rounded-md">
-										<p className="text-sm text-gray-600">
-											<strong>Nama peserta:</strong> {data.user?.nama || "-"}
-										</p>
-										<p className="text-sm text-gray-600">
-											<strong>Event yang diikuti:</strong>{" "}
-											{data.event?.judul || "-"}
-										</p>
-										<p className="text-sm text-gray-600">
-											<strong>Tanggal daftar:</strong>{" "}
-											{data.tanggal_daftar
-												? new Date(
-														data.tanggal_daftar.replace(" ", "T")
-												  ).toLocaleDateString("id-ID", {
-														day: "numeric",
-														month: "long",
-														year: "numeric",
-												  })
-												: "-"}
-										</p>
-										<p className="text-sm text-gray-600">
-											<strong>Tanggal Konfirmasi:</strong>{" "}
-											{data.tanggal_konfirmasi
-												? new Date(
-														data.tanggal_konfirmasi.replace(" ", "T")
-												  ).toLocaleDateString("id-ID", {
-														day: "numeric",
-														month: "long",
-														year: "numeric",
-												  })
-												: "Belum dikonfirmasi"}
-										</p>
-										<p className="text-sm text-gray-600 mt-2">
-											<strong>Catatan:</strong>
-										</p>
-										<p className="text-sm text-gray-800 mt-1">
-											{data.catatan || "-"}
-										</p>
+									<div className="p-6 bg-white rounded-md border border-gray-100 shadow-sm">
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+											{/* Left column */}
+											<div className="space-y-3">
+												<div className="text-sm text-gray-700">
+													<span className="font-semibold">Nama peserta:</span>
+													<span className="ml-2 text-gray-900">
+														{data.user?.nama || "-"}
+													</span>
+												</div>
+												<div className="text-sm text-gray-700">
+													<span className="font-semibold">Event:</span>
+													<span className="ml-2 text-gray-900">
+														{data.event?.judul || "-"}
+													</span>
+												</div>
+
+												<div>
+													<div className="text-sm font-semibold text-gray-700 mb-1">
+														Catatan
+													</div>
+													<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
+														{data.catatan || "-"}
+													</div>
+												</div>
+											</div>
+
+											{/* Right column */}
+											<div className="space-y-3">
+												<div className="flex items-start">
+													<div className="text-sm text-gray-700 font-semibold">
+														Tanggal Daftar:
+													</div>
+													<div className="text-sm text-gray-900 ml-2">
+														{data.tanggal_daftar
+															? new Date(
+																	data.tanggal_daftar.replace(" ", "T")
+															  ).toLocaleDateString("id-ID", {
+																	day: "numeric",
+																	month: "long",
+																	year: "numeric",
+															  })
+															: "-"}
+													</div>
+												</div>
+
+												<div className="flex items-start">
+													<div className="text-sm text-gray-700 font-semibold">
+														Tanggal Konfirmasi:
+													</div>
+													<div className="text-sm ml-2">
+														{data.tanggal_konfirmasi ? (
+															<span className="text-gray-900">
+																{new Date(
+																	data.tanggal_konfirmasi.replace(" ", "T")
+																).toLocaleDateString("id-ID", {
+																	day: "numeric",
+																	month: "long",
+																	year: "numeric",
+																})}
+															</span>
+														) : (
+															<Badge variant="secondary">
+																Status Belum Dikonfirmasi
+															</Badge>
+														)}
+													</div>
+												</div>
+											</div>
+										</div>
 									</div>
 								)}
 								noDataComponent={

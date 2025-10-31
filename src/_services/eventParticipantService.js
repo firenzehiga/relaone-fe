@@ -114,3 +114,17 @@ export const adminDeleteParticipant = async (id) => {
 		throw error;
 	}
 };
+
+// ORGANIZATION SERVICES
+/** Mengambil semua event participants dengan optional filtering
+ *
+ * @async
+ * @function orgGetParticipants
+ * @endpoint GET /organization/event-participants
+ * @param {Object} params - Query parameters untuk filtering
+ * @returns {Promise} Promise dengan data participants
+ */
+export const orgGetParticipants = async () => {
+	const response = await api.get("/organization/event-participants");
+	return response.data.data || response.data;
+};

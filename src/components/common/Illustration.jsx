@@ -9,7 +9,7 @@ export function LoginIllustration() {
 			initial={{ opacity: 0, x: -50 }}
 			animate={{ opacity: 1, x: 0 }}
 			transition={{ duration: 0.6 }}
-			className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-emerald-400 via-purple-500 to-pink-400 relative overflow-hidden">
+			className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-emerald-400 via-blue-500 to-emerald-400 relative overflow-hidden">
 			<div className="absolute inset-0 bg-black/10"></div>
 			<div className="relative z-10 flex flex-col justify-center items-center p-12 text-white text-center">
 				<motion.div
@@ -88,7 +88,7 @@ export function RegisterIllustration() {
 			initial={{ opacity: 0, x: -50 }}
 			animate={{ opacity: 1, x: 0 }}
 			transition={{ duration: 0.6 }}
-			className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 relative overflow-hidden">
+			className="hidden lg:flex lg:w-2/2 bg-gradient-to-br from-green-400 via-blue-500 to-blue-600 relative overflow-hidden">
 			<div className="absolute inset-0 bg-black/10"></div>
 			<div className="relative z-10 flex flex-col justify-center items-center p-12 text-white text-center">
 				<motion.div

@@ -33,7 +33,7 @@ import Badge from "@/components/ui/Badge";
 
 export default function AdminLocation() {
 	const {
-		data: locations,
+		data: locations = [],
 		isLoading: locationsLoading,
 		error: locationsError,
 		isFetching: locationsRefetching,
