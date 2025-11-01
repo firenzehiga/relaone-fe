@@ -70,7 +70,7 @@ export default function Badge({
 		try {
 			const { r, g, b } = hexToRgb(hex);
 			const yiq = (r * 299 + g * 587 + b * 114) / 1000;
-			return yiq >= 128 ? "#224403" : "#ffffff";
+			return yiq >= 128 ? "#ffffff" : "#ffffff";
 		} catch (e) {
 			return "#000000";
 		}

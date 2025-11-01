@@ -397,13 +397,11 @@ export default function EventsPage() {
 										key={event.id}
 										initial={{ opacity: 0, y: 20 }}
 										animate={{ opacity: 1, y: 0 }}
+										exit={{ opacity: 0 }}
 										transition={{ delay: index * 0.1 }}>
 										<EventCard
 											event={{
 												...event,
-												category: categories?.find(
-													(cat) => cat.id === event.category_id
-												),
 											}}
 											onJoin={handleJoinEvent}
 										/>

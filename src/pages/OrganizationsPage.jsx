@@ -57,7 +57,7 @@ export default function OrganizationsPage() {
 					{organizations.map((org) => (
 						<article
 							key={org.id}
-							className="flex flex-col md:flex-row gap-4 p-6 bg-white rounded-xl border shadow-sm">
+							className="flex flex-col md:flex-row gap-4 p-6 bg-white rounded-xl border shadow-sm hover:scale-105 transition-transform ease-out duration-500">
 							<div className="flex-shrink-0 w-full md:w-36 h-36 md:h-36 rounded-lg bg-sky-50 border overflow-hidden flex items-center justify-center">
 								{org.logo ? (
 									<AsyncImage

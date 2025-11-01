@@ -168,7 +168,7 @@ export default function LandingPage() {
 									transition={{ delay: index * 0.1 }}
 									exit={{ opacity: 0 }}
 									className="group">
-									<Card className="text-center h-full group-hover:scale-105 transition-transform duration-300">
+									<Card className="text-center h-full group-hover:scale-105 transition-transform ease-out duration-300">
 										<div className="mx-auto w-16 h-16 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
 											<feature.icon className="text-white" size={28} />
 										</div>
@@ -204,7 +204,6 @@ export default function LandingPage() {
 									initial={{ opacity: 0, scale: 0.9 }}
 									animate={{ opacity: 1, scale: 1 }}
 									transition={{ delay: index * 0.1 }}
-									whileHover={{ scale: 1.05 }}
 									exit={{ opacity: 0 }}
 									className="cursor-pointer"
 									onClick={() =>
@@ -215,7 +214,7 @@ export default function LandingPage() {
 											className={`mx-auto w-16 h-16 ${category.bgColor} rounded-full flex items-center justify-center mb-6`}>
 											<category.icon className={category.color} size={32} />
 										</div>
-										<h3 className="text-xl font-semibold text-white mb-2">
+										<h3 className="text-xl font-semibold text-gray-500 mb-2">
 											{category.name}
 										</h3>
 										<p className="text-gray-400">{category.description}</p>

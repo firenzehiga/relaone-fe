@@ -74,11 +74,9 @@ export default function EventCard({
 	const registrationClosed = isCancelled || isFull || isStartedOrPast;
 
 	return (
-		<motion.div
-			whileHover={{ y: -6, scale: 1.0 }}
-			transition={{ duration: 0.1, ease: "easeOut" }}
+		<div
 			className={cn(
-				"bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:shadow-emerald-500/10",
+				"bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-lg transition-transform duration-500 ease-out hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/10",
 				className
 			)}>
 			{/* Event Banner */}
@@ -228,6 +226,6 @@ export default function EventCard({
 					</DynamicButton>
 				</div>
 			</div>
-		</motion.div>
+		</div>
 	);
 }
