@@ -105,7 +105,6 @@ export const useAdminCreateEventMutation = () => {
 		mutationFn: eventService.adminCreateEvent,
 		onSuccess: () => {
 			queryClient.invalidateQueries(["adminEvents"]);
-			queryClient.invalidateQueries(["events"]);
 		},
 	});
 };
@@ -128,7 +127,6 @@ export const useAdminUpdateEventMutation = () => {
 			queryClient.invalidateQueries(["adminEvents"]);
 			queryClient.invalidateQueries(["adminEvents", id]);
 			// query key publik
-			queryClient.invalidateQueries(["events"]);
 			queryClient.invalidateQueries(["detailEvent", id]);
 		},
 	});
@@ -151,7 +149,6 @@ export const useAdminDeleteEventMutation = () => {
 				oldData.filter((event) => event.id !== id)
 			);
 			queryClient.invalidateQueries(["adminEvents"]);
-			queryClient.invalidateQueries(["events"]);
 		},
 	});
 };

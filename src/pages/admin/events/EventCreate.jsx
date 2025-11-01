@@ -716,14 +716,15 @@ export default function AdminEventCreate() {
 					</Tabs>
 					<>
 						<div className="flex items-center justify-end gap-3">
-							<button
+							<DynamicButton
+								variant="outline"
 								type="button"
 								onClick={() => {
 									navigate("/admin/events");
 								}}
 								className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md">
 								Batal
-							</button>
+							</DynamicButton>
 							<button
 								type="submit"
 								disabled={submitting}

@@ -182,7 +182,7 @@ export default function AdminLocation() {
 
 	if (locationsError) {
 		return (
-			<div className="flex flex-col items-center justify-center h-[40vh] text-gray-600">
+			<div className="flex flex-col items-center justify-center min-h-[520px] text-gray-600">
 				<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 				<h3 className="text-lg font-semibold mb-2">Error</h3>
 				<p className="text-gray-500 mb-4 text-center">
@@ -200,7 +200,17 @@ export default function AdminLocation() {
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="bg-white rounded-lg shadow p-6">
 					<div className="flex justify-between items-center mb-4">
-						<h2 className="text-lg font-semibold">Daftar Lokasi</h2>
+						<h2 className="text-lg font-semibold">
+							{" "}
+							{locationsRefetching ? (
+								<FetchLoader
+									variant="inline"
+									text="Mengambil Data Terbaru..."
+								/>
+							) : (
+								"Daftar Lokasi"
+							)}
+						</h2>
 						<LinkButton
 							to="/admin/locations/create"
 							variant="success"
@@ -216,8 +226,6 @@ export default function AdminLocation() {
 						</div>
 					) : (
 						<>
-							{locationsRefetching && <FetchLoader />}
-
 							<div className="w-80 mb-4">
 								<input
 									type="text"
