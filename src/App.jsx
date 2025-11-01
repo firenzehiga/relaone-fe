@@ -89,7 +89,7 @@ function App() {
 							<MainLayout />
 						</VolunteerRoute>
 					}>
-					<Route index element={<Navigate to="/home" replace />} />
+					<Route path="/" element={<Navigate to="/home" replace />} />
 					<Route path="home" element={<LandingPage />} />
 					<Route path="events">
 						<Route index element={<EventsPage />} />
