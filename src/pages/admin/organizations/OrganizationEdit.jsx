@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { UserCircle2Icon, Loader2 } from "lucide-react";
-import { Input, InputGroup, InputLeftAddon } from "@chakra-ui/react";
-import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-hot-toast";
-import { useAdminOrganizationUsers } from "@/_hooks/useUsers";
 import {
 	useAdminOrganizationById,
 	useAdminUpdateOrganizationMutation,
 } from "@/_hooks/useOrganizations";
-import { parseApiError } from "@/utils";
-import DynamicButton from "@/components/ui/Button";
+import { useAuthStore } from "@/_hooks/useAuth";
+import { UserCircle2Icon } from "lucide-react";
+import { Input, InputGroup, InputLeftAddon } from "@chakra-ui/react";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-hot-toast";
 import Skeleton from "@/components/ui/Skeleton";
+import Button from "@/components/ui/Button";
+import { useAdminOrganizationUsers } from "@/_hooks/useUsers";
 
 export default function AdminOrganizationEdit() {
 	const { id } = useParams();
@@ -25,7 +25,7 @@ export default function AdminOrganizationEdit() {
 		status_verifikasi: "pending",
 		user_id: "",
 	});
-	const [submitting, setSubmitting] = useState(false);
+	const { isLoading } = useAuthStore();
 
 	const { data: showOrganization, isLoading: showOrganizationLoading } =
 		useAdminOrganizationById(id);
@@ -96,38 +96,24 @@ export default function AdminOrganizationEdit() {
 		}
 	};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = (e) => {
 		e.preventDefault();
-		setSubmitting(true);
-		try {
-			const payload = new FormData();
-			payload.append("_method", "PUT");
-			// append form values
-			// Note: we purposely do NOT normalize/trim website here per request
-			for (const key in formData) {
-				if (key === "logo") {
-					// only append logo when user selected a new File
-					if (formData.logo instanceof File) {
-						payload.append("logo", formData.logo);
-					}
-				} else {
-					payload.append(key, formData[key]);
+		const payload = new FormData();
+		payload.append("_method", "PUT");
+		// append form values
+		// Note: we purposely do NOT normalize/trim website here per request
+		for (const key in formData) {
+			if (key === "logo") {
+				// only append logo when user selected a new File
+				if (formData.logo instanceof File) {
+					payload.append("logo", formData.logo);
 				}
+			} else {
+				payload.append(key, formData[key]);
 			}
-
-			await updateOrganizationMutation.mutateAsync({ id, data: payload });
-			toast.success("Organisasi berhasil diperbarui", {
-				position: "top-center",
-			});
-
-			navigate("/admin/organizations");
-		} catch (err) {
-			const message = parseApiError(err);
-			toast.error(message, { position: "top-center" });
-			console.error(err);
-		} finally {
-			setSubmitting(false);
 		}
+
+		updateOrganizationMutation.mutateAsync({ id, data: payload });
 	};
 
 	if (showOrganizationLoading || organizationUsersLoading) {
@@ -311,27 +297,22 @@ export default function AdminOrganizationEdit() {
 					</div>
 
 					<div className="flex items-center justify-end gap-3">
-						<DynamicButton
+						<Button
 							type="button"
 							variant="secondary"
+							disabled={isLoading}
 							onClick={() => {
 								navigate("/admin/organizations");
 							}}>
 							Batal
-						</DynamicButton>
-						<button
+						</Button>
+						<Button
 							type="submit"
-							disabled={submitting}
-							className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500">
-							{submitting ? (
-								<>
-									<Loader2 className="animate-spin h-4 w-4 mr-1 mb-1 inline" />
-									Menyimpan data....
-								</>
-							) : (
-								"Simpan Organisasi"
-							)}
-						</button>
+							variant="success"
+							loading={isLoading}
+							disabled={isLoading}>
+							{isLoading ? "Menyimpan..." : "Simpan Organisasi"}
+						</Button>
 					</div>
 				</form>
 			</div>

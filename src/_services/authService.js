@@ -69,27 +69,7 @@ export const logout = async () => {
 	}
 };
 
-/**
- * Mendapatkan informasi user yang sedang login
- */
-export const getCurrentUser = async () => {
-	try {
-		const response = await api.get("/user/myProfile");
 
-		if (response.data.success) {
-			return response.data;
-		} else {
-			throw new Error(response.data.message || "Failed to get user profile");
-		}
-	} catch (error) {
-		// Jika ada response dari server, lempar data (mengandung message & errors)
-		if (error.response?.data) {
-			throw error.response.data;
-		}
-		// Jika tidak ada response (network/CORS), lempar error asli
-		throw error;
-	}
-};
 
 /**
  * Refresh authentication token

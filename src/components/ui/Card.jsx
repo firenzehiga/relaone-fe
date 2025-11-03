@@ -15,8 +15,8 @@ export default function Card({ children, className, hover = true, ...props }) {
 	return (
 		<div
 			className={cn(
-				"bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl p-6",
-				"shadow-lg hover:shadow-xl hover:scale-105 transition-transform ease-out duration-300 ",
+				"bg-white/80 backdrop-blur-sm border border-black/10 rounded-2xl p-6",
+				"shadow-lg hover:shadow-xl  ",
 				" border-gradient",
 				className
 			)}

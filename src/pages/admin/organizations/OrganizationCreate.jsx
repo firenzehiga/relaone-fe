@@ -1,13 +1,13 @@
 import React, { useRef, useState, useEffect } from "react";
-import { UserCircle2Icon, Loader2 } from "lucide-react";
+import { useAdminOrganizationUsers } from "@/_hooks/useUsers";
+import { useAdminCreateOrganizationMutation } from "@/_hooks/useOrganizations";
+import { useAuthStore } from "@/_hooks/useAuth";
+import { UserCircle2Icon } from "lucide-react";
 import { Input, InputGroup, InputLeftAddon } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { useAdminOrganizationUsers } from "@/_hooks/useUsers";
-import { useAdminCreateOrganizationMutation } from "@/_hooks/useOrganizations";
-import { parseApiError } from "@/utils";
-import DynamicButton from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
+import Button from "@/components/ui/Button";
 
 export default function AdminOrganizationCreate() {
 	const navigate = useNavigate();
@@ -21,7 +21,8 @@ export default function AdminOrganizationCreate() {
 		status_verifikasi: "pending",
 		user_id: "",
 	});
-	const [submitting, setSubmitting] = useState(false);
+	const { isLoading } = useAuthStore();
+
 	const [previewUrl, setPreviewUrl] = useState(null);
 	const fileRef = useRef(null);
 
@@ -77,37 +78,25 @@ export default function AdminOrganizationCreate() {
 		}
 	}
 
-	async function handleSubmit(e) {
+	const handleSubmit = (e) => {
 		e.preventDefault();
-		setSubmitting(true);
-		try {
-			const payload = new FormData();
-			// normalize website
-			const website = formData.website
-				? formData.website.trim().startsWith("http")
-					? formData.website.trim()
-					: `https://${formData.website.trim()}`
-				: "";
-			const dataToAppend = { ...formData, website };
-			for (const key in dataToAppend) {
-				const val = dataToAppend[key];
-				if (val === null || val === undefined) continue;
-				payload.append(key, val);
-			}
 
-			const result = await createOrganizationMutation.mutateAsync(payload);
-			console.log("Created organization:", result);
-			toast.success("Organisasi berhasil dibuat", { position: "top-center" });
-
-			navigate("/admin/organizations");
-		} catch (err) {
-			const message = parseApiError(err);
-			toast.error(message, { position: "top-center" });
-			console.error(err);
-		} finally {
-			setSubmitting(false);
+		const payload = new FormData();
+		// normalize website
+		const website = formData.website
+			? formData.website.trim().startsWith("http")
+				? formData.website.trim()
+				: `https://${formData.website.trim()}`
+			: "";
+		const dataToAppend = { ...formData, website };
+		for (const key in dataToAppend) {
+			const val = dataToAppend[key];
+			if (val === null || val === undefined) continue;
+			payload.append(key, val);
 		}
-	}
+
+		createOrganizationMutation.mutateAsync(payload);
+	};
 
 	if (organizationUsersLoading) {
 		return <Skeleton.FormSkeleton title="Loading..." />;
@@ -289,27 +278,21 @@ export default function AdminOrganizationCreate() {
 					</div>
 
 					<div className="flex items-center justify-end gap-3">
-						<DynamicButton
+						<Button
 							type="button"
 							variant="secondary"
 							onClick={() => {
 								navigate("/admin/organizations");
 							}}>
 							Batal
-						</DynamicButton>
-						<button
+						</Button>
+						<Button
 							type="submit"
-							disabled={submitting}
-							className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500">
-							{submitting ? (
-								<>
-									<Loader2 className="animate-spin h-4 w-4 mr-1 mb-1 inline" />
-									Menyimpan data....
-								</>
-							) : (
-								"Simpan Organisasi"
-							)}
-						</button>
+							variant="success"
+							loading={isLoading}
+							disabled={isLoading}>
+							{isLoading ? "Membuat..." : "Simpan Organisasi"}
+						</Button>
 					</div>
 				</form>
 			</div>

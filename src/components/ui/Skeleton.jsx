@@ -1,6 +1,12 @@
 import { motion } from "framer-motion";
 import { cn } from "@/utils";
 import { Loader2 } from "lucide-react";
+import {
+	Skeleton as ChkSkeleton,
+	SkeletonCircle,
+	SkeletonText as ChkSkeletonText,
+} from "@chakra-ui/react";
+import Card from "./Card";
 
 export default function Skeleton({ className, ...props }) {
 	return (
@@ -227,3 +233,87 @@ function OrgSkeleton() {
 	);
 }
 Skeleton.OrgSkeleton = OrgSkeleton;
+
+// Komponen Skeleton untuk ProfilePage
+function ProfileSkeleton() {
+	return (
+		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-4 px-4">
+			<div className="max-w-7xl mx-auto">
+				{/* Header Skeleton */}
+				<div className="text-center mb-6">
+					<ChkSkeleton height="32px" width="200px" mx="auto" mb={2} />
+					<ChkSkeleton height="16px" width="300px" mx="auto" />
+				</div>
+
+				<div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+					{/* Profile Card Skeleton */}
+					<div className="xl:col-span-1">
+						<Card className="text-center h-fit">
+							{/* Avatar Skeleton */}
+							<div className="relative mb-4">
+								<SkeletonCircle size="128px" mx="auto" />
+							</div>
+
+							{/* Basic Info Skeleton */}
+							<ChkSkeleton height="24px" width="150px" mx="auto" mb={2} />
+							<ChkSkeleton height="16px" width="200px" mx="auto" mb={4} />
+
+							{/* Edit Button Skeleton */}
+							<ChkSkeleton height="32px" width="100%" borderRadius="lg" />
+						</Card>
+					</div>
+
+					{/* Details Section Skeleton */}
+					<div className="xl:col-span-3">
+						<Card>
+							<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+								{/* Personal Information Skeleton */}
+								<div>
+									<div className="flex items-center mb-4">
+										<ChkSkeleton width="20px" height="20px" mr={2} />
+										<ChkSkeleton height="24px" width="150px" />
+									</div>
+
+									<div className="space-y-3">
+										{[...Array(6)].map((_, index) => (
+											<div key={index}>
+												<ChkSkeleton height="12px" width="80px" mb={1} />
+												<div className="flex items-center">
+													<ChkSkeleton width="12px" height="12px" mr={2} />
+													<ChkSkeleton height="16px" width="120px" />
+												</div>
+											</div>
+										))}
+									</div>
+								</div>
+
+								{/* Additional Information Skeleton */}
+								<div>
+									<div className="flex items-center mb-4">
+										<ChkSkeleton width="20px" height="20px" mr={2} />
+										<ChkSkeleton height="24px" width="180px" />
+									</div>
+
+									<div className="space-y-3">
+										{[...Array(4)].map((_, index) => (
+											<div key={index}>
+												<ChkSkeleton height="12px" width="60px" mb={1} />
+												<ChkSkeletonText
+													mt={1}
+													noOfLines={index === 0 ? 2 : 1}
+													spacing="2"
+													skeletonHeight="2"
+												/>
+											</div>
+										))}
+									</div>
+								</div>
+							</div>
+						</Card>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
+Skeleton.ProfileSkeleton = ProfileSkeleton;

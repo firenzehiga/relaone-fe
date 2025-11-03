@@ -1,41 +1,63 @@
-import { useQuery } from "@tanstack/react-query";
-import * as userService from "../_services/userService";
-import { useUserRole } from "./useAuth";
+import * as userService from "@/_services/userService";
+import { useAuthStore, useUserRole } from "@/_hooks/useAuth";
+import toast from "react-hot-toast";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { parseApiError } from "@/utils";
 
 // === PUBLIC HOOKS ===
-/**
- *
- * Hook untuk mengambil data profile user saat ini
- * @param {Object} params - Query parameters untuk filtering
- * @returns {Object} Query result dengan data, isLoading, error, etc
- */
-// export const useUserProfile = () => {
-// 	return useQuery({
-// 		queryKey: ["user", "profile"],
-// 		queryFn: async () => {
-// 			const response = await userService.getUserProfile();
-// 			return response;
-// 		},
-// 		staleTime: 5 * 60 * 1000,
-// 		retry: 1,
-// 	});
-// };
+// Ambil profile (sebelumnya useProfile)
+export const useUserProfile = () => {
+	const { isAuthenticated } = useAuthStore();
 
-/**
- * Hook untuk mengambil data pendaftaran user saat ini
- */
-// export const useUserRegistrations = () => {
-// 	return useQuery({
-// 		queryKey: ["user", "registrations"],
-// 		queryFn: async () => {
-// 			const response = await userService.getUserRegistrations();
-// 			return response;
-// 		},
-// 		staleTime: 3 * 60 * 1000,
-// 		retry: 1,
-// 	});
-// };
+	return useQuery({
+		queryKey: ["userProfile"],
+		queryFn: async () => {
+			const res = await userService.getUserProfile();
+			return res.data;
+		},
+		enabled: isAuthenticated,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
+	});
+};
 
+// Update profile -> panggil updateUser dari auth store untuk sinkron ke localStorage/state
+export const useUpdateUserMutation = () => {
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
+	const { updateUser, setLoading, clearError, setError } = useAuthStore();
+
+	return useMutation({
+		mutationKey: ["users", "updateProfile"],
+		mutationFn: ({ userData }) => userService.updateUserProfile(userData),
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: async (response) => {
+			// Extract user data dari response
+			const userData = response.data?.user;
+			if (userData) {
+				updateUser(userData); // Update user di localStorage dan auth store
+			}
+			await queryClient.invalidateQueries(["userProfile"]); // Invalidate queries untuk refresh cache
+			navigate("/profile");
+
+			setLoading(false);
+
+			toast.success(response.message, { duration: 2000 });
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Update profile failed";
+			setError(msg);
+			toast.error(msg, { duration: 4000 });
+			console.error("Update profile error:", error);
+		},
+	});
+};
 // === ADMIN HOOKS ===
 /**
  * Hook untuk mengambil data semua users (khusus admin)

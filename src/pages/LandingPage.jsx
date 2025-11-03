@@ -209,7 +209,7 @@ export default function LandingPage() {
 									onClick={() =>
 										navigate(`/events?category=${category.name.toLowerCase()}`)
 									}>
-									<Card className="text-center">
+									<Card className="text-center hover:scale-105 transition-transform ease-out duration-300">
 										<div
 											className={`mx-auto w-16 h-16 ${category.bgColor} rounded-full flex items-center justify-center mb-6`}>
 											<category.icon className={category.color} size={32} />

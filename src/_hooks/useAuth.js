@@ -1,8 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { create } from "zustand";
 import toast from "react-hot-toast";
 import * as authService from "@/_services/authService";
+import * as userService from "@/_services/userService";
 import { showToast, toastSuccess } from "@/components/ui/Toast";
 
 /**
@@ -134,7 +135,7 @@ const useAuthStore = create((set, get) => ({
 		// Jika verifikasi gagal, kita bersihkan auth lokal.
 		(async () => {
 			try {
-				const res = await authService.getCurrentUser();
+				const res = await userService.getUserProfile();
 				const remoteUser = res.data;
 				if (remoteUser) {
 					set({ user: remoteUser });
@@ -163,22 +164,6 @@ const useAuthStore = create((set, get) => ({
 // usage: const userRole = useUserRole();
 export const useUserRole = () =>
 	useAuthStore((state) => state.user?.role ?? "guest");
-
-export const useProfile = () => {
-	const { isAuthenticated } = useAuthStore();
-
-	return useQuery({
-		queryKey: ["auth", "profile"],
-		queryFn: async () => {
-			const response = await authService.getCurrentUser();
-			return response.data;
-		},
-		enabled: isAuthenticated,
-		staleTime: 1 * 60 * 1000,
-		cacheTime: 5 * 60 * 1000,
-		retry: 1,
-	});
-};
 
 export const useLogin = () => {
 	const navigate = useNavigate();
@@ -362,7 +347,13 @@ export const roleAllowed = {
 		"/organization/feedbacks",
 		"/organization/profile",
 	],
-	volunteer: ["/home", "/events", "/organizations"],
+	volunteer: [
+		"/home",
+		"/events",
+		"/organizations",
+		"/profile",
+		"/profile/edit",
+	],
 };
 
 // Helper function untuk mendapatkan dashboard URL berdasarkan user role

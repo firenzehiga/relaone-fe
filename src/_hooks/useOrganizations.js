@@ -1,6 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as organizationService from "@/_services/organizationService";
-import { useUserRole } from "./useAuth";
+import { useAuthStore, useUserRole } from "@/_hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { parseApiError } from "@/utils";
+import toast from "react-hot-toast";
 
 /**
  * Ambil semua data organisasi (khusus admin).
@@ -92,12 +95,31 @@ export const useAdminOrganizationById = (id) => {
  * @invalidates ["organizations"]
  */
 export const useAdminCreateOrganizationMutation = () => {
+	const navigate = useNavigate();
 	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
 
 	return useMutation({
+		mutationKey: ["adminOrganizations", "create"],
 		mutationFn: organizationService.adminCreateOrganization,
-		onSuccess: () => {
-			queryClient.invalidateQueries(["adminOrganizations"]);
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: async () => {
+			await queryClient.invalidateQueries(["adminOrganizations"]);
+
+			navigate("/admin/organizations");
+
+			setLoading(false);
+			toast.success("Organisasi berhasil dibuat", { duration: 2000 });
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Create organization failed";
+			setError(msg);
+			toast.error(msg, { duration: 4000 });
+			console.error("Create organization error:", error);
 		},
 	});
 };
@@ -112,14 +134,32 @@ export const useAdminCreateOrganizationMutation = () => {
  * @invalidates ["organizations"]
  */
 export const useAdminUpdateOrganizationMutation = () => {
+	const navigate = useNavigate();
+
 	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
 
 	return useMutation({
+		mutationKey: ["adminOrganizations", "update"],
 		mutationFn: ({ id, data }) =>
 			organizationService.adminUpdateOrganization(id, data),
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
 		onSuccess: async (_, id) => {
 			await queryClient.invalidateQueries(["adminOrganizations"]);
-			await queryClient.invalidateQueries(["adminOrganizations", id]);
+			navigate("/admin/organizations");
+
+			setLoading(false);
+			toast.success("Organisasi berhasil diupdate", { duration: 2000 });
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Update organization failed";
+			setError(msg);
+			toast.error(msg, { duration: 4000 });
+			console.error("Update organization error:", error);
 		},
 	});
 };

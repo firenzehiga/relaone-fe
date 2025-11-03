@@ -5,16 +5,43 @@ import api from "@/_api";
  * Mengambil profile user yang sedang login
  */
 export const getUserProfile = async () => {
-	const response = await api.get("/user/profile");
-	return response.data.data || response.data;
-};
+	try {
+		const response = await api.get("/user/profile");
 
+		if (response.data.success) {
+			return response.data;
+		} else {
+			throw new Error(response.data.message || "Failed to get user profile");
+		}
+	} catch (error) {
+		// Jika ada response dari server, lempar data (mengandung message & errors)
+		if (error.response?.data) {
+			throw error.response.data;
+		}
+		// Jika tidak ada response (network/CORS), lempar error asli
+		throw error;
+	}
+};
 /**
  * Update profile user
  */
 export const updateUserProfile = async (userData) => {
-	const response = await api.put("/user/profile", userData);
-	return response.data.data || response.data;
+	try {
+		const response = await api.post("/user/profile", userData); // Tetap POST dengan _method: PUT di payload
+
+		if (response.data.success) {
+			return response.data;
+		} else {
+			throw new Error(response.data.message || "Failed to update user profile");
+		}
+	} catch (error) {
+		// Jika ada response dari server, lempar data (mengandung message & errors)
+		if (error.response?.data) {
+			throw error.response.data;
+		}
+		console.log("Error updating profile:", error);
+		throw error;
+	}
 };
 
 /**

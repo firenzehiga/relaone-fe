@@ -16,6 +16,8 @@ import LandingPage from "@/pages/LandingPage";
 import EventsPage from "@/pages/EventsPage";
 import OrganizationsPage from "@/pages/OrganizationsPage";
 import DetailEventPage from "@/pages/DetailEventPage";
+import ProfilePage from "@/pages/ProfilePage";
+import EditProfilePage from "@/pages/EditProfilePage";
 
 // Auth Pages
 import LoginPage from "@/pages/auth/LoginPage";
@@ -96,6 +98,10 @@ function App() {
 						<Route path="details/:eventId" element={<DetailEventPage />} />
 					</Route>
 					<Route path="organizations" element={<OrganizationsPage />} />
+					<Route path="profile">
+						<Route index element={<ProfilePage />} />
+						<Route path="edit" element={<EditProfilePage />} />
+					</Route>
 				</Route>
 
 				{/* ADMIN ROUTES */}

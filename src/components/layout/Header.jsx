@@ -11,16 +11,14 @@ import {
 	User,
 	LogIn,
 	UserPlus,
-	Settings,
 	LogOut,
 	Users,
 	MapPin,
-	User2,
-	ShieldCheck,
 } from "lucide-react";
 import DynamicButton from "@/components/ui/Button";
 import Avatar from "@/components/ui/Avatar";
 import { useAuthStore, useLogout } from "@/_hooks/useAuth";
+import { getImageUrl } from "@/utils";
 
 /**
  * Komponen Header navigasi utama aplikasi
@@ -158,7 +156,11 @@ export default function Header() {
 								<button
 									onClick={() => setUserMenuOpen(!userMenuOpen)}
 									className="flex items-center space-x-2 p-2 rounded-xl hover:bg-emerald-50 transition-colors">
-									<Avatar src={user?.avatar} fallback={user?.nama} size="sm" />
+									<Avatar
+										src={getImageUrl(`foto_profil/${user?.foto_profil}`)}
+										fallback={user?.nama}
+										size="sm"
+									/>
 								</button>
 
 								<AnimatePresence mode="wait">
