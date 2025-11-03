@@ -77,8 +77,7 @@ export default function Header() {
 	// Jika verifikasi organisasi masih "pending", hanya tampilkan Dashboard.
 	if (isAuthenticated && user?.role === "organization") {
 		// mengecek status verifikasi organisasi dari authUser di local storage
-		const orgStatus =
-			user?.organization?.status_verifikasi ?? user?.status_verifikasi;
+		const orgStatus = user?.role_data?.status_verifikasi;
 		if (orgStatus === "pending") {
 			navItems = [
 				{
