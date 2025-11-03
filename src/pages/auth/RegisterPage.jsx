@@ -348,7 +348,7 @@ export default function RegisterPage() {
 									<label
 										htmlFor="password"
 										className="block text-sm font-medium text-gray-700 mb-1">
-										Password *
+										Password <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
 										<Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -383,7 +383,7 @@ export default function RegisterPage() {
 									<label
 										htmlFor="password_confirmation"
 										className="block text-sm font-medium text-gray-700 mb-1">
-										Confirm Password *
+										Confirm Password <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
 										<Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -467,7 +467,7 @@ export default function RegisterPage() {
 															value={formData.organization_deskripsi}
 															onChange={handleInputChange}
 															className="w-full pl-3 pr-4 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
-															placeholder="A short description (optional)"
+															placeholder="A short description"
 															disabled={isLoading}
 															rows={2}
 														/>
