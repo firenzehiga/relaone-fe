@@ -3,7 +3,7 @@ import { useAuthStore, useUserRole } from "./useAuth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { parseApiError } from "@/utils";
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
+import { showToast } from "@/components/ui/Toast";
 
 // === ADMIN HOOKS ===
 /**
@@ -75,13 +75,26 @@ export const useAdminUpdateFeedbackMutation = () => {
 			navigate("/admin/feedbacks");
 
 			setLoading(false);
-			toast.success("Feedback berhasil diperbarui", { duration: 2000 });
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "Feedback berhasil diperbarui",
+				duration: 3000,
+				position: "top-center",
+			});
 		},
 		onError: (error) => {
 			setLoading(false);
 			const msg = parseApiError(error) || "Update location failed";
 			setError(msg);
-			toast.error(msg, { duration: 4000 });
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali logic yang Anda buat.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
 			console.error("Update location error:", error);
 		},
 	});

@@ -2,8 +2,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as eventService from "@/_services/eventService";
 import { useAuthStore, useUserRole } from "./useAuth";
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
 import { parseApiError } from "@/utils";
+import { showToast } from "@/components/ui/Toast";
 
 // === PUBLIC HOOKS ===
 /**
@@ -118,13 +118,26 @@ export const useAdminCreateEventMutation = () => {
 			navigate("/admin/events");
 
 			setLoading(false);
-			toast.success("Event berhasil dibuat", { duration: 2000 });
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "Event berhasil dibuat",
+				duration: 3000,
+				position: "top-center",
+			});
 		},
 		onError: (error) => {
 			setLoading(false);
 			const msg = parseApiError(error) || "Create event failed";
 			setError(msg);
-			toast.error(msg, { duration: 4000 });
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali logic yang Anda buat.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
 		},
 	});
 };
@@ -159,13 +172,26 @@ export const useAdminUpdateEventMutation = () => {
 			navigate("/admin/events");
 
 			setLoading(false);
-			toast.success("Event berhasil diperbarui", { duration: 2000 });
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "Event berhasil diperbarui",
+				duration: 3000,
+				position: "top-center",
+			});
 		},
 		onError: (error) => {
 			setLoading(false);
 			const msg = parseApiError(error) || "Update event failed";
 			setError(msg);
-			toast.error(msg, { duration: 4000 });
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali logic yang Anda buat.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
 		},
 	});
 };

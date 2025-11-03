@@ -3,7 +3,7 @@ import * as eventParticipantService from "@/_services/eventParticipantService";
 import { useAuthStore, useUserRole } from "./useAuth";
 import { useNavigate } from "react-router-dom";
 import { parseApiError } from "@/utils";
-import toast from "react-hot-toast";
+import { showToast } from "@/components/ui/Toast";
 
 /** PUBLIC HOOKS
  *
@@ -123,13 +123,26 @@ export const useAdminCreateParticipantMutation = () => {
 			await queryClient.invalidateQueries(["adminParticipants"]);
 			navigate("/admin/event-participants");
 			setLoading(false);
-			toast.success("Participant berhasil dibuat", { duration: 2000 });
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "Participant berhasil dibuat",
+				duration: 3000,
+				position: "top-center",
+			});
 		},
 		onError: (error) => {
 			setLoading(false);
 			const msg = parseApiError(error) || "Create location failed";
 			setError(msg);
-			toast.error(msg, { duration: 4000 });
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali logic yang Anda buat.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
 			console.error("Create location error:", error);
 		},
 	});
@@ -163,13 +176,26 @@ export const useAdminUpdateParticipantMutation = () => {
 			navigate("/admin/event-participants");
 
 			setLoading(false);
-			toast.success("Participant berhasil diperbarui", { duration: 2000 });
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "Participant berhasil diperbarui",
+				duration: 3000,
+				position: "top-center",
+			});
 		},
 		onError: (error) => {
 			setLoading(false);
 			const msg = parseApiError(error) || "Update participant failed";
 			setError(msg);
-			toast.error(msg, { duration: 4000 });
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali logic yang Anda buat.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
 			console.error("Update participant error:", error);
 		},
 	});

@@ -3,7 +3,7 @@ import * as organizationService from "@/_services/organizationService";
 import { useAuthStore, useUserRole } from "@/_hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { parseApiError } from "@/utils";
-import toast from "react-hot-toast";
+import { showToast } from "@/components/ui/Toast";
 
 /**
  * Ambil semua data organisasi (khusus admin).
@@ -112,13 +112,26 @@ export const useAdminCreateOrganizationMutation = () => {
 			navigate("/admin/organizations");
 
 			setLoading(false);
-			toast.success("Organisasi berhasil dibuat", { duration: 2000 });
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "Organisasi berhasil dibuat",
+				duration: 3000,
+				position: "top-center",
+			});
 		},
 		onError: (error) => {
 			setLoading(false);
 			const msg = parseApiError(error) || "Create organization failed";
 			setError(msg);
-			toast.error(msg, { duration: 4000 });
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali logic yang Anda buat.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
 			console.error("Create organization error:", error);
 		},
 	});
@@ -152,13 +165,26 @@ export const useAdminUpdateOrganizationMutation = () => {
 			navigate("/admin/organizations");
 
 			setLoading(false);
-			toast.success("Organisasi berhasil diupdate", { duration: 2000 });
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "Organisasi berhasil diperbarui",
+				duration: 3000,
+				position: "top-center",
+			});
 		},
 		onError: (error) => {
 			setLoading(false);
 			const msg = parseApiError(error) || "Update organization failed";
 			setError(msg);
-			toast.error(msg, { duration: 4000 });
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali logic yang Anda buat.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
 			console.error("Update organization error:", error);
 		},
 	});

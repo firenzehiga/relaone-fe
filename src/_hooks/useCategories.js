@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import * as categoryService from "../_services/categoryService";
+import * as categoryService from "@/_services/categoryService";
 import { useAuthStore, useUserRole } from "./useAuth";
-import toast from "react-hot-toast";
 import { parseApiError } from "@/utils";
 import { useNavigate } from "react-router-dom";
+import { showToast } from "@/components/ui/Toast";
 
 // === PUBLIC HOOKS ===
 /**
@@ -84,13 +84,26 @@ export const useAdminCreateCategoryMutation = () => {
 			navigate("/admin/categories");
 
 			setLoading(false);
-			toast.success("Kategori berhasil dibuat", { duration: 2000 });
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "Kategori berhasil dibuat",
+				duration: 3000,
+				position: "top-center",
+			});
 		},
 		onError: (error) => {
 			setLoading(false);
 			const msg = parseApiError(error) || "Create kategori failed";
 			setError(msg);
-			toast.error(msg, { duration: 4000 });
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali logic yang Anda buat.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
 			console.error("Create kategori error:", error);
 		},
 	});
@@ -122,13 +135,26 @@ export const useAdminUpdateCategoryMutation = () => {
 			navigate("/admin/categories");
 
 			setLoading(false);
-			toast.success("Kategori berhasil diperbarui", { duration: 2000 });
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "Kategori berhasil diperbarui",
+				duration: 3000,
+				position: "top-center",
+			});
 		},
 		onError: (error) => {
 			setLoading(false);
 			const msg = parseApiError(error) || "Update Kategori failed";
 			setError(msg);
-			toast.error(msg, { duration: 4000 });
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali logic yang Anda buat.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
 			console.error("Update Kategori error:", error);
 		},
 	});

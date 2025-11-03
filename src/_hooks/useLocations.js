@@ -3,7 +3,7 @@ import { useAuthStore, useUserRole } from "./useAuth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { parseApiError } from "@/utils";
-import toast from "react-hot-toast";
+import { showToast } from "@/components/ui/Toast";
 
 // === ADMIN HOOKS ===
 /**
@@ -72,13 +72,26 @@ export const useAdminCreateLocationMutation = () => {
 			navigate("/admin/locations");
 
 			setLoading(false);
-			toast.success("Lokasi berhasil dibuat", { duration: 2000 });
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "Lokasi berhasil dibuat",
+				duration: 3000,
+				position: "top-center",
+			});
 		},
 		onError: (error) => {
 			setLoading(false);
 			const msg = parseApiError(error) || "Create location failed";
 			setError(msg);
-			toast.error(msg, { duration: 4000 });
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali logic yang Anda buat.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
 			console.error("Create location error:", error);
 		},
 	});
@@ -110,8 +123,11 @@ export const useAdminUpdateLocationMutation = () => {
 			navigate("/admin/locations");
 
 			setLoading(false);
-			toast.success("Lokasi berhasil diperbarui", {
-				duration: 2000,
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "Lokasi berhasil diperbarui",
+				duration: 3000,
 				position: "top-center",
 			});
 		},
@@ -119,7 +135,14 @@ export const useAdminUpdateLocationMutation = () => {
 			setLoading(false);
 			const msg = parseApiError(error) || "Update location failed";
 			setError(msg);
-			toast.error(msg, { duration: 4000 });
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali logic yang Anda buat.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
 			console.error("Update location error:", error);
 		},
 	});
