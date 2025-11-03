@@ -29,6 +29,8 @@ import NotFound from "@/components/fallback/NotFound";
 
 // Admin Pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
+import AdminProfilePage from "@/pages/admin/profiles/ProfilePage";
+import AdminEditProfilePage from "@/pages/admin/profiles/EditProfilePage";
 
 import AdminUser from "@/pages/admin/users/UserRead";
 import AdminUserCreate from "@/pages/admin/users/UserCreate";
@@ -50,11 +52,17 @@ import AdminLocation from "@/pages/admin/locations/LocationRead";
 import AdminLocationCreate from "@/pages/admin/locations/LocationCreate";
 import AdminLocationEdit from "@/pages/admin/locations/LocationEdit";
 
+import AdminCategory from "@/pages/admin/categories/CategoryRead";
+import AdminCategoryCreate from "@/pages/admin/categories/CategoryCreate";
+import AdminCategoryEdit from "@/pages/admin/categories/CategoryEdit";
+
 import AdminFeedback from "@/pages/admin/feedbacks/FeedbackRead";
 import AdminFeedbackEdit from "@/pages/admin/feedbacks/FeedbackEdit";
 
 // Organization Pages
 import OrganizationsDashboard from "@/pages/organization/OrganizationDashboard";
+import OrganizationProfilePage from "@/pages/organization/profiles/ProfilePage";
+import OrganizationEditProfilePage from "@/pages/organization/profiles/EditProfilePage";
 
 import OrganizationEvent from "@/pages/organization/events/EventRead";
 import OrganizationEventCreate from "@/pages/organization/events/EventCreate";
@@ -69,9 +77,6 @@ import OrganizationLocationCreate from "@/pages/organization/locations/LocationC
 import OrganizationLocationEdit from "@/pages/organization/locations/LocationEdit";
 import AdminLayout from "./layout/AdminLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
-import AdminCategory from "./pages/admin/categories/CategoryRead";
-import AdminCategoryCreate from "./pages/admin/categories/CategoryCreate";
-import AdminCategoryEdit from "./pages/admin/categories/CategoryEdit";
 /**
  * Komponen utama aplikasi volunteer platform
  * Mengatur routing dengan layout yang menggunakan Outlet
@@ -113,7 +118,10 @@ function App() {
 						</AdminRoute>
 					}>
 					<Route path="dashboard" element={<AdminDashboard />} />
-
+					<Route path="profile">
+						<Route index element={<AdminProfilePage />} />
+						<Route path="edit" element={<AdminEditProfilePage />} />
+					</Route>
 					<Route path="events">
 						<Route index element={<AdminEvent />} />
 						<Route path="create" element={<AdminEventCreate />} />
@@ -162,7 +170,10 @@ function App() {
 						</OrganizationRoute>
 					}>
 					<Route path="dashboard" element={<OrganizationsDashboard />} />
-
+					<Route path="profile">
+						<Route index element={<OrganizationProfilePage />} />
+						<Route path="edit" element={<OrganizationEditProfilePage />} />
+					</Route>
 					<Route path="event-participants">
 						<Route index element={<OrganizationEventParticipant />} />
 					</Route>

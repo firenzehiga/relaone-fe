@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -35,6 +35,10 @@ export default function AdminHeader() {
 	const [desktopSubmenuOpen, setDesktopSubmenuOpen] = useState(null);
 	const [mobileSubmenusOpen, setMobileSubmenusOpen] = useState({});
 	const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+	// Refs untuk mendeteksi klik di luar
+	const desktopSubmenuRef = useRef(null);
+	const userMenuRef = useRef(null);
 
 	const navigate = useNavigate();
 	const { user, isAuthenticated } = useAuthStore();
@@ -80,6 +84,32 @@ export default function AdminHeader() {
 		setMobileSubmenusOpen((s) => ({ ...s, [name]: !s[name] }));
 	};
 
+	// Effect untuk menutup submenu ketika klik di luar
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			// Tutup desktop submenu jika klik di luar
+			if (
+				desktopSubmenuRef.current &&
+				!desktopSubmenuRef.current.contains(event.target)
+			) {
+				setDesktopSubmenuOpen(null);
+			}
+
+			// Tutup user menu jika klik di luar
+			if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+				setUserMenuOpen(false);
+			}
+		};
+
+		// Tambahkan event listener
+		document.addEventListener("mousedown", handleClickOutside);
+
+		// Cleanup event listener
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, []);
+
 	return (
 		<header className="w-full sticky top-0 z-40 bg-white/90 backdrop-blur-lg border-b border-gray-200/50 shadow-sm">
 			<div className="w-full px-4 sm:px-6 lg:px-8">
@@ -109,6 +139,7 @@ export default function AdminHeader() {
 								return (
 									<div
 										key={item.name}
+										ref={desktopSubmenuRef}
 										className="relative"
 										onMouseEnter={() => setDesktopSubmenuOpen(item.name)}
 										onMouseLeave={() => setDesktopSubmenuOpen(null)}>
@@ -118,6 +149,11 @@ export default function AdminHeader() {
 													? "text-emerald-600 bg-emerald-50 font-semibold"
 													: "text-gray-700 hover:text-emerald-600 hover:bg-emerald-50"
 											}`}
+											onClick={() =>
+												setDesktopSubmenuOpen(
+													desktopSubmenuOpen === item.name ? null : item.name
+												)
+											}
 											aria-expanded={desktopSubmenuOpen === item.name}>
 											<item.icon
 												size={16}
@@ -175,7 +211,7 @@ export default function AdminHeader() {
 					<div className="flex items-center space-x-4">
 						{/* User Menu */}
 						{isAuthenticated ? (
-							<div className="relative">
+							<div className="relative" ref={userMenuRef}>
 								<button
 									onClick={() => setUserMenuOpen(!userMenuOpen)}
 									className="flex items-center space-x-2 p-2 rounded-xl hover:bg-emerald-50 transition-colors">
@@ -203,14 +239,12 @@ export default function AdminHeader() {
 												<p className="text-xs text-gray-500">{user?.email}</p>
 											</div>
 											<div className="p-2">
-												<button className="flex items-center gap-3 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+												<Link
+													to="/admin/profile"
+													className="flex items-center gap-3 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
 													<User size={16} />
 													<span>Profile</span>
-												</button>
-												<button className="flex items-center gap-3 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
-													<Settings size={16} />
-													<span>Settings</span>
-												</button>
+												</Link>
 											</div>
 											<div className="p-2 border-t border-gray-100">
 												<button

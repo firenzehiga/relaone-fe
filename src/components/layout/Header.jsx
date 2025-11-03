@@ -170,22 +170,35 @@ export default function Header() {
 											animate={{ opacity: 1, y: 0 }}
 											exit={{ opacity: 0, y: -10 }}
 											className="absolute right-0 mt-2 w-56 bg-white backdrop-blur-lg border border-gray-200/50 rounded-2xl shadow-xl">
-											<Link
-												to="/profile"
-												className="flex items-center px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors rounded-t-xl"
-												onClick={() => setUserMenuOpen(false)}>
-												<User size={18} className="mr-3" />
-												<span className="font-medium">Profile</span>
-											</Link>
-											{user?.role === "volunteer" && (
+											{user?.role === "volunteer" ? (
+												<>
+													<Link
+														to="/profile"
+														className="flex items-center px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors rounded-t-xl"
+														onClick={() => setUserMenuOpen(false)}>
+														<User size={18} className="mr-3" />
+														<span className="font-medium">Profile</span>
+													</Link>
+													<Link
+														to="/my-registrations"
+														className="flex items-center px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors rounded-lg"
+														onClick={() => setUserMenuOpen(false)}>
+														<Calendar size={18} className="mr-3" />
+														<span className="font-medium">
+															Pendaftaran Saya
+														</span>
+													</Link>
+												</>
+											) : (
 												<Link
-													to="/my-registrations"
-													className="flex items-center px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors rounded-lg"
+													to="/organization/profile"
+													className="flex items-center px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors rounded-t-xl"
 													onClick={() => setUserMenuOpen(false)}>
-													<Calendar size={18} className="mr-3" />
-													<span className="font-medium">Pendaftaran Saya</span>
+													<User size={18} className="mr-3" />
+													<span className="font-medium">Profile</span>
 												</Link>
 											)}
+
 											<hr className=" border-gray-100" />
 											<button
 												onClick={handleLogout}

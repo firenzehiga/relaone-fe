@@ -13,7 +13,7 @@ import {
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { useUserProfile } from "@/_hooks/useUsers";
-import { getImageUrl, getVolunteerEventBadge } from "@/utils";
+import { getImageUrl } from "@/utils";
 import Skeleton from "@/components/ui/Skeleton";
 
 /**
@@ -21,7 +21,7 @@ import Skeleton from "@/components/ui/Skeleton";
  * Menampilkan informasi lengkap profile user yang sedang login
  */
 
-export default function ProfilePage() {
+export default function AdminProfilePage() {
 	const { data: profile, isLoading, error } = useUserProfile();
 
 	if (isLoading) {
@@ -127,36 +127,6 @@ export default function ProfilePage() {
 										<User className="w-16 h-16 text-white" />
 									</div>
 								)}
-
-								{/* Event Badge - Top Right */}
-								{(() => {
-									const badge = getVolunteerEventBadge(
-										profile?.analytics?.events_participated_count
-									);
-									const BadgeIcon = badge.icon;
-									return (
-										<div className="absolute -top-2 -right-2">
-											<div
-												className={`relative bg-gradient-to-r ${badge.bgGradient} p-2 rounded-full shadow-lg border-2 border-white group hover:scale-110 transition-transform duration-300`}>
-												<BadgeIcon className="w-4 h-4 text-white" />
-
-												{/* Tooltip */}
-												<div className="absolute bottom-full right-0 mb-2 w-32 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-													<div className="bg-gray-900 text-white text-xs rounded-lg py-2 px-3 shadow-lg">
-														<div className="font-semibold">{badge.title}</div>
-														<div className="text-gray-300">
-															{badge.subtitle}
-														</div>
-														{/* Arrow */}
-														<div className="absolute top-full right-3 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-													</div>
-												</div>
-											</div>
-										</div>
-									);
-								})()}
-
-								{/* Role Badge - Bottom */}
 								<div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2">
 									<span
 										className={`px-2 py-1 rounded-full text-xs font-medium border ${getRoleBadgeColor(
@@ -207,14 +177,6 @@ export default function ProfilePage() {
 											</label>
 											<p className="text-gray-900 font-medium text-sm">
 												{profile?.nama || "Tidak tersedia"}
-											</p>
-										</div>
-										<div>
-											<label className="text-xs font-medium text-gray-500 block mb-1">
-												Jenis Kelamin
-											</label>
-											<p className="text-gray-900 font-medium text-sm">
-												{profile?.jenis_kelamin || "Tidak tersedia"}
 											</p>
 										</div>
 
@@ -294,81 +256,14 @@ export default function ProfilePage() {
 									</h3>
 								</div>
 
-								<div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-									<div className="space-y-4">
-										<div>
-											<label className="text-xs font-medium text-gray-500 block mb-1">
-												Bio
-											</label>
-											<p className="text-gray-900 text-sm leading-relaxed">
-												{profile?.bio || "Belum ada bio yang ditambahkan"}
-											</p>
-										</div>
-
-										<div>
-											<label className="text-xs font-medium text-gray-500 block mb-1">
-												Minat Volunteering
-											</label>
-											<p className="text-gray-900 text-sm leading-relaxed">
-												{profile?.interests ||
-													"Belum ada minat yang ditambahkan"}
-											</p>
-										</div>
-									</div>
-
-									<div className="space-y-4">
-										<div>
-											<label className="text-xs font-medium text-gray-500 block mb-1">
-												Event yang Diikuti
-											</label>
-											<div className="flex items-center space-x-3">
-												{(() => {
-													const badge = getVolunteerEventBadge(
-														profile?.analytics?.events_participated_count
-													);
-													const BadgeIcon = badge.icon;
-													return (
-														<>
-															<div
-																className={`flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r ${badge.bgGradient}`}>
-																<BadgeIcon className="w-4 h-4 text-white" />
-															</div>
-															<div>
-																<p className="text-gray-900 font-semibold text-sm">
-																	{profile?.analytics
-																		?.events_participated_count || 0}{" "}
-																	Event
-																</p>
-																<p
-																	className={`text-xs font-medium ${
-																		badge.color.split(" ")[1]
-																	}`}>
-																	{badge.title}
-																</p>
-															</div>
-														</>
-													);
-												})()}
-											</div>
-										</div>
-
-										<div>
-											<label className="text-xs font-medium text-gray-500 block mb-1">
-												Level Volunteer
-											</label>
-											{(() => {
-												const badge = getVolunteerEventBadge(
-													profile?.events_participated_count
-												);
-												return (
-													<span
-														className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${badge.color}`}>
-														<badge.icon className="w-3 h-3 mr-1" />
-														{badge.title}
-													</span>
-												);
-											})()}
-										</div>
+								<div className="space-y-4">
+									<div>
+										<label className="text-xs font-medium text-gray-500 block mb-1">
+											Bio
+										</label>
+										<p className="text-gray-900 text-sm leading-relaxed">
+											{profile?.bio || "Belum ada bio yang ditambahkan"}
+										</p>
 									</div>
 								</div>
 							</div>

@@ -9,9 +9,10 @@ import { parseApiError } from "@/utils";
 // Ambil profile (sebelumnya useProfile)
 export const useUserProfile = () => {
 	const { isAuthenticated } = useAuthStore();
+	const currentRole = useUserRole();
 
 	return useQuery({
-		queryKey: ["userProfile"],
+		queryKey: ["userProfile", currentRole],
 		queryFn: async () => {
 			const res = await userService.getUserProfile();
 			return res.data;
@@ -43,7 +44,20 @@ export const useUpdateUserMutation = () => {
 				updateUser(userData); // Update user di localStorage dan auth store
 			}
 			await queryClient.invalidateQueries(["userProfile"]); // Invalidate queries untuk refresh cache
-			navigate("/profile");
+
+			const userRole = userData?.role;
+			switch (userRole) {
+				case "admin":
+					navigate("/admin/profile");
+					break;
+				case "organization":
+					navigate("/organization/profile");
+					break;
+				case "volunteer":
+				default:
+					navigate("/profile");
+					break;
+			}
 
 			setLoading(false);
 

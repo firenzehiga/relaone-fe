@@ -269,3 +269,20 @@ export const extractPlaceFromPath = (url) => {
 	}
 	return "";
 };
+
+// Export volunteer badge utilities
+export {
+	getVolunteerEventBadge,
+	getAllVolunteerBadgeLevels,
+	getVolunteerProgress,
+	checkLevelUp,
+} from "./volunteerBadges";
+
+// Export organization badge utilities
+export {
+	getOrganizationEventBadge,
+	getOrganizationVerificationBadge,
+	getAllOrganizationBadgeLevels,
+	getOrganizationProgress,
+	checkOrganizationLevelUp,
+} from "./organizationBadges";

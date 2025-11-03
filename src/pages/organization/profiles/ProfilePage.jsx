@@ -8,20 +8,25 @@ import {
 	Calendar,
 	Edit3,
 	Shield,
-	Award,
+	Building2,
+	Globe,
 } from "lucide-react";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { useUserProfile } from "@/_hooks/useUsers";
-import { getImageUrl, getVolunteerEventBadge } from "@/utils";
+import {
+	getImageUrl,
+	getOrganizationEventBadge,
+	getOrganizationVerificationBadge,
+} from "@/utils";
 import Skeleton from "@/components/ui/Skeleton";
 
 /**
- * Halaman Profile Volunteer
- * Menampilkan informasi lengkap profile user yang sedang login
+ * Halaman Profile Organization
+ * Menampilkan informasi lengkap profile organization yang sedang login
  */
 
-export default function ProfilePage() {
+export default function OrganizationProfilePage() {
 	const { data: profile, isLoading, error } = useUserProfile();
 
 	if (isLoading) {
@@ -103,10 +108,10 @@ export default function ProfilePage() {
 				{/* Header Section - Compact */}
 				<motion.div variants={itemVariants} className="text-center mb-6">
 					<h1 className="text-2xl font-bold text-gray-900 mb-1">
-						Profile Saya
+						Profile Organisasi
 					</h1>
 					<p className="text-gray-600 text-sm">
-						Kelola informasi profile Anda sebagai volunteer
+						Kelola informasi profile organisasi Anda
 					</p>
 				</motion.div>
 
@@ -116,22 +121,24 @@ export default function ProfilePage() {
 						<Card className="text-center h-fit">
 							{/* Avatar - Larger */}
 							<div className="relative mb-4">
-								{profile?.foto_profil ? (
+								{profile?.role_data?.logo ? (
 									<img
-										src={getImageUrl(`foto_profil/${profile?.foto_profil}`)}
-										alt="Avatar"
+										src={getImageUrl(
+											`organizations/${profile?.role_data?.logo}`
+										)}
+										alt="Organization Logo"
 										className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-lg"
 									/>
 								) : (
 									<div className="w-32 h-32 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full mx-auto flex items-center justify-center border-4 border-white shadow-lg">
-										<User className="w-16 h-16 text-white" />
+										<Building2 className="w-16 h-16 text-white" />
 									</div>
 								)}
 
 								{/* Event Badge - Top Right */}
 								{(() => {
-									const badge = getVolunteerEventBadge(
-										profile?.analytics?.events_participated_count
+									const badge = getOrganizationEventBadge(
+										profile?.analytics?.events_created_count
 									);
 									const BadgeIcon = badge.icon;
 									return (
@@ -141,7 +148,7 @@ export default function ProfilePage() {
 												<BadgeIcon className="w-4 h-4 text-white" />
 
 												{/* Tooltip */}
-												<div className="absolute bottom-full right-0 mb-2 w-32 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+												<div className="absolute bottom-full right-0 mb-2 w-36 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
 													<div className="bg-gray-900 text-white text-xs rounded-lg py-2 px-3 shadow-lg">
 														<div className="font-semibold">{badge.title}</div>
 														<div className="text-gray-300">
@@ -149,6 +156,36 @@ export default function ProfilePage() {
 														</div>
 														{/* Arrow */}
 														<div className="absolute top-full right-3 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+													</div>
+												</div>
+											</div>
+										</div>
+									);
+								})()}
+
+								{/* Verification Badge - Top Left */}
+								{(() => {
+									const verificationBadge = getOrganizationVerificationBadge(
+										profile?.role_data?.status_verifikasi
+									);
+									const VerificationIcon = verificationBadge.icon;
+									return (
+										<div className="absolute -top-2 -left-2">
+											<div
+												className={`relative ${verificationBadge.bgColor} p-2 rounded-full shadow-lg border-2 border-white group hover:scale-110 transition-transform duration-300`}>
+												<VerificationIcon className="w-4 h-4 text-white" />
+
+												{/* Tooltip */}
+												<div className="absolute bottom-full left-0 mb-2 w-36 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+													<div className="bg-gray-900 text-white text-xs rounded-lg py-2 px-3 shadow-lg">
+														<div className="font-semibold">
+															{verificationBadge.title}
+														</div>
+														<div className="text-gray-300">
+															{verificationBadge.description}
+														</div>
+														{/* Arrow */}
+														<div className="absolute top-full left-3 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
 													</div>
 												</div>
 											</div>
@@ -169,14 +206,16 @@ export default function ProfilePage() {
 
 							{/* Basic Info - Compact */}
 							<h2 className="text-lg font-bold text-gray-900 mb-1">
-								{profile?.nama || "Nama tidak tersedia"}
+								{profile?.role_data?.nama ||
+									profile?.nama ||
+									"Nama tidak tersedia"}
 							</h2>
 							<p className="text-gray-600 mb-3 text-sm">
 								{profile?.email || "Email tidak tersedia"}
 							</p>
 
 							{/* Edit Button */}
-							<Link to="/profile/edit">
+							<Link to="/organization/profile/edit">
 								<Button variant="success" className="w-full" size="sm">
 									<Edit3 className="w-3 h-3 mr-2" />
 									Edit Profile
@@ -194,7 +233,7 @@ export default function ProfilePage() {
 								<div className="flex items-center mb-6">
 									<User className="w-5 h-5 text-blue-500 mr-2" />
 									<h3 className="text-lg font-bold text-gray-900">
-										Informasi Personal
+										Informasi Pengguna
 									</h3>
 								</div>
 
@@ -285,12 +324,12 @@ export default function ProfilePage() {
 							{/* Divider */}
 							<div className="border-t border-gray-200 mb-8"></div>
 
-							{/* Informasi Tambahan Section */}
+							{/* Informasi Organisasi Section */}
 							<div>
 								<div className="flex items-center mb-6">
-									<Award className="w-5 h-5 text-purple-500 mr-2" />
+									<Building2 className="w-5 h-5 text-purple-500 mr-2" />
 									<h3 className="text-lg font-bold text-gray-900">
-										Informasi Tambahan
+										Informasi Organisasi
 									</h3>
 								</div>
 
@@ -298,33 +337,53 @@ export default function ProfilePage() {
 									<div className="space-y-4">
 										<div>
 											<label className="text-xs font-medium text-gray-500 block mb-1">
-												Bio
+												Nama Organisasi
 											</label>
-											<p className="text-gray-900 text-sm leading-relaxed">
-												{profile?.bio || "Belum ada bio yang ditambahkan"}
+											<p className="text-gray-900 font-semibold text-sm">
+												{profile?.role_data?.nama || "Tidak tersedia"}
 											</p>
 										</div>
 
 										<div>
 											<label className="text-xs font-medium text-gray-500 block mb-1">
-												Minat Volunteering
+												Deskripsi Organisasi
 											</label>
 											<p className="text-gray-900 text-sm leading-relaxed">
-												{profile?.interests ||
-													"Belum ada minat yang ditambahkan"}
+												{profile?.role_data?.deskripsi ||
+													"Belum ada deskripsi organisasi"}
 											</p>
+										</div>
+
+										<div>
+											<label className="text-xs font-medium text-gray-500 block mb-1">
+												Website Organisasi
+											</label>
+											{profile?.role_data?.website ? (
+												<div className="flex items-center">
+													<Globe className="w-3 h-3 text-gray-400 mr-2" />
+													<a
+														href={profile.role_data.website}
+														target="_blank"
+														rel="noopener noreferrer"
+														className="text-blue-600 hover:text-blue-800 text-sm underline">
+														{profile.role_data.website}
+													</a>
+												</div>
+											) : (
+												<p className="text-gray-900 text-sm">Tidak tersedia</p>
+											)}
 										</div>
 									</div>
 
 									<div className="space-y-4">
 										<div>
 											<label className="text-xs font-medium text-gray-500 block mb-1">
-												Event yang Diikuti
+												Event yang Dibuat
 											</label>
 											<div className="flex items-center space-x-3">
 												{(() => {
-													const badge = getVolunteerEventBadge(
-														profile?.analytics?.events_participated_count
+													const badge = getOrganizationEventBadge(
+														profile?.analytics?.events_created_count
 													);
 													const BadgeIcon = badge.icon;
 													return (
@@ -335,8 +394,8 @@ export default function ProfilePage() {
 															</div>
 															<div>
 																<p className="text-gray-900 font-semibold text-sm">
-																	{profile?.analytics
-																		?.events_participated_count || 0}{" "}
+																	{profile?.analytics?.events_created_count ||
+																		0}{" "}
 																	Event
 																</p>
 																<p
@@ -354,11 +413,30 @@ export default function ProfilePage() {
 
 										<div>
 											<label className="text-xs font-medium text-gray-500 block mb-1">
-												Level Volunteer
+												Status Verifikasi
 											</label>
 											{(() => {
-												const badge = getVolunteerEventBadge(
-													profile?.events_participated_count
+												const verificationBadge =
+													getOrganizationVerificationBadge(
+														profile?.role_data?.status_verifikasi
+													);
+												return (
+													<span
+														className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${verificationBadge.color}`}>
+														<verificationBadge.icon className="w-3 h-3 mr-1" />
+														{verificationBadge.title}
+													</span>
+												);
+											})()}
+										</div>
+
+										<div>
+											<label className="text-xs font-medium text-gray-500 block mb-1">
+												Level Organisasi
+											</label>
+											{(() => {
+												const badge = getOrganizationEventBadge(
+													profile?.analytics?.events_created_count
 												);
 												return (
 													<span
