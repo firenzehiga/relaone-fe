@@ -57,6 +57,10 @@ export default function Avatar({
 					className
 				)}
 				{...props}
+				onError={(e) => {
+					e.target.onerror = null;
+					e.target.src = getFallbackInitials(fallback);
+				}}
 			/>
 		);
 	}
