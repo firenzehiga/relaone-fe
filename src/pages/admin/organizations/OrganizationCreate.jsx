@@ -291,7 +291,7 @@ export default function AdminOrganizationCreate() {
 							variant="success"
 							loading={isLoading}
 							disabled={isLoading}>
-							{isLoading ? "Membuat..." : "Simpan Organisasi"}
+							{isLoading ? "Membuat..." : "Buat Organisasi"}
 						</Button>
 					</div>
 				</form>

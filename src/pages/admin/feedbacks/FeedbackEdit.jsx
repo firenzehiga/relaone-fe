@@ -10,8 +10,9 @@ import {
 import RatingStars from "@/components/ui/RatingStars";
 import Skeleton from "@/components/ui/Skeleton";
 import { parseApiError } from "@/utils";
-import DynamicButton from "@/components/ui/Button";
+import Button from "@/components/ui/Button";
 import NotFound from "@/components/fallback/NotFound";
+import { useAuthStore } from "@/_hooks/useAuth";
 
 export default function AdminFeedbackEdit() {
 	const { id } = useParams();
@@ -26,7 +27,7 @@ export default function AdminFeedbackEdit() {
 	const updateMutation = useAdminUpdateFeedbackMutation();
 
 	const [formData, setFormData] = useState({ komentar: "", rating: 0 });
-	const [submitting, setSubmitting] = useState(false);
+	const { isLoading } = useAuthStore();
 
 	const { data: showFeedback, isLoading: showFeedbackLoading } =
 		useAdminFeedbackById(id);
@@ -53,26 +54,17 @@ export default function AdminFeedbackEdit() {
 		setFormData((s) => ({ ...s, rating: Number(value) }));
 	};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = (e) => {
 		e.preventDefault();
-		setSubmitting(true);
-		try {
-			const payload = new FormData();
-			payload.append("_method", "PUT");
-			payload.append("komentar", formData.komentar);
-			payload.append("rating", String(formData.rating));
 
-			await updateMutation.mutateAsync({ id, data: payload });
-			toast.success("Feedback berhasil diperbarui", { position: "top-center" });
-			navigate("/admin/feedbacks");
-		} catch (err) {
-			const msg = parseApiError(err);
-			toast.error(msg, { position: "top-center" });
-			console.error(err);
-		} finally {
-			setSubmitting(false);
-			isDirty.current = false;
-		}
+		const payload = new FormData();
+		payload.append("_method", "PUT");
+		payload.append("komentar", formData.komentar);
+		payload.append("rating", String(formData.rating));
+
+		updateMutation.mutateAsync({ id, data: payload });
+
+		isDirty.current = false;
 	};
 
 	if (showFeedbackLoading) return <Skeleton.FormSkeleton title="Loading..." />;
@@ -83,7 +75,7 @@ export default function AdminFeedbackEdit() {
 		<div className="max-w-6xl mx-auto p-6">
 			<div
 				className="bg-white shadow-lg rounded-lg p-6"
-				style={{ minHeight: 420, width: 900 }}>
+				style={{ minHeight: 475, width: 900 }}>
 				<header className="mb-6">
 					<h1 className="text-2xl font-semibold text-gray-900">
 						Edit Feedback
@@ -125,25 +117,20 @@ export default function AdminFeedbackEdit() {
 					</div>
 
 					<div className="flex items-center justify-end gap-3">
-						<DynamicButton
+						<Button
 							type="button"
-							variant="secondary"
+							disabled={isLoading}
+							variant="outline"
 							onClick={() => navigate("/admin/feedbacks")}>
 							Batal
-						</DynamicButton>
-						<button
+						</Button>
+						<Button
 							type="submit"
-							disabled={submitting}
-							className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500">
-							{submitting ? (
-								<>
-									<Loader2 className="animate-spin h-4 w-4 mr-1 mb-1 inline" />
-									Menyimpan...
-								</>
-							) : (
-								"Simpan Feedback"
-							)}
-						</button>
+							variant="success"
+							loading={isLoading}
+							disabled={isLoading}>
+							{isLoading ? "Menyimpan..." : "Simpan Feedback"}
+						</Button>
 					</div>
 				</form>
 			</div>

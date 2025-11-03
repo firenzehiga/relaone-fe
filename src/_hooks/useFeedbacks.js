@@ -1,6 +1,9 @@
 import * as feedbackService from "@/_services/feedbackService";
-import { useUserRole } from "./useAuth";
+import { useAuthStore, useUserRole } from "./useAuth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { parseApiError } from "@/utils";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 // === ADMIN HOOKS ===
 /**
@@ -55,13 +58,31 @@ export const useAdminFeedbackById = (id) => {
  * @invalidates ["feedbacks"]
  */
 export const useAdminUpdateFeedbackMutation = () => {
+	const navigate = useNavigate();
+
 	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
 
 	return useMutation({
+		mutationKey: ["adminFeedbacks", "update"],
 		mutationFn: ({ id, data }) => feedbackService.adminUpdateFeedback(id, data),
-		onSuccess: (_, id) => {
-			queryClient.invalidateQueries(["adminFeedbacks"]);
-			queryClient.invalidateQueries(["adminFeedbacks", id]);
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: async (_, id) => {
+			await queryClient.invalidateQueries(["adminFeedbacks"]);
+			navigate("/admin/feedbacks");
+
+			setLoading(false);
+			toast.success("Feedback berhasil diperbarui", { duration: 2000 });
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Update location failed";
+			setError(msg);
+			toast.error(msg, { duration: 4000 });
+			console.error("Update location error:", error);
 		},
 	});
 };

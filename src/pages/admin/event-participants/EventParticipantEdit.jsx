@@ -9,9 +9,10 @@ import {
 	useAdminUpdateParticipantMutation,
 } from "@/_hooks/useParticipants";
 import { parseApiError, toInputDate } from "@/utils";
-import DynamicButton from "@/components/ui/Button";
+import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
 import { showToast } from "@/components/ui/Toast";
+import { useAuthStore } from "@/_hooks/useAuth";
 
 export default function AdminEventParticipantEdit() {
 	const { id } = useParams();
@@ -34,7 +35,8 @@ export default function AdminEventParticipantEdit() {
 		tanggal_hadir: "",
 		catatan: "",
 	});
-	const [submitting, setSubmitting] = useState(false);
+
+	const { isLoading } = useAuthStore();
 
 	useEffect(() => {
 		if (!showParticipant) return;
@@ -68,36 +70,19 @@ export default function AdminEventParticipantEdit() {
 		});
 	};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = (e) => {
 		e.preventDefault();
-		setSubmitting(true);
-		try {
-			const payload = new FormData();
-			payload.append("_method", "PUT");
 
-			for (const key in formData) {
-				payload.append(key, formData[key]);
-			}
+		const payload = new FormData();
+		payload.append("_method", "PUT");
 
-			await updateMutation.mutateAsync({ id, data: payload });
-			toast.success("Participant berhasil diperbarui", {
-				position: "top-center",
-			});
-			navigate("/admin/event-participants");
-		} catch (err) {
-			const msg = parseApiError(err);
-			showToast({
-				type: "error",
-				tipIcon: "💡",
-				tipText: msg,
-				duration: 4000,
-				position: "top-center",
-			});
-			console.error(err);
-		} finally {
-			setSubmitting(false);
-			isDirty.current = false;
+		for (const key in formData) {
+			payload.append(key, formData[key]);
 		}
+
+		updateMutation.mutateAsync({ id, data: payload });
+
+		isDirty.current = false;
 	};
 
 	if (eventsLoading || volunteersLoading || showLoading)
@@ -234,25 +219,20 @@ export default function AdminEventParticipantEdit() {
 					</div>
 
 					<div className="flex items-center justify-end gap-3">
-						<DynamicButton
+						<Button
 							type="button"
-							variant="secondary"
+							variant="outline"
+							disabled={isLoading}
 							onClick={() => navigate("/admin/event-participants")}>
 							Batal
-						</DynamicButton>
-						<button
+						</Button>
+						<Button
 							type="submit"
-							disabled={submitting}
-							className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500">
-							{submitting ? (
-								<>
-									<Loader2 className="animate-spin h-4 w-4 mr-1 mb-1 inline" />
-									Menyimpan...
-								</>
-							) : (
-								"Simpan Participant"
-							)}
-						</button>
+							variant="success"
+							loading={isLoading}
+							disabled={isLoading}>
+							{isLoading ? "Menyimpan..." : "Simpan Participant"}
+						</Button>
 					</div>
 				</form>
 			</div>

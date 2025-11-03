@@ -29,6 +29,7 @@ import Badge from "@/components/ui/Badge";
 import { getImageUrl, parseApiError } from "@/utils";
 import { Link } from "react-router-dom";
 import FetchLoader from "@/components/ui/FetchLoader";
+import toast from "react-hot-toast";
 
 export default function AdminOrganization() {
 	const {

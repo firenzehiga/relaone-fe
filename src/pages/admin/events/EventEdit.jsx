@@ -3,7 +3,7 @@ import { parseApiError, toInputDate } from "@/utils";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
-import DynamicButton from "@/components/ui/Button";
+import Button from "@/components/ui/Button";
 import { useAdminLocations } from "@/_hooks/useLocations";
 import { useAdminOrganizations } from "@/_hooks/useOrganizations";
 import { useAuthStore } from "@/_hooks/useAuth";
@@ -40,10 +40,11 @@ export default function AdminEventEdit() {
 		location_id: "",
 		user_id: user.id,
 	});
+
+	const { isLoading } = useAuthStore();
 	const [persyaratanInput, setPersyaratanInput] = useState("");
 	const [manfaatInput, setManfaatInput] = useState("");
 
-	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState("");
 
 	const updateEventMutation = useAdminUpdateEventMutation();
@@ -217,37 +218,26 @@ export default function AdminEventEdit() {
 		e.preventDefault();
 	};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = (e) => {
 		e.preventDefault();
 		setError("");
-		setSubmitting(true);
-		try {
-			// build FormData (handle file + arrays)
-			const payload = new FormData();
-			payload.append("_method", "PUT");
-			for (const key in formData) {
-				const value = formData[key];
-				if (key === "gambar") {
-					if (value instanceof File) payload.append("gambar", value);
-				} else if (Array.isArray(value)) {
-					// send arrays as JSON so backend can decode back to array
-					payload.append(key, JSON.stringify(value));
-				} else {
-					payload.append(key, value ?? "");
-				}
+
+		// build FormData (handle file + arrays)
+		const payload = new FormData();
+		payload.append("_method", "PUT");
+		for (const key in formData) {
+			const value = formData[key];
+			if (key === "gambar") {
+				if (value instanceof File) payload.append("gambar", value);
+			} else if (Array.isArray(value)) {
+				// send arrays as JSON so backend can decode back to array
+				payload.append(key, JSON.stringify(value));
+			} else {
+				payload.append(key, value ?? "");
 			}
-
-			await updateEventMutation.mutateAsync({ id, data: payload });
-
-			toast.success("Event berhasil diperbarui", { position: "top-center" });
-			navigate("/admin/events");
-		} catch (err) {
-			const message = parseApiError(err);
-			toast.error(message, { position: "top-center" });
-			setError(message);
-		} finally {
-			setSubmitting(false);
 		}
+
+		updateEventMutation.mutateAsync({ id, data: payload });
 	};
 
 	if (
@@ -594,12 +584,12 @@ export default function AdminEventEdit() {
 														}
 													}}
 												/>
-												<DynamicButton
+												<Button
 													variant="success"
 													type="button"
 													onClick={addPersyaratan}>
 													Tambah
-												</DynamicButton>
+												</Button>
 											</div>
 										</div>
 									</div>
@@ -648,12 +638,12 @@ export default function AdminEventEdit() {
 														}
 													}}
 												/>
-												<DynamicButton
+												<Button
 													variant="success"
 													type="button"
 													onClick={addManfaat}>
 													Tambah
-												</DynamicButton>
+												</Button>
 											</div>
 										</div>
 									</div>
@@ -762,27 +752,22 @@ export default function AdminEventEdit() {
 					</Tabs>
 					<>
 						<div className="flex items-center justify-end gap-3">
-							<button
+							<Button
 								type="button"
+								variant="outline"
+								disabled={isLoading}
 								onClick={() => {
 									navigate("/admin/events");
-								}}
-								className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md">
+								}}>
 								Batal
-							</button>
-							<button
+							</Button>
+							<Button
 								type="submit"
-								disabled={submitting}
-								className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500">
-								{submitting ? (
-									<>
-										<Loader2 className="animate-spin h-4 w-4 mr-1 mb-1 inline" />
-										Menyimpan data....
-									</>
-								) : (
-									"Simpan Event"
-								)}
-							</button>
+								variant="success"
+								loading={isLoading}
+								disabled={isLoading}>
+								{isLoading ? "Menyimpan..." : "Simpan Event"}
+							</Button>
 						</div>
 					</>
 				</form>

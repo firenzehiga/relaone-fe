@@ -5,11 +5,13 @@ import {
 } from "@/_hooks/useLocations";
 import DynamicButton from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
+import Button from "@/components/ui/Button";
 import { parseApiError } from "@/utils";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
+import { useAuthStore } from "@/_hooks/useAuth";
 
 export default function AdminLocationEdit() {
 	const { id } = useParams();
@@ -27,6 +29,8 @@ export default function AdminLocationEdit() {
 		zoom_level: 15,
 		tipe: "",
 	});
+	const { isLoading } = useAuthStore();
+
 	const [submitting, setSubmitting] = useState(false);
 	const [gmapUrl, setGmapUrl] = useState("");
 	const [parseError, setParseError] = useState("");
@@ -67,28 +71,17 @@ export default function AdminLocationEdit() {
 		}
 	};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = (e) => {
 		e.preventDefault();
 		setParseError("");
-		setSubmitting(true);
-		try {
-			const payload = new FormData();
-			payload.append("_method", "PUT");
-			for (const key in formData) {
-				payload.append(key, formData[key]);
-			}
 
-			await updateLocationMutation.mutateAsync({ id, data: payload });
-
-			toast.success("Location berhasil diperbarui", { position: "top-center" });
-			navigate("/admin/locations");
-		} catch (err) {
-			const message = parseApiError(err);
-			toast.error(message, { position: "top-center" });
-			console.error(err);
-		} finally {
-			setSubmitting(false);
+		const payload = new FormData();
+		payload.append("_method", "PUT");
+		for (const key in formData) {
+			payload.append(key, formData[key]);
 		}
+
+		updateLocationMutation.mutateAsync({ id, data: payload });
 	};
 
 	// Try to parse common Google Maps url formats to extract lat,lng,zoom and a label
@@ -431,25 +424,20 @@ export default function AdminLocationEdit() {
 					</div>
 
 					<div className="flex items-center justify-end gap-3">
-						<DynamicButton
+						<Button
 							type="button"
-							variant="secondary"
+							variant="outline"
+							disabled={isLoading}
 							onClick={() => navigate("/admin/locations")}>
 							Batal
-						</DynamicButton>
-						<button
+						</Button>
+						<Button
 							type="submit"
-							disabled={submitting}
-							className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500">
-							{submitting ? (
-								<>
-									<Loader2 className="animate-spin h-4 w-4 mr-1 mb-1 inline" />
-									Menyimpan data....
-								</>
-							) : (
-								"Simpan Lokasi"
-							)}
-						</button>
+							variant="success"
+							loading={isLoading}
+							disabled={isLoading}>
+							{isLoading ? "Menyimpan..." : "Simpan Lokasi"}
+						</Button>
 					</div>
 				</form>
 			</div>

@@ -3,7 +3,7 @@ import { parseApiError } from "@/utils";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
-import DynamicButton from "@/components/ui/Button";
+import Button from "@/components/ui/Button";
 import { useAdminLocations } from "@/_hooks/useLocations";
 import { useAdminOrganizations } from "@/_hooks/useOrganizations";
 import { useAuthStore } from "@/_hooks/useAuth";
@@ -36,10 +36,11 @@ export default function AdminEventCreate() {
 		location_id: "",
 		user_id: user.id,
 	});
+
+	const { isLoading } = useAuthStore();
 	const [persyaratanInput, setPersyaratanInput] = useState("");
 	const [manfaatInput, setManfaatInput] = useState("");
 
-	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState("");
 	const fileInputRef = useRef(null);
 	const [previewUrl, setPreviewUrl] = useState("");
@@ -175,31 +176,20 @@ export default function AdminEventCreate() {
 		e.preventDefault();
 	};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = (e) => {
 		e.preventDefault();
 		setError("");
-		setSubmitting(true);
-		try {
-			const payload = new FormData();
-			for (const key in formData) {
-				if (Array.isArray(formData[key])) {
-					payload.append(key, JSON.stringify(formData[key])); // Kondisi khusus untuk persyaratan dan manfaat agar backend dapat menguraikannya kembali ke array
-				} else {
-					payload.append(key, formData[key] ?? "");
-				}
+
+		const payload = new FormData();
+		for (const key in formData) {
+			if (Array.isArray(formData[key])) {
+				payload.append(key, JSON.stringify(formData[key])); // Kondisi khusus untuk persyaratan dan manfaat agar backend dapat menguraikannya kembali ke array
+			} else {
+				payload.append(key, formData[key] ?? "");
 			}
-
-			await createEventMutation.mutateAsync(payload);
-
-			toast.success("Event berhasil dibuat", { position: "top-center" });
-			navigate("/admin/events");
-		} catch (err) {
-			const message = parseApiError(err);
-			toast.error(message, { position: "top-center" });
-			setError(message);
-		} finally {
-			setSubmitting(false);
 		}
+
+		createEventMutation.mutateAsync(payload);
 	};
 
 	if (locationsLoading || organizationsLoading || categoriesLoading) {
@@ -570,12 +560,12 @@ export default function AdminEventCreate() {
 														}
 													}}
 												/>
-												<DynamicButton
+												<Button
 													variant="success"
 													type="button"
 													onClick={addPersyaratan}>
 													Tambah
-												</DynamicButton>
+												</Button>
 											</div>
 										</div>
 									</div>
@@ -624,12 +614,12 @@ export default function AdminEventCreate() {
 														}
 													}}
 												/>
-												<DynamicButton
+												<Button
 													variant="success"
 													type="button"
 													onClick={addManfaat}>
 													Tambah
-												</DynamicButton>
+												</Button>
 											</div>
 										</div>
 									</div>
@@ -716,7 +706,7 @@ export default function AdminEventCreate() {
 					</Tabs>
 					<>
 						<div className="flex items-center justify-end gap-3">
-							<DynamicButton
+							<Button
 								variant="outline"
 								type="button"
 								onClick={() => {
@@ -724,20 +714,14 @@ export default function AdminEventCreate() {
 								}}
 								className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md">
 								Batal
-							</DynamicButton>
-							<button
+							</Button>
+							<Button
 								type="submit"
-								disabled={submitting}
-								className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500">
-								{submitting ? (
-									<>
-										<Loader2 className="animate-spin h-4 w-4 mr-1 mb-1 inline" />
-										Menyimpan data....
-									</>
-								) : (
-									"Simpan Event"
-								)}
-							</button>
+								variant="success"
+								loading={isLoading}
+								disabled={isLoading}>
+								{isLoading ? "Membuat..." : "Buat Event"}
+							</Button>
 						</div>
 					</>
 				</form>

@@ -14,6 +14,8 @@ import * as Lucide from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import Button from "@/components/ui/Button";
+import { useAuthStore } from "@/_hooks/useAuth";
 
 export default function AdminCategoryCreate() {
 	const navigate = useNavigate();
@@ -24,7 +26,7 @@ export default function AdminCategoryCreate() {
 		warna: "",
 		is_active: 1,
 	});
-	const [submitting, setSubmitting] = useState(false);
+	const { isLoading } = useAuthStore();
 
 	const createCategoryMutation = useAdminCreateCategoryMutation();
 	// Generic change handler
@@ -33,26 +35,15 @@ export default function AdminCategoryCreate() {
 		setFormData((s) => ({ ...s, [name]: value }));
 	};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = (e) => {
 		e.preventDefault();
-		setSubmitting(true);
-		try {
-			const payload = new FormData();
-			for (const key in formData) {
-				payload.append(key, formData[key]);
-			}
 
-			await createCategoryMutation.mutateAsync(payload);
-
-			toast.success("Category berhasil dibuat", { position: "top-center" });
-			navigate("/admin/categories");
-		} catch (err) {
-			const message = parseApiError(err);
-			toast.error(message, { position: "top-center" });
-			console.error(err);
-		} finally {
-			setSubmitting(false);
+		const payload = new FormData();
+		for (const key in formData) {
+			payload.append(key, formData[key]);
 		}
+
+		createCategoryMutation.mutateAsync(payload);
 	};
 
 	return (
@@ -237,25 +228,21 @@ export default function AdminCategoryCreate() {
 						</select>
 					</div>
 					<div className="flex items-center justify-end gap-3">
-						<DynamicButton
+						<Button
 							type="button"
-							variant="secondary"
+							variant="outline"
+							disabled={isLoading}
 							onClick={() => navigate("/admin/categories")}>
 							Batal
-						</DynamicButton>
-						<button
+						</Button>
+						<Button
 							type="submit"
-							disabled={submitting}
+							disabled={isLoading}
+							loading={isLoading}
+							variant="success"
 							className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500">
-							{submitting ? (
-								<>
-									<Loader2 className="animate-spin h-4 w-4 mr-1 mb-1 inline" />
-									Menyimpan data....
-								</>
-							) : (
-								"Simpan Kategori"
-							)}
-						</button>
+							{isLoading ? "Membuat..." : "Buat Kategori"}
+						</Button>
 					</div>
 				</form>
 			</div>

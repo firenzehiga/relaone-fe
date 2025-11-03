@@ -1,6 +1,9 @@
 import * as locationService from "@/_services/locationService";
-import { useUserRole } from "./useAuth";
+import { useAuthStore, useUserRole } from "./useAuth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { parseApiError } from "@/utils";
+import toast from "react-hot-toast";
 
 // === ADMIN HOOKS ===
 /**
@@ -53,12 +56,30 @@ export const useAdminLocationById = (id) => {
  * @invalidates ["locations"]
  */
 export const useAdminCreateLocationMutation = () => {
+	const navigate = useNavigate();
 	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
 
 	return useMutation({
+		mutationKey: ["adminLocations", "create"],
 		mutationFn: locationService.adminCreateLocation,
-		onSuccess: () => {
-			queryClient.invalidateQueries(["adminLocations"]);
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: async () => {
+			await queryClient.invalidateQueries(["adminLocations"]);
+			navigate("/admin/locations");
+
+			setLoading(false);
+			toast.success("Lokasi berhasil dibuat", { duration: 2000 });
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Create location failed";
+			setError(msg);
+			toast.error(msg, { duration: 4000 });
+			console.error("Create location error:", error);
 		},
 	});
 };
@@ -72,13 +93,34 @@ export const useAdminCreateLocationMutation = () => {
  * @param {Object} variables.payload - Data lokasi baru
  */
 export const useAdminUpdateLocationMutation = () => {
+	const navigate = useNavigate();
+
 	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
 
 	return useMutation({
+		mutationKey: ["adminLocations", "update"],
 		mutationFn: ({ id, data }) => locationService.adminUpdateLocation(id, data),
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
 		onSuccess: async (_, id) => {
 			await queryClient.invalidateQueries(["adminLocations"]);
-			await queryClient.invalidateQueries(["adminLocations", id]);
+			navigate("/admin/locations");
+
+			setLoading(false);
+			toast.success("Lokasi berhasil diperbarui", {
+				duration: 2000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Update location failed";
+			setError(msg);
+			toast.error(msg, { duration: 4000 });
+			console.error("Update location error:", error);
 		},
 	});
 };

@@ -1,6 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as eventParticipantService from "@/_services/eventParticipantService";
-import { useUserRole } from "./useAuth";
+import { useAuthStore, useUserRole } from "./useAuth";
+import { useNavigate } from "react-router-dom";
+import { parseApiError } from "@/utils";
+import toast from "react-hot-toast";
 
 /** PUBLIC HOOKS
  *
@@ -105,12 +108,29 @@ export const useAdminParticipantById = (id) => {
  * @invalidates ["participants"]
  */
 export const useAdminCreateParticipantMutation = () => {
+	const navigate = useNavigate();
 	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
 
 	return useMutation({
+		mutationKey: ["adminParticipants", "create"],
 		mutationFn: eventParticipantService.adminCreateParticipant,
-		onSuccess: () => {
-			queryClient.invalidateQueries(["adminParticipants"]);
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: async () => {
+			await queryClient.invalidateQueries(["adminParticipants"]);
+			navigate("/admin/event-participants");
+			setLoading(false);
+			toast.success("Participant berhasil dibuat", { duration: 2000 });
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Create location failed";
+			setError(msg);
+			toast.error(msg, { duration: 4000 });
+			console.error("Create location error:", error);
 		},
 	});
 };
@@ -124,14 +144,33 @@ export const useAdminCreateParticipantMutation = () => {
  * @param {Object} variables.payload - Data participant baru
  */
 export const useAdminUpdateParticipantMutation = () => {
+	const navigate = useNavigate();
+
 	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
 
 	return useMutation({
+		mutationKey: ["adminParticipants", "update"],
 		mutationFn: ({ id, data }) =>
 			eventParticipantService.adminUpdateParticipant(id, data),
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
 		onSuccess: async (_, id) => {
 			await queryClient.invalidateQueries(["adminParticipants"]);
-			await queryClient.invalidateQueries(["adminParticipants", id]);
+			queryClient.invalidateQueries(["adminParticipants", id]);
+			navigate("/admin/event-participants");
+
+			setLoading(false);
+			toast.success("Participant berhasil diperbarui", { duration: 2000 });
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Update participant failed";
+			setError(msg);
+			toast.error(msg, { duration: 4000 });
+			console.error("Update participant error:", error);
 		},
 	});
 };

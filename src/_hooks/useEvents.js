@@ -1,6 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as eventService from "@/_services/eventService";
-import { useUserRole } from "./useAuth";
+import { useAuthStore, useUserRole } from "./useAuth";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { parseApiError } from "@/utils";
 
 // === PUBLIC HOOKS ===
 /**
@@ -99,12 +102,29 @@ export const useAdminEventById = (id) => {
  * @invalidates ["events"]
  */
 export const useAdminCreateEventMutation = () => {
+	const navigate = useNavigate();
 	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
 
 	return useMutation({
+		mutationKey: ["adminEvents", "create"],
 		mutationFn: eventService.adminCreateEvent,
-		onSuccess: () => {
-			queryClient.invalidateQueries(["adminEvents"]);
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: async () => {
+			await queryClient.invalidateQueries(["adminEvents"]);
+			navigate("/admin/events");
+
+			setLoading(false);
+			toast.success("Event berhasil dibuat", { duration: 2000 });
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Create event failed";
+			setError(msg);
+			toast.error(msg, { duration: 4000 });
 		},
 	});
 };
@@ -119,15 +139,33 @@ export const useAdminCreateEventMutation = () => {
  * @invalidates ["events"]
  */
 export const useAdminUpdateEventMutation = () => {
+	const navigate = useNavigate();
+
 	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
 
 	return useMutation({
+		mutationKey: ["adminEvents", "update"],
 		mutationFn: ({ id, data }) => eventService.adminUpdateEvent(id, data),
-		onSuccess: (_, id) => {
-			queryClient.invalidateQueries(["adminEvents"]);
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: async (_, id) => {
+			await queryClient.invalidateQueries(["adminEvents"]);
 			queryClient.invalidateQueries(["adminEvents", id]);
 			// query key publik
 			queryClient.invalidateQueries(["detailEvent", id]);
+			navigate("/admin/events");
+
+			setLoading(false);
+			toast.success("Event berhasil diperbarui", { duration: 2000 });
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Update event failed";
+			setError(msg);
+			toast.error(msg, { duration: 4000 });
 		},
 	});
 };

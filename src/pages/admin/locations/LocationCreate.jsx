@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/_hooks/useAuth";
 import { useAdminCreateLocationMutation } from "@/_hooks/useLocations";
 import DynamicButton from "@/components/ui/Button";
 import { parseApiError, parseGoogleMapsUrl } from "@/utils";
@@ -5,6 +6,7 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import Button from "@/components/ui/Button";
 
 export default function AdminLocationCreate() {
 	const navigate = useNavigate();
@@ -21,7 +23,7 @@ export default function AdminLocationCreate() {
 		zoom_level: 15,
 		tipe: "",
 	});
-	const [submitting, setSubmitting] = useState(false);
+	const { isLoading } = useAuthStore();
 	const [gmapUrl, setGmapUrl] = useState("");
 	const [parseError, setParseError] = useState("");
 
@@ -40,24 +42,13 @@ export default function AdminLocationCreate() {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setParseError("");
-		setSubmitting(true);
-		try {
-			const payload = new FormData();
-			for (const key in formData) {
-				payload.append(key, formData[key]);
-			}
 
-			await createLocationMutation.mutateAsync(payload);
-
-			toast.success("Location berhasil dibuat", { position: "top-center" });
-			navigate("/admin/locations");
-		} catch (err) {
-			const message = parseApiError(err);
-			toast.error(message, { position: "top-center" });
-			console.error(err);
-		} finally {
-			setSubmitting(false);
+		const payload = new FormData();
+		for (const key in formData) {
+			payload.append(key, formData[key]);
 		}
+
+		await createLocationMutation.mutateAsync(payload);
 	};
 
 	const handleParse = () => {
@@ -305,25 +296,20 @@ export default function AdminLocationCreate() {
 					</div>
 
 					<div className="flex items-center justify-end gap-3">
-						<DynamicButton
+						<Button
 							type="button"
-							variant="secondary"
+							variant="outline"
+							disabled={isLoading}
 							onClick={() => navigate("/admin/locations")}>
 							Batal
-						</DynamicButton>
-						<button
+						</Button>
+						<Button
 							type="submit"
-							disabled={submitting}
-							className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500">
-							{submitting ? (
-								<>
-									<Loader2 className="animate-spin h-4 w-4 mr-1 mb-1 inline" />
-									Menyimpan data....
-								</>
-							) : (
-								"Simpan Lokasi"
-							)}
-						</button>
+							variant="success"
+							loading={isLoading}
+							disabled={isLoading}>
+							{isLoading ? "Membuat..." : "Buat Lokasi"}
+						</Button>
 					</div>
 				</form>
 			</div>

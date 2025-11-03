@@ -18,6 +18,8 @@ import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import Skeleton from "@/components/ui/Skeleton";
+import Button from "@/components/ui/Button";
+import { useAuthStore } from "@/_hooks/useAuth";
 
 export default function AdminCategoryEdit() {
 	const { id } = useParams();
@@ -29,7 +31,7 @@ export default function AdminCategoryEdit() {
 		warna: "",
 		is_active: "1",
 	});
-	const [submitting, setSubmitting] = useState(false);
+	const { isLoading } = useAuthStore();
 
 	const updateCategoryMutation = useAdminUpdateCategoryMutation();
 
@@ -58,28 +60,16 @@ export default function AdminCategoryEdit() {
 		setFormData((s) => ({ ...s, [name]: value }));
 	};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = (e) => {
 		e.preventDefault();
-		setSubmitting(true);
-		try {
-			const payload = new FormData();
-			payload.append("_method", "PUT");
+		const payload = new FormData();
+		payload.append("_method", "PUT");
 
-			for (const key in formData) {
-				payload.append(key, formData[key]);
-			}
-
-			await updateCategoryMutation.mutateAsync({ id, data: payload });
-
-			toast.success("Category berhasil diperbarui", { position: "top-center" });
-			navigate("/admin/categories");
-		} catch (err) {
-			const message = parseApiError(err);
-			toast.error(message, { position: "top-center" });
-			console.error(err);
-		} finally {
-			setSubmitting(false);
+		for (const key in formData) {
+			payload.append(key, formData[key]);
 		}
+
+		updateCategoryMutation.mutateAsync({ id, data: payload });
 	};
 
 	if (showCategoryLoading) return <Skeleton.FormSkeleton title="Loading..." />;
@@ -266,25 +256,21 @@ export default function AdminCategoryEdit() {
 						</select>
 					</div>
 					<div className="flex items-center justify-end gap-3">
-						<DynamicButton
+						<Button
 							type="button"
-							variant="secondary"
+							variant="outline"
+							disabled={isLoading}
 							onClick={() => navigate("/admin/categories")}>
 							Batal
-						</DynamicButton>
-						<button
+						</Button>
+						<Button
 							type="submit"
-							disabled={submitting}
+							variant="success"
+							disabled={isLoading}
+							loading={isLoading}
 							className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500">
-							{submitting ? (
-								<>
-									<Loader2 className="animate-spin h-4 w-4 mr-1 mb-1 inline" />
-									Menyimpan data....
-								</>
-							) : (
-								"Simpan Kategori"
-							)}
-						</button>
+							{isLoading ? "Menyimpan..." : "Simpan Kategori"}
+						</Button>
 					</div>
 				</form>
 			</div>

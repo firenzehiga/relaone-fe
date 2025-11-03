@@ -1,6 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as categoryService from "../_services/categoryService";
-import { useUserRole } from "./useAuth";
+import { useAuthStore, useUserRole } from "./useAuth";
+import toast from "react-hot-toast";
+import { parseApiError } from "@/utils";
+import { useNavigate } from "react-router-dom";
 
 // === PUBLIC HOOKS ===
 /**
@@ -65,16 +68,30 @@ export const useAdminCategoryById = (id) => {
  * @returns {Object} Mutation object dengan mutate, isLoading, error, etc
  */
 export const useAdminCreateCategoryMutation = () => {
+	const navigate = useNavigate();
 	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
 
 	return useMutation({
+		mutationKey: ["adminCategories", "create"],
 		mutationFn: categoryService.adminCreateCategory,
-		onSuccess: () => {
-			// Invalidate dan refetch categories list
-			queryClient.invalidateQueries({ queryKey: ["adminCategories"] });
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: ["adminCategories"] });
+			navigate("/admin/categories");
+
+			setLoading(false);
+			toast.success("Kategori berhasil dibuat", { duration: 2000 });
 		},
 		onError: (error) => {
-			console.error("Failed to create category:", error);
+			setLoading(false);
+			const msg = parseApiError(error) || "Create kategori failed";
+			setError(msg);
+			toast.error(msg, { duration: 4000 });
+			console.error("Create kategori error:", error);
 		},
 	});
 };
@@ -84,17 +101,35 @@ export const useAdminCreateCategoryMutation = () => {
  * @returns {Object} Mutation object dengan mutate, isLoading, error, etc
  */
 export const useAdminUpdateCategoryMutation = () => {
+	const navigate = useNavigate();
+
 	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
 
 	return useMutation({
+		mutationKey: ["adminCategories", "update"],
 		mutationFn: ({ id, data }) => categoryService.adminUpdateCategory(id, data),
-		onSuccess: (_, id) => {
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: async (_, id) => {
 			// Invalidate categories list dan specific category
-			queryClient.invalidateQueries({ queryKey: ["adminCategories"] });
-			queryClient.invalidateQueries({ queryKey: ["adminCategories", id] });
+			await queryClient.invalidateQueries({ queryKey: ["adminCategories"] });
+			await queryClient.invalidateQueries({
+				queryKey: ["adminCategories", id],
+			});
+			navigate("/admin/categories");
+
+			setLoading(false);
+			toast.success("Kategori berhasil diperbarui", { duration: 2000 });
 		},
 		onError: (error) => {
-			console.error("Failed to update category:", error);
+			setLoading(false);
+			const msg = parseApiError(error) || "Update Kategori failed";
+			setError(msg);
+			toast.error(msg, { duration: 4000 });
+			console.error("Update Kategori error:", error);
 		},
 	});
 };
