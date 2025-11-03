@@ -157,7 +157,11 @@ export default function Header() {
 									onClick={() => setUserMenuOpen(!userMenuOpen)}
 									className="flex items-center space-x-2 p-2 rounded-xl hover:bg-emerald-50 transition-colors">
 									<Avatar
-										src={getImageUrl(`foto_profil/${user?.foto_profil}`)}
+										src={
+											user?.foto_profil
+												? getImageUrl(`foto_profil/${user?.foto_profil}`)
+												: null
+										}
 										fallback={user?.nama}
 										size="sm"
 									/>
