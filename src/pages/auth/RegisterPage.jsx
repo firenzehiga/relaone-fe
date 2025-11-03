@@ -157,7 +157,7 @@ export default function RegisterPage() {
 									<label
 										htmlFor="nama"
 										className="block text-sm font-medium text-gray-700 mb-1">
-										Full Name *
+										Full Name <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
 										<User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -180,7 +180,7 @@ export default function RegisterPage() {
 									<label
 										htmlFor="email"
 										className="block text-sm font-medium text-gray-700 mb-1">
-										Email Address *
+										Email Address <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
 										<Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -202,7 +202,7 @@ export default function RegisterPage() {
 									<label
 										htmlFor="telepon"
 										className="block text-sm font-medium text-gray-700 mb-1">
-										Phone Number
+										Phone Number <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
 										<Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -266,7 +266,7 @@ export default function RegisterPage() {
 									<label
 										htmlFor="alamat"
 										className="block text-sm font-medium text-gray-700 mb-1">
-										Address
+										Address <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
 										<textarea
@@ -285,7 +285,7 @@ export default function RegisterPage() {
 								<div className="md:col-span-2">
 									<fieldset className="space-y-2">
 										<legend className="block text-sm font-medium text-gray-700 mb-1">
-											Bergabung sebagai *
+											Bergabung sebagai <span className="text-red-500">*</span>
 										</legend>
 
 										<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -434,7 +434,8 @@ export default function RegisterPage() {
 														<label
 															htmlFor="organization_nama"
 															className="block text-sm font-medium text-gray-700 mb-1">
-															Organization Name *
+															Organization Name{" "}
+															<span className="text-red-500">*</span>
 														</label>
 														<input
 															type="text"
@@ -457,7 +458,8 @@ export default function RegisterPage() {
 														<label
 															htmlFor="organization_deskripsi"
 															className="block text-sm font-medium text-gray-700 mb-1">
-															Organization Description
+															Organization Description{" "}
+															<span className="text-red-500">*</span>
 														</label>
 														<textarea
 															id="organization_deskripsi"

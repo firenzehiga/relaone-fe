@@ -480,7 +480,7 @@ export default function EditProfilePage() {
 									<div className="flex items-center mb-4">
 										<Award className="w-5 h-5 text-purple-500 mr-2" />
 										<h3 className="text-lg font-bold text-gray-900">
-											Informasi Tambahan
+											Informasi Tambahan (kolom belum di develop di backend)
 										</h3>
 									</div>
 
@@ -499,24 +499,6 @@ export default function EditProfilePage() {
 													rows={3}
 													className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none text-sm"
 													placeholder="Ceritakan tentang diri Anda..."
-												/>
-											</div>
-										</div>
-
-										{/* Skills */}
-										<div>
-											<label className="block text-sm font-medium text-gray-700 mb-1">
-												Keahlian
-											</label>
-											<div className="relative">
-												<Award className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-												<textarea
-													name="skills"
-													value={formData.skills}
-													onChange={handleChange}
-													rows={2}
-													className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none text-sm"
-													placeholder="Contoh: Desain Grafis, Public Speaking..."
 												/>
 											</div>
 										</div>
