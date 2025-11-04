@@ -520,24 +520,6 @@ export default function EditProfilePage() {
 												/>
 											</div>
 										</div>
-
-										{/* Experience */}
-										<div>
-											<label className="block text-sm font-medium text-gray-700 mb-1">
-												Pengalaman Volunteering
-											</label>
-											<div className="relative">
-												<Briefcase className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-												<textarea
-													name="experience"
-													value={formData.experience}
-													onChange={handleChange}
-													rows={3}
-													className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none text-sm"
-													placeholder="Ceritakan pengalaman volunteering Anda..."
-												/>
-											</div>
-										</div>
 									</div>
 								</div>
 							</div>
