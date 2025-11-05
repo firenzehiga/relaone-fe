@@ -113,6 +113,6 @@ export function getUserDashboard(role) {
 			return "/organization/dashboard";
 		case "volunteer":
 		default:
-			return "/home";
+			return "/";
 	}
 }
