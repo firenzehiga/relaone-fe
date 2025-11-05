@@ -29,7 +29,7 @@ export default function NotFound() {
 					<DynamicButton
 						size="lg"
 						variant="success"
-						onClick={() => navigate("/home")}
+						onClick={() => navigate("/")}
 						className="group">
 						<ArrowLeft
 							size={20}
