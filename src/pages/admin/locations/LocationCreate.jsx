@@ -7,6 +7,8 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Button from "@/components/ui/Button";
+import { useAdminOrganizations } from "@/_hooks/useOrganizations";
+import Skeleton from "@/components/ui/Skeleton";
 
 export default function AdminLocationCreate() {
 	const navigate = useNavigate();
@@ -22,12 +24,20 @@ export default function AdminLocationCreate() {
 		negara: "Indonesia",
 		zoom_level: 15,
 		tipe: "",
+		organization_id: "",
 	});
 	const { isLoading } = useAuthStore();
 	const [gmapUrl, setGmapUrl] = useState("");
 	const [parseError, setParseError] = useState("");
 
 	const createLocationMutation = useAdminCreateLocationMutation();
+
+	const {
+		data: organizations = [],
+		isLoading: organizationsLoading,
+		error: organizationsError,
+	} = useAdminOrganizations();
+
 	// Generic change handler
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -70,6 +80,10 @@ export default function AdminLocationCreate() {
 		}));
 	};
 
+	if (organizationsLoading) {
+		return <Skeleton.FormSkeleton title="Loading..." />;
+	}
+
 	return (
 		<div className="max-w-6xl mx-auto p-6">
 			<div
@@ -89,7 +103,8 @@ export default function AdminLocationCreate() {
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Nama Lokasi
+								Nama Lokasi (bebas, hanya untuk pendataan){" "}
+								<span className="text-red-500">*</span>
 							</label>
 							<input
 								name="nama"
@@ -104,7 +119,7 @@ export default function AdminLocationCreate() {
 
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Tipe Lokasi
+								Tipe Lokasi <span className="text-red-500">*</span>
 							</label>
 							<select
 								name="tipe"
@@ -116,29 +131,49 @@ export default function AdminLocationCreate() {
 								<option value="">Pilih tipe</option>
 								<option value="event">Event</option>
 								<option value="organization">Kantor</option>
-								<option value="saved">saved</option>
 							</select>
 						</div>
 					</div>
-
-					<div>
-						<label className="block text-sm font-medium text-gray-700">
-							Alamat
-						</label>
-						<input
-							name="alamat"
-							value={formData.alamat}
-							onChange={handleChange}
-							type="text"
-							required
-							placeholder="Alamat (terisi otomatis dari Google Maps)"
-							className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-						/>
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<div>
+							<label className="block text-sm font-medium text-gray-700">
+								Alamat <span className="text-red-500">*</span>
+							</label>
+							<input
+								name="alamat"
+								value={formData.alamat}
+								onChange={handleChange}
+								type="text"
+								required
+								placeholder="Alamat (terisi otomatis dari Google Maps)"
+								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+							/>
+						</div>
+						<div>
+							<label
+								htmlFor="organization_id"
+								className="block text-sm font-medium text-gray-700">
+								Organisasi Pemilik Lokasi
+							</label>
+							<select
+								id="organization_id"
+								name="organization_id"
+								value={formData.organization_id}
+								onChange={handleChange}
+								required
+								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+								<option value="">Pilih Organisasi</option>
+								{organizations.map((organization) => (
+									<option key={organization.id} value={organization.id}>
+										{organization.nama}
+									</option>
+								))}
+							</select>
+						</div>
 					</div>
-
 					<div>
 						<label className="block text-sm font-medium text-gray-700">
-							Alamat lengkap
+							Alamat Tambahan
 						</label>
 						<input
 							name="alamat_lengkap"
@@ -153,7 +188,7 @@ export default function AdminLocationCreate() {
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Kota
+								Kota (opsional)
 							</label>
 							<input
 								name="kota"
@@ -165,7 +200,7 @@ export default function AdminLocationCreate() {
 						</div>
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Provinsi
+								Provinsi (opsional)
 							</label>
 							<input
 								name="provinsi"
@@ -177,7 +212,7 @@ export default function AdminLocationCreate() {
 						</div>
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Negara
+								Negara <span className="text-red-500">*</span>
 							</label>
 							<input
 								name="negara"
@@ -191,7 +226,7 @@ export default function AdminLocationCreate() {
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Latitude
+								Latitude (terisi otomatis)
 							</label>
 							<input
 								name="latitude"
@@ -204,7 +239,7 @@ export default function AdminLocationCreate() {
 						</div>
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Longitude
+								Longitude (terisi otomatis)
 							</label>
 							<input
 								name="longitude"
@@ -217,7 +252,7 @@ export default function AdminLocationCreate() {
 						</div>
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Zoom
+								Zoom <span className="text-red-500">*</span>
 							</label>
 							<input
 								name="zoom_level"

@@ -88,7 +88,7 @@ export default function AdminFeedbackEdit() {
 				<form onSubmit={handleSubmit} className="space-y-6">
 					<div>
 						<label className="block text-sm font-medium text-gray-700">
-							Rating
+							Rating <span className="text-red-500">*</span>
 						</label>
 						<div className="mt-2">
 							<RatingStars

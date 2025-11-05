@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuthStore } from "@/_hooks/useAuth";
+import { useAdminOrganizations } from "@/_hooks/useOrganizations";
 
 export default function AdminLocationEdit() {
 	const { id } = useParams();
@@ -28,6 +29,7 @@ export default function AdminLocationEdit() {
 		negara: "Indonesia",
 		zoom_level: 15,
 		tipe: "",
+		organization_id: "",
 	});
 	const { isLoading } = useAuthStore();
 
@@ -38,6 +40,12 @@ export default function AdminLocationEdit() {
 	const updateLocationMutation = useAdminUpdateLocationMutation();
 	const { data: showLocation, isLoading: showLocationLoading } =
 		useAdminLocationById(id);
+
+	const {
+		data: organizations = [],
+		isLoading: organizationsLoading,
+		error: organizationsError,
+	} = useAdminOrganizations();
 
 	useEffect(() => {
 		if (!showLocation) return;
@@ -57,6 +65,7 @@ export default function AdminLocationEdit() {
 				negara: showLocation.negara,
 				zoom_level: showLocation.zoom_level,
 				tipe: showLocation.tipe,
+				organization_id: showLocation.organization_id,
 			};
 		});
 	}, [showLocation]);
@@ -194,7 +203,7 @@ export default function AdminLocationEdit() {
 		});
 	};
 
-	if (showLocationLoading) {
+	if (showLocationLoading || organizationsLoading) {
 		return <Skeleton.FormSkeleton title="Loading..." />;
 	}
 
@@ -204,9 +213,7 @@ export default function AdminLocationEdit() {
 				className="bg-white shadow-lg rounded-lg p-6"
 				style={{ minHeight: 420, width: 900 }}>
 				<header className="mb-6">
-					<h1 className="text-2xl font-semibold text-gray-900">
-						Buat Lokasi Baru
-					</h1>
+					<h1 className="text-2xl font-semibold text-gray-900">Edit Lokasi</h1>
 					<p className="text-sm text-gray-500 mt-1">
 						Isi detail lokasi. Anda bisa menempelkan link Google Maps dan
 						menekan "Parse" untuk mengisi koordinat otomatis.
@@ -217,7 +224,8 @@ export default function AdminLocationEdit() {
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Nama Lokasi (bebas, hanya untuk pendataan)
+								Nama Lokasi (bebas, hanya untuk pendataan){" "}
+								<span className="text-red-500">*</span>
 							</label>
 							<input
 								name="nama"
@@ -232,7 +240,7 @@ export default function AdminLocationEdit() {
 
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Tipe Lokasi
+								Tipe Lokasi <span className="text-red-500">*</span>
 							</label>
 							<select
 								name="tipe"
@@ -248,25 +256,46 @@ export default function AdminLocationEdit() {
 						</div>
 					</div>
 
-					<div>
-						<label className="block text-sm font-medium text-gray-700">
-							Alamat (terisi otomatis dari parsing, digunakan untuk Google Maps)
-						</label>
-						<input
-							name="alamat"
-							value={formData.alamat}
-							onChange={handleChange}
-							type="text"
-							disabled
-							required
-							placeholder="Alamat (terisi otomatis dari Google Maps)"
-							className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-						/>
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<div>
+							<label className="block text-sm font-medium text-gray-700">
+								Alamat <span className="text-red-500">*</span>
+							</label>
+							<input
+								name="alamat"
+								value={formData.alamat}
+								onChange={handleChange}
+								type="text"
+								required
+								placeholder="Alamat (terisi otomatis dari Google Maps)"
+								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+							/>
+						</div>
+						<div>
+							<label
+								htmlFor="organization_id"
+								className="block text-sm font-medium text-gray-700">
+								Organisasi Pemilik Lokasi
+							</label>
+							<select
+								id="organization_id"
+								name="organization_id"
+								value={formData.organization_id}
+								onChange={handleChange}
+								required
+								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+								<option value="">Pilih Organisasi</option>
+								{organizations.map((organization) => (
+									<option key={organization.id} value={organization.id}>
+										{organization.nama}
+									</option>
+								))}
+							</select>
+						</div>
 					</div>
-
 					<div>
 						<label className="block text-sm font-medium text-gray-700">
-							Alamat lengkap (opsional)
+							Alamat Tambahan
 						</label>
 						<input
 							name="alamat_lengkap"
@@ -305,7 +334,7 @@ export default function AdminLocationEdit() {
 						</div>
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Negara
+								Negara <span className="text-red-500">*</span>
 							</label>
 							<input
 								name="negara"
@@ -345,7 +374,7 @@ export default function AdminLocationEdit() {
 						</div>
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Zoom
+								Zoom <span className="text-red-500">*</span>
 							</label>
 							<input
 								name="zoom_level"

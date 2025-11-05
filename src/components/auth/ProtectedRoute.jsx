@@ -105,7 +105,7 @@ export function AdminOrganizationRoute({ children }) {
 /**
  * Local helper to obtain dashboard path per role (kept local to avoid extra files)
  */
-function getUserDashboard(role) {
+export function getUserDashboard(role) {
 	switch (role) {
 		case "admin":
 			return "/admin/dashboard";
@@ -113,6 +113,6 @@ function getUserDashboard(role) {
 			return "/organization/dashboard";
 		case "volunteer":
 		default:
-			return "/";
+			return "/home";
 	}
 }

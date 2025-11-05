@@ -14,6 +14,7 @@ export default function AdminOrganizationCreate() {
 	const [formData, setFormData] = useState({
 		nama: "",
 		deskripsi: "",
+		alamat: "",
 		telepon: "",
 		email: "",
 		website: "",
@@ -124,7 +125,7 @@ export default function AdminOrganizationCreate() {
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Nama Organisasi
+								Nama Organisasi <span className="text-red-500">*</span>
 							</label>
 							<input
 								name="nama"
@@ -212,7 +213,7 @@ export default function AdminOrganizationCreate() {
 						</div>
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Email
+								Email <span className="text-red-500">*</span>
 							</label>
 							<input
 								name="email"
@@ -225,25 +226,40 @@ export default function AdminOrganizationCreate() {
 							/>
 						</div>
 					</div>
-					<div>
-						<label className="block text-sm font-medium text-gray-700">
-							Deskripsi
-						</label>
-						<textarea
-							name="deskripsi"
-							value={formData.deskripsi}
-							onChange={handleChange}
-							rows={4}
-							required
-							className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-							placeholder="Deskripsi singkat organisasi"
-						/>
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+						<div>
+							<label className="block text-sm font-medium text-gray-700">
+								Alamat <span className="text-red-500">*</span>
+							</label>
+							<textarea
+								name="alamat"
+								value={formData.alamat}
+								onChange={handleChange}
+								rows={4}
+								required
+								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+								placeholder="Deskripsi singkat organisasi"
+							/>
+						</div>
+						<div>
+							<label className="block text-sm font-medium text-gray-700">
+								Deskripsi
+							</label>
+							<textarea
+								name="deskripsi"
+								value={formData.deskripsi}
+								onChange={handleChange}
+								rows={4}
+								required
+								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+								placeholder="Deskripsi singkat organisasi"
+							/>
+						</div>
 					</div>
-
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
 						<div className="col-span-1">
 							<label className="block text-sm font-medium text-gray-700">
-								Logo
+								Logo <span className="text-red-500">*</span>
 							</label>
 							<div className="mt-2 flex items-center gap-4">
 								<div className="w-28 h-20 rounded-md border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden">

@@ -264,7 +264,7 @@ export default function AdminEventEdit() {
 			<div className="bg-white shadow-xl rounded-lg p-6">
 				<header className="mb-8">
 					<h1 className="text-2xl font-semibold text-gray-900 mb-2">
-						Buat Event Baru
+						Edit Event
 					</h1>
 					<p className="text-sm text-gray-500 mt-1">
 						Isi nama, deskripsi dan tambahkan gambar untuk event.
@@ -292,7 +292,7 @@ export default function AdminEventEdit() {
 									<label
 										htmlFor="judul"
 										className="block text-sm font-medium text-gray-700">
-										Nama Event
+										Nama Event <span className="text-red-500">*</span>
 									</label>
 									<input
 										id="judul"
@@ -310,7 +310,7 @@ export default function AdminEventEdit() {
 									<label
 										htmlFor="deskripsi"
 										className="block text-sm font-medium text-gray-700">
-										Deskripsi
+										Deskripsi <span className="text-red-500">*</span>
 									</label>
 									<textarea
 										id="deskripsi"
@@ -345,7 +345,7 @@ export default function AdminEventEdit() {
 										<label
 											htmlFor="category_id"
 											className="block text-sm font-medium text-gray-700">
-											Kategori Kegiatan
+											Kategori Kegiatan <span className="text-red-500">*</span>
 										</label>
 										<select
 											id="category_id"
@@ -366,7 +366,7 @@ export default function AdminEventEdit() {
 										<label
 											htmlFor="maks_peserta"
 											className="block text-sm font-medium text-gray-700">
-											Maks Peserta
+											Maks Peserta <span className="text-red-500">*</span>
 										</label>
 										<input
 											id="maks_peserta"
@@ -383,7 +383,7 @@ export default function AdminEventEdit() {
 								</div>
 								<div className="mb-4">
 									<label className="block text-sm font-medium text-gray-700">
-										Gambar Event
+										Gambar Event <span className="text-red-500">*</span>
 									</label>
 									<div
 										onDrop={handleDrop}
@@ -430,7 +430,7 @@ export default function AdminEventEdit() {
 										<label
 											htmlFor="tanggal_mulai"
 											className="block text-sm font-medium text-gray-700">
-											Tanggal Mulai
+											Tanggal Mulai <span className="text-red-500">*</span>
 										</label>
 										<input
 											id="tanggal_mulai"
@@ -446,7 +446,7 @@ export default function AdminEventEdit() {
 										<label
 											htmlFor="tanggal_selesai"
 											className="block text-sm font-medium text-gray-700">
-											Tanggal Selesai
+											Tanggal Selesai <span className="text-red-500">*</span>
 										</label>
 										<input
 											id="tanggal_selesai"
@@ -466,7 +466,7 @@ export default function AdminEventEdit() {
 										<label
 											htmlFor="waktu_mulai"
 											className="block text-sm font-medium text-gray-700">
-											Waktu Mulai
+											Waktu Mulai <span className="text-red-500">*</span>
 										</label>
 										<input
 											id="waktu_mulai"
@@ -482,7 +482,7 @@ export default function AdminEventEdit() {
 										<label
 											htmlFor="waktu_selesai"
 											className="block text-sm font-medium text-gray-700">
-											Waktu Selesai
+											Waktu Selesai <span className="text-red-500">*</span>
 										</label>
 										<input
 											id="waktu_selesai"
@@ -501,7 +501,7 @@ export default function AdminEventEdit() {
 										<label
 											htmlFor="batas_pendaftaran"
 											className="block text-sm font-medium text-gray-700">
-											Batas Pendaftaran
+											Batas Pendaftaran <span className="text-red-500">*</span>
 										</label>
 										<input
 											id="batas_pendaftaran"
@@ -518,7 +518,7 @@ export default function AdminEventEdit() {
 										<label
 											htmlFor="location_id"
 											className="block text-sm font-medium text-gray-700">
-											Lokasi
+											Lokasi <span className="text-red-500">*</span>
 										</label>
 										<select
 											id="location_id"
@@ -733,7 +733,7 @@ export default function AdminEventEdit() {
 										<label
 											htmlFor="status"
 											className="block text-sm font-medium text-gray-700">
-											Status
+											Status <span className="text-red-500">*</span>
 										</label>
 										<select
 											id="status"

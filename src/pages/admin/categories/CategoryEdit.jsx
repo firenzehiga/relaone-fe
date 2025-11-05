@@ -81,7 +81,7 @@ export default function AdminCategoryEdit() {
 				style={{ minHeight: 520, width: 900 }}>
 				<header className="mb-6">
 					<h1 className="text-2xl font-semibold text-gray-900">
-						Buat Kategori Baru
+						Edit Kategori
 					</h1>
 					<p className="text-sm text-gray-500 mt-1">Isi detail kategori.</p>
 				</header>
@@ -90,7 +90,7 @@ export default function AdminCategoryEdit() {
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Nama Kategori
+								Nama Kategori <span className="text-red-500">*</span>
 							</label>
 							<input
 								name="nama"
@@ -104,7 +104,7 @@ export default function AdminCategoryEdit() {
 						</div>
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Warna
+								Warna <span className="text-red-500">*</span>
 							</label>
 							<div className="mt-1 flex items-center gap-3">
 								{/* native color input */}
@@ -152,7 +152,7 @@ export default function AdminCategoryEdit() {
 					{/* Icon picker (lucide-react) */}
 					<div>
 						<label className="block text-sm font-medium text-gray-700 mb-2">
-							Icon Kategori
+							Icon Kategori <span className="text-red-500">*</span>
 						</label>
 						{/* quick picks */}
 						<div className="flex flex-wrap gap-2 mb-3">
@@ -241,7 +241,7 @@ export default function AdminCategoryEdit() {
 						<label
 							htmlFor="category_id"
 							className="block text-sm font-medium text-gray-700">
-							Status Kategori
+							Status Kategori <span className="text-red-500">*</span>
 						</label>
 						<select
 							id="is_active"

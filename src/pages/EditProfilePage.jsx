@@ -1,7 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUpdateUserMutation, useUserProfile } from "@/_hooks/useUsers";
-import { toInputDate, getImageUrl } from "@/utils";
+import {
+	toInputDate,
+	getImageUrl,
+	parseSkillsArray,
+	addSkill,
+	updateSkill,
+	removeSkill,
+} from "@/utils";
 import { useAuthStore } from "@/_hooks/useAuth";
 import { motion } from "framer-motion";
 import {
@@ -41,12 +48,13 @@ export default function EditProfilePage() {
 		tanggal_lahir: "",
 		jenis_kelamin: "",
 		bio: "",
-		skills: "",
+		keahlian: [],
 		interests: "",
 		experience: "",
 		foto_profil: null,
 	});
 	const [imagePreview, setImagePreview] = useState(null);
+	const [keahlianInput, setKeahlianInput] = useState("");
 
 	// State untuk validation errors
 	const [errors, setErrors] = useState({});
@@ -73,7 +81,7 @@ export default function EditProfilePage() {
 				tanggal_lahir: toInputDate(profileData.tanggal_lahir) || "",
 				jenis_kelamin: profileData.jenis_kelamin || "",
 				bio: profileData.bio || "",
-				skills: profileData.skills || "",
+				keahlian: parseSkillsArray(profileData.keahlian) || [],
 				interests: profileData.interests || "",
 				experience: profileData.experience || "",
 				foto_profil: profileData.foto_profil,
@@ -145,6 +153,32 @@ export default function EditProfilePage() {
 		}
 	};
 
+	// keahlian handlers (array) - using utils
+	const addKeahlianHandler = () => {
+		const trimmedInput = keahlianInput.trim();
+		if (!trimmedInput) return;
+
+		const newSkills = addSkill(formData.keahlian, trimmedInput);
+		if (newSkills.length === formData.keahlian.length) {
+			// Skill already exists or invalid
+			toast.error("Keahlian sudah ada atau tidak valid");
+			return;
+		}
+
+		setFormData((prev) => ({ ...prev, keahlian: newSkills }));
+		setKeahlianInput("");
+	};
+
+	const updateKeahlianHandler = (idx, value) => {
+		const updatedSkills = updateSkill(formData.keahlian, idx, value);
+		setFormData((prev) => ({ ...prev, keahlian: updatedSkills }));
+	};
+
+	const removeKeahlianHandler = (idx) => {
+		const updatedSkills = removeSkill(formData.keahlian, idx);
+		setFormData((prev) => ({ ...prev, keahlian: updatedSkills }));
+	};
+
 	// Validate form
 	const validateForm = () => {
 		const newErrors = {};
@@ -188,6 +222,8 @@ export default function EditProfilePage() {
 				if (formData.foto_profil instanceof File) {
 					payload.append("foto_profil", formData.foto_profil);
 				}
+			} else if (Array.isArray(formData[key])) {
+				payload.append(key, JSON.stringify(formData[key]));
 			} else {
 				payload.append(key, formData[key]);
 			}
@@ -503,21 +539,58 @@ export default function EditProfilePage() {
 											</div>
 										</div>
 
-										{/* Interests */}
+										{/* Keahlian (Skills) */}
 										<div>
-											<label className="block text-sm font-medium text-gray-700 mb-1">
-												Minat Volunteering
+											<label className="block text-sm font-medium text-gray-700">
+												Keahlian
 											</label>
-											<div className="relative">
-												<Target className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-												<textarea
-													name="interests"
-													value={formData.interests}
-													onChange={handleChange}
-													rows={2}
-													className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none text-sm"
-													placeholder="Contoh: Pendidikan, Lingkungan..."
-												/>
+											<div className="mt-2 space-y-2">
+												{formData.keahlian && formData.keahlian.length > 0 ? (
+													formData.keahlian.map((p, idx) => (
+														<div key={idx} className="flex items-center gap-2">
+															<input
+																type="text"
+																className="flex-1 rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+																value={p}
+																onChange={(e) =>
+																	updateKeahlianHandler(idx, e.target.value)
+																}
+															/>
+															<button
+																type="button"
+																onClick={() => removeKeahlianHandler(idx)}
+																className="px-2 py-1 text-sm text-red-600 bg-red-50 rounded">
+																Hapus
+															</button>
+														</div>
+													))
+												) : (
+													<div className="text-sm text-gray-400">
+														Belum ada keahlian. Tambahkan di bawah.
+													</div>
+												)}
+
+												<div className="flex items-center gap-2">
+													<input
+														type="text"
+														placeholder="Tambahkan keahlian, misal: Microsoft Office"
+														className="flex-1 rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+														value={keahlianInput}
+														onChange={(e) => setKeahlianInput(e.target.value)}
+														onKeyDown={(e) => {
+															if (e.key === "Enter") {
+																e.preventDefault();
+																addKeahlianHandler();
+															}
+														}}
+													/>
+													<Button
+														variant="success"
+														type="button"
+														onClick={addKeahlianHandler}>
+														Tambah
+													</Button>
+												</div>
 											</div>
 										</div>
 									</div>

@@ -9,11 +9,13 @@ import {
 	Edit3,
 	Shield,
 	Award,
+	Star,
+	Code,
 } from "lucide-react";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { useUserProfile } from "@/_hooks/useUsers";
-import { getImageUrl, getVolunteerEventBadge } from "@/utils";
+import { getImageUrl, getVolunteerEventBadge, parseSkillsArray } from "@/utils";
 import Skeleton from "@/components/ui/Skeleton";
 
 /**
@@ -305,14 +307,44 @@ export default function ProfilePage() {
 											</p>
 										</div>
 
+										{/* Keahlian Section */}
 										<div>
-											<label className="text-xs font-medium text-gray-500 block mb-1">
-												Minat Volunteering
+											<label className="text-xs font-medium text-gray-500 block mb-3">
+												Keahlian & Kemampuan
 											</label>
-											<p className="text-gray-900 text-sm leading-relaxed">
-												{profile?.interests ||
-													"Belum ada minat yang ditambahkan"}
-											</p>
+											{parseSkillsArray(profile?.keahlian)?.length > 0 ? (
+												<div className="space-y-3">
+													<div className="flex flex-wrap gap-2">
+														{parseSkillsArray(profile?.keahlian).map(
+															(skill, index) => (
+																<span
+																	key={index}
+																	className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border border-blue-200 hover:from-blue-100 hover:to-indigo-100 transition-colors">
+																	<Star className="w-3 h-3 mr-1.5 text-blue-500" />
+																	{skill}
+																</span>
+															)
+														)}
+													</div>
+													<div className="flex items-center text-xs text-gray-500">
+														<Code className="w-3 h-3 mr-1" />
+														<span>
+															{parseSkillsArray(profile?.keahlian).length}{" "}
+															keahlian terdaftar
+														</span>
+													</div>
+												</div>
+											) : (
+												<div className="text-center py-6 border-2 border-dashed border-gray-200 rounded-lg">
+													<Star className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+													<p className="text-gray-500 text-sm mb-1">
+														Belum ada keahlian yang ditambahkan
+													</p>
+													<p className="text-gray-400 text-xs">
+														Tambahkan keahlian untuk melengkapi profile
+													</p>
+												</div>
+											)}
 										</div>
 									</div>
 

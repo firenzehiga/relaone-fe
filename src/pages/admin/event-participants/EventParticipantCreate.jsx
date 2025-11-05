@@ -99,7 +99,7 @@ export default function AdminEventParticipantCreate() {
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Event
+								Event <span className="text-red-500">*</span>
 							</label>
 							<select
 								name="event_id"
@@ -118,7 +118,7 @@ export default function AdminEventParticipantCreate() {
 
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Peserta (user)
+								Peserta (user) <span className="text-red-500">*</span>
 							</label>
 							<select
 								name="user_id"
@@ -139,7 +139,7 @@ export default function AdminEventParticipantCreate() {
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Tanggal Daftar
+								Tanggal Daftar <span className="text-red-500">*</span>
 							</label>
 							<input
 								type="date"
@@ -181,7 +181,7 @@ export default function AdminEventParticipantCreate() {
 						)}
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Status
+								Status <span className="text-red-500">*</span>
 							</label>
 							<select
 								name="status"

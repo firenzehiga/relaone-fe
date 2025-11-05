@@ -62,7 +62,7 @@ export default function AdminCategoryCreate() {
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Nama Kategori
+								Nama Kategori <span className="text-red-500">*</span>
 							</label>
 							<input
 								name="nama"
@@ -76,7 +76,7 @@ export default function AdminCategoryCreate() {
 						</div>
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Warna
+								Warna <span className="text-red-500">*</span>
 							</label>
 							<div className="mt-1 flex items-center gap-3">
 								{/* native color input */}
@@ -123,7 +123,7 @@ export default function AdminCategoryCreate() {
 					{/* Icon picker (lucide-react) */}
 					<div>
 						<label className="block text-sm font-medium text-gray-700 mb-2">
-							Icon Kategori
+							Icon Kategori <span className="text-red-500">*</span>
 						</label>
 						{/* quick picks */}
 						<div className="flex flex-wrap gap-2 mb-3">
@@ -211,7 +211,7 @@ export default function AdminCategoryCreate() {
 						<label
 							htmlFor="category_id"
 							className="block text-sm font-medium text-gray-700">
-							Status Kategori
+							Status Kategori <span className="text-red-500">*</span>
 						</label>
 						<select
 							id="is_active"

@@ -273,29 +273,52 @@ export default function AdminOrganization() {
 								sortIcon={<ChevronDown />}
 								expandableRows
 								expandableRowsComponent={({ data }) => (
-									<div className="p-4 bg-gray-50 rounded-md">
-										<p className="text-sm text-gray-600">
-											<strong>Nama Perwakilan:</strong>{" "}
-											{data?.user?.nama || "-"}
-										</p>
-										<p className="text-sm text-gray-600 mt-2">
-											<strong>Deskripsi:</strong>
-										</p>
-										<p className="text-sm text-gray-800 mt-1">
-											{data.deskripsi || "-"}
-										</p>
-										<p className="text-sm text-gray-600 mt-2">
-											<strong>No Telepon:</strong>
-										</p>
-										<p className="text-sm text-gray-800 mt-1">
-											{data.telepon || "-"}
-										</p>
-										<p className="text-sm text-gray-600 mt-2">
-											<strong>Email:</strong>
-										</p>
-										<p className="text-sm text-gray-800 mt-1">
-											{data.email || "-"}
-										</p>
+									<div className="p-6 bg-white rounded-md border border-gray-100 shadow-sm">
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+											{/* Left column */}
+											<div className="space-y-3">
+												<div className="text-sm text-gray-700">
+													<span className="font-semibold">
+														Nama Penanggung Jawab:
+													</span>
+													<span className="ml-2 text-gray-900">
+														{data.user?.nama || "-"}
+													</span>
+												</div>
+												<div className="text-sm text-gray-700">
+													<span className="font-semibold">No Telp:</span>
+													<span className="ml-2 text-gray-900">
+														{data.telepon || "-"}
+													</span>
+												</div>
+												<div className="text-sm text-gray-700">
+													<span className="font-semibold">Email:</span>
+													<span className="ml-2 text-gray-900">
+														{data.email || "-"}
+													</span>
+												</div>
+											</div>
+
+											{/* Right column */}
+											<div className="space-y-3">
+												<div>
+													<div className="text-sm font-semibold text-gray-700 mb-1">
+														Alamat:
+													</div>
+													<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
+														{data.alamat || "-"}
+													</div>
+												</div>
+												<div>
+													<div className="text-sm font-semibold text-gray-700 mb-1">
+														Deskripsi Organisasi:
+													</div>
+													<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
+														{data.deskripsi || "-"}
+													</div>
+												</div>
+											</div>
+										</div>
 									</div>
 								)}
 								noDataComponent={

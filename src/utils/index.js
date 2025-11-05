@@ -276,7 +276,7 @@ export {
 	getAllVolunteerBadgeLevels,
 	getVolunteerProgress,
 	checkLevelUp,
-} from "./volunteerBadges";
+} from "./profile/volunteerBadges";
 
 // Export organization badge utilities
 export {
@@ -285,4 +285,16 @@ export {
 	getAllOrganizationBadgeLevels,
 	getOrganizationProgress,
 	checkOrganizationLevelUp,
-} from "./organizationBadges";
+} from "./profile/organizationBadges";
+
+// Export skills helper utilities
+export {
+	parseSkillsArray,
+	addSkill,
+	updateSkill,
+	removeSkill,
+	validateSkill,
+	formatSkillsForDisplay,
+	formatSkillsForBackend,
+	getSkillsStats,
+} from "./profile/skillsHelpers";
