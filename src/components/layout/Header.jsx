@@ -36,9 +36,9 @@ export default function Header() {
 	const logoutMutation = useLogout();
 
 	const baseNav = [
-		{ name: "Beranda", href: "/", icon: Home },
+		{ name: "Home", href: "/", icon: Home },
 		{ name: "Event", href: "/events", icon: Calendar },
-		{ name: "Organisasi", href: "/organizations", icon: Building },
+		{ name: "Organization", href: "/organizations", icon: Building },
 	];
 
 	const orgNav = [
