@@ -30,6 +30,8 @@ import { getImageUrl, parseApiError } from "@/utils";
 import { Link } from "react-router-dom";
 import FetchLoader from "@/components/ui/FetchLoader";
 import toast from "react-hot-toast";
+import { AsyncImage } from "loadable-image";
+import { Fade } from "transitions-kit";
 
 export default function AdminOrganization() {
 	const {
@@ -120,19 +122,19 @@ export default function AdminOrganization() {
 		{
 			name: "Logo",
 			selector: (row) => (
-				<div className="flex items-center mt-1 mb-1">
-					{row.logo ? (
-						<img
-							src={getImageUrl(`organizations/${row.logo}`)}
-							alt={row.nama || "logo"}
-							className="w-16 h-16 rounded-md object-cover border border-gray-200"
-						/>
-					) : (
-						<div className="w-16 h-16 rounded-md bg-gray-100 flex items-center justify-center text-xs text-gray-500 border border-gray-200">
-							No Image
-						</div>
-					)}
-				</div>
+				<>
+					<AsyncImage
+						loading="lazy"
+						transition={Fade}
+						src={getImageUrl(`organizations/${row.logo}`)}
+						alt={row.nama}
+						className="w-20 h-20 object-cover rounded-lg m-1 border border-gray-200 flex-shrink-0"
+						onError={(e) => {
+							e.target.onerror = null;
+							e.target.src = "https://placehold.co/400";
+						}}
+					/>
+				</>
 			),
 			sortable: true,
 			width: "170px",

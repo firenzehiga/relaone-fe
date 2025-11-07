@@ -69,8 +69,6 @@ export const logout = async () => {
 	}
 };
 
-
-
 /**
  * Refresh authentication token
  */
@@ -84,6 +82,60 @@ export const refreshToken = async () => {
 			return response.data;
 		} else {
 			throw new Error(response.data.message || "Token refresh failed");
+		}
+	} catch (error) {
+		// Jika ada response dari server, lempar data (mengandung message & errors)
+		if (error.response?.data) {
+			throw error.response.data;
+		}
+		// Jika tidak ada response (network/CORS), lempar error asli
+		throw error;
+	}
+};
+
+/**
+ * Send forgot password email
+ */
+export const forgotPassword = async (email) => {
+	try {
+		const response = await api.post("/forgot-password", { email });
+
+		if (response.data.success) {
+			return response.data;
+		} else {
+			throw new Error(response.data.message || "Failed to send reset email");
+		}
+	} catch (error) {
+		// Jika ada response dari server, lempar data (mengandung message & errors)
+		if (error.response?.data) {
+			throw error.response.data;
+		}
+		// Jika tidak ada response (network/CORS), lempar error asli
+		throw error;
+	}
+};
+
+/**
+ * Reset password dengan token
+ */
+export const resetPassword = async (
+	token,
+	email,
+	newPassword,
+	confirmPassword
+) => {
+	try {
+		const response = await api.post("/reset-password", {
+			token,
+			email,
+			password: newPassword,
+			password_confirmation: confirmPassword,
+		});
+
+		if (response.data.success) {
+			return response.data;
+		} else {
+			throw new Error(response.data.message || "Password reset failed");
 		}
 	} catch (error) {
 		// Jika ada response dari server, lempar data (mengandung message & errors)

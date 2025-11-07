@@ -8,7 +8,7 @@ import { useAdminLocations } from "@/_hooks/useLocations";
 import { useAdminOrganizations } from "@/_hooks/useOrganizations";
 import { useAuthStore } from "@/_hooks/useAuth";
 import { useAdminCreateEventMutation } from "@/_hooks/useEvents";
-import { Loader2 } from "lucide-react";
+import { Loader2, UserCircle2, Image } from "lucide-react";
 import { useAdminCategory } from "@/_hooks/useCategories";
 import Skeleton from "@/components/ui/Skeleton";
 export default function AdminEventCreate() {
@@ -42,8 +42,7 @@ export default function AdminEventCreate() {
 	const [manfaatInput, setManfaatInput] = useState("");
 
 	const [error, setError] = useState("");
-	const fileInputRef = useRef(null);
-	const [previewUrl, setPreviewUrl] = useState("");
+	const [imagePreview, setImagePreview] = useState(null);
 
 	const createEventMutation = useAdminCreateEventMutation();
 	const {
@@ -101,8 +100,8 @@ export default function AdminEventCreate() {
 		let url;
 		if (formData.gambar instanceof File) {
 			url = URL.createObjectURL(formData.gambar);
-			setPreviewUrl(url);
-		} else setPreviewUrl("");
+			setImagePreview(url);
+		} else setImagePreview("");
 		return () => {
 			if (url) URL.revokeObjectURL(url);
 		};
@@ -315,50 +314,60 @@ export default function AdminEventCreate() {
 										Gambar Event <span className="text-red-500">*</span>
 									</label>
 									<div
+										className="mt-2"
 										onDrop={handleDrop}
-										onDragOver={handleDragOver}
-										className="mt-2 flex items-center gap-4">
-										<div className="flex-1">
-											<p className="text-sm text-gray-500">
-												PNG / JPG — maksimal 2MB. (webp tidak diperbolehkan)
-											</p>
-											<div className="mt-3 flex gap-3">
-												<label className="inline-flex items-center px-3 py-2 bg-white border rounded-md text-sm text-gray-700 hover:bg-gray-50 cursor-pointer">
-													Pilih Gambar
-													<input
-														ref={fileInputRef}
-														name="gambar"
-														id="gambar"
-														type="file"
-														accept="image/*"
-														required
-														onChange={handleChange}
-														className="sr-only"
+										onDragOver={handleDragOver}>
+										<div className="flex items-center space-x-6">
+											{/* Image Preview */}
+											<div className="relative">
+												{imagePreview ? (
+													<img
+														src={imagePreview}
+														alt="Preview"
+														className="w-24 h-24 rounded-lg object-cover border-4 border-white shadow-lg"
 													/>
-												</label>
-											</div>
-											{formData.gambar && (
-												<div className="ml-4 flex flex-col items-center">
-													{previewUrl ? (
-														<img
-															src={previewUrl}
-															alt={formData.gambar.name}
-															className="w-60 h-40 object-cover rounded border"
-														/>
-													) : (
-														<div className="w-40 h-28 bg-gray-100 rounded flex items-center justify-center border text-xs text-gray-500">
-															Preview...
-														</div>
-													)}
-													<div className="mt-2 text-sm text-gray-700 truncate w-70 text-center">
-														{formData.gambar.name}
+												) : (
+													<div className="w-24 h-24 rounded-lg bg-gray-200 flex items-center justify-center border-4 border-white shadow-lg">
+														<Image className="w-12 h-12 text-gray-400" />
 													</div>
+												)}
+											</div>
+
+											{/* Upload Button and Info */}
+											<div className="flex flex-col space-y-2">
+												<div className="relative">
+													<input
+														type="file"
+														id="gambar"
+														name="gambar"
+														accept="image/jpeg,image/jpg,image/png"
+														onChange={handleChange}
+														className="hidden"
+														required
+													/>
+													<label
+														htmlFor="gambar"
+														className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-600 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors duration-200 text-sm font-medium">
+														<Image className="w-4 h-4 mr-2" />
+														{imagePreview ? "Ganti Gambar" : "Upload Gambar"}
+													</label>
 												</div>
-											)}
-											<p className="mt-2 text-xs text-gray-400">
-												Kamu juga bisa seret & lepas gambar ke area ini.
-											</p>
+
+												<p className="text-xs text-gray-500">
+													Format: JPEG, JPG, PNG. Maksimal 2MB.
+												</p>
+
+												{formData.gambar && (
+													<p className="text-xs text-gray-700">
+														{formData.gambar.name}
+													</p>
+												)}
+											</div>
 										</div>
+
+										<p className="mt-2 text-xs text-gray-400">
+											Kamu juga bisa seret & lepas gambar ke area ini.
+										</p>
 									</div>
 								</div>
 							</TabPanel>

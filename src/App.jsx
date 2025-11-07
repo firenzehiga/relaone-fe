@@ -22,6 +22,8 @@ import EditProfilePage from "@/pages/EditProfilePage";
 // Auth Pages
 import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
+import ForgotPasswordPage from "@/pages/auth/ForgotPassword";
+import ResetPasswordPage from "@/pages/auth/ResetPassword";
 
 // Modals
 import JoinEventModal from "@/components/JoinEventModal";
@@ -107,6 +109,22 @@ function App() {
 						<Route path="edit" element={<EditProfilePage />} />
 					</Route>
 				</Route>
+				<Route
+					path="forgot-password"
+					element={
+						<GuestRoute>
+							<ForgotPasswordPage />
+						</GuestRoute>
+					}
+				/>
+				<Route
+					path="reset-password"
+					element={
+						<GuestRoute>
+							<ResetPasswordPage />
+						</GuestRoute>
+					}
+				/>
 
 				{/* ADMIN ROUTES */}
 				<Route

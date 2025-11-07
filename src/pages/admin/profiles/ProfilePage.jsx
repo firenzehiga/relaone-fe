@@ -125,7 +125,7 @@ export default function AdminProfilePage() {
 										className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-lg"
 									/>
 								) : (
-									<div className="w-32 h-32 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full mx-auto flex items-center justify-center border-4 border-white shadow-lg">
+									<div className="w-32 h-32 bg-gradient-to-br from-blue-400 to-emerald-500 rounded-full mx-auto flex items-center justify-center border-4 border-white shadow-lg">
 										<User className="w-16 h-16 text-white" />
 									</div>
 								)}

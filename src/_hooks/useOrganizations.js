@@ -13,7 +13,7 @@ import { showToast } from "@/components/ui/Toast";
  */
 export const useOrganizations = (params = {}) => {
 	return useQuery({
-		queryKey: ["organizations", params],
+		queryKey: ["organizations"],
 		queryFn: async () => {
 			const response = await organizationService.getOrganizations(params);
 			return response;

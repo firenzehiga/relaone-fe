@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import * as authService from "@/_services/authService";
 import * as userService from "@/_services/userService";
 import { showToast, toastSuccess } from "@/components/ui/Toast";
+import { parseApiError } from "@/utils";
 
 /**
  * Baca user yang tersimpan di localStorage (jika ada) saat file dimuat.
@@ -266,6 +267,74 @@ export const useRegister = () => {
 	});
 };
 
+export const useForgotPassword = () => {
+	const { setLoading, setError, clearError } = useAuthStore();
+
+	return useMutation({
+		mutationKey: ["forgotPassword"],
+		mutationFn: authService.forgotPassword,
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: (data) => {
+			setLoading(false);
+			showToast({
+				type: "success",
+				title: "Email Terkirim!",
+				message:
+					data.message || "Cek email Anda untuk instruksi reset password.",
+				duration: 4000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Failed to send reset email";
+			// Handle Laravel validation errors
+			setError(msg);
+			toast.error(msg, { duration: 2000 });
+		},
+	});
+};
+
+export const useResetPassword = () => {
+	const navigate = useNavigate();
+	const { setLoading, setError, clearError } = useAuthStore();
+
+	return useMutation({
+		mutationKey: ["resetPassword"],
+		mutationFn: ({ token, email, newPassword, confirmPassword }) =>
+			authService.resetPassword(token, email, newPassword, confirmPassword),
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: (data) => {
+			setLoading(false);
+			showToast({
+				type: "success",
+				title: "Password Reset Berhasil!",
+				message:
+					"Password Anda telah berhasil direset. Silakan login dengan password baru.",
+				duration: 4000,
+				position: "top-center",
+			});
+
+			// Navigate to login page
+			navigate("/login");
+		},
+		onError: (error) => {
+			setLoading(false);
+			// Handle Laravel validation errors
+			const errorMessage =
+				error.errors || error.message || "Password reset failed";
+			setError(errorMessage);
+			toast.error(errorMessage, { duration: 2000 });
+		},
+	});
+};
+
 export const useLogout = () => {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
@@ -294,7 +363,7 @@ export const useLogout = () => {
 			queryClient.clear();
 
 			// Navigate to home AFTER auth state cleared to avoid ProtectedRoute race
-			setTimeout(() => navigate("/home", { replace: true }), 0);
+			setTimeout(() => navigate("/", { replace: true }), 0);
 		},
 		onError: (error) => {
 			// Even if logout fails on server, clear local data

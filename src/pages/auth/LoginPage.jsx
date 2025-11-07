@@ -50,7 +50,7 @@ export default function LoginPage() {
 					<div className="w-full max-w-md">
 						{/* Back Button */}
 						<Link
-							to="/home"
+							to="/"
 							className="inline-flex items-center text-gray-600 hover:text-gray-800 mb-8 transition-colors">
 							<ArrowLeft className="w-4 h-4 mr-2" />
 							Go Back
@@ -134,8 +134,8 @@ export default function LoginPage() {
 							</div>
 
 							{/* Remember Me & Forgot Password */}
-							<div className="flex items-center justify-between">
-								<label className="flex items-center">
+							<div className="flex items-center justify-end">
+								{/* <label className="flex items-center">
 									<input
 										type="checkbox"
 										name="rememberMe"
@@ -147,7 +147,7 @@ export default function LoginPage() {
 									<span className="ml-2 text-sm text-gray-600">
 										Remember me
 									</span>
-								</label>
+								</label> */}
 								<Link
 									to="/forgot-password"
 									className="text-sm text-blue-600 hover:text-blue-800">

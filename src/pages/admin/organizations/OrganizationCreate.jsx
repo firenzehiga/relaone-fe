@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { useAdminOrganizationUsers } from "@/_hooks/useUsers";
 import { useAdminCreateOrganizationMutation } from "@/_hooks/useOrganizations";
 import { useAuthStore } from "@/_hooks/useAuth";
-import { UserCircle2Icon } from "lucide-react";
+import { UserCircle2Icon, Building2 } from "lucide-react";
 import { Input, InputGroup, InputLeftAddon } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
@@ -25,7 +25,6 @@ export default function AdminOrganizationCreate() {
 	const { isLoading } = useAuthStore();
 
 	const [previewUrl, setPreviewUrl] = useState(null);
-	const fileRef = useRef(null);
 
 	const {
 		data: organizationUsers = [],
@@ -261,31 +260,53 @@ export default function AdminOrganizationCreate() {
 							<label className="block text-sm font-medium text-gray-700">
 								Logo <span className="text-red-500">*</span>
 							</label>
-							<div className="mt-2 flex items-center gap-4">
-								<div className="w-28 h-20 rounded-md border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden">
-									{previewUrl ? (
-										<img
-											src={previewUrl}
-											alt="logo"
-											className="w-full h-full object-cover"
-										/>
-									) : (
-										<UserCircle2Icon className="text-gray-300 size-12" />
-									)}
-								</div>
-								<div className="flex flex-col gap-2">
-									<label className="inline-flex items-center px-3 py-2 bg-white border rounded-md text-sm text-gray-700 hover:bg-gray-50 cursor-pointer">
-										Pilih Logo
-										<input
-											name="logo"
-											ref={fileRef}
-											onChange={handleChange}
-											type="file"
-											accept="image/jpeg,image/png,image/jpg"
-											required
-											className="sr-only"
-										/>
-									</label>
+							<div className="mt-2">
+								<div className="flex items-center space-x-6">
+									{/* Logo Preview */}
+									<div className="relative">
+										{previewUrl ? (
+											<img
+												src={previewUrl}
+												alt="Preview"
+												className="w-24 h-24 rounded-lg object-cover border-4 border-white shadow-lg"
+											/>
+										) : (
+											<div className="w-24 h-24 rounded-lg bg-gray-200 flex items-center justify-center border-4 border-white shadow-lg">
+												<Building2 className="w-12 h-12 text-gray-400" />
+											</div>
+										)}
+									</div>
+
+									{/* Upload Button and Info */}
+									<div className="flex flex-col space-y-2">
+										<div className="relative">
+											<input
+												type="file"
+												id="logo"
+												name="logo"
+												accept="image/jpeg,image/jpg,image/png"
+												onChange={handleChange}
+												className="hidden"
+												required
+											/>
+											<label
+												htmlFor="logo"
+												className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-600 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors duration-200 text-sm font-medium">
+												<Building2 className="w-4 h-4 mr-2" />
+												{previewUrl ? "Ganti Logo" : "Upload Logo"}
+											</label>
+										</div>
+
+										<p className="text-xs text-gray-500">
+											Format: JPEG, JPG, PNG. Maksimal 2MB.
+										</p>
+
+										{formData.logo && (
+											<p className="text-xs text-gray-700">
+												{formData.logo.name}
+											</p>
+										)}
+									</div>
 								</div>
 							</div>
 						</div>

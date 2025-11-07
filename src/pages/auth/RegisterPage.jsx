@@ -126,7 +126,7 @@ export default function RegisterPage() {
 					<div className="w-full max-w-md">
 						{/* Back Button */}
 						<Link
-							to="/home"
+							to="/"
 							className="inline-flex items-center text-gray-600 hover:text-gray-800 mb-8 transition-colors">
 							<ArrowLeft className="w-4 h-4 mr-2" />
 							Go Back
