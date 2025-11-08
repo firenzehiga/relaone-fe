@@ -202,12 +202,6 @@ export default function OrganizationEventParticipant() {
 				<div className="bg-white rounded-lg shadow p-6">
 					<div className="flex justify-between items-center mb-4">
 						<h2 className="text-lg font-semibold">Daftar Participant</h2>
-						<LinkButton
-							to="/admin/event-participants/create"
-							variant="success"
-							size="sm">
-							<Plus className="w-4 h-4 mr-2" /> Tambah Event Participant
-						</LinkButton>
 					</div>
 
 					{participantsLoading ? (
