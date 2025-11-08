@@ -190,3 +190,145 @@ export const useOrgLocations = () => {
 		retry: 1,
 	});
 };
+
+/**
+ * Ambil detail lokasi berdasarkan ID.
+ *
+ * @param {string|number} locationId - ID lokasi
+ * @returns {UseQueryResult<Object>} Data detail lokasi
+ */
+export const useOrgLocationById = (id) => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "organization" && !!id;
+	return useQuery({
+		queryKey: ["orgLocations", id],
+		queryFn: async () => {
+			const response = await locationService.orgGetLocationById(id);
+			return response;
+		},
+		enabled,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
+	});
+};
+
+/**
+ * Buat location baru (organization).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["locations"]
+ */
+export const useOrgCreateLocationMutation = () => {
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
+
+	return useMutation({
+		mutationKey: ["orgLocations", "create"],
+		mutationFn: locationService.orgCreateLocation,
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: async () => {
+			await queryClient.invalidateQueries(["orgLocations"]);
+			navigate("/organization/locations");
+
+			setLoading(false);
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "Lokasi berhasil dibuat",
+				duration: 3000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Create location failed";
+			setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali logic yang Anda buat.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Create location error:", error);
+		},
+	});
+};
+
+/**
+ * Update lokasi (organization).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @param {Object} variables - Parameter update
+ * @param {string|number} variables.locationId - ID lokasi
+ * @param {Object} variables.payload - Data lokasi baru
+ */
+export const useOrgUpdateLocationMutation = () => {
+	const navigate = useNavigate();
+
+	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
+
+	return useMutation({
+		mutationKey: ["orgLocations", "update"],
+		mutationFn: ({ id, data }) => locationService.orgUpdateLocation(id, data),
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: async (_, id) => {
+			await queryClient.invalidateQueries(["orgLocations"]);
+			navigate("/organization/locations");
+
+			setLoading(false);
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "Lokasi berhasil diperbarui",
+				duration: 3000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Update location failed";
+			setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali logic yang Anda buat.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Update location error:", error);
+		},
+	});
+};
+
+/**
+ * Hapus location (Organization).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["OrgLocations"]
+ * @optimisticUpdate Cache ["orgLocations"] langsung difilter
+ */
+export const useOrgDeleteLocationMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: locationService.orgDeleteLocation,
+		onSuccess: (_, id) => {
+			queryClient.setQueryData(["orgLocations"], (oldData) =>
+				oldData.filter((location) => location.id !== id)
+			);
+			queryClient.invalidateQueries(["orgLocations"]);
+		},
+	});
+};
