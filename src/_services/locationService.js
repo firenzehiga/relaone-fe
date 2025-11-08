@@ -89,3 +89,65 @@ export const orgGetLocations = async () => {
 	const response = await api.get("/organization/locations");
 	return response.data.data || response.data;
 };
+
+/** Mengambil detail lokasi berdasarkan ID.
+ *
+ * @async
+ * @function orgGetLocationById
+ * @endpoint GET /organization/locations/{locationId}
+ * @param {string|number} id - ID lokasi
+ */
+export const orgGetLocationById = async (id) => {
+	const response = await api.get(`/organization/locations/${id}`);
+	return response.data.data || response.data;
+};
+
+/** * Buat location baru
+ *
+ * @async
+ * @function orgCreateLocation
+ * @endpoint POST /organization/locations
+ * @param {Object} data - Data location baru
+ * @returns {Promise<any>} Data location baru
+ */
+export const orgCreateLocation = async (data) => {
+	const response = await api.post("/organization/locations", data);
+	return response.data.data || response.data;
+};
+
+/** * Update location
+ *
+ * @async
+ * @function orgUpdateLocation
+ * @endpoint POST method PUT /organization/locations/{locationId}
+ * @param {string|number} id - ID location
+ * @param {Object} data - Data location baru
+ * @returns {Promise<any>} Data location baru
+ */
+export const orgUpdateLocation = async (id, data) => {
+	try {
+		const response = await api.post(`/organization/locations/${id}`, data);
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error updating event:", error);
+		throw error;
+	}
+};
+
+/** Hapus location
+ *
+ * @async
+ * @function orgDeleteLocation
+ * @endpoint DELETE /organization/locations/{locationId}
+ * @param {string|number} id - ID location
+ * @returns {Promise<any>} Data location yang dihapus
+ */
+export const orgDeleteLocation = async (id) => {
+	try {
+		const response = await api.delete(`/organization/locations/${id}`);
+		return response.data;
+	} catch (error) {
+		console.log("Error deleting location:", error);
+		throw error;
+	}
+};
