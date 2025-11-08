@@ -240,6 +240,128 @@ export const useOrgEvents = () => {
 };
 
 /**
+ * Hook untuk mengambil data events berdasarkan ID (organization)
+ * @returns {Object} Query result dengan data, isLoading, error, etc
+ */
+export const useOrgEventById = (id) => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "organization" && !!id;
+
+	return useQuery({
+		queryKey: ["orgEvents", id],
+		queryFn: async () => {
+			const response = await eventService.orgGetEventById(id);
+			return response;
+		},
+		enabled,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
+	});
+};
+
+/**
+ * Buat event baru (organization).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["events"]
+ */
+export const useOrgCreateEventMutation = () => {
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
+
+	return useMutation({
+		mutationKey: ["orgEvents", "create"],
+		mutationFn: eventService.orgCreateEvent,
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: async () => {
+			await queryClient.invalidateQueries(["orgEvents"]);
+			navigate("/organization/events");
+
+			setLoading(false);
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "Event berhasil dibuat",
+				duration: 3000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Create event failed";
+			setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali logic yang Anda buat.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+		},
+	});
+};
+
+/**
+ * Update event (organization).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @param {Object} variables - Parameter update
+ * @param {string|number} variables.eventId - ID event
+ * @param {Object} variables.data - Data event baru
+ * @invalidates ["events"]
+ */
+export const useOrgUpdateEventMutation = () => {
+	const navigate = useNavigate();
+
+	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
+
+	return useMutation({
+		mutationKey: ["orgEvents", "update"],
+		mutationFn: ({ id, data }) => eventService.orgUpdateEvent(id, data),
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: async (_, id) => {
+			await queryClient.invalidateQueries(["orgEvents"]);
+			queryClient.invalidateQueries(["orgEvents", id]);
+			// query key publik
+			queryClient.invalidateQueries(["detailEvent", id]);
+			navigate("/organization/events");
+
+			setLoading(false);
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "Event berhasil diperbarui",
+				duration: 3000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Update event failed";
+			setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali logic yang Anda buat.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+		},
+	});
+};
+
+/**
  * Hapus event (organization).
  *
  * @returns {UseMutationResult} Mutation hook
