@@ -1,5 +1,9 @@
 import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/id";
+
+// Extend dayjs with relative time plugin
+dayjs.extend(relativeTime);
 
 /**
  * Util: Ambil token dari localStorage (jika diperlukan di masa depan).
@@ -142,6 +146,24 @@ export const formatTime = (time, withZone = false) => {
 	return out;
 };
 
+/**
+ * Mengformat tanggal menjadi relative time (waktu relatif)
+ *
+ * Contoh: "2 jam yang lalu", "3 hari yang lalu", "seminggu yang lalu"
+ *
+ * @function formatRelativeTime
+ * @param {Date|number|string} tgl - Tanggal input.
+ * @returns {string} Hasil format relatif atau "-" jika tidak valid.
+ */
+export const formatRelativeTime = (tgl) => {
+	if (!tgl && tgl !== 0) return "-";
+
+	const d = toDayjs(tgl);
+	if (!d.isValid()) return "-";
+
+	return d.locale("id").fromNow();
+};
+
 /*
 Contoh penggunaan (bahasa Indonesia):
 - formatDateDay(tgl)        => "Senin, 1 Januari 2024"
@@ -150,4 +172,5 @@ Contoh penggunaan (bahasa Indonesia):
 - formatTime('07:30')       => "07:30"
 - formatTime('07:30', true) => "07:30 WIB"
 - formatTime('07:30', 'WITA') => "07:30 WITA"
+- formatRelativeTime(tgl)   => "2 jam yang lalu"
 */

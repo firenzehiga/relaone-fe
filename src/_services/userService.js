@@ -88,3 +88,15 @@ export const adminGetVolunteerUsers = async (params = {}) => {
 	const response = await api.get("/admin/volunteer-users");
 	return response.data.data || response.data;
 };
+
+/** Mengambil data analytics untuk dashboard.
+
+ * @async
+ * @function adminGetDashboardAnalytics
+ * @endpoint GET /admin/dashboard/analytics
+ * @returns {Promise<any>} Data analytics untuk dashboard.
+ */
+export const adminGetAnalytics = async (params = {}) => {
+	const response = await api.get("/admin/analytics/dashboard", { params });
+	return response.data.data || response.data;
+};

@@ -1,32 +1,19 @@
-import {
-	EditIcon,
-	ExternalLinkIcon,
-	HamburgerIcon,
-	PlusIcon,
-	RepeatIcon,
-} from "lucide-react";
-import {
-	Menu,
-	MenuButton,
-	MenuList,
-	MenuItem,
-	MenuItemOption,
-	MenuGroup,
-	MenuOptionGroup,
-	MenuDivider,
-	IconButton,
-} from "@chakra-ui/react";
+import { useAdminAnalytics } from "@/_hooks/useUsers";
+import AnalyticsDashboard from "@/components/admin/AnalyticsDashboard";
+
 export default function AdminDashboard() {
+	const { data: analyticsData, isLoading, error } = useAdminAnalytics();
+
 	return (
-		<>
-			<div className="min-h-screen flex items-center justify-center bg-gray-50">
-				<div className="text-center">
-					<h1 className="text-2xl font-bold text-gray-900 mb-4">
-						Admin Dashboard
-					</h1>
-				
-				</div>
+		<div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+			<div className="max-w-7xl mx-auto">
+				{/* Analytics Dashboard Component */}
+				<AnalyticsDashboard
+					data={analyticsData}
+					isLoading={isLoading}
+					error={error}
+				/>
 			</div>
-		</>
+		</div>
 	);
 }

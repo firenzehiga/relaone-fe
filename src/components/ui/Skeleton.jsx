@@ -317,3 +317,129 @@ function ProfileSkeleton() {
 	);
 }
 Skeleton.ProfileSkeleton = ProfileSkeleton;
+
+// Komponen Skeleton untuk Dashboard Admin Analytics
+function AnalyticsSkeleton() {
+	return (
+		<div className="space-y-8">
+			{/* Header Section */}
+			<div>
+				<ChkSkeleton height="32px" width="250px" mb={4} />
+
+				{/* Stats Cards Grid - 3 columns */}
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+					{Array.from({ length: 6 }).map((_, i) => (
+						<div key={i} className="bg-white rounded-xl border shadow-sm p-6">
+							<div className="flex items-start justify-between">
+								<div className="flex-1">
+									{/* Title */}
+									<ChkSkeleton height="14px" width="120px" mb={2} />
+									{/* Value */}
+									<ChkSkeleton height="36px" width="80px" mb={3} />
+									{/* Description */}
+									<ChkSkeleton height="12px" width="150px" />
+								</div>
+								{/* Icon */}
+								<ChkSkeleton width="48px" height="48px" borderRadius="lg" />
+							</div>
+						</div>
+					))}
+				</div>
+			</div>
+
+			{/* Charts Section - 2 columns */}
+			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+				{/* Pie Chart 1 */}
+				<Card>
+					<ChkSkeleton height="24px" width="200px" mb={4} />
+					<div
+						className="flex items-center justify-center"
+						style={{ height: 300 }}>
+						<SkeletonCircle size="200px" />
+					</div>
+				</Card>
+
+				{/* Pie Chart 2 */}
+				<Card>
+					<ChkSkeleton height="24px" width="220px" mb={4} />
+					<div
+						className="flex items-center justify-center"
+						style={{ height: 300 }}>
+						<SkeletonCircle size="200px" />
+					</div>
+				</Card>
+			</div>
+
+			{/* Line Charts Section - 2 columns */}
+			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+				{/* Line Chart 1 */}
+				<Card>
+					<ChkSkeleton height="24px" width="240px" mb={4} />
+					<div className="space-y-3" style={{ height: 300 }}>
+						<ChkSkeleton height="100%" width="100%" borderRadius="md" />
+					</div>
+				</Card>
+
+				{/* Line Chart 2 */}
+				<Card>
+					<ChkSkeleton height="24px" width="260px" mb={4} />
+					<div className="space-y-3" style={{ height: 300 }}>
+						<ChkSkeleton height="100%" width="100%" borderRadius="md" />
+					</div>
+				</Card>
+			</div>
+
+			{/* Bar Chart Section - Full Width */}
+			<Card>
+				<ChkSkeleton height="24px" width="280px" mb={4} />
+				<div className="space-y-3" style={{ height: 300 }}>
+					<ChkSkeleton height="100%" width="100%" borderRadius="md" />
+				</div>
+			</Card>
+
+			{/* Recent Activity Section - 2 columns */}
+			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+				{/* Recent Logins */}
+				<Card>
+					<ChkSkeleton height="24px" width="150px" mb={4} />
+					<div className="space-y-3">
+						{Array.from({ length: 5 }).map((_, i) => (
+							<div
+								key={i}
+								className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+								<div className="flex-1">
+									<ChkSkeleton height="16px" width="140px" mb={2} />
+									<ChkSkeleton height="14px" width="180px" mb={1} />
+									<ChkSkeleton height="12px" width="100px" />
+								</div>
+								<ChkSkeleton height="24px" width="60px" borderRadius="full" />
+							</div>
+						))}
+					</div>
+				</Card>
+
+				{/* Most Active Users */}
+				<Card>
+					<ChkSkeleton height="24px" width="180px" mb={4} />
+					<div className="space-y-3">
+						{Array.from({ length: 5 }).map((_, i) => (
+							<div
+								key={i}
+								className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+								<div className="flex-1">
+									<ChkSkeleton height="16px" width="140px" mb={2} />
+									<ChkSkeleton height="14px" width="180px" />
+								</div>
+								<div className="text-right">
+									<ChkSkeleton height="24px" width="40px" mb={1} />
+									<ChkSkeleton height="12px" width="50px" />
+								</div>
+							</div>
+						))}
+					</div>
+				</Card>
+			</div>
+		</div>
+	);
+}
+Skeleton.AnalyticsSkeleton = AnalyticsSkeleton;
