@@ -209,7 +209,7 @@ export default function EventsPage() {
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Header */}
 				<div className="mb-8">
-					<h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+					<h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent mb-4">
 						Event Relawan
 					</h1>
 					<p className="text-xl text-gray-600">
