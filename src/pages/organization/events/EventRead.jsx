@@ -157,13 +157,13 @@ export default function OrganizationEvent() {
 					/>
 					<Portal>
 						<MenuList className="font-semibold">
-							<Link to={`/admin/events/edit/${row.id}`}>
+							<Link to={`/organization/events/edit/${row.id}`}>
 								<MenuItem
 									icon={<Eye className="text-blue-500 hover:text-blue-600" />}>
 									Lihat
 								</MenuItem>
 							</Link>
-							<Link to={`/admin/events/edit/${row.id}`}>
+							<Link to={`/organization/events/edit/${row.id}`}>
 								<MenuItem
 									icon={
 										<EditIcon className="text-yellow-500 hover:text-yellow-600" />
@@ -206,7 +206,7 @@ export default function OrganizationEvent() {
 				<div className="bg-white rounded-xl shadow p-6">
 					<div className="flex justify-between items-center mb-4">
 						<h2 className="text-lg font-semibold">Daftar Event/Kegiatan</h2>
-						<LinkButton variant="success" to="/admin/events/create">
+						<LinkButton variant="success" to="/organization/events/create">
 							<Plus className="w-4 h-4 mr-2" /> Tambah Event
 						</LinkButton>
 					</div>

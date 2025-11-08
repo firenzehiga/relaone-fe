@@ -128,6 +128,56 @@ export const orgGetEvents = async (params = {}) => {
 	return response.data.data || response.data;
 };
 
+/** Mengambil detail event berdasarkan ID.
+ *
+ * @async
+ * @function orgGetEventById
+ * @endpoint GET /organization/events/{eventId}
+ * @param {string|number} id - ID event
+ * @returns {Promise<any>} Data detail event
+ */
+export const orgGetEventById = async (id) => {
+	const response = await api.get(`/organization/events/${id}`);
+	return response.data.data || response.data;
+};
+
+/** * Buat event baru
+ *
+ * @async
+ * @function orgCreateEvent
+ * @endpoint POST /organization/events
+ * @param {Object} data - Data event baru
+ * @returns {Promise<any>} Data event baru
+ */
+export const orgCreateEvent = async (data) => {
+	try {
+		const response = await api.post("/organization/events", data);
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error creating event:", error);
+		throw error;
+	}
+};
+
+/** * Update event
+ *
+ * @async
+ * @function orgUpdateEvent
+ * @endpoint POST method PUT /organization/events/{eventId}
+ * @param {string|number} id - ID event
+ * @param {Object} data - Data event baru
+ * @returns {Promise<any>} Data event baru
+ */
+export const orgUpdateEvent = async (id, data) => {
+	try {
+		const response = await api.post(`/organization/events/${id}`, data);
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error updating event:", error);
+		throw error;
+	}
+};
+
 /** * Hapus event
  *
  * @async
