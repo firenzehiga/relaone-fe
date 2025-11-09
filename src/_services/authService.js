@@ -1,5 +1,4 @@
 import api from "@/_api";
-import { useJwt } from "react-jwt";
 
 /**
  * Login user dengan credentials
@@ -147,28 +146,28 @@ export const resetPassword = async (
 	}
 };
 
-export const useDecodeToken = (token) => {
-	const { decodeToken, isExpired } = useJwt(token);
+// export const useDecodeToken = (token) => {
+// 	const { decodeToken, isExpired } = useJwt(token);
 
-	try {
-		if (isExpired) {
-			return {
-				success: false,
-				message: "Token expired",
-				data: null,
-			};
-		}
+// 	try {
+// 		if (isExpired) {
+// 			return {
+// 				success: false,
+// 				message: "Token expired",
+// 				data: null,
+// 			};
+// 		}
 
-		return {
-			success: true,
-			message: "Token valid",
-			data: decodeToken,
-		};
-	} catch (error) {
-		return {
-			success: false,
-			message: error.message,
-			data: null,
-		};
-	}
-};
+// 		return {
+// 			success: true,
+// 			message: "Token valid",
+// 			data: decodeToken,
+// 		};
+// 	} catch (error) {
+// 		return {
+// 			success: false,
+// 			message: error.message,
+// 			data: null,
+// 		};
+// 	}
+// };

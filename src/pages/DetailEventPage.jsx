@@ -137,7 +137,7 @@ export default function DetailEventPage() {
 									Kembali
 								</DynamicButton>
 								<DynamicButton
-									variant="primary"
+									variant="success"
 									onClick={handleJoinEvent}
 									disabled={registrationClosed}>
 									{isCancelled

@@ -190,15 +190,14 @@ export default function AdminLocationEdit() {
 		}
 
 		setFormData((s) => {
-			const place = result.place || "";
 			return {
 				...s,
 				latitude: result.latitude || s.latitude,
 				longitude: result.longitude || s.longitude,
 				zoom_level: result.zoom_level || s.zoom_level,
-				alamat: place || s.alamat,
+				alamat: result.place,
 				// auto-fill nama hanya jika belum ada (user tetap bisa edit)
-				nama: place || s.nama,
+				nama: result.place,
 			};
 		});
 	};

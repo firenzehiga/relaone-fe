@@ -77,6 +77,8 @@ export default function AdminLocationCreate() {
 			longitude: result.longitude || s.longitude,
 			zoom_level: result.zoom_level || s.zoom_level,
 			alamat: result.place || s.alamat,
+			// auto-fill nama hanya jika belum ada (user tetap bisa edit)
+			nama: result.place,
 		}));
 	};
 

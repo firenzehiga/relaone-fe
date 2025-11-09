@@ -147,7 +147,7 @@ export default function OrganizationsPage() {
 										{org.status_verifikasi === "verified" && (
 											<Badge
 												variant="success"
-												className="absolute top-3 right-3 text-white bg-emerald-500/90 backdrop-blur-sm shadow-lg">
+												className="absolute top-3 right-3 text-black backdrop-blur-sm shadow-lg">
 												<CheckCircle className="w-3 h-3 mr-1" />
 												Terverifikasi
 											</Badge>

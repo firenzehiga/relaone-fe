@@ -470,7 +470,7 @@ export default function EventsPage() {
 																Detail
 															</DynamicButton>
 															<DynamicButton
-																variant="primary"
+																variant="success"
 																size="sm"
 																onClick={() => openJoinModal(event.id, event)}
 																disabled={isRegistrationClosedFor(event)}>

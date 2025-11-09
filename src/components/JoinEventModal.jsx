@@ -14,7 +14,7 @@ import Badge from "@/components/ui/Badge";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/_hooks/useAuth";
 import { useVolunteerJoinEventMutation } from "@/_hooks/useParticipants";
-import { parseApiError } from "@/utils";
+import { getImageUrl, parseApiError } from "@/utils";
 import { showToast } from "./ui/Toast";
 import { useEventById } from "@/_hooks/useEvents";
 import { useModalStore } from "@/stores/useAppStore";
@@ -154,7 +154,10 @@ export default function JoinEventModal() {
 					<div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-100">
 						<div className="flex items-start gap-4">
 							<img
-								src={event.banner || "https://placehold.co/400"}
+								src={
+									getImageUrl(`events/${event.gambar}`) ||
+									"https://placehold.co/400"
+								}
 								alt={event.judul}
 								className="w-24 h-24 object-cover rounded-lg shadow-md flex-shrink-0"
 							/>

@@ -13,6 +13,10 @@ import {
 	EditIcon,
 	EllipsisVerticalIcon,
 	AlertCircle,
+	Filter,
+	X,
+	Calendar,
+	Users,
 } from "lucide-react";
 import {
 	Menu,
@@ -41,21 +45,55 @@ export default function AdminEventParticipant() {
 
 	// Local state for search/filter
 	const [searchParticipant, setSearchParticipant] = useState("");
+	const [selectedEventId, setSelectedEventId] = useState("all");
+
+	// Get unique events from participants
+	const eventsList = useMemo(() => {
+		const eventsMap = new Map();
+		participants.forEach((p) => {
+			if (p.event?.id && p.event?.judul) {
+				if (!eventsMap.has(p.event.id)) {
+					eventsMap.set(p.event.id, {
+						id: p.event.id,
+						judul: p.event.judul,
+						count: 0,
+					});
+				}
+				eventsMap.get(p.event.id).count++;
+			}
+		});
+		return Array.from(eventsMap.values()).sort((a, b) =>
+			a.judul.localeCompare(b.judul)
+		);
+	}, [participants]);
 
 	const filteredParticipants = useMemo(() => {
-		if (!searchParticipant) return participants;
-		const query = searchParticipant.toLowerCase();
-		return participants.filter((participantItem) => {
-			const peserta = String(participantItem.user?.nama || "").toLowerCase();
-			const event = String(participantItem.event?.judul || "").toLowerCase();
-			const status = String(participantItem.status || "").toLowerCase();
-			return (
-				peserta.includes(query) ||
-				event.includes(query) ||
-				status.includes(query)
+		let filtered = participants;
+
+		// Filter by selected event
+		if (selectedEventId !== "all") {
+			filtered = filtered.filter(
+				(p) => p.event?.id === parseInt(selectedEventId)
 			);
-		});
-	}, [participants, searchParticipant]);
+		}
+
+		// Filter by search query
+		if (searchParticipant) {
+			const query = searchParticipant.toLowerCase();
+			filtered = filtered.filter((participantItem) => {
+				const peserta = String(participantItem.user?.nama || "").toLowerCase();
+				const event = String(participantItem.event?.judul || "").toLowerCase();
+				const status = String(participantItem.status || "").toLowerCase();
+				return (
+					peserta.includes(query) ||
+					event.includes(query) ||
+					status.includes(query)
+				);
+			});
+		}
+
+		return filtered;
+	}, [participants, searchParticipant, selectedEventId]);
 
 	// Fungsi untuk menangani penghapusan kursus
 	const handleDelete = (id) => {
@@ -232,15 +270,133 @@ export default function AdminEventParticipant() {
 						</div>
 					) : (
 						<>
-							<div className="w-80 mb-4">
-								<input
-									type="text"
-									placeholder="Cari peserta..."
-									value={searchParticipant}
-									onChange={(e) => setSearchParticipant(e.target.value)}
-									className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
-								/>
+							{/* Stats Cards */}
+							<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+								<div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
+									<div className="flex items-center justify-between">
+										<div>
+											<p className="text-sm text-blue-600 font-medium">
+												Total Events
+											</p>
+											<p className="text-2xl font-bold text-blue-900">
+												{eventsList.length}
+											</p>
+										</div>
+										<Calendar className="w-10 h-10 text-blue-500 opacity-70" />
+									</div>
+								</div>
+								<div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg p-4 border border-emerald-200">
+									<div className="flex items-center justify-between">
+										<div>
+											<p className="text-sm text-emerald-600 font-medium">
+												Total Participants
+											</p>
+											<p className="text-2xl font-bold text-emerald-900">
+												{participants.length}
+											</p>
+										</div>
+										<Users className="w-10 h-10 text-emerald-500 opacity-70" />
+									</div>
+								</div>
+								<div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
+									<div className="flex items-center justify-between">
+										<div>
+											<p className="text-sm text-purple-600 font-medium">
+												Filtered Results
+											</p>
+											<p className="text-2xl font-bold text-purple-900">
+												{filteredParticipants.length}
+											</p>
+										</div>
+										<Filter className="w-10 h-10 text-purple-500 opacity-70" />
+									</div>
+								</div>
 							</div>
+
+							{/* Filters */}
+							<div className="flex flex-col md:flex-row gap-4 mb-4">
+								<div className="flex-1">
+									<label className="block text-sm font-medium text-gray-700 mb-1">
+										Filter berdasarkan Event
+									</label>
+									<select
+										value={selectedEventId}
+										onChange={(e) => setSelectedEventId(e.target.value)}
+										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+										<option value="all">
+											Semua Event ({participants.length})
+										</option>
+										{eventsList.map((event) => (
+											<option key={event.id} value={event.id}>
+												{event.judul} ({event.count})
+											</option>
+										))}
+									</select>
+								</div>
+								<div className="flex-1">
+									<label className="block text-sm font-medium text-gray-700 mb-1">
+										Cari Peserta
+									</label>
+									<div className="relative">
+										<input
+											type="text"
+											placeholder="Cari peserta, event, status..."
+											value={searchParticipant}
+											onChange={(e) => setSearchParticipant(e.target.value)}
+											className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 pr-8"
+										/>
+										{searchParticipant && (
+											<button
+												onClick={() => setSearchParticipant("")}
+												className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+												<X className="w-4 h-4" />
+											</button>
+										)}
+									</div>
+								</div>
+							</div>
+
+							{/* Active Filters Display */}
+							{(selectedEventId !== "all" || searchParticipant) && (
+								<div className="mb-4 flex flex-wrap gap-2">
+									<span className="text-sm text-gray-600">Filter aktif:</span>
+									{selectedEventId !== "all" && (
+										<Badge
+											variant="primary"
+											className="flex items-center gap-1">
+											Event:{" "}
+											{eventsList.find(
+												(e) => e.id === parseInt(selectedEventId)
+											)?.judul || "Unknown"}
+											<button
+												onClick={() => setSelectedEventId("all")}
+												className="ml-1 hover:text-white">
+												<X className="w-3 h-3" />
+											</button>
+										</Badge>
+									)}
+									{searchParticipant && (
+										<Badge
+											variant="secondary"
+											className="flex items-center gap-1">
+											Search: {searchParticipant}
+											<button
+												onClick={() => setSearchParticipant("")}
+												className="ml-1 hover:text-gray-800">
+												<X className="w-3 h-3" />
+											</button>
+										</Badge>
+									)}
+									<button
+										onClick={() => {
+											setSelectedEventId("all");
+											setSearchParticipant("");
+										}}
+										className="text-sm text-emerald-600 hover:text-emerald-700 font-medium">
+										Reset semua filter
+									</button>
+								</div>
+							)}
 							<DataTable
 								columns={columns}
 								data={filteredParticipants}
