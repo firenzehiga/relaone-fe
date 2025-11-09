@@ -1,7 +1,8 @@
 import axios from "axios";
 
 // Base API URL - menggunakan Laravel backend yang sudah ada
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://peladen.my.id";
+const BASE_URL =
+	import.meta.env.VITE_API_BASE_URL || "http://peladen.my.id/api";
 
 /**
  * Instance axios yang sudah dikonfigurasi untuk API calls
