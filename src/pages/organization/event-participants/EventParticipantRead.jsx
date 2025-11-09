@@ -1,4 +1,9 @@
-import { useOrgParticipants } from "@/_hooks/useParticipants";
+import {
+	useOrgParticipants,
+	useOrgDownloadQrMutation,
+	useOrgConfirmParticipantMutation,
+	useOrgRejectParticipantMutation,
+} from "@/_hooks/useParticipants";
 import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
 import { LinkButton } from "@/components/ui/Button";
@@ -14,6 +19,10 @@ import {
 	X,
 	Calendar,
 	Users,
+	QrCode,
+	Scan,
+	Download,
+	Check,
 } from "lucide-react";
 import {
 	Menu,
@@ -23,12 +32,14 @@ import {
 	Portal,
 	IconButton,
 } from "@chakra-ui/react";
-import { useMemo, useState } from "react";
+import { use, useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom";
 import FetchLoader from "@/components/ui/FetchLoader";
 import { parseApiError } from "@/utils";
 import Badge from "@/components/ui/Badge";
+import { QRCodeCanvas } from "qrcode.react";
+import { useAuthStore } from "@/_hooks/useAuth";
 
 export default function OrganizationEventParticipant() {
 	const {
@@ -38,11 +49,73 @@ export default function OrganizationEventParticipant() {
 		isFetching: participantsRefetching,
 	} = useOrgParticipants();
 
+	const { isLoading } = useAuthStore();
+
+	const downloadQrMutation = useOrgDownloadQrMutation();
+
 	// const deleteParticipantMutation = useOrgDeleteParticipantMutation();
 
 	// Local state for search/filter
 	const [searchParticipant, setSearchParticipant] = useState("");
 	const [selectedEventId, setSelectedEventId] = useState("all");
+	const [qrDataMap, setQrDataMap] = useState({}); // Store QR data for each participant
+
+	// Handle download QR code
+	const handleDownloadQR = (participant) => {
+		downloadQrMutation.mutate(participant.id, {
+			onSuccess: (response) => {
+				if (response.success) {
+					const qrData = response.data.qr_code;
+					const volunteerName = response.data.volunteer.nama;
+					const eventName = response.data.event.judul;
+
+					// Store QR data temporarily for rendering
+					setQrDataMap((prev) => ({
+						...prev,
+						[participant.id]: qrData,
+					}));
+
+					// Wait a bit for canvas to render, then download
+					setTimeout(() => {
+						const canvas = document.querySelector(
+							`#qr-canvas-${participant.id}`
+						);
+						if (!canvas) {
+							toast.error("Gagal generate QR Code");
+							return;
+						}
+
+						// Download the QR code
+						const pngUrl = canvas
+							.toDataURL("image/png")
+							.replace("image/png", "image/octet-stream");
+
+						const link = document.createElement("a");
+						link.href = pngUrl;
+						link.download = `QR_${volunteerName}_${eventName}.png`;
+						document.body.appendChild(link);
+						link.click();
+						document.body.removeChild(link);
+
+						// Show success message
+						toast.success(
+							`QR Code untuk ${volunteerName} berhasil didownload`,
+							{
+								position: "top-center",
+							}
+						);
+
+						// Cleanup QR data after download
+						setQrDataMap((prev) => {
+							const newMap = { ...prev };
+							delete newMap[participant.id];
+							return newMap;
+						});
+					}, 100);
+				}
+			},
+		});
+	};
 
 	// Get unique events from participants
 	const eventsList = useMemo(() => {
@@ -92,42 +165,59 @@ export default function OrganizationEventParticipant() {
 		return filtered;
 	}, [participants, searchParticipant, selectedEventId]);
 
-	// Fungsi untuk menangani penghapusan kursus
-	// const handleDelete = (id) => {
-	// 	Swal.fire({
-	// 		title: "Apa Anda yakin?",
-	// 		text: "Kamu tidak akan bisa mengembalikan ini!",
-	// 		showCancelButton: true,
-	// 		confirmButtonText: "Ya, hapus!",
-	// 		cancelButtonText: "Batal",
-	// 		customClass: {
-	// 			popup: "bg-white rounded-xl shadow-xl p-5 max-w-md w-full",
-	// 			title: "text-lg font-semibold text-gray-900",
-	// 			content: "text-sm text-gray-600 dark:text-gray-300 mt-1",
-	// 			actions: "flex gap-3 justify-center mt-4",
-	// 			confirmButton:
-	// 				"px-4 py-2 focus:outline-none rounded-md bg-emerald-500 hover:bg-emerald-600 text-white",
-	// 			cancelButton:
-	// 				"px-4 py-2 rounded-md border border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700",
-	// 		},
-	// 		backdrop: true,
-	// 	}).then((result) => {
-	// 		if (result.isConfirmed) {
-	// 			deleteParticipantMutation.mutate(id, {
-	// 				onSuccess: () => {
-	// 					toast.success("Participant berhasil dihapus.", {
-	// 						position: "top-center",
-	// 					});
-	// 				},
-	// 				onError: (err) => {
-	// 					// ambil pesan backend kalau ada, fallback ke err.message
-	// 					const msg = parseApiError(err) || "Gagal menghapus participant.";
-	// 					toast.error(msg, { position: "top-center" });
-	// 				},
-	// 			}); // Panggil fungsi deleteMutation dengan ID event
-	// 		}
-	// 	});
-	// };
+	// Fungsi konfirmasi participant
+	const confirmParticipantMutation = useOrgConfirmParticipantMutation();
+	const handleConfirm = (id) => {
+		Swal.fire({
+			title: "Apa Anda yakin?",
+			text: "Kamu tidak akan bisa mengembalikan ini!",
+			showCancelButton: true,
+			confirmButtonText: "Ya, konfirmasi!",
+			cancelButtonText: "Batal",
+			customClass: {
+				popup: "bg-white rounded-xl shadow-xl p-5 max-w-md w-full",
+				title: "text-lg font-semibold text-gray-900",
+				content: "text-sm text-gray-600 dark:text-gray-300 mt-1",
+				actions: "flex gap-3 justify-center mt-4",
+				confirmButton:
+					"px-4 py-2 focus:outline-none rounded-md bg-emerald-500 hover:bg-emerald-600 text-white",
+				cancelButton:
+					"px-4 py-2 rounded-md border border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700",
+			},
+			backdrop: true,
+		}).then((result) => {
+			if (result.isConfirmed) {
+				confirmParticipantMutation.mutate(id);
+			}
+		});
+	};
+
+	// Fungsi konfirmasi participant
+	const rejectedParticipantMutation = useOrgRejectParticipantMutation();
+	const handleReject = (id) => {
+		Swal.fire({
+			title: "Apa Anda yakin?",
+			text: "Kamu tidak akan bisa mengembalikan ini!",
+			showCancelButton: true,
+			confirmButtonText: "Ya, tolak!",
+			cancelButtonText: "Batal",
+			customClass: {
+				popup: "bg-white rounded-xl shadow-xl p-5 max-w-md w-full",
+				title: "text-lg font-semibold text-gray-900",
+				content: "text-sm text-gray-600 dark:text-gray-300 mt-1",
+				actions: "flex gap-3 justify-center mt-4",
+				confirmButton:
+					"px-4 py-2 focus:outline-none rounded-md bg-emerald-500 hover:bg-emerald-600 text-white",
+				cancelButton:
+					"px-4 py-2 rounded-md border border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700",
+			},
+			backdrop: true,
+		}).then((result) => {
+			if (result.isConfirmed) {
+				rejectedParticipantMutation.mutate(id);
+			}
+		});
+	};
 
 	const columns = [
 		{
@@ -176,9 +266,9 @@ export default function OrganizationEventParticipant() {
 					) : row.status === "attended" ? (
 						<Badge variant={"success"}>Hadir</Badge>
 					) : row.status === "absent" ? (
-						<Badge variant={"danger"}>Tidak Hadir</Badge>
+						<Badge variant={"secondary"}>Tidak Hadir</Badge>
 					) : (
-						<Badge variant={"secondary"}>{row.status || "-"}</Badge>
+						<Badge variant={"danger"}>Ditolak</Badge>
 					)}
 				</>
 			),
@@ -187,34 +277,60 @@ export default function OrganizationEventParticipant() {
 		},
 		{
 			name: "Aksi",
-			cell: (row) => (
-				<Menu>
-					<MenuButton
-						as={IconButton}
-						aria-label="Options"
-						icon={<EllipsisVerticalIcon />}
-						variant="ghost"
-					/>
-					<Portal>
-						<MenuList className="font-semibold">
-							<Link
-								to={`/organization/event-participants/edit/${row.id}`}
-								className="w-full">
-								<MenuItem
-									icon={
-										<EditIcon className="text-yellow-500 hover:text-yellow-600" />
-									}>
-									Edit
-								</MenuItem>
-							</Link>
-							<MenuItem
-								icon={<Trash className="text-red-500 hover:text-red-600" />}>
-								Hapus
-							</MenuItem>
-						</MenuList>
-					</Portal>
-				</Menu>
-			),
+			cell: (row) => {
+				// Tidak tampilkan tombol aksi untuk status rejected
+				if (row.status === "rejected") {
+					return (
+						<span className="text-xs text-gray-400 italic">Tidak ada aksi</span>
+					);
+				}
+
+				return (
+					<Menu>
+						<MenuButton
+							as={IconButton}
+							aria-label="Options"
+							icon={<EllipsisVerticalIcon />}
+							variant="ghost"
+						/>
+						<Portal>
+							<MenuList className="font-semibold">
+								{/* Download QR - Only for confirmed or attended */}
+								{row.status === "confirmed" && (
+									<MenuItem
+										icon={
+											<Download className="text-blue-500 hover:text-blue-600" />
+										}
+										onClick={() => handleDownloadQR(row)}
+										isDisabled={downloadQrMutation.isPending}>
+										{downloadQrMutation.isPending
+											? "Downloading..."
+											: "QR Code"}
+									</MenuItem>
+								)}
+								{row.status === "registered" && (
+									<>
+										<MenuItem
+											onClick={() => handleConfirm(row.id)}
+											disabled={isLoading}
+											icon={
+												<Check className="text-green-500 hover:text-green-600" />
+											}>
+											Konfirmasi Peserta
+										</MenuItem>
+										<MenuItem
+											onClick={() => handleReject(row.id)}
+											disabled={isLoading}
+											icon={<X className="text-red-500 hover:text-red-600" />}>
+											Tolak Peserta
+										</MenuItem>
+									</>
+								)}
+							</MenuList>
+						</Portal>
+					</Menu>
+				);
+			},
 			width: "140px",
 		},
 	];
@@ -249,7 +365,39 @@ export default function OrganizationEventParticipant() {
 								"Daftar Participant"
 							)}
 						</h2>
+
+						{/* Tombol Scanner */}
+						{selectedEventId !== "all" && (
+							<LinkButton
+								variant="success"
+								className="flex items-center gap-2"
+								to={`/organization/event-participants/scanner/${selectedEventId}`}>
+								<Scan className="w-4 h-4" />
+								Buka Scanner
+							</LinkButton>
+						)}
 					</div>
+
+					{/* Quick Scanner Access Banner */}
+					{selectedEventId === "all" && eventsList.length > 0 && (
+						<div className="mb-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+							<div className="flex items-start gap-3">
+								<QrCode className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" />
+								<div className="flex-1">
+									<h3 className="text-sm font-semibold text-blue-900 mb-1">
+										Scanner Check-in Tersedia
+									</h3>
+									<p className="text-sm text-blue-700 mb-3">
+										Pilih event terlebih dahulu untuk membuka scanner QR
+										check-in volunteer
+									</p>
+									<div className="text-xs text-blue-600">
+										💡 Filter event → Klik "Buka Scanner" untuk mulai check-in
+									</div>
+								</div>
+							</div>
+						</div>
+					)}
 
 					{participantsLoading ? (
 						<div className="flex h-96 justify-center py-20">
@@ -486,6 +634,20 @@ export default function OrganizationEventParticipant() {
 									</div>
 								}
 							/>
+
+							{/* Hidden QR Code Canvases for download */}
+							<div style={{ position: "absolute", left: "-9999px" }}>
+								{Object.entries(qrDataMap).map(([participantId, qrData]) => (
+									<QRCodeCanvas
+										key={participantId}
+										id={`qr-canvas-${participantId}`}
+										value={qrData}
+										size={300}
+										level="H"
+										includeMargin={true}
+									/>
+								))}
+							</div>
 						</>
 					)}
 				</div>

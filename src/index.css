@@ -192,3 +192,28 @@ textarea {
 	backface-visibility: hidden;
 	-webkit-font-smoothing: antialiased;
 }
+
+/* QR Scanner Styles */
+#qr-reader {
+	position: relative !important;
+}
+
+#qr-reader video {
+	width: 100% !important;
+	height: auto !important;
+	display: block !important;
+	border-radius: 8px !important;
+}
+
+#qr-reader__dashboard {
+	display: none !important;
+}
+
+#qr-reader__scan_region {
+	border: 2px solid #3b82f6 !important;
+	border-radius: 8px !important;
+}
+
+#qr-reader__dashboard_section {
+	display: none !important;
+}

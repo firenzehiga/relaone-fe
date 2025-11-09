@@ -71,6 +71,7 @@ import OrganizationEventCreate from "@/pages/organization/events/EventCreate";
 import OrganizationEventEdit from "@/pages/organization/events/EventEdit";
 
 import OrganizationEventParticipant from "@/pages/organization/event-participants/EventParticipantRead";
+import EventScannerPage from "@/pages/organization/event-participants/EventScannerPage";
 
 import OrganizationFeedback from "@/pages/organization/feedbacks/FeedbackRead";
 
@@ -193,6 +194,7 @@ function App() {
 					</Route>
 					<Route path="event-participants">
 						<Route index element={<OrganizationEventParticipant />} />
+						<Route path="scanner/:eventId" element={<EventScannerPage />} />
 					</Route>
 
 					<Route path="events">

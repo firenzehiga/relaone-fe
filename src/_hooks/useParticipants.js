@@ -133,7 +133,7 @@ export const useAdminCreateParticipantMutation = () => {
 		},
 		onError: (error) => {
 			setLoading(false);
-			const msg = parseApiError(error) || "Create location failed";
+			const msg = parseApiError(error) || "Create participant failed";
 			setError(msg);
 			showToast({
 				type: "error",
@@ -143,7 +143,7 @@ export const useAdminCreateParticipantMutation = () => {
 				duration: 3000,
 				position: "top-center",
 			});
-			console.error("Create location error:", error);
+			console.error("Create participant error:", error);
 		},
 	});
 };
@@ -241,5 +241,184 @@ export const useOrgParticipants = () => {
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
+	});
+};
+
+/**
+ * Konfirmasi status participant baru.
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["participants"]
+ */
+export const useOrgConfirmParticipantMutation = () => {
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
+
+	return useMutation({
+		mutationKey: ["orgParticipants", "confirm"],
+		mutationFn: eventParticipantService.orgConfirmParticipant,
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: async () => {
+			await queryClient.invalidateQueries(["orgParticipants"]);
+			navigate("/organization/event-participants");
+			setLoading(false);
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "Participant berhasil dikonfirmasi",
+				duration: 3000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Konfirmasi participant gagal";
+			setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali logic yang Anda buat.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Confirm participant error:", error);
+		},
+	});
+};
+
+/**
+ * Tolak status participant baru.
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["participants"]
+ */
+export const useOrgRejectParticipantMutation = () => {
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
+
+	return useMutation({
+		mutationKey: ["orgParticipants", "reject"],
+		mutationFn: eventParticipantService.orgRejectParticipant,
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: async () => {
+			await queryClient.invalidateQueries(["orgParticipants"]);
+			navigate("/organization/event-participants");
+			setLoading(false);
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "Participant berhasil ditolak",
+				duration: 3000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Tolak participant gagal";
+			setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali logic yang Anda buat.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Reject participant error:", error);
+		},
+	});
+};
+
+/**
+ * Hook untuk mengambil statistics attendance untuk organization
+ * @param {string|number} eventId - ID event
+ * @returns {Object} Query result dengan data, isLoading, error, etc
+ */
+export const useOrgAttendanceStats = (eventId) => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "organization" && !!eventId;
+
+	return useQuery({
+		queryKey: ["orgAttendanceStats", eventId],
+		queryFn: async () => {
+			const response = await eventParticipantService.orgGetAttendanceStats(
+				eventId
+			);
+			return response;
+		},
+		enabled,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
+	});
+};
+
+/**
+ * Scan QR code untuk check-in participant (organization).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @param {Object} variables - Parameter scan QR
+ * @param {string|number} variables.eventId - ID event
+ * @param {string} variables.qr_data - Data QR code yang di-scan
+ * @invalidates ["orgParticipants"]
+ */
+export const useOrgScanQrMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: eventParticipantService.orgScanQrCheckIn,
+		onSuccess: async () => {
+			await queryClient.invalidateQueries(["orgParticipants"]);
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "Participant berhasil check-in",
+				duration: 3000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			const msg = parseApiError(error) || "Check-in gagal";
+			showToast({
+				type: "error",
+				title: "Gagal!",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Check-in error:", error);
+		},
+	});
+};
+
+/**
+ * Download QR code untuk participant (organization).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @param {string|number} participantId - ID participant
+ */
+export const useOrgDownloadQrMutation = () => {
+	return useMutation({
+		mutationFn: eventParticipantService.orgGetParticipantQR,
+		onError: (error) => {
+			const msg = parseApiError(error) || "Gagal mengambil QR code";
+			showToast({
+				type: "error",
+				title: "Gagal!",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Download QR error:", error);
+		},
 	});
 };

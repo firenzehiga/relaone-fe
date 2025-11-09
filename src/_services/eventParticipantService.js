@@ -128,3 +128,102 @@ export const orgGetParticipants = async () => {
 	const response = await api.get("/organization/event-participants");
 	return response.data.data || response.data;
 };
+
+/** * Konfirmasi status pendaftaran partisipan
+ *
+ * @async
+ * @function orgConfirmParticipant
+ * @endpoint POST /organization/confirm-participants/{participantId}
+ * @param {string|number} id - ID participant
+ * @returns {Promise<any>} Data participant baru
+ */
+export const orgConfirmParticipant = async (id) => {
+	try {
+		const response = await api.post(
+			`/organization/confirm-participants/${id}`
+		);
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error confirming participant:", error);
+		throw error;
+	}
+};
+
+/** * Tolak status pendaftaran partisipan
+ *
+ * @async
+ * @function orgRejectParticipant
+ * @endpoint POST /organization/reject-participants/{participantId}
+ * @param {string|number} id - ID participant
+ * @returns {Promise<any>} Data participant baru
+ */
+export const orgRejectParticipant = async (id) => {
+	try {
+		const response = await api.post(`/organization/reject-participants/${id}`);
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error rejecting participant:", error);
+		throw error;
+	}
+};
+/** Mengambil attendance statistics untuk event
+ *
+ * @async
+ * @function orgGetAttendanceStats
+ * @endpoint GET /organization/events/{event}/attendance/statistics
+ * @param {number|string} eventId - ID event
+ * @returns {Promise} Promise dengan data statistics
+ */
+export const orgGetAttendanceStats = async (eventId) => {
+	const response = await api.get(
+		`/organization/events/${eventId}/attendance/statistics`
+	);
+	return response.data.data || response.data;
+};
+
+/** Scan QR Code volunteer untuk check-in
+ *
+ * @async
+ * @function orgScanQrCheckIn
+ * @endpoint POST /organization/events/{event_id}/scan-qr
+ * @param {Object} payload - Data untuk scan
+ * @param {number|string} payload.eventId - ID event
+ * @param {string} payload.qr_data - Data QR Code yang di-scan
+ * @returns {Promise} Promise dengan data volunteer yang check-in
+ */
+export const orgScanQrCheckIn = async ({ eventId, qr_data }) => {
+	const response = await api.post(`/organization/events/${eventId}/scan-qr`, {
+		qr_data,
+	});
+	return response.data;
+};
+
+/** Mendapatkan daftar recent check-ins
+ *
+ * @async
+ * @function orgGetRecentCheckIns
+ * @endpoint GET /organization/events/{event_id}/attendance/recent
+ * @param {number|string} eventId - ID event
+ * @returns {Promise} Promise dengan data recent check-ins
+ */
+export const orgGetRecentCheckIns = async (eventId) => {
+	const response = await api.get(
+		`/organization/events/${eventId}/attendance/recent`
+	);
+	return response.data.data || response.data;
+};
+
+/** Mendapatkan QR Code untuk participant tertentu
+ *
+ * @async
+ * @function orgGetParticipantQR
+ * @endpoint GET /organization/event-participants/{participantId}/qr-code
+ * @param {number|string} participantId - ID participant
+ * @returns {Promise} Promise dengan data QR code
+ */
+export const orgGetParticipantQR = async (participantId) => {
+	const response = await api.get(
+		`/organization/event-participants/${participantId}/qr-code`
+	);
+	return response.data;
+};

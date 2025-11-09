@@ -174,3 +174,31 @@ Contoh penggunaan (bahasa Indonesia):
 - formatTime('07:30', 'WITA') => "07:30 WITA"
 - formatRelativeTime(tgl)   => "2 jam yang lalu"
 */
+
+// Helper function untuk format relative time untuk RecentCheckIns page
+export const getRelativeTime = (dateString) => {
+	if (!dateString) return "";
+	const date = new Date(dateString.replace(" ", "T"));
+	const now = new Date();
+	const diffMs = now - date;
+	const diffMins = Math.floor(diffMs / 60000);
+	const diffHours = Math.floor(diffMs / 3600000);
+
+	if (diffMins < 1) return "Baru saja";
+	if (diffMins < 60) return `${diffMins} menit yang lalu`;
+	if (diffHours < 24) return `${diffHours} jam yang lalu`;
+	return date.toLocaleDateString("id-ID", {
+		day: "numeric",
+		month: "short",
+		hour: "2-digit",
+		minute: "2-digit",
+	});
+};
+// Helper untuk dapetin hari ini dalam format "YYYY-MM-DD"
+export const getTodayDate = () => {
+	const today = new Date();
+	return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
+		2,
+		"0"
+	)}-${String(today.getDate()).padStart(2, "0")}`;
+};

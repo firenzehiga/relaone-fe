@@ -1,0 +1,151 @@
+import { Users, CheckCircle, Clock, XCircle, AlertCircle } from "lucide-react";
+
+/**
+ * Component untuk menampilkan statistik kehadiran event
+ * Menggunakan data dari parent (tidak fetch sendiri)
+ */
+function AttendanceStats({ stats, isLoading }) {
+	if (isLoading) {
+		return (
+			<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+				{[1, 2, 3, 4].map((i) => (
+					<div
+						key={i}
+						className="bg-gray-100 rounded-lg p-4 h-24 animate-pulse"
+					/>
+				))}
+			</div>
+		);
+	}
+
+	if (!stats) {
+		return (
+			<div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
+				<AlertCircle className="w-8 h-8 text-yellow-500 mx-auto mb-2" />
+				<p className="text-yellow-800">Data statistik tidak tersedia</p>
+			</div>
+		);
+	}
+
+	const statCards = [
+		{
+			label: "Registered",
+			value: stats.registered || 0,
+			icon: Clock,
+			color: "bg-blue-50 border-blue-200 text-blue-600",
+			iconBg: "bg-blue-100",
+		},
+		{
+			label: "Confirmed",
+			value: stats.confirmed || 0,
+			icon: CheckCircle,
+			color: "bg-green-50 border-green-200 text-green-600",
+			iconBg: "bg-green-100",
+		},
+		{
+			label: "Attended",
+			value: stats.attended || 0,
+			icon: CheckCircle,
+			color: "bg-purple-50 border-purple-200 text-purple-600",
+			iconBg: "bg-purple-100",
+		},
+		{
+			label: "No Show",
+			value: stats.no_show || 0,
+			icon: XCircle,
+			color: "bg-yellow-50 border-yellow-200 text-yellow-600",
+			iconBg: "bg-yellow-100",
+		},
+	];
+
+	const attendanceRate =
+		stats.confirmed > 0
+			? Math.round((stats.attended / stats.confirmed) * 100)
+			: 0;
+
+	return (
+		<div className="space-y-4">
+			{/* Main Stats Grid */}
+			<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+				{statCards.map((stat, index) => {
+					const Icon = stat.icon;
+					return (
+						<div
+							key={index}
+							className={`${stat.color} border rounded-lg p-4 transition-all hover:shadow-md`}>
+							<div className="flex items-start justify-between">
+								<div>
+									<p className="text-sm font-medium opacity-80 mb-1">
+										{stat.label}
+									</p>
+									<p className="text-3xl font-bold">{stat.value}</p>
+								</div>
+								<div className={`${stat.iconBg} rounded-lg p-2`}>
+									<Icon className="w-5 h-5" />
+								</div>
+							</div>
+						</div>
+					);
+				})}
+			</div>
+
+			{/* Additional Info */}
+			<div className="bg-white border border-gray-200 rounded-lg p-4">
+				<div className="flex items-center justify-between">
+					<div className="flex items-center gap-3">
+						<Users className="w-5 h-5 text-gray-600" />
+						<div>
+							<p className="text-sm text-gray-600">Total Peserta</p>
+							<p className="text-2xl font-bold text-gray-800">
+								{stats.total || 0}
+							</p>
+						</div>
+					</div>
+
+					<div className="text-right">
+						<p className="text-sm text-gray-600 mb-1">Tingkat Kehadiran</p>
+						<div className="flex items-center gap-2">
+							<div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+								<div
+									className="h-full bg-gradient-to-r from-green-500 to-green-600 transition-all duration-500"
+									style={{ width: `${attendanceRate}%` }}
+								/>
+							</div>
+							<span className="text-lg font-bold text-green-600">
+								{attendanceRate}%
+							</span>
+						</div>
+						<p className="text-xs text-gray-500 mt-1">
+							{stats.attended || 0} dari {stats.confirmed || 0} dikonfirmasi
+						</p>
+					</div>
+				</div>
+			</div>
+
+			{/* Rejected & Cancelled Info */}
+			{(stats.rejected > 0 || stats.cancelled > 0) && (
+				<div className="flex gap-4 text-sm">
+					{stats.rejected > 0 && (
+						<div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 flex items-center gap-2">
+							<XCircle className="w-4 h-4 text-red-600" />
+							<span className="text-red-800">
+								<span className="font-semibold">{stats.rejected}</span> Ditolak
+							</span>
+						</div>
+					)}
+					{stats.cancelled > 0 && (
+						<div className="bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 flex items-center gap-2">
+							<XCircle className="w-4 h-4 text-gray-600" />
+							<span className="text-gray-800">
+								<span className="font-semibold">{stats.cancelled}</span>{" "}
+								Dibatalkan
+							</span>
+						</div>
+					)}
+				</div>
+			)}
+		</div>
+	);
+}
+
+export default AttendanceStats;
