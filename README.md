@@ -1,6 +1,87 @@
-# Volunteer Frontend Application
+# 💚 RelaOne - Volunteer App (Frontend)
 
-Frontend aplikasi volunteer management system menggunakan React 18 + Vite.
+<div align="center">
+  <img src="./public/images/logo_fe.png" alt="RelaOne Logo" width="150" height="150">
+  
+  **Platform untuk menghubungkan organisasi penyelenggara kegiatan sosial dengan para relawan yang bersedia berkontribusi.**
+  
+  Sebagai wadah bagi organisasi penyelenggara kegiatan sosial  untuk menginformasikan kegiatan sosial mereka yang membutuhkan relawan, sekaligus menjadi sarana informasi bagi para masyarakat (relawan) yang tertarik untuk berkontribusi.
+
+[![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=white&style=flat-square)](https://react.dev) 
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?logo=tailwindcss&logoColor=white&style=flat-square)](https://tailwindcss.com) 
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=Vite&logoColor=white)](https://vite.dev/)
+[![JavaScript](https://shields.io/badge/JavaScript-F7DF1E?logo=JavaScript&logoColor=000&style=flat-square)](http://javascript.com/)
+</div>
+
+---
+
+## 🌀 Tentang RelaOne
+
+**RelaOne** atau **Volunteer Activity Manager** merupakan platform berbasis web yang bertujuan membantu menghubungkan organisasi penyelenggara kegiatan sosial dengan para relawan (volunteer) yang bersedia berkontribusi dalam aktivitas masyarakat. Mereka  dapat mencari, melihat detail kegiatan, serta mendaftar secara langsung tanpa harus melalui proses manual. Semua ini bertujuan untuk mempermudah koordinasi kegiatan sosial dan akses informasi.
+
+---
+
+## ✨ Fitur Utama
+
+### 🧑 **Untuk Volunteer/Relawan**
+- **Event Searching** - Temukan kegiatan relawan yang ingin diikuti sesuai preferensi
+- **Easy Regist** - Sistem pendaftaran ke suatu kegiatan yang simpel dengan konfirmasi real-time  
+- **Tracking Activities** - Pantau riwayat kegiatan anda
+
+### 🏢 **Untuk Organisasi**
+- **Location Management** - Kelola semua lokasi untuk kegiatan yang dibuat
+- **Event Management** - Kelola semua kegiatan yang anda selenggarakan
+- **Participant Management** - Kelola semua partisipan kegiatan anda dengan mudah dan simpel
+- **Check-In via Barcode** - Fitur absensi menggunakan Scan Kode QR untuk mempermudah proses pendataan
+
+### 🛡️ **Untuk Admin**
+- **Full Data Management** - Kelola semua data untuk monitoring
+- **Dashboard Analytics** - Analitik data dalam bentuk chart
+
+---
+
+## 🚀 **Teknologi yang Digunakan**
+
+### Frontend Stack
+- **React 19** - Library Javascript modern dengan hooks
+- **Axios** - Library JavaScript berbasis promise untuk membuat permintaan HTTP dari browser
+- **DayJs** - Library Javascript minimalis yang memanipulasi, dan menampilkan tanggal dan waktu
+- **Vite** - Build tool yang super cepat
+- **Tailwind CSS 3** - Utility-first CSS framework
+- **Chakra UI** - Library UI modern
+- **React Hot Toast** - Library Push Notification ringan
+- **React Datatable Component** - Library komponen untuk visualisasi data dalam bentuk tabel
+- **Sweet Alert** - Library Popup Notification dengan tampilan menarik
+- **QR Code React** - Library untuk membuat dan menampilkan kode QR
+- **HTML5 QR Code** - Library untuk memproses gambar dari kamera dan membaca kode QR
+- **ReCharts** - Library grafi berbasis JavaScript yang digunakan untuk membuat visualisasi data     
+- **Framer Motion** - Animasi yang smooth dan engaging
+- **React Query** - Data fetching dan state management
+- **Zustand** - Lightweight state management
+- **React Router** - Navigation dan routing
+
+### UI/UX Features
+- **Responsive Design** - Tampil sempurna di semua device
+- **Loading Animations** - Interactive loading states
+- **Modern Components** - Reusable dan maintainable
+- **Accessible** - Memenuhi standar accessibility
+
+---
+
+## 📄 **License & Ownership**
+
+Aplikasi ini dikembangkan sebagai bagian dari project kolaboratif pendidikan. Frontend implementation, design, dan user experience dikembangkan oleh **Firenze Higa**.
+
+📧 **Contact**: firenzehiga@gmail.com  
+🐙 **GitHub**: [@firenzehiga](https://github.com/firenzehiga)
+
+---
+
+## 🙏 **Acknowledgments**
+
+- Tim backend yang amazing
+
+---
 
 ## 🔗 Related Repositories
 
@@ -64,18 +145,25 @@ Aplikasi akan berjalan di `http://localhost:5173`
 
 ```
 src/
-├── api/                 # API calls dan service functions
+├── _api/                # Axios Instance and interceptor
+├── _hooks/              # Custom hooks for service functions
+├── _services/           # Custom services for API calls
 ├── assets/              # Static assets (images, icons)
 ├── components/          # Reusable React components
 │   ├── admin/           # Admin-specific components
+│   ├── auth/            # Auth Protected Route specific components
+│   ├── common/          # Common UI components
+│   ├── fallback/        # Custom components for any fallback ui
 │   ├── layout/          # Layout components (Header, Footer)
-│   └── ui/              # UI components (Button, Modal, etc.)
-├── hooks/               # Custom React hooks
-├── mock/                # Mock data untuk development
+│   ├── organization/    # Organization-specific components
+│   ├── ui/              # UI components (Button, Modal, etc.)
+│   └── volunteer/       # Volunteer-specific components
+├── layout/              # Page Layout
 ├── pages/               # Page components
-├── store/               # State management (Zustand/Redux)
+├── store/               # State management (Zustand)
 ├── utils/               # Utility functions
 ├── App.jsx              # Main App component
+├── .env.example         # App Environment
 └── main.jsx             # Application entry point
 ```
 
@@ -100,38 +188,6 @@ npm run lint:fix
 # Format code dengan Prettier
 npm run format
 ```
-
-## 📋 Available Features
-
-### ✅ Completed Features
-- [x] Event browsing dan search
-- [x] Event detail view dengan modal
-- [x] Location picker dengan Google Maps integration
-- [x] Responsive UI dengan Tailwind CSS
-- [x] Mock data untuk development
-- [x] Component library (Button, Card, Modal, dll)
-
-### 🔄 In Progress Features
-- [ ] User authentication sistem
-- [ ] Event registration flow
-- [ ] Organization dashboard
-- [ ] User profile management
-
-### 📋 Planned Features
-- [ ] Push notifications
-- [ ] Event feedback sistem
-- [ ] Admin panel
-- [ ] Analytics dashboard
-- [ ] Mobile app support
-
-## 🎨 UI Components
-
-Aplikasi menggunakan custom UI components yang dibangun dengan:
-- **Tailwind CSS** - Utility-first CSS framework
-- **Lucide React** - Icon library
-- **Headless UI** - Unstyled, accessible UI components
-- **React Hook Form** - Form handling
-- **React Query** - Server state management
 
 ## 🔧 Configuration
 
@@ -167,23 +223,6 @@ export default defineConfig({
 })
 ```
 
-## 🌐 API Integration
-
-Backend API saat ini masih dalam tahap setup. Mock data tersedia di folder `/src/mock/` untuk development:
-
-- `events.json` - Data event volunteer
-- `organizations.json` - Data organisasi
-- `users.json` - Data users
-- `categories.json` - Kategori event
-- `saved_locations.json` - Lokasi tersimpan
-
-## 📱 Browser Support
-
-- Chrome >= 90
-- Firefox >= 88
-- Safari >= 14
-- Edge >= 90
-
 ## 🤝 Contributing
 
 1. Fork repository
@@ -206,10 +245,11 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+<div align="center">
+  
+  **⭐ Jika project ini membantu, jangan lupa kasih star ya! ⭐**
+  
+  Made with ❤️ by Firenze Higa
+  
+</div>
