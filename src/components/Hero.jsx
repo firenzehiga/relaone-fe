@@ -68,7 +68,6 @@ export default function Hero() {
 						<div className="absolute inset-0 lg:inset-y-0 lg:right-0">
 							<img
 								src={
-									"images/hero.jpeg" ||
 									"https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=1200&h=1200&fit=crop"
 								}
 								alt="Volunteer activities"
