@@ -114,7 +114,7 @@ export default function Header() {
 							{user?.role === "organization" ? (
 								<Building className="text-emerald-600 w-6 h-6" />
 							) : (
-								<img src="images/logo.png" alt="" className="w-10 h-10" />
+								<img src="images/logo_fe.png" alt="" className="w-10 h-10" />
 							)}
 						</div>
 						<span className="text-xl font-bold bg-black bg-clip-text text-transparent">
