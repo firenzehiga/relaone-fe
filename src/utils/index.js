@@ -29,7 +29,7 @@ export const cn = (...classes) => {
  */
 export const getImageUrl = (path) => {
 	const baseUrl =
-		import.meta.env.VITE_IMG_STORAGE_URL || "http://peladen.my.id/storage/";
+		import.meta.env.VITE_IMG_STORAGE_URL || "https://peladen.my.id/storage/";
 	if (!path) return "";
 	return `${baseUrl}${path}`;
 };
