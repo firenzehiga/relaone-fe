@@ -39,16 +39,62 @@ export default function AdminFeedback() {
 	const deleteFeedbackMutation = useAdminDeleteFeedbackMutation();
 	// Local state for search/filter
 	const [searchFeedback, setSearchFeedback] = useState("");
+	const [eventFilter, setEventFilter] = useState("all");
+	const [ratingFilter, setRatingFilter] = useState("all");
+
+	// Get unique events from feedbacks
+	const availableEvents = useMemo(() => {
+		const eventMap = new Map();
+		feedbacks.forEach((feedback) => {
+			if (feedback.event?.id) {
+				eventMap.set(feedback.event.id, {
+					id: feedback.event.id,
+					judul: feedback.event.judul,
+				});
+			}
+		});
+		return Array.from(eventMap.values()).sort((a, b) =>
+			a.judul.localeCompare(b.judul)
+		);
+	}, [feedbacks]);
 
 	const filteredFeedbacks = useMemo(() => {
-		if (!searchFeedback) return feedbacks;
-		const query = searchFeedback.toLowerCase();
-		return feedbacks.filter((feedbackItem) => {
-			const user = String(feedbackItem.user?.nama || "").toLowerCase();
-			const event = String(feedbackItem.event?.judul || "").toLowerCase();
-			return user.includes(query) || event.includes(query);
-		});
-	}, [feedbacks, searchFeedback]);
+		let filtered = feedbacks;
+
+		// Filter by event
+		if (eventFilter !== "all") {
+			filtered = filtered.filter(
+				(feedback) => feedback.event?.id === parseInt(eventFilter)
+			);
+		}
+
+		// Filter by rating
+		if (ratingFilter !== "all") {
+			filtered = filtered.filter((feedback) => {
+				const rating = Number(feedback.rating) || 0;
+				if (ratingFilter === "high") {
+					return rating >= 4;
+				} else if (ratingFilter === "medium") {
+					return rating === 3;
+				} else if (ratingFilter === "low") {
+					return rating <= 2;
+				}
+				return true;
+			});
+		}
+
+		// Filter by search query
+		if (searchFeedback) {
+			const query = searchFeedback.toLowerCase();
+			filtered = filtered.filter((feedbackItem) => {
+				const user = String(feedbackItem.user?.nama || "").toLowerCase();
+				const event = String(feedbackItem.event?.judul || "").toLowerCase();
+				return user.includes(query) || event.includes(query);
+			});
+		}
+
+		return filtered;
+	}, [feedbacks, searchFeedback, eventFilter, ratingFilter]);
 
 	// const filteredFeedbacks = feedbacks.filter((p) => {
 	// 	const lower = searchFeedback.toLowerCase();
@@ -202,14 +248,41 @@ export default function AdminFeedback() {
 						</div>
 					) : (
 						<>
-							<div className="w-80 mb-4">
-								<input
-									type="text"
-									placeholder="Cari user atau event feedback..."
-									value={searchFeedback}
-									onChange={(e) => setSearchFeedback(e.target.value)}
-									className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
-								/>
+							{/* Filter & Search */}
+							<div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+								<div>
+									<input
+										type="text"
+										placeholder="Cari user atau event feedback..."
+										value={searchFeedback}
+										onChange={(e) => setSearchFeedback(e.target.value)}
+										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
+									/>
+								</div>
+								<div>
+									<select
+										value={eventFilter}
+										onChange={(e) => setEventFilter(e.target.value)}
+										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+										<option value="all">Semua Event</option>
+										{availableEvents.map((event) => (
+											<option key={event.id} value={event.id}>
+												{event.judul}
+											</option>
+										))}
+									</select>
+								</div>
+								<div>
+									<select
+										value={ratingFilter}
+										onChange={(e) => setRatingFilter(e.target.value)}
+										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+										<option value="all">Semua Rating</option>
+										<option value="high">Rating Tinggi (4-5⭐)</option>
+										<option value="medium">Rating Sedang (3⭐)</option>
+										<option value="low">Rating Rendah (1-2⭐)</option>
+									</select>
+								</div>
 							</div>
 							<DataTable
 								columns={columns}

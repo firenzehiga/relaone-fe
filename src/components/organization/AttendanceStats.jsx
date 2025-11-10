@@ -58,9 +58,13 @@ function AttendanceStats({ stats, isLoading }) {
 		},
 	];
 
+	// Hitung persentase kehadiran dari yang dikonfirmasi (confirmed)
+	// Logika: dari semua yang sudah/pernah dikonfirmasi, berapa persen yang benar-benar hadir
+	// Total confirmed = confirmed saat ini + yang sudah attended (karena attended dulunya confirmed)
+	const totalConfirmed = (stats.confirmed || 0) + (stats.attended || 0);
 	const attendanceRate =
-		stats.confirmed > 0
-			? Math.round((stats.attended / stats.confirmed) * 100)
+		totalConfirmed > 0
+			? Math.round((stats.attended / totalConfirmed) * 100)
 			: 0;
 
 	return (
@@ -116,7 +120,8 @@ function AttendanceStats({ stats, isLoading }) {
 							</span>
 						</div>
 						<p className="text-xs text-gray-500 mt-1">
-							{stats.attended || 0} dari {stats.confirmed || 0} dikonfirmasi
+							{stats.attended || 0} hadir{" "}
+							{totalConfirmed > 0 && `dari ${totalConfirmed} yang dikonfirmasi`}
 						</p>
 					</div>
 				</div>

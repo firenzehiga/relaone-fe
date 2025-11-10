@@ -39,21 +39,50 @@ export default function OrganizationEvent() {
 
 	// Local state for search/filter
 	const [searchEvent, setSearchEvent] = useState("");
+	const [statusFilter, setStatusFilter] = useState("all"); // all, upcoming, ongoing, completed
 
 	const filteredEvents = useMemo(() => {
-		if (!searchEvent) return events;
-		const query = searchEvent.toLowerCase();
-		return events.filter((eventItem) => {
-			const title = String(eventItem.judul || "").toLowerCase();
-			const description = String(eventItem.deskripsi || "").toLowerCase();
-			const location = String(eventItem.lokasi || "").toLowerCase();
-			return (
-				title.includes(query) ||
-				description.includes(query) ||
-				location.includes(query)
-			);
-		});
-	}, [events, searchEvent]);
+		let filtered = events;
+
+		// Filter by status
+		if (statusFilter !== "all") {
+			const today = new Date();
+			today.setHours(0, 0, 0, 0);
+
+			filtered = filtered.filter((eventItem) => {
+				const startDate = new Date(eventItem.tanggal_mulai);
+				const endDate = new Date(eventItem.tanggal_selesai);
+				startDate.setHours(0, 0, 0, 0);
+				endDate.setHours(23, 59, 59, 999);
+
+				if (statusFilter === "upcoming") {
+					return startDate > today;
+				} else if (statusFilter === "ongoing") {
+					return startDate <= today && endDate >= today;
+				} else if (statusFilter === "completed") {
+					return endDate < today;
+				}
+				return true;
+			});
+		}
+
+		// Filter by search query
+		if (searchEvent) {
+			const query = searchEvent.toLowerCase();
+			filtered = filtered.filter((eventItem) => {
+				const title = String(eventItem.judul || "").toLowerCase();
+				const description = String(eventItem.deskripsi || "").toLowerCase();
+				const location = String(eventItem.lokasi || "").toLowerCase();
+				return (
+					title.includes(query) ||
+					description.includes(query) ||
+					location.includes(query)
+				);
+			});
+		}
+
+		return filtered;
+	}, [events, searchEvent, statusFilter]);
 
 	// Fungsi untuk menangani penghapusan kursus
 	const handleDelete = (id) => {
@@ -139,7 +168,7 @@ export default function OrganizationEvent() {
 			width: "150px",
 		},
 		{
-			name: "Tanggal Mulai",
+			name: "Tanggal Selesai",
 			selector: (row) => formatDate(row.tanggal_selesai || "-"),
 			sortable: false,
 			width: "150px",
@@ -219,14 +248,29 @@ export default function OrganizationEvent() {
 					) : (
 						<>
 							{eventsRefetching && <FetchLoader />}
-							<div className="w-80 mb-4">
-								<input
-									type="text"
-									placeholder="Cari judul, deskripsi, atau lokasi..."
-									value={searchEvent}
-									onChange={(e) => setSearchEvent(e.target.value)}
-									className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
-								/>
+
+							{/* Filter & Search */}
+							<div className="flex flex-col sm:flex-row gap-3 mb-4">
+								<div className="flex-1 max-w-md">
+									<input
+										type="text"
+										placeholder="Cari judul, deskripsi, atau lokasi..."
+										value={searchEvent}
+										onChange={(e) => setSearchEvent(e.target.value)}
+										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
+									/>
+								</div>
+								<div className="w-full sm:w-48">
+									<select
+										value={statusFilter}
+										onChange={(e) => setStatusFilter(e.target.value)}
+										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+										<option value="all">Semua Status</option>
+										<option value="upcoming">Belum Mulai</option>
+										<option value="ongoing">Sedang Berlangsung</option>
+										<option value="completed">Sudah Selesai</option>
+									</select>
+								</div>
 							</div>
 							<DataTable
 								columns={columns}
@@ -263,12 +307,12 @@ export default function OrganizationEvent() {
 									<div className="flex flex-col items-center justify-center h-64 text-gray-600">
 										<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 										<h3 className="text-lg font-semibold mb-2">
-											{searchEvent
+											{searchEvent || statusFilter
 												? "No Matching Events Found"
 												: "No Events Available"}
 										</h3>
 										<p className="text-gray-500 mb-4 text-center">
-											{searchEvent
+											{searchEvent || statusFilter
 												? "Tidak ada event yang sesuai dengan pencarian."
 												: "Belum ada data event"}
 										</p>

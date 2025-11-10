@@ -1,11 +1,14 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, QrCode as QrCodeIcon } from "lucide-react";
 import QrScanner from "@/components/organization/QrScanner";
 import AttendanceStats from "@/components/organization/AttendanceStats";
 import RecentCheckIns from "@/components/organization/RecentCheckIns";
-import { useOrgParticipants } from "@/_hooks/useParticipants";
-import { getRelativeTime } from "@/utils/dateFormatter";
+import {
+	useOrgParticipants,
+	useOrgRecentCheckIns,
+	useOrgAttendanceStats,
+} from "@/_hooks/useParticipants";
 
 /**
  * Halaman Scanner QR untuk check-in volunteer di event
@@ -13,61 +16,72 @@ import { getRelativeTime } from "@/utils/dateFormatter";
  */
 export default function EventScannerPage() {
 	const { eventId } = useParams();
-	const [refreshKey, setRefreshKey] = useState(0);
 
-	// Get participants data from hook
-	const { data: participants = [], isLoading, refetch } = useOrgParticipants();
+	// Get attendance statistics dari API
+	const {
+		data: statsResponse,
+		isLoading: isLoadingStats,
+		refetch: refetchStats,
+	} = useOrgAttendanceStats(eventId);
 
-	// Filter participants untuk event ini dan hitung stats
-	const stats = useMemo(() => {
-		const eventParticipants = participants.filter(
+	// Get recent check-ins dari endpoint
+	const {
+		data: recentCheckIns = [],
+		isLoading: isLoadingRecent,
+		refetch: refetchRecent,
+	} = useOrgRecentCheckIns(eventId);
+
+	// Get participants untuk event info saja
+	const { data: participants = [] } = useOrgParticipants();
+
+	// Extract stats dari response API
+	const stats = statsResponse?.statistics || {
+		registered: 0,
+		confirmed: 0,
+		attended: 0,
+		rejected: 0,
+		cancelled: 0,
+		no_show: 0,
+		total: 0,
+	};
+
+	// Get event info dari stats response atau fallback ke participants
+	const eventInfo = useMemo(() => {
+		// Prioritas dari stats API response
+		if (statsResponse?.event) {
+			return statsResponse.event;
+		}
+		// Fallback dari participants
+		const eventParticipant = participants.find(
 			(p) => p.event?.id === parseInt(eventId)
 		);
+		return eventParticipant?.event || null;
+	}, [statsResponse, participants, eventId]);
 
-		return {
-			registered: eventParticipants.filter((p) => p.status === "registered")
-				.length,
-			confirmed: eventParticipants.filter((p) => p.status === "confirmed")
-				.length,
-			attended: eventParticipants.filter((p) => p.status === "attended").length,
-			rejected: eventParticipants.filter((p) => p.status === "rejected").length,
-			cancelled: eventParticipants.filter((p) => p.status === "cancelled")
-				.length,
-			no_show: eventParticipants.filter((p) => p.status === "no_show").length,
-			total: eventParticipants.length,
-		};
-	}, [participants, eventId]);
+	const eventStatus = useMemo(() => {
+		if (!eventInfo?.tanggal_mulai || !eventInfo?.tanggal_selesai)
+			return "unknown";
 
-	// Recent check-ins (20 terakhir yang attended)
-	const recentCheckIns = useMemo(() => {
-		return participants
-			.filter(
-				(p) => p.event?.id === parseInt(eventId) && p.status === "attended"
-			)
-			.sort((a, b) => {
-				const dateA = new Date(a.tanggal_hadir || a.updated_at);
-				const dateB = new Date(b.tanggal_hadir || b.updated_at);
-				return dateB - dateA;
-			})
-			.slice(0, 20)
-			.map((p) => ({
-				id: p.id,
-				volunteer: {
-					id: p.user?.id,
-					nama: p.user?.nama,
-					email: p.user?.email,
-					foto: p.user?.foto_profil,
-				},
-				tanggal_hadir: p.tanggal_hadir || p.updated_at,
-				waktu_relatif: getRelativeTime(p.tanggal_hadir || p.updated_at),
-			}));
-	}, [participants, eventId, getRelativeTime]);
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+
+		const startDate = new Date(eventInfo.tanggal_mulai);
+		const endDate = new Date(eventInfo.tanggal_selesai);
+		startDate.setHours(0, 0, 0, 0);
+		endDate.setHours(23, 59, 59, 999);
+
+		if (startDate > today) return "upcoming";
+		if (startDate <= today && endDate >= today) return "ongoing";
+		if (endDate < today) return "completed";
+
+		return "unknown";
+	}, [eventInfo]);
 
 	// Callback saat scan berhasil - refetch data
 	const handleScanSuccess = (data) => {
-		// Refetch participants data untuk update stats & recent
-		refetch();
-		setRefreshKey((prev) => prev + 1);
+		// Refetch stats & recent check-ins
+		refetchStats();
+		refetchRecent();
 	};
 
 	// Callback saat scan error
@@ -89,43 +103,150 @@ export default function EventScannerPage() {
 						</span>
 					</Link>
 
-					<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-						<div className="flex items-center gap-3">
-							<div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-								<QrCodeIcon className="w-6 h-6 text-white" />
+					<div
+						className={`rounded-lg shadow-sm border p-6 ${
+							eventStatus === "ongoing"
+								? "bg-white border-gray-200"
+								: eventStatus === "completed"
+								? "bg-gray-50 border-gray-300"
+								: "bg-yellow-50 border-yellow-200"
+						}`}>
+						<div className="flex items-center justify-between gap-3">
+							<div className="flex items-center gap-3">
+								<div
+									className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+										eventStatus === "ongoing"
+											? "bg-gradient-to-br from-blue-500 to-indigo-600"
+											: eventStatus === "completed"
+											? "bg-gradient-to-br from-gray-400 to-gray-500"
+											: "bg-gradient-to-br from-yellow-500 to-orange-500"
+									}`}>
+									<QrCodeIcon className="w-6 h-6 text-white" />
+								</div>
+								<div>
+									<h1 className="text-2xl font-bold text-gray-900">
+										Scanner Check-in Event
+									</h1>
+									<p
+										className={`text-sm mt-1 ${
+											eventStatus === "ongoing"
+												? "text-gray-600"
+												: eventStatus === "completed"
+												? "text-gray-500"
+												: "text-yellow-700"
+										}`}>
+										{eventInfo?.judul || "Loading event..."}
+									</p>
+								</div>
 							</div>
 							<div>
-								<h1 className="text-2xl font-bold text-gray-900">
-									Scanner Check-in Event
-								</h1>
-								<p className="text-gray-600 text-sm mt-1">
-									Scan QR Code volunteer untuk mencatat kehadiran secara
-									realtime
-								</p>
+								{eventStatus === "upcoming" && (
+									<span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+										🕐 Belum Mulai
+									</span>
+								)}
+								{eventStatus === "ongoing" && (
+									<span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 border border-green-200">
+										🟢 Sedang Berlangsung
+									</span>
+								)}
+								{eventStatus === "completed" && (
+									<span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700 border border-gray-200">
+										✓ Sudah Selesai
+									</span>
+								)}
 							</div>
 						</div>
+
+						{/* Warning banner for non-ongoing events */}
+						{eventStatus !== "ongoing" && (
+							<div
+								className={`mt-4 p-3 rounded-lg border text-sm ${
+									eventStatus === "completed"
+										? "bg-gray-100 border-gray-300 text-gray-700"
+										: "bg-yellow-100 border-yellow-300 text-yellow-800"
+								}`}>
+								{eventStatus === "completed" ? (
+									<>⚠️ Event sudah selesai. Scanner tidak dapat digunakan.</>
+								) : (
+									<>
+										⚠️ Event belum dimulai. Scanner akan aktif saat event
+										berlangsung.
+									</>
+								)}
+							</div>
+						)}
 					</div>
 				</div>
 
 				{/* Attendance Statistics */}
 				<div className="mb-6">
-					<AttendanceStats stats={stats} isLoading={isLoading} />
+					<AttendanceStats stats={stats} isLoading={isLoadingStats} />
 				</div>
 
 				{/* Main Content - Scanner & Recent Check-ins */}
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 					{/* QR Scanner */}
 					<div>
-						<QrScanner
-							eventId={eventId}
-							onScanSuccess={handleScanSuccess}
-							onScanError={handleScanError}
-						/>
+						{eventStatus === "ongoing" ? (
+							<QrScanner
+								eventId={eventId}
+								onScanSuccess={handleScanSuccess}
+								onScanError={handleScanError}
+							/>
+						) : (
+							<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+								<div className="text-center">
+									<QrCodeIcon
+										className={`w-16 h-16 mx-auto mb-4 ${
+											eventStatus === "completed"
+												? "text-gray-300"
+												: "text-yellow-300"
+										}`}
+									/>
+									<h3 className="text-lg font-semibold text-gray-700 mb-2">
+										Scanner Tidak Tersedia
+									</h3>
+									<p className="text-sm text-gray-500 mb-4">
+										{eventStatus === "completed"
+											? "Event sudah selesai. Scanner QR tidak dapat digunakan lagi."
+											: "Event belum dimulai. Scanner akan aktif saat event berlangsung."}
+									</p>
+									{eventInfo && (
+										<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+											<p className="font-medium mb-1">Jadwal Event:</p>
+											<p>
+												{new Date(eventInfo.tanggal_mulai).toLocaleDateString(
+													"id-ID",
+													{
+														day: "numeric",
+														month: "long",
+														year: "numeric",
+													}
+												)}{" "}
+												-{" "}
+												{new Date(eventInfo.tanggal_selesai).toLocaleDateString(
+													"id-ID",
+													{
+														day: "numeric",
+														month: "long",
+														year: "numeric",
+													}
+												)}
+											</p>
+										</div>
+									)}
+								</div>
+							</div>
+						)}
 					</div>
 
 					{/* Recent Check-ins List */}
 					<div>
-						<RecentCheckIns checkIns={recentCheckIns} isLoading={isLoading} />
+						<RecentCheckIns
+							checkIns={recentCheckIns}
+							isLoading={isLoadingRecent}
+						/>
 					</div>
 				</div>
 

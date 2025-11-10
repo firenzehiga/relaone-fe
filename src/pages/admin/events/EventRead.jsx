@@ -41,21 +41,74 @@ export default function AdminEvent() {
 
 	// Local state for search/filter
 	const [searchEvent, setSearchEvent] = useState("");
+	const [statusFilter, setStatusFilter] = useState("all");
+	const [organizationFilter, setOrganizationFilter] = useState("all");
+
+	// Get unique organizations
+	const organizationsList = useMemo(() => {
+		const orgsMap = new Map();
+		events.forEach((event) => {
+			if (event.organization?.id && event.organization?.nama) {
+				orgsMap.set(event.organization.id, {
+					id: event.organization.id,
+					nama: event.organization.nama,
+				});
+			}
+		});
+		return Array.from(orgsMap.values()).sort((a, b) =>
+			a.nama.localeCompare(b.nama)
+		);
+	}, [events]);
 
 	const filteredEvents = useMemo(() => {
-		if (!searchEvent) return events;
-		const query = searchEvent.toLowerCase();
-		return events.filter((eventItem) => {
-			const title = String(eventItem.judul || "").toLowerCase();
-			const description = String(eventItem.deskripsi || "").toLowerCase();
-			const location = String(eventItem.lokasi || "").toLowerCase();
-			return (
-				title.includes(query) ||
-				description.includes(query) ||
-				location.includes(query)
+		let filtered = events;
+
+		// Filter by status
+		if (statusFilter !== "all") {
+			const today = new Date();
+			today.setHours(0, 0, 0, 0);
+
+			filtered = filtered.filter((eventItem) => {
+				const startDate = new Date(eventItem.tanggal_mulai);
+				const endDate = new Date(eventItem.tanggal_selesai);
+				startDate.setHours(0, 0, 0, 0);
+				endDate.setHours(23, 59, 59, 999);
+
+				if (statusFilter === "upcoming") {
+					return startDate > today;
+				} else if (statusFilter === "ongoing") {
+					return startDate <= today && endDate >= today;
+				} else if (statusFilter === "completed") {
+					return endDate < today;
+				}
+				return true;
+			});
+		}
+
+		// Filter by organization
+		if (organizationFilter !== "all") {
+			filtered = filtered.filter(
+				(event) => event.organization?.id === parseInt(organizationFilter)
 			);
-		});
-	}, [events, searchEvent]);
+		}
+
+		// Filter by search query
+		if (searchEvent) {
+			const query = searchEvent.toLowerCase();
+			filtered = filtered.filter((eventItem) => {
+				const title = String(eventItem.judul || "").toLowerCase();
+				const description = String(eventItem.deskripsi || "").toLowerCase();
+				const location = String(eventItem.lokasi || "").toLowerCase();
+				return (
+					title.includes(query) ||
+					description.includes(query) ||
+					location.includes(query)
+				);
+			});
+		}
+
+		return filtered;
+	}, [events, searchEvent, statusFilter, organizationFilter]);
 
 	// Fungsi untuk menangani penghapusan kursus
 	const handleDelete = (id) => {
@@ -218,14 +271,41 @@ export default function AdminEvent() {
 						</div>
 					) : (
 						<>
-							<div className="w-80 mb-4">
-								<input
-									type="text"
-									placeholder="Cari judul, deskripsi, atau lokasi..."
-									value={searchEvent}
-									onChange={(e) => setSearchEvent(e.target.value)}
-									className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
-								/>
+							{/* Filter & Search */}
+							<div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+								<div>
+									<input
+										type="text"
+										placeholder="Cari judul, deskripsi, atau lokasi..."
+										value={searchEvent}
+										onChange={(e) => setSearchEvent(e.target.value)}
+										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
+									/>
+								</div>
+								<div>
+									<select
+										value={statusFilter}
+										onChange={(e) => setStatusFilter(e.target.value)}
+										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+										<option value="all">Semua Status</option>
+										<option value="upcoming">Belum Mulai</option>
+										<option value="ongoing">Sedang Berlangsung</option>
+										<option value="completed">Sudah Selesai</option>
+									</select>
+								</div>
+								<div>
+									<select
+										value={organizationFilter}
+										onChange={(e) => setOrganizationFilter(e.target.value)}
+										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+										<option value="all">Semua Organisasi</option>
+										{organizationsList.map((org) => (
+											<option key={org.id} value={org.id}>
+												{org.nama}
+											</option>
+										))}
+									</select>
+								</div>
 							</div>
 							<DataTable
 								columns={columns}

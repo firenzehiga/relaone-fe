@@ -31,21 +31,51 @@ export default function OrganizationFeedback() {
 
 	// Local state for search/filter
 	const [searchFeedback, setSearchFeedback] = useState("");
+	const [eventFilter, setEventFilter] = useState("all");
+
+	// Get unique events from feedbacks
+	const availableEvents = useMemo(() => {
+		const eventMap = new Map();
+		feedbacks.forEach((feedback) => {
+			if (feedback.event?.id) {
+				eventMap.set(feedback.event.id, {
+					id: feedback.event.id,
+					judul: feedback.event.judul,
+				});
+			}
+		});
+		return Array.from(eventMap.values());
+	}, [feedbacks]);
 
 	const filteredFeedbacks = useMemo(() => {
-		if (!searchFeedback) return feedbacks;
-		const query = searchFeedback.toLowerCase();
-		return feedbacks.filter((feedbackItem) => {
-			const user = String(feedbackItem.user?.nama || "").toLowerCase();
-			const tglKomentar = formatDateDay(feedbackItem.created_at).toLowerCase();
-			const event = String(feedbackItem.event?.judul || "").toLowerCase();
-			return (
-				user.includes(query) ||
-				event.includes(query) ||
-				tglKomentar.includes(query)
+		let filtered = feedbacks;
+
+		// Filter by event
+		if (eventFilter !== "all") {
+			filtered = filtered.filter(
+				(feedback) => feedback.event?.id === parseInt(eventFilter)
 			);
-		});
-	}, [feedbacks, searchFeedback]);
+		}
+
+		// Filter by search query
+		if (searchFeedback) {
+			const query = searchFeedback.toLowerCase();
+			filtered = filtered.filter((feedbackItem) => {
+				const user = String(feedbackItem.user?.nama || "").toLowerCase();
+				const tglKomentar = formatDateDay(
+					feedbackItem.created_at
+				).toLowerCase();
+				const event = String(feedbackItem.event?.judul || "").toLowerCase();
+				return (
+					user.includes(query) ||
+					event.includes(query) ||
+					tglKomentar.includes(query)
+				);
+			});
+		}
+
+		return filtered;
+	}, [feedbacks, searchFeedback, eventFilter]);
 
 	const columns = [
 		{
@@ -146,14 +176,30 @@ export default function OrganizationFeedback() {
 						<>
 							{feedbacksRefetching && <FetchLoader />}
 
-							<div className="w-80 mb-4">
-								<input
-									type="text"
-									placeholder="Cari user atau event feedback..."
-									value={searchFeedback}
-									onChange={(e) => setSearchFeedback(e.target.value)}
-									className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
-								/>
+							{/* Filter & Search */}
+							<div className="flex flex-col sm:flex-row gap-3 mb-4">
+								<div className="flex-1 max-w-md">
+									<input
+										type="text"
+										placeholder="Cari user atau event feedback..."
+										value={searchFeedback}
+										onChange={(e) => setSearchFeedback(e.target.value)}
+										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
+									/>
+								</div>
+								<div className="w-full sm:w-64">
+									<select
+										value={eventFilter}
+										onChange={(e) => setEventFilter(e.target.value)}
+										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+										<option value="all">Semua Event</option>
+										{availableEvents.map((event) => (
+											<option key={event.id} value={event.id}>
+												{event.judul}
+											</option>
+										))}
+									</select>
+								</div>
 							</div>
 							<DataTable
 								columns={columns}

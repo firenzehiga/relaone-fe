@@ -363,21 +363,51 @@ export const useOrgAttendanceStats = (eventId) => {
 };
 
 /**
+ * Hook untuk mengambil recent check-ins untuk organization
+ * @param {string|number} eventId - ID event
+ * @returns {Object} Query result dengan data, isLoading, error, etc
+ */
+export const useOrgRecentCheckIns = (eventId) => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "organization" && !!eventId;
+
+	return useQuery({
+		queryKey: ["orgRecentCheckIns", eventId],
+		queryFn: async () => {
+			const response = await eventParticipantService.orgGetRecentCheckIns(
+				eventId
+			);
+			return response;
+		},
+		enabled,
+		staleTime: 30 * 1000, // 30 detik - lebih fresh karena realtime
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
+		refetchInterval: 30000, // Auto refetch tiap 30 detik
+	});
+};
+
+/**
  * Scan QR code untuk check-in participant (organization).
  *
  * @returns {UseMutationResult} Mutation hook
  * @param {Object} variables - Parameter scan QR
  * @param {string|number} variables.eventId - ID event
  * @param {string} variables.qr_data - Data QR code yang di-scan
- * @invalidates ["orgParticipants"]
+ * @invalidates ["orgParticipants", "orgRecentCheckIns", "orgAttendanceStats"]
  */
 export const useOrgScanQrMutation = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
 		mutationFn: eventParticipantService.orgScanQrCheckIn,
-		onSuccess: async () => {
+		onSuccess: async (_, variables) => {
+			const eventId = variables?.eventId;
 			await queryClient.invalidateQueries(["orgParticipants"]);
+			if (eventId) {
+				await queryClient.invalidateQueries(["orgRecentCheckIns", eventId]);
+				await queryClient.invalidateQueries(["orgAttendanceStats", eventId]);
+			}
 			showToast({
 				type: "success",
 				title: "Berhasil!",
@@ -419,6 +449,44 @@ export const useOrgDownloadQrMutation = () => {
 				position: "top-center",
 			});
 			console.error("Download QR error:", error);
+		},
+	});
+};
+
+/**
+ * Update status participant menjadi "no_show" untuk yang tidak hadir (organization).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @param {string|number} eventId - ID event
+ * @invalidates ["orgParticipants"]
+ */
+export const useOrgUpdateNoShowMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: eventParticipantService.orgUpdateNoShowParticipants,
+		onSuccess: async (response) => {
+			await queryClient.invalidateQueries(["orgParticipants"]);
+			const msg = parseApiError(response);
+
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: msg,
+				duration: 4000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			const msg = parseApiError(error) || "Gagal update status no show";
+			showToast({
+				type: "error",
+				title: "Gagal!",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Update no show error:", error);
 		},
 	});
 };

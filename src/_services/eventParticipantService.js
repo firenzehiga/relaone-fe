@@ -139,9 +139,7 @@ export const orgGetParticipants = async () => {
  */
 export const orgConfirmParticipant = async (id) => {
 	try {
-		const response = await api.post(
-			`/organization/confirm-participants/${id}`
-		);
+		const response = await api.post(`/organization/confirm-participants/${id}`);
 		return response.data.data || response.data;
 	} catch (error) {
 		console.log("Error confirming participant:", error);
@@ -224,6 +222,21 @@ export const orgGetRecentCheckIns = async (eventId) => {
 export const orgGetParticipantQR = async (participantId) => {
 	const response = await api.get(
 		`/organization/event-participants/${participantId}/qr-code`
+	);
+	return response.data;
+};
+
+/** Update status participant menjadi "no_show" untuk yang tidak hadir
+ *
+ * @async
+ * @function orgUpdateNoShowParticipants
+ * @endpoint POST /organization/events/{eventId}/update-no-show
+ * @param {number|string} eventId - ID event
+ * @returns {Promise} Promise dengan data hasil update
+ */
+export const orgUpdateNoShowParticipants = async (eventId) => {
+	const response = await api.post(
+		`/organization/events/${eventId}/update-no-show`
 	);
 	return response.data;
 };

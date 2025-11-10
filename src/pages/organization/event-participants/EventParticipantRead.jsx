@@ -3,6 +3,7 @@ import {
 	useOrgDownloadQrMutation,
 	useOrgConfirmParticipantMutation,
 	useOrgRejectParticipantMutation,
+	useOrgUpdateNoShowMutation,
 } from "@/_hooks/useParticipants";
 import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
@@ -23,6 +24,7 @@ import {
 	Scan,
 	Download,
 	Check,
+	UserX,
 } from "lucide-react";
 import {
 	Menu,
@@ -52,6 +54,7 @@ export default function OrganizationEventParticipant() {
 	const { isLoading } = useAuthStore();
 
 	const downloadQrMutation = useOrgDownloadQrMutation();
+	const updateNoShowMutation = useOrgUpdateNoShowMutation();
 
 	// const deleteParticipantMutation = useOrgDeleteParticipantMutation();
 
@@ -126,6 +129,8 @@ export default function OrganizationEventParticipant() {
 					eventsMap.set(p.event.id, {
 						id: p.event.id,
 						judul: p.event.judul,
+						tanggal_mulai: p.event.tanggal_mulai,
+						tanggal_selesai: p.event.tanggal_selesai,
 						count: 0,
 					});
 				}
@@ -136,6 +141,20 @@ export default function OrganizationEventParticipant() {
 			a.judul.localeCompare(b.judul)
 		);
 	}, [participants]);
+
+	// Get selected event info
+	const selectedEvent = useMemo(() => {
+		if (selectedEventId === "all") return null;
+		return eventsList.find((e) => e.id === parseInt(selectedEventId));
+	}, [selectedEventId, eventsList]);
+
+	// Simple check if event is finished
+	const isEventFinished = useMemo(() => {
+		if (!selectedEvent?.tanggal_selesai) return false;
+		const today = new Date();
+		const endDate = new Date(selectedEvent.tanggal_selesai);
+		return endDate < today;
+	}, [selectedEvent]);
 
 	const filteredParticipants = useMemo(() => {
 		let filtered = participants;
@@ -219,6 +238,54 @@ export default function OrganizationEventParticipant() {
 		});
 	};
 
+	// Fungsi update no show participants
+	const handleUpdateNoShow = () => {
+		if (selectedEventId === "all") {
+			toast.error("Pilih event terlebih dahulu untuk update status no show", {
+				position: "top-center",
+			});
+			return;
+		}
+
+		// Count participants yang masih confirmed (for display only)
+		const confirmedCount = filteredParticipants.filter(
+			(p) => p.status === "confirmed"
+		).length;
+
+		Swal.fire({
+			title: "Update Status Tidak Hadir?",
+			html: `<div class="text-left">
+				<p class="mb-2">Event: <strong>${selectedEvent?.judul}</strong></p>
+				${
+					confirmedCount > 0
+						? `<p class="mb-2">Participant dengan status "Dikonfirmasi": <strong>${confirmedCount} orang</strong></p>`
+						: '<p class="mb-2 text-gray-600">Sistem akan mengecek participant yang perlu diupdate...</p>'
+				}
+				<p class="text-red-600 mt-4">⚠️ Semua participant yang masih berstatus "Dikonfirmasi" akan diubah menjadi "Tidak Hadir".</p>
+				<p class="text-sm text-gray-500 mt-2">Note: Event harus sudah selesai untuk melakukan update ini.</p>
+			</div>`,
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonText: "Ya, Update!",
+			cancelButtonText: "Batal",
+			customClass: {
+				popup: "bg-white rounded-xl shadow-xl p-5 max-w-md w-full",
+				title: "text-lg font-semibold text-gray-900",
+				htmlContainer: "text-sm text-gray-600",
+				actions: "flex gap-3 justify-center mt-4",
+				confirmButton:
+					"px-4 py-2 focus:outline-none rounded-md bg-red-500 hover:bg-red-600 text-white",
+				cancelButton:
+					"px-4 py-2 rounded-md border border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700",
+			},
+			backdrop: true,
+		}).then((result) => {
+			if (result.isConfirmed) {
+				updateNoShowMutation.mutate(selectedEventId);
+			}
+		});
+	};
+
 	const columns = [
 		{
 			name: "No",
@@ -239,11 +306,28 @@ export default function OrganizationEventParticipant() {
 			sortable: false,
 			wrap: true,
 		},
+
 		{
 			name: "Tanggal Daftar",
 			selector: (row) =>
 				row.tanggal_daftar
 					? new Date(row.tanggal_daftar.replace(" ", "T")).toLocaleDateString(
+							"id-ID",
+							{
+								day: "numeric",
+								month: "long",
+								year: "numeric",
+							}
+					  )
+					: "-",
+			sortable: true,
+			width: "170px",
+		},
+		{
+			name: "Tanggal Hadir",
+			selector: (row) =>
+				row.tanggal_hadir
+					? new Date(row.tanggal_hadir.replace(" ", "T")).toLocaleDateString(
 							"id-ID",
 							{
 								day: "numeric",
@@ -265,8 +349,8 @@ export default function OrganizationEventParticipant() {
 						<Badge variant={"primary"}>Dikonfirmasi</Badge>
 					) : row.status === "attended" ? (
 						<Badge variant={"success"}>Hadir</Badge>
-					) : row.status === "absent" ? (
-						<Badge variant={"secondary"}>Tidak Hadir</Badge>
+					) : row.status === "no_show" ? (
+						<Badge variant={"danger"}>Tidak Hadir</Badge>
 					) : (
 						<Badge variant={"danger"}>Ditolak</Badge>
 					)}
@@ -278,12 +362,25 @@ export default function OrganizationEventParticipant() {
 		{
 			name: "Aksi",
 			cell: (row) => {
-				// Tidak tampilkan tombol aksi untuk status rejected
-				if (row.status === "rejected") {
+				// Tidak tampilkan tombol aksi untuk status rejected atau attended
+				if (
+					row.status === "rejected" ||
+					row.status === "attended" ||
+					row.status === "no_show"
+				) {
 					return (
-						<span className="text-xs text-gray-400 italic">Tidak ada aksi</span>
+						<span className="text-xs text-gray-400 italic">
+							{row.status === "attended" ? "Sudah hadir" : "Tidak ada aksi"}
+						</span>
 					);
 				}
+
+				// Check if event is completed - disable actions
+				const today = new Date();
+				const eventEndDate = row.event?.tanggal_selesai
+					? new Date(row.event.tanggal_selesai)
+					: null;
+				const isEventCompleted = eventEndDate && eventEndDate < today;
 
 				return (
 					<Menu>
@@ -292,11 +389,12 @@ export default function OrganizationEventParticipant() {
 							aria-label="Options"
 							icon={<EllipsisVerticalIcon />}
 							variant="ghost"
+							isDisabled={isEventCompleted}
 						/>
 						<Portal>
 							<MenuList className="font-semibold">
-								{/* Download QR - Only for confirmed or attended */}
-								{row.status === "confirmed" && (
+								{/* Download QR - Only for confirmed and event not completed */}
+								{row.status === "confirmed" && !isEventCompleted && (
 									<MenuItem
 										icon={
 											<Download className="text-blue-500 hover:text-blue-600" />
@@ -308,7 +406,8 @@ export default function OrganizationEventParticipant() {
 											: "QR Code"}
 									</MenuItem>
 								)}
-								{row.status === "registered" && (
+								{/* Confirm/Reject - Only for registered and event not completed */}
+								{row.status === "registered" && !isEventCompleted && (
 									<>
 										<MenuItem
 											onClick={() => handleConfirm(row.id)}
@@ -325,6 +424,12 @@ export default function OrganizationEventParticipant() {
 											Tolak Peserta
 										</MenuItem>
 									</>
+								)}
+								{/* Show message if event completed */}
+								{isEventCompleted && (
+									<MenuItem isDisabled className="text-xs text-gray-500 italic">
+										Event sudah selesai
+									</MenuItem>
 								)}
 							</MenuList>
 						</Portal>
@@ -366,17 +471,93 @@ export default function OrganizationEventParticipant() {
 							)}
 						</h2>
 
-						{/* Tombol Scanner */}
-						{selectedEventId !== "all" && (
-							<LinkButton
-								variant="success"
-								className="flex items-center gap-2"
-								to={`/organization/event-participants/scanner/${selectedEventId}`}>
-								<Scan className="w-4 h-4" />
-								Buka Scanner
-							</LinkButton>
-						)}
+						{/* Action Buttons */}
+						<div className="flex gap-2">
+							{/* Tombol Update No Show */}
+							{selectedEventId !== "all" && (
+								<button
+									onClick={handleUpdateNoShow}
+									disabled={updateNoShowMutation.isPending}
+									className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md text-sm font-medium transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
+									<UserX className="w-4 h-4" />
+									{updateNoShowMutation.isPending
+										? "Updating..."
+										: "Update No Show"}
+								</button>
+							)}
+
+							{/* Tombol Scanner */}
+							{selectedEventId !== "all" && (
+								<LinkButton
+									variant="success"
+									className="flex items-center gap-2"
+									to={`/organization/event-participants/scanner/${selectedEventId}`}>
+									<Scan className="w-4 h-4" />
+									Buka Absen
+								</LinkButton>
+							)}
+						</div>
 					</div>
+
+					{/* Event Info Banner - Simple */}
+					{selectedEvent && (
+						<div
+							className={`mb-4 rounded-lg p-4 border ${
+								isEventFinished
+									? "bg-gradient-to-r from-gray-50 to-slate-50 border-gray-300"
+									: "bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200"
+							}`}>
+							<div className="flex items-center justify-between flex-wrap gap-2">
+								<div className="flex items-center gap-3">
+									<Calendar
+										className={`w-6 h-6 flex-shrink-0 ${
+											isEventFinished ? "text-gray-600" : "text-blue-600"
+										}`}
+									/>
+									<div>
+										<h3
+											className={`text-sm font-semibold mb-1 ${
+												isEventFinished ? "text-gray-900" : "text-blue-900"
+											}`}>
+											{selectedEvent.judul}
+										</h3>
+										<p
+											className={`text-xs ${
+												isEventFinished ? "text-gray-700" : "text-blue-700"
+											}`}>
+											{new Date(selectedEvent.tanggal_mulai).toLocaleDateString(
+												"id-ID",
+												{
+													day: "numeric",
+													month: "long",
+													year: "numeric",
+												}
+											)}{" "}
+											-{" "}
+											{new Date(
+												selectedEvent.tanggal_selesai
+											).toLocaleDateString("id-ID", {
+												day: "numeric",
+												month: "long",
+												year: "numeric",
+											})}
+										</p>
+									</div>
+								</div>
+								<div>
+									{isEventFinished ? (
+										<Badge variant="secondary" className="text-sm">
+											✓ Event Sudah Selesai
+										</Badge>
+									) : (
+										<Badge variant="success" className="text-sm">
+											🟢 Event Aktif
+										</Badge>
+									)}
+								</div>
+							</div>
+						</div>
+					)}
 
 					{/* Quick Scanner Access Banner */}
 					{selectedEventId === "all" && eventsList.length > 0 && (
@@ -385,14 +566,21 @@ export default function OrganizationEventParticipant() {
 								<QrCode className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" />
 								<div className="flex-1">
 									<h3 className="text-sm font-semibold text-blue-900 mb-1">
-										Scanner Check-in Tersedia
+										Fitur Manajemen Kehadiran
 									</h3>
 									<p className="text-sm text-blue-700 mb-3">
-										Pilih event terlebih dahulu untuk membuka scanner QR
-										check-in volunteer
+										Pilih event terlebih dahulu untuk mengakses fitur scanner
+										check-in dan update status kehadiran
 									</p>
-									<div className="text-xs text-blue-600">
-										💡 Filter event → Klik "Buka Scanner" untuk mulai check-in
+									<div className="text-xs text-blue-600 space-y-1">
+										<div>
+											� <strong>Scanner QR:</strong> Scan QR volunteer untuk
+											check-in realtime
+										</div>
+										<div>
+											⏰ <strong>Update No Show:</strong> Ubah status
+											participant yang tidak hadir setelah event selesai
+										</div>
 									</div>
 								</div>
 							</div>
@@ -561,6 +749,22 @@ export default function OrganizationEventParticipant() {
 													<span className="ml-2 text-gray-900">
 														{data.event?.judul || "-"}
 													</span>
+												</div>
+												<div className="flex items-start">
+													<div className="text-sm text-gray-700 font-semibold">
+														Tanggal Mulai:
+													</div>
+													<div className="text-sm text-gray-900 ml-2">
+														{data.event?.tanggal_mulai
+															? new Date(
+																	data.event.tanggal_mulai.replace(" ", "T")
+															  ).toLocaleDateString("id-ID", {
+																	day: "numeric",
+																	month: "long",
+																	year: "numeric",
+															  })
+															: "-"}
+													</div>
 												</div>
 
 												<div>
