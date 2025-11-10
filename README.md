@@ -3,6 +3,8 @@
 <div align="center">
   <img src="./public/images/logo_fe.png" alt="RelaOne Logo" width="150" height="150">
   
+<p>
+</p>
 
 [![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=white&style=flat-square)](https://react.dev) 
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?logo=tailwindcss&logoColor=white&style=flat-square)](https://tailwindcss.com) 
@@ -76,7 +78,7 @@ Aplikasi ini dikembangkan sebagai bagian dari project kolaboratif pendidikan. Fr
 
 ## 🙏 **Acknowledgments**
 
-- Tim backend yang amazing
+- Tim frontend yang membantu dalam mengembangkan aplikasi ini.
 
 ---
 
