@@ -233,24 +233,24 @@ function QrScanner({ eventId, onScanSuccess, onScanError }) {
 	};
 
 	return (
-		<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-			<div className="flex items-center justify-between mb-4">
-				<h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-					<Scan className="w-6 h-6 text-blue-600" />
+		<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+			<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4">
+				<h2 className="text-lg sm:text-xl font-semibold text-gray-800 flex items-center gap-2">
+					<Scan className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
 					Scanner Check-in
 				</h2>
 
 				{!scanning ? (
 					<button
 						onClick={startScanning}
-						className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2 transition-colors">
+						className="w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center justify-center gap-2 transition-colors text-sm">
 						<Camera className="w-4 h-4" />
 						Mulai Scan
 					</button>
 				) : (
 					<button
 						onClick={stopScanning}
-						className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+						className="w-full sm:w-auto px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm">
 						Stop Scan
 					</button>
 				)}
@@ -262,14 +262,14 @@ function QrScanner({ eventId, onScanSuccess, onScanError }) {
 						id="qr-reader"
 						style={{
 							width: "100%",
-							minHeight: "500px",
+							minHeight: "350px",
 							border: "2px solid #3b82f6",
 							borderRadius: "8px",
 							overflow: "hidden",
 							backgroundColor: "#000",
 						}}
 					/>
-					<p className="text-center text-sm text-gray-600 mt-3">
+					<p className="text-center text-xs sm:text-sm text-gray-600 mt-3">
 						📹 Arahkan kamera ke QR Code volunteer
 					</p>
 					<p className="text-center text-xs text-gray-500 mt-1">
@@ -281,25 +281,25 @@ function QrScanner({ eventId, onScanSuccess, onScanError }) {
 			{/* Result Display */}
 			{result && (
 				<div
-					className={`rounded-lg p-4 mb-4 border-2 ${
+					className={`rounded-lg p-3 sm:p-4 mb-4 border-2 ${
 						resultType === "success"
 							? "bg-green-50 border-green-300"
 							: resultType === "error"
 							? "bg-red-50 border-red-300"
 							: "bg-yellow-50 border-yellow-300"
 					}`}>
-					<div className="flex items-start gap-3">
+					<div className="flex items-start gap-2 sm:gap-3">
 						{resultType === "success" ? (
-							<CheckCircle className="w-8 h-8 text-green-600 flex-shrink-0" />
+							<CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-green-600 flex-shrink-0" />
 						) : resultType === "error" ? (
-							<XCircle className="w-8 h-8 text-red-600 flex-shrink-0" />
+							<XCircle className="w-6 h-6 sm:w-8 sm:h-8 text-red-600 flex-shrink-0" />
 						) : (
-							<AlertCircle className="w-8 h-8 text-yellow-600 flex-shrink-0" />
+							<AlertCircle className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-600 flex-shrink-0" />
 						)}
 
-						<div className="flex-1">
+						<div className="flex-1 min-w-0">
 							<h3
-								className={`font-semibold text-lg mb-2 ${
+								className={`font-semibold text-base sm:text-lg mb-2 ${
 									resultType === "success"
 										? "text-green-800"
 										: resultType === "error"
@@ -310,17 +310,17 @@ function QrScanner({ eventId, onScanSuccess, onScanError }) {
 							</h3>
 
 							{result.volunteer && (
-								<div className="flex items-center gap-3 bg-white rounded-lg p-3 mt-2">
+								<div className="flex items-center gap-2 sm:gap-3 bg-white rounded-lg p-2 sm:p-3 mt-2">
 									<img
 										src={result.volunteer.foto || "/default-avatar.png"}
 										alt={result.volunteer.nama}
-										className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
+										className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-gray-200 flex-shrink-0"
 									/>
-									<div>
-										<p className="font-medium text-gray-800">
+									<div className="flex-1 min-w-0">
+										<p className="font-medium text-gray-800 text-sm sm:text-base truncate">
 											{result.volunteer.nama}
 										</p>
-										<p className="text-sm text-gray-600">
+										<p className="text-xs sm:text-sm text-gray-600 truncate">
 											{result.volunteer.email}
 										</p>
 										{result.volunteer.tanggal_hadir && (
@@ -333,7 +333,7 @@ function QrScanner({ eventId, onScanSuccess, onScanError }) {
 							)}
 
 							{result.details && (
-								<div className="mt-2 text-sm text-gray-700 bg-white rounded p-2">
+								<div className="mt-2 text-xs sm:text-sm text-gray-700 bg-white rounded p-2">
 									<p>
 										Status:{" "}
 										<span className="font-medium">{result.details}</span>
@@ -346,10 +346,12 @@ function QrScanner({ eventId, onScanSuccess, onScanError }) {
 			)}
 			{/* Info Box */}
 			{!scanning && !result && (
-				<div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-					<Camera className="w-12 h-12 text-blue-500 mx-auto mb-2" />
-					<p className="text-blue-800 font-medium">Scanner belum aktif</p>
-					<p className="text-blue-600 text-sm mt-1">
+				<div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 text-center">
+					<Camera className="w-10 h-10 sm:w-12 sm:h-12 text-blue-500 mx-auto mb-2" />
+					<p className="text-blue-800 font-medium text-sm sm:text-base">
+						Scanner belum aktif
+					</p>
+					<p className="text-blue-600 text-xs sm:text-sm mt-1">
 						Klik "Mulai Scan" untuk memulai check-in volunteer
 					</p>
 				</div>

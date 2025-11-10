@@ -75,29 +75,23 @@ export default function OrganizationLocationCreate() {
 		}));
 	};
 
-	if (organizationsLoading) {
-		return <Skeleton.FormSkeleton title="Loading..." />;
-	}
-
 	return (
-		<div className="max-w-6xl mx-auto p-6">
-			<div
-				className="bg-white shadow-lg rounded-lg p-6"
-				style={{ minHeight: 420, width: 900 }}>
-				<header className="mb-6">
-					<h1 className="text-2xl font-semibold text-gray-900">
+		<div className="w-full mx-auto p-4 sm:p-6 max-w-6xl min-h-[calc(100vh-4rem)]">
+			<div className="bg-white shadow-lg rounded-lg p-4 sm:p-6">
+				<header className="mb-6 sm:mb-8">
+					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
 						Buat Lokasi Baru
 					</h1>
-					<p className="text-sm text-gray-500 mt-1">
+					<p className="text-xs sm:text-sm text-gray-500 mt-1">
 						Isi detail lokasi. Anda bisa menempelkan link Google Maps dan
 						menekan "Parse" untuk mengisi koordinat otomatis.
 					</p>
 				</header>
 
-				<form onSubmit={handleSubmit} className="space-y-6">
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+				<form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Nama Lokasi (bebas, hanya untuk pendataan){" "}
 								<span className="text-red-500">*</span>
 							</label>
@@ -108,12 +102,12 @@ export default function OrganizationLocationCreate() {
 								type="text"
 								required
 								placeholder="Contoh: Lapangan RW 05"
-								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 							/>
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Tipe Lokasi <span className="text-red-500">*</span>
 							</label>
 							<select
@@ -129,9 +123,9 @@ export default function OrganizationLocationCreate() {
 							</select>
 						</div>
 					</div>
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Alamat <span className="text-red-500">*</span>
 							</label>
 							<input
@@ -141,12 +135,12 @@ export default function OrganizationLocationCreate() {
 								type="text"
 								required
 								placeholder="Alamat (terisi otomatis dari Google Maps)"
-								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 							/>
 						</div>
 					</div>
 					<div>
-						<label className="block text-sm font-medium text-gray-700">
+						<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 							Alamat Tambahan
 						</label>
 						<input
@@ -155,13 +149,13 @@ export default function OrganizationLocationCreate() {
 							onChange={handleChange}
 							type="text"
 							placeholder="Alamat lengkap (opsional)"
-							className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+							className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 						/>
 					</div>
 
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+					<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Kota (opsional)
 							</label>
 							<input
@@ -173,7 +167,7 @@ export default function OrganizationLocationCreate() {
 							/>
 						</div>
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Provinsi (opsional)
 							</label>
 							<input
@@ -185,7 +179,7 @@ export default function OrganizationLocationCreate() {
 							/>
 						</div>
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Negara <span className="text-red-500">*</span>
 							</label>
 							<input
@@ -197,9 +191,9 @@ export default function OrganizationLocationCreate() {
 						</div>
 					</div>
 
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+					<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Latitude (terisi otomatis)
 							</label>
 							<input
@@ -212,7 +206,7 @@ export default function OrganizationLocationCreate() {
 							/>
 						</div>
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Longitude (terisi otomatis)
 							</label>
 							<input
@@ -225,7 +219,7 @@ export default function OrganizationLocationCreate() {
 							/>
 						</div>
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Zoom <span className="text-red-500">*</span>
 							</label>
 							<input
@@ -241,7 +235,7 @@ export default function OrganizationLocationCreate() {
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-gray-700">
+						<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 							Place ID (opsional)
 						</label>
 						<input
@@ -254,7 +248,7 @@ export default function OrganizationLocationCreate() {
 					</div>
 
 					<div className="bg-gray-50 border border-gray-100 p-4 rounded">
-						<label className="block text-sm font-medium text-gray-700">
+						<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 							Masukkan link Google Maps
 						</label>
 						<p className="text-xs text-gray-500 mt-1">
@@ -273,17 +267,17 @@ export default function OrganizationLocationCreate() {
 							<em>negara</em>, atau <em>place_id</em> dapat diisi manual jika
 							diperlukan.
 						</p>
-						<div className="flex gap-2 mt-2">
+						<div className="flex flex-col sm:flex-row gap-2 mt-2">
 							<input
 								value={gmapUrl}
 								onChange={(e) => setGmapUrl(e.target.value)}
 								placeholder="https://www.google.com/maps/place/... (atau URL dari address bar)"
-								className="flex-1 rounded-md border border-gray-200 px-3 py-2"
+								className="flex-1 rounded-md border border-gray-200 px-3 py-2 text-sm"
 							/>
 							<button
 								type="button"
 								onClick={handleParse}
-								className="px-4 py-2 bg-indigo-600 text-white rounded-md">
+								className="w-full sm:w-auto px-4 py-2 bg-indigo-600 text-white rounded-md text-sm">
 								Parse
 							</button>
 						</div>
@@ -304,21 +298,25 @@ export default function OrganizationLocationCreate() {
 						)}
 					</div>
 
-					<div className="flex items-center justify-end gap-3">
-						<Button
-							type="button"
-							variant="outline"
-							disabled={isLoading}
-							onClick={() => navigate("/organization/locations")}>
-							Batal
-						</Button>
-						<Button
-							type="submit"
-							variant="success"
-							loading={isLoading}
-							disabled={isLoading}>
-							{isLoading ? "Membuat..." : "Buat Lokasi"}
-						</Button>
+					<div className="mt-auto pt-6">
+						<div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3">
+							<Button
+								type="button"
+								variant="outline"
+								disabled={isLoading}
+								onClick={() => navigate("/organization/locations")}
+								className="w-full sm:w-auto order-2 sm:order-1">
+								Batal
+							</Button>
+							<Button
+								type="submit"
+								variant="success"
+								loading={isLoading}
+								disabled={isLoading}
+								className="w-full sm:w-auto order-1 sm:order-2">
+								{isLoading ? "Membuat..." : "Buat Lokasi"}
+							</Button>
+						</div>
 					</div>
 				</form>
 			</div>

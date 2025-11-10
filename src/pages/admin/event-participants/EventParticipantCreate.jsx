@@ -82,23 +82,21 @@ export default function AdminEventParticipantCreate() {
 	}
 
 	return (
-		<div className="max-w-6xl mx-auto p-6">
-			<div
-				className="bg-white shadow-xl rounded-lg p-6"
-				style={{ minHeight: 520, width: 900 }}>
-				<header className="mb-6">
-					<h1 className="text-2xl font-semibold text-gray-900">
+		<div className="w-full mx-auto p-4 sm:p-6 max-w-6xl min-h-[calc(100vh-4rem)]">
+			<div className="bg-white shadow-xl rounded-lg p-4 sm:p-6">
+				<header className="mb-6 sm:mb-8">
+					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
 						Tambah Participant
 					</h1>
-					<p className="text-sm text-gray-500 mt-1">
+					<p className="text-xs sm:text-sm text-gray-500 mt-1">
 						Tambah peserta untuk event tertentu.
 					</p>
 				</header>
 
-				<form onSubmit={handleSubmit} className="space-y-6">
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+				<form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Event <span className="text-red-500">*</span>
 							</label>
 							<select
@@ -106,7 +104,7 @@ export default function AdminEventParticipantCreate() {
 								value={formData.event_id}
 								required
 								onChange={handleChange}
-								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 								<option value="">Pilih event</option>
 								{events.map((ev) => (
 									<option key={ev.id} value={ev.id}>
@@ -117,7 +115,7 @@ export default function AdminEventParticipantCreate() {
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Peserta (user) <span className="text-red-500">*</span>
 							</label>
 							<select
@@ -125,7 +123,7 @@ export default function AdminEventParticipantCreate() {
 								value={formData.user_id}
 								required
 								onChange={handleChange}
-								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 								<option value="">Pilih user</option>
 								{volunteers.map((volunteer) => (
 									<option key={volunteer.id} value={volunteer.id}>
@@ -136,9 +134,9 @@ export default function AdminEventParticipantCreate() {
 						</div>
 					</div>
 
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Tanggal Daftar <span className="text-red-500">*</span>
 							</label>
 							<input
@@ -146,12 +144,12 @@ export default function AdminEventParticipantCreate() {
 								name="tanggal_daftar"
 								value={formData.tanggal_daftar}
 								onChange={handleChange}
-								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
+								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm"
 							/>
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Tanggal Konfirmasi
 							</label>
 							<input
@@ -159,15 +157,15 @@ export default function AdminEventParticipantCreate() {
 								name="tanggal_konfirmasi"
 								value={formData.tanggal_konfirmasi}
 								onChange={handleChange}
-								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
+								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm"
 							/>
 						</div>
 					</div>
 
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 						{formData.tanggal_konfirmasi && (
 							<div>
-								<label className="block text-sm font-medium text-gray-700">
+								<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 									Tanggal Hadir
 								</label>
 								<input
@@ -175,12 +173,12 @@ export default function AdminEventParticipantCreate() {
 									name="tanggal_hadir"
 									value={formData.tanggal_hadir}
 									onChange={handleChange}
-									className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
+									className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm"
 								/>
 							</div>
 						)}
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Status <span className="text-red-500">*</span>
 							</label>
 							<select
@@ -188,7 +186,7 @@ export default function AdminEventParticipantCreate() {
 								value={formData.status}
 								required
 								onChange={handleChange}
-								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 								<option value="registered">Registered</option>
 								<option value="confirmed">Confirmed</option>
 								<option value="cancelled">Cancelled</option>
@@ -199,7 +197,7 @@ export default function AdminEventParticipantCreate() {
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-gray-700">
+						<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 							Catatan
 						</label>
 						<textarea
@@ -207,26 +205,30 @@ export default function AdminEventParticipantCreate() {
 							value={formData.catatan}
 							onChange={handleChange}
 							rows={4}
-							className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
+							className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm"
 							placeholder="Catatan (opsional)"
 						/>
 					</div>
 
-					<div className="flex items-center justify-end gap-3">
-						<Button
-							type="button"
-							variant="outline"
-							disabled={isLoading}
-							onClick={() => navigate("/admin/event-participants")}>
-							Batal
-						</Button>
-						<Button
-							type="submit"
-							variant="success"
-							loading={isLoading}
-							disabled={isLoading}>
-							{isLoading ? "Membuat..." : "Buat Participant"}
-						</Button>
+					<div className="mt-auto pt-6">
+						<div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3">
+							<Button
+								type="button"
+								variant="outline"
+								disabled={isLoading}
+								onClick={() => navigate("/admin/event-participants")}
+								className="w-full sm:w-auto order-2 sm:order-1">
+								Batal
+							</Button>
+							<Button
+								type="submit"
+								variant="success"
+								loading={isLoading}
+								disabled={isLoading}
+								className="w-full sm:w-auto order-1 sm:order-2">
+								{isLoading ? "Membuat..." : "Buat Participant"}
+							</Button>
+						</div>
 					</div>
 				</form>
 			</div>

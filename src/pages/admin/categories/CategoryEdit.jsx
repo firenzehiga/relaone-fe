@@ -75,21 +75,21 @@ export default function AdminCategoryEdit() {
 	if (showCategoryLoading) return <Skeleton.FormSkeleton title="Loading..." />;
 
 	return (
-		<div className="max-w-6xl mx-auto p-6">
-			<div
-				className="bg-white shadow-xl rounded-lg p-6"
-				style={{ minHeight: 520, width: 900 }}>
-				<header className="mb-6">
-					<h1 className="text-2xl font-semibold text-gray-900">
+		<div className="w-full mx-auto p-4 sm:p-6 max-w-6xl min-h-[calc(100vh-4rem)]">
+			<div className="bg-white shadow-xl rounded-lg p-4 sm:p-6">
+				<header className="mb-6 sm:mb-8">
+					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
 						Edit Kategori
 					</h1>
-					<p className="text-sm text-gray-500 mt-1">Isi detail kategori.</p>
+					<p className="text-xs sm:text-sm text-gray-500 mt-1">
+						Isi detail kategori.
+					</p>
 				</header>
 
-				<form onSubmit={handleSubmit} className="space-y-6">
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+				<form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Nama Kategori <span className="text-red-500">*</span>
 							</label>
 							<input
@@ -99,14 +99,14 @@ export default function AdminCategoryEdit() {
 								type="text"
 								required
 								placeholder="Contoh:Pendidikan"
-								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 							/>
 						</div>
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Warna <span className="text-red-500">*</span>
 							</label>
-							<div className="mt-1 flex items-center gap-3">
+							<div className="mt-1 flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3">
 								{/* native color input */}
 								<input
 									type="color"
@@ -124,7 +124,7 @@ export default function AdminCategoryEdit() {
 									value={formData.warna}
 									onChange={handleChange}
 									placeholder="#10B981"
-									className="flex-1 rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+									className="flex-1 min-w-[120px] rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 								/>
 								{/* live swatch */}
 								<div
@@ -136,7 +136,7 @@ export default function AdminCategoryEdit() {
 						</div>
 					</div>
 					<div>
-						<label className="block text-sm font-medium text-gray-700">
+						<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 							Deskripsi Singkat
 						</label>
 						<textarea
@@ -145,13 +145,13 @@ export default function AdminCategoryEdit() {
 							onChange={handleChange}
 							required
 							placeholder="Contoh: Aksi Peduli Lingkungan"
-							className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+							className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 						/>
 					</div>
 
 					{/* Icon picker (lucide-react) */}
 					<div>
-						<label className="block text-sm font-medium text-gray-700 mb-2">
+						<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
 							Icon Kategori <span className="text-red-500">*</span>
 						</label>
 						{/* quick picks */}
@@ -170,7 +170,7 @@ export default function AdminCategoryEdit() {
 										type="button"
 										key={key}
 										onClick={() => setFormData((s) => ({ ...s, icon: key }))}
-										className={`flex items-center gap-2 px-3 py-2 border rounded-md text-sm ${
+										className={`flex items-center gap-2 px-2 sm:px-3 py-2 border rounded-md text-xs sm:text-sm ${
 											selected
 												? "border-indigo-600 bg-indigo-50"
 												: "border-gray-200 bg-white"
@@ -183,7 +183,7 @@ export default function AdminCategoryEdit() {
 						</div>
 
 						{/* free-text Lucide icon name */}
-						<div className="flex gap-2 items-center mb-2">
+						<div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center mb-2">
 							<input
 								type="text"
 								name="icon"
@@ -192,17 +192,17 @@ export default function AdminCategoryEdit() {
 									setFormData((s) => ({ ...s, icon: e.target.value }))
 								}
 								placeholder="Ketik nama icon Lucide, mis. Camera"
-								className="flex-1 rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+								className="flex-1 rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 							/>
 							<button
 								type="button"
 								onClick={() => setFormData((s) => ({ ...s, icon: "" }))}
-								className="px-3 py-2 bg-gray-100 rounded-md text-sm">
+								className="w-full sm:w-auto px-3 py-2 bg-gray-100 rounded-md text-xs sm:text-sm">
 								Clear
 							</button>
 						</div>
 
-						<div className="mt-2 text-sm text-gray-500">
+						<div className="mt-2 text-xs sm:text-sm text-gray-500">
 							Pilih icon dari pilihan cepat atau ketik nama icon Lucide. Sistem
 							akan menyimpan nama komponen (case-sensitive), mis.{" "}
 							<code>Leaf</code>.<p></p>
@@ -222,13 +222,13 @@ export default function AdminCategoryEdit() {
 
 						{formData.icon && (
 							<div className="mt-3 flex items-center gap-3">
-								<span className="text-sm font-medium">Preview:</span>
+								<span className="text-xs sm:text-sm font-medium">Preview:</span>
 								{(() => {
 									const Comp = Lucide[formData.icon];
 									return Comp ? (
 										<Comp size={24} />
 									) : (
-										<span className="text-sm text-gray-500">
+										<span className="text-xs sm:text-sm text-gray-500">
 											Nama icon tidak ditemukan
 										</span>
 									);
@@ -240,7 +240,7 @@ export default function AdminCategoryEdit() {
 					<div className="mb-4">
 						<label
 							htmlFor="category_id"
-							className="block text-sm font-medium text-gray-700">
+							className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 							Status Kategori <span className="text-red-500">*</span>
 						</label>
 						<select
@@ -249,28 +249,32 @@ export default function AdminCategoryEdit() {
 							value={formData.is_active}
 							onChange={handleChange}
 							required
-							className="mt-1 block w-1/4 rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+							className="mt-1 block w-full sm:w-1/4 rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 							<option value="">Status Kategori</option>
 							<option value="1">Aktif</option>
 							<option value="0">Tidak Aktif</option>
 						</select>
 					</div>
-					<div className="flex items-center justify-end gap-3">
-						<Button
-							type="button"
-							variant="outline"
-							disabled={isLoading}
-							onClick={() => navigate("/admin/categories")}>
-							Batal
-						</Button>
-						<Button
-							type="submit"
-							variant="success"
-							disabled={isLoading}
-							loading={isLoading}
-							className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500">
-							{isLoading ? "Menyimpan..." : "Simpan Kategori"}
-						</Button>
+
+					<div className="mt-auto pt-6">
+						<div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3">
+							<Button
+								type="button"
+								variant="outline"
+								disabled={isLoading}
+								onClick={() => navigate("/admin/categories")}
+								className="w-full sm:w-auto order-2 sm:order-1">
+								Batal
+							</Button>
+							<Button
+								type="submit"
+								variant="success"
+								disabled={isLoading}
+								loading={isLoading}
+								className="w-full sm:w-auto order-1 sm:order-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500">
+								{isLoading ? "Menyimpan..." : "Simpan Kategori"}
+							</Button>
+						</div>
 					</div>
 				</form>
 			</div>

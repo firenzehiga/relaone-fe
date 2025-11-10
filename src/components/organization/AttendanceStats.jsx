@@ -7,11 +7,11 @@ import { Users, CheckCircle, Clock, XCircle, AlertCircle } from "lucide-react";
 function AttendanceStats({ stats, isLoading }) {
 	if (isLoading) {
 		return (
-			<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+			<div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
 				{[1, 2, 3, 4].map((i) => (
 					<div
 						key={i}
-						className="bg-gray-100 rounded-lg p-4 h-24 animate-pulse"
+						className="bg-gray-100 rounded-lg p-3 sm:p-4 h-20 sm:h-24 animate-pulse"
 					/>
 				))}
 			</div>
@@ -20,9 +20,11 @@ function AttendanceStats({ stats, isLoading }) {
 
 	if (!stats) {
 		return (
-			<div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
-				<AlertCircle className="w-8 h-8 text-yellow-500 mx-auto mb-2" />
-				<p className="text-yellow-800">Data statistik tidak tersedia</p>
+			<div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 sm:p-4 text-center">
+				<AlertCircle className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-500 mx-auto mb-2" />
+				<p className="text-yellow-800 text-sm sm:text-base">
+					Data statistik tidak tersedia
+				</p>
 			</div>
 		);
 	}
@@ -61,31 +63,32 @@ function AttendanceStats({ stats, isLoading }) {
 	// Hitung persentase kehadiran dari yang dikonfirmasi (confirmed)
 	// Logika: dari semua yang sudah/pernah dikonfirmasi, berapa persen yang benar-benar hadir
 	// Total confirmed = confirmed saat ini + yang sudah attended (karena attended dulunya confirmed)
-	const totalConfirmed = (stats.confirmed || 0) + (stats.attended || 0);
+	const totalConfirmed =
+		(stats.confirmed || 0) + (stats.attended || 0) + (stats.no_show || 0);
 	const attendanceRate =
 		totalConfirmed > 0
 			? Math.round((stats.attended / totalConfirmed) * 100)
 			: 0;
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-3 sm:space-y-4">
 			{/* Main Stats Grid */}
-			<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+			<div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
 				{statCards.map((stat, index) => {
 					const Icon = stat.icon;
 					return (
 						<div
 							key={index}
-							className={`${stat.color} border rounded-lg p-4 transition-all hover:shadow-md`}>
+							className={`${stat.color} border rounded-lg p-3 sm:p-4 transition-all hover:shadow-md`}>
 							<div className="flex items-start justify-between">
 								<div>
-									<p className="text-sm font-medium opacity-80 mb-1">
+									<p className="text-xs sm:text-sm font-medium opacity-80 mb-1">
 										{stat.label}
 									</p>
-									<p className="text-3xl font-bold">{stat.value}</p>
+									<p className="text-xl sm:text-3xl font-bold">{stat.value}</p>
 								</div>
-								<div className={`${stat.iconBg} rounded-lg p-2`}>
-									<Icon className="w-5 h-5" />
+								<div className={`${stat.iconBg} rounded-lg p-1.5 sm:p-2`}>
+									<Icon className="w-4 h-4 sm:w-5 sm:h-5" />
 								</div>
 							</div>
 						</div>
@@ -115,7 +118,7 @@ function AttendanceStats({ stats, isLoading }) {
 									style={{ width: `${attendanceRate}%` }}
 								/>
 							</div>
-							<span className="text-lg font-bold text-green-600">
+							<span className="text-base sm:text-lg font-bold text-green-600">
 								{attendanceRate}%
 							</span>
 						</div>
@@ -129,18 +132,18 @@ function AttendanceStats({ stats, isLoading }) {
 
 			{/* Rejected & Cancelled Info */}
 			{(stats.rejected > 0 || stats.cancelled > 0) && (
-				<div className="flex gap-4 text-sm">
+				<div className="flex flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm">
 					{stats.rejected > 0 && (
-						<div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 flex items-center gap-2">
-							<XCircle className="w-4 h-4 text-red-600" />
+						<div className="bg-red-50 border border-red-200 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 flex items-center gap-1.5 sm:gap-2">
+							<XCircle className="w-3 h-3 sm:w-4 sm:h-4 text-red-600" />
 							<span className="text-red-800">
 								<span className="font-semibold">{stats.rejected}</span> Ditolak
 							</span>
 						</div>
 					)}
 					{stats.cancelled > 0 && (
-						<div className="bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 flex items-center gap-2">
-							<XCircle className="w-4 h-4 text-gray-600" />
+						<div className="bg-gray-100 border border-gray-300 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 flex items-center gap-1.5 sm:gap-2">
+							<XCircle className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
 							<span className="text-gray-800">
 								<span className="font-semibold">{stats.cancelled}</span>{" "}
 								Dibatalkan

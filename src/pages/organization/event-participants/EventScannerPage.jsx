@@ -90,45 +90,43 @@ export default function EventScannerPage() {
 	};
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8">
-			<div className="max-w-7xl mx-auto px-4">
+		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-4 sm:py-8">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Header */}
-				<div className="mb-6">
+				<div className="mb-4 sm:mb-6">
 					<Link
 						to="/organization/event-participants"
-						className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors">
+						className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors text-sm">
 						<ArrowLeft className="w-4 h-4" />
-						<span className="text-sm font-medium">
-							Kembali ke Daftar Participants
-						</span>
+						<span className="font-medium">Kembali ke Daftar Participants</span>
 					</Link>
 
 					<div
-						className={`rounded-lg shadow-sm border p-6 ${
+						className={`rounded-lg shadow-sm border p-4 sm:p-6 ${
 							eventStatus === "ongoing"
 								? "bg-white border-gray-200"
 								: eventStatus === "completed"
 								? "bg-gray-50 border-gray-300"
 								: "bg-yellow-50 border-yellow-200"
 						}`}>
-						<div className="flex items-center justify-between gap-3">
-							<div className="flex items-center gap-3">
+						<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+							<div className="flex items-center gap-3 w-full sm:w-auto">
 								<div
-									className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+									className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
 										eventStatus === "ongoing"
 											? "bg-gradient-to-br from-blue-500 to-indigo-600"
 											: eventStatus === "completed"
 											? "bg-gradient-to-br from-gray-400 to-gray-500"
 											: "bg-gradient-to-br from-yellow-500 to-orange-500"
 									}`}>
-									<QrCodeIcon className="w-6 h-6 text-white" />
+									<QrCodeIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
 								</div>
-								<div>
-									<h1 className="text-2xl font-bold text-gray-900">
+								<div className="flex-1 min-w-0">
+									<h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
 										Scanner Check-in Event
 									</h1>
 									<p
-										className={`text-sm mt-1 ${
+										className={`text-xs sm:text-sm mt-1 truncate ${
 											eventStatus === "ongoing"
 												? "text-gray-600"
 												: eventStatus === "completed"
@@ -139,19 +137,19 @@ export default function EventScannerPage() {
 									</p>
 								</div>
 							</div>
-							<div>
+							<div className="w-full sm:w-auto">
 								{eventStatus === "upcoming" && (
-									<span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+									<span className="inline-flex items-center justify-center w-full sm:w-auto px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
 										🕐 Belum Mulai
 									</span>
 								)}
 								{eventStatus === "ongoing" && (
-									<span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 border border-green-200">
+									<span className="inline-flex items-center justify-center w-full sm:w-auto px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-green-100 text-green-800 border border-green-200">
 										🟢 Sedang Berlangsung
 									</span>
 								)}
 								{eventStatus === "completed" && (
-									<span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700 border border-gray-200">
+									<span className="inline-flex items-center justify-center w-full sm:w-auto px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-gray-100 text-gray-700 border border-gray-200">
 										✓ Sudah Selesai
 									</span>
 								)}
@@ -161,7 +159,7 @@ export default function EventScannerPage() {
 						{/* Warning banner for non-ongoing events */}
 						{eventStatus !== "ongoing" && (
 							<div
-								className={`mt-4 p-3 rounded-lg border text-sm ${
+								className={`mt-4 p-3 rounded-lg border text-xs sm:text-sm ${
 									eventStatus === "completed"
 										? "bg-gray-100 border-gray-300 text-gray-700"
 										: "bg-yellow-100 border-yellow-300 text-yellow-800"
@@ -180,12 +178,12 @@ export default function EventScannerPage() {
 				</div>
 
 				{/* Attendance Statistics */}
-				<div className="mb-6">
+				<div className="mb-4 sm:mb-6">
 					<AttendanceStats stats={stats} isLoading={isLoadingStats} />
 				</div>
 
 				{/* Main Content - Scanner & Recent Check-ins */}
-				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
 					{/* QR Scanner */}
 					<div>
 						{eventStatus === "ongoing" ? (
@@ -195,27 +193,27 @@ export default function EventScannerPage() {
 								onScanError={handleScanError}
 							/>
 						) : (
-							<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+							<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sm:p-8">
 								<div className="text-center">
 									<QrCodeIcon
-										className={`w-16 h-16 mx-auto mb-4 ${
+										className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 ${
 											eventStatus === "completed"
 												? "text-gray-300"
 												: "text-yellow-300"
 										}`}
 									/>
-									<h3 className="text-lg font-semibold text-gray-700 mb-2">
+									<h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-2">
 										Scanner Tidak Tersedia
 									</h3>
-									<p className="text-sm text-gray-500 mb-4">
+									<p className="text-xs sm:text-sm text-gray-500 mb-4">
 										{eventStatus === "completed"
 											? "Event sudah selesai. Scanner QR tidak dapat digunakan lagi."
 											: "Event belum dimulai. Scanner akan aktif saat event berlangsung."}
 									</p>
 									{eventInfo && (
-										<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+										<div className="text-xs sm:text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
 											<p className="font-medium mb-1">Jadwal Event:</p>
-											<p>
+											<p className="text-xs sm:text-sm">
 												{new Date(eventInfo.tanggal_mulai).toLocaleDateString(
 													"id-ID",
 													{
@@ -251,11 +249,11 @@ export default function EventScannerPage() {
 				</div>
 
 				{/* Info Box */}
-				<div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-					<h3 className="text-sm font-semibold text-blue-900 mb-2">
+				<div className="mt-4 sm:mt-6 bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
+					<h3 className="text-xs sm:text-sm font-semibold text-blue-900 mb-2">
 						💡 Tips Penggunaan Scanner:
 					</h3>
-					<ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
+					<ul className="text-xs sm:text-sm text-blue-800 space-y-1 list-disc list-inside">
 						<li>Pastikan pencahayaan cukup untuk hasil scan yang optimal</li>
 						<li>
 							Minta volunteer menunjukkan QR Code dengan jelas di layar HP atau

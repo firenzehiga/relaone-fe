@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { cn } from "@/utils";
-import { Loader2 } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 import {
 	Skeleton as ChkSkeleton,
 	SkeletonCircle,
@@ -163,34 +163,41 @@ Skeleton.Detail = SkeletonDetail;
 
 function FormSkeleton({ title = "", rows = 6 }) {
 	return (
-		<div className="max-w-7xl mx-auto p-6">
-			<div className="bg-white shadow-lg rounded-lg p-6" style={{ width: 950 }}>
-				<div className="flex items-center justify-center gap-3 mb-4">
-					<Loader2 className="animate-spin h-7 w-7 text-emerald-500" />
-					<div className="text-sm font-medium text-gray-700">{title}</div>
+		<div className="w-full mx-auto p-4 sm:p-6 min-h-[calc(100vh-4rem)]">
+			<div className="bg-white shadow-lg rounded-lg p-4 sm:p-6 max-w-7xl mx-auto">
+				<div className="flex items-center justify-center gap-3 mb-6">
+					<Loader2 className="animate-spin h-6 w-6 sm:h-7 sm:w-7 text-emerald-500" />
+					<div className="text-sm sm:text-base font-medium text-gray-700">
+						{title}
+					</div>
 				</div>
-				<form className="space-y-6">
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+				<form className="space-y-6 flex flex-col">
+					{/* Responsive 2-column grid */}
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
 						<div className="h-10 bg-gray-100 rounded animate-pulse" />
 						<div className="h-10 bg-gray-100 rounded animate-pulse" />
 					</div>
 
+					{/* Full width fields */}
 					<div className="h-10 bg-gray-100 rounded animate-pulse" />
 					<div className="h-20 bg-gray-100 rounded animate-pulse" />
 
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+					{/* Responsive 3-column grid */}
+					<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 						<div className="h-10 bg-gray-100 rounded animate-pulse" />
 						<div className="h-10 bg-gray-100 rounded animate-pulse" />
 						<div className="h-10 bg-gray-100 rounded animate-pulse" />
 					</div>
 
+					{/* Additional rows */}
 					{Array.from({ length: rows }).map((_, i) => (
 						<div key={i} className="h-10 bg-gray-100 rounded animate-pulse" />
 					))}
 
-					<div className="flex items-center justify-end gap-3">
-						<div className="h-10 w-24 bg-gray-100 rounded animate-pulse" />
-						<div className="h-10 w-32 bg-gray-100 rounded animate-pulse" />
+					{/* Responsive buttons - full width on mobile, auto on desktop */}
+					<div className="flex flex-col sm:flex-row items-center justify-end gap-3 mt-auto pt-6">
+						<div className="h-10 w-full sm:w-24 bg-gray-100 rounded animate-pulse" />
+						<div className="h-10 w-full sm:w-32 bg-gray-100 rounded animate-pulse" />
 					</div>
 				</form>
 			</div>
@@ -201,31 +208,98 @@ Skeleton.FormSkeleton = FormSkeleton;
 
 function OrgSkeleton() {
 	return (
-		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-slate-50 via-white to-blue-50">
+		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-emerald-50 via-white to-teal-50">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div className="mb-8">
-					<h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+				{/* Hero Header */}
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.5 }}
+					className="mb-8 text-center">
+					<h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent mb-4">
 						Organisasi Komunitas
 					</h1>
-					<p className="text-xl text-gray-600">
-						Jelajahi berbagai organisasi komunitas yang berkontribusi pada
-						masyarakat
+					<p className="text-xl text-gray-600 max-w-2xl mx-auto">
+						Bergabunglah dengan berbagai organisasi komunitas yang berkontribusi
+						untuk membuat perubahan positif di masyarakat
 					</p>
-				</div>
+				</motion.div>
 
-				<div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
-					{Array.from({ length: 6 }).map((_, i) => (
-						<div
-							key={i}
-							className="flex gap-4 p-6 bg-white rounded-xl border shadow-sm animate-pulse"
-							aria-hidden>
-							<div className="w-20 h-20 rounded-lg bg-slate-200" />
-							<div className="flex-1 space-y-3">
-								<div className="h-5 bg-slate-200 rounded w-3/4" />
-								<div className="h-4 bg-slate-200 rounded w-1/2" />
-								<div className="h-3 bg-slate-200 rounded w-2/3" />
-							</div>
+				{/* Search Bar */}
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.5, delay: 0.2 }}
+					className="mb-8">
+					<Card className="p-4">
+						<div className="relative">
+							<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+							<input
+								type="text"
+								placeholder="Cari organisasi, lokasi, atau kata kunci..."
+								disabled
+								className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed outline-none"
+							/>
 						</div>
+					</Card>
+				</motion.div>
+
+				{/* Organizations Grid - 2 columns on desktop */}
+				<div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+					{Array.from({ length: 6 }).map((_, i) => (
+						<Card
+							key={i}
+							className="h-full overflow-hidden animate-pulse"
+							aria-hidden>
+							{/* Banner with gradient */}
+							<div className="relative h-40 bg-gradient-to-br from-emerald-400 to-teal-500 overflow-hidden">
+								{/* Verified Badge */}
+								<div className="absolute top-3 right-3">
+									<ChkSkeleton
+										height="24px"
+										width="120px"
+										borderRadius="full"
+									/>
+								</div>
+							</div>
+
+							{/* Logo Avatar - overlapping banner */}
+							<div className="px-6 -mt-16 relative z-10 mb-4">
+								<ChkSkeleton width="96px" height="96px" borderRadius="2xl" />
+							</div>
+
+							{/* Content */}
+							<div className="px-6 pb-6">
+								{/* Organization Name */}
+								<ChkSkeleton height="28px" width="70%" mb={2} />
+
+								{/* Location */}
+								<div className="flex items-center mb-4">
+									<ChkSkeleton width="16px" height="16px" mr={2} />
+									<ChkSkeleton height="16px" width="120px" />
+								</div>
+
+								{/* Description - 3 lines */}
+								<div className="mb-4 space-y-2">
+									<ChkSkeleton height="14px" width="100%" />
+									<ChkSkeleton height="14px" width="95%" />
+									<ChkSkeleton height="14px" width="80%" />
+								</div>
+
+								{/* Rating */}
+								<div className="flex items-center gap-2 mb-5 pb-5 border-b border-gray-100">
+									<ChkSkeleton width="20px" height="20px" />
+									<ChkSkeleton height="20px" width="60px" />
+								</div>
+
+								{/* Contact Buttons */}
+								<div className="flex items-center gap-4 flex-wrap">
+									<ChkSkeleton height="36px" width="80px" borderRadius="lg" />
+									<ChkSkeleton height="36px" width="90px" borderRadius="lg" />
+									<ChkSkeleton height="36px" width="85px" borderRadius="lg" />
+								</div>
+							</div>
+						</Card>
 					))}
 				</div>
 			</div>
