@@ -3,9 +3,6 @@
 <div align="center">
   <img src="./public/images/logo_fe.png" alt="RelaOne Logo" width="150" height="150">
   
-  **Platform untuk menghubungkan organisasi penyelenggara kegiatan sosial dengan para relawan yang bersedia berkontribusi.**
-  
-  Sebagai wadah bagi organisasi penyelenggara kegiatan sosial  untuk menginformasikan kegiatan sosial mereka yang membutuhkan relawan, sekaligus menjadi sarana informasi bagi para masyarakat (relawan) yang tertarik untuk berkontribusi.
 
 [![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=white&style=flat-square)](https://react.dev) 
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?logo=tailwindcss&logoColor=white&style=flat-square)](https://tailwindcss.com) 
