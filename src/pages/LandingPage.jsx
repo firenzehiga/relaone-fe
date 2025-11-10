@@ -151,7 +151,7 @@ export default function LandingPage() {
 						<div className="text-center mb-16">
 							<h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
 								Mengapa Memilih Rela
-								<span className="text-emerald-500">O</span>ne?
+								<span className="text-emerald-600">O</span>ne?
 							</h2>
 							<p className="text-xl text-gray-600 max-w-3xl mx-auto">
 								Platform terpercaya untuk menghubungkan volunteer dengan

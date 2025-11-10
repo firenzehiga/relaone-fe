@@ -1,13 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import {
-	Check,
-	AlertCircle,
-	Calendar,
-	MapPin,
-	Users,
-	Clock,
-} from "lucide-react";
+import { Check, Calendar, MapPin, Users, Clock } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import DynamicButton from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
@@ -18,6 +11,7 @@ import { getImageUrl, parseApiError } from "@/utils";
 import { showToast } from "./ui/Toast";
 import { useEventById } from "@/_hooks/useEvents";
 import { useModalStore } from "@/stores/useAppStore";
+import { AsyncImage } from "loadable-image";
 
 /**
  * Modal untuk join event volunteer
@@ -153,7 +147,7 @@ export default function JoinEventModal() {
 					{/* Event Preview Card */}
 					<div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-100">
 						<div className="flex items-start gap-4">
-							<img
+							<AsyncImage
 								src={
 									getImageUrl(`events/${event.gambar}`) ||
 									"https://placehold.co/400"
@@ -295,7 +289,7 @@ export default function JoinEventModal() {
 									id="agreement"
 									checked={agreed}
 									onChange={(e) => setAgreed(e.target.checked)}
-									className="mt-1 w-5 h-5 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+									className="mt-1 w-5 h-5 text-emerald-600 bg-white border-gray-300 rounded focus:ring-emerald-500 focus:ring-2"
 								/>
 								<label
 									htmlFor="agreement"
@@ -327,7 +321,7 @@ export default function JoinEventModal() {
 							</DynamicButton>
 							<DynamicButton
 								type="submit"
-								variant={alreadyRegistered ? "outline" : "primary"}
+								variant={alreadyRegistered ? "outline" : "success"}
 								disabled={!agreed || isSubmitting || alreadyRegistered}
 								loading={isSubmitting}
 								className="flex-1 order-1 sm:order-2">

@@ -90,10 +90,6 @@ export default function EventCard({
 						src={getImageUrl(`events/${event.gambar}`)}
 						alt={event.judul}
 						className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-						onError={(e) => {
-							e.target.onerror = null;
-							e.target.src = "https://placehold.co/400";
-						}}
 					/>
 					<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
 					<div className="absolute top-3 left-3">

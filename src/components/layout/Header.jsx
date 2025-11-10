@@ -109,16 +109,20 @@ export default function Header() {
 			<div className="w-full px-4 sm:px-6 lg:px-8">
 				<div className="flex items-center justify-between h-16 max-w-7xl mx-auto">
 					{/* Logo */}
-					<Link to="/home" className="flex items-center space-x-2 group">
-						<div className="p-1 bg-gradient-to-r from-emerald-200 to-emerald-200 rounded-xl group-hover:scale-110 transition-transform duration-300">
+					<Link to="/" className="flex items-center space-x-2 group">
+						<div className="p-1  group-hover:scale-110 transition-transform duration-300">
 							{user?.role === "organization" ? (
-								<Building className="text-white" size={20} />
+								<Building className="text-emerald-600 w-6 h-6" />
 							) : (
 								<img src="images/logo.png" alt="" className="w-10 h-10" />
 							)}
 						</div>
-						<span className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-600 bg-clip-text text-transparent">
-							RelaOne
+						<span className="text-xl font-bold bg-black bg-clip-text text-transparent">
+							Rela
+							<span className="text-xl font-bold bg-emerald-600 bg-clip-text text-transparent">
+								O
+							</span>
+							ne.
 						</span>
 					</Link>
 
