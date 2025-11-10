@@ -112,7 +112,7 @@ export default function Header() {
 					<Link to="/" className="flex items-center space-x-2 group">
 						<div className="p-1  group-hover:scale-110 transition-transform duration-300">
 							<img
-								src="images/logo_fe.png"
+								src="/images/logo_fe.png"
 								alt="RelaOne Logo"
 								className="w-10 h-10"
 							/>

@@ -119,13 +119,11 @@ export default function AdminHeader() {
 					<Link
 						to="/admin/dashboard"
 						className="flex items-center space-x-2 group">
-						<div className="p-2 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl group-hover:scale-110 transition-transform duration-300">
-							<img
-								src="images/logo_fe.png"
-								alt="RelaOne Logo"
-								className="w-10 h-10"
-							/>
-						</div>
+						<img
+							src="/images/logo_fe.png"
+							alt="RelaOne Logo"
+							className="w-10 h-10"
+						/>
 						<span className="text-xl font-bold bg-gradient-to-r from-gray-600 to-gray-600 bg-clip-text text-transparent">
 							Admin
 						</span>
