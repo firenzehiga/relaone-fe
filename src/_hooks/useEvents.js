@@ -213,6 +213,7 @@ export const useAdminDeleteEventMutation = () => {
 				oldData.filter((event) => event.id !== id)
 			);
 			queryClient.invalidateQueries(["adminEvents"]);
+			queryClient.invalidateQueries(["orgEvents"]);
 		},
 	});
 };
