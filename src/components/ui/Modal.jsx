@@ -37,9 +37,6 @@ export default function Modal({
 					<div className="flex min-h-screen items-start sm:items-center justify-center p-2 sm:p-4">
 						{/* Backdrop */}
 						<motion.div
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							exit={{ opacity: 0 }}
 							onClick={onClose}
 							className="fixed inset-0 bg-black/60 backdrop-blur-sm"
 						/>

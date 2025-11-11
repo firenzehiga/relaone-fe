@@ -32,9 +32,10 @@ export const useEvents = (params = {}) => {
  * Ambil detail event berdasarkan ID.
  *
  * @param {string|number} eventId - ID event
+ * @param {Object} options - Additional query options
  * @returns {UseQueryResult<Object>} Data detail event
  */
-export const useEventById = (id) => {
+export const useEventById = (id, options = {}) => {
 	const currentRole = useUserRole();
 	const enabled =
 		currentRole !== "admin" && currentRole !== "organization" && !!id; // supaya kalo admin login, ga fetch events
@@ -49,6 +50,9 @@ export const useEventById = (id) => {
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
+		refetchOnWindowFocus: false, // Default tidak refetch saat focus
+		refetchOnMount: true,
+		...options, // Override dengan options yang diberikan
 	});
 };
 

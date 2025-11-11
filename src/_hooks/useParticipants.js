@@ -32,25 +32,54 @@ export const useParticipants = (params = {}) => {
  * Join event sebagai participant.
  *
  * @returns {UseMutationResult} Mutation hook
- * @invalidates ["participants"]
+ * @invalidates ["participants", "detailEvent", "events"]
  */
 export const useVolunteerJoinEventMutation = () => {
 	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
 
 	return useMutation({
+		mutationKey: ["participants", "join"],
 		mutationFn: eventParticipantService.volunteerJoinEvent,
-		// onSuccess gets (data, variables)
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
 		onSuccess: async (_data, variables) => {
-			const eventId = variables?.id;
-			console.log("Invalidating queries after joining event:", eventId);
+			const eventId = variables?.event_id || variables?.id;
+
+			console.log("Join event success:", eventId);
+
+			// Hanya invalidate query yang benar-benar perlu
 			if (eventId) {
-				// sesuaikan key dengan useEventById (mis. ["detailEvent", id])
-				await queryClient.invalidateQueries(["detailEvent", eventId]);
+				// Invalidate detail event spesifik (bukan await, biar tidak blocking)
+				queryClient.invalidateQueries({
+					queryKey: ["detailEvent", eventId],
+					refetchType: "active", // Hanya refetch yang sedang active/mounted
+				});
 			}
-			queryClient.invalidateQueries(["participants"]);
-			queryClient.invalidateQueries(["adminParticipants"]);
-			queryClient.invalidateQueries(["events"]);
-			queryClient.invalidateQueries(["adminEvents"]);
+
+			// Invalidate list events untuk update counter peserta
+			queryClient.invalidateQueries({
+				queryKey: ["events"],
+				refetchType: "none", // Jangan auto refetch, tunggu manual
+			});
+
+			// Loading akan di-handle di component setelah animation selesai
+			// setLoading akan dipanggil manual di component
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Gagal mendaftar event";
+			setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Join event error:", error);
 		},
 	});
 };

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Check, Calendar, MapPin, Users, Clock } from "lucide-react";
 import Modal from "@/components/ui/Modal";
@@ -7,8 +7,7 @@ import Badge from "@/components/ui/Badge";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/_hooks/useAuth";
 import { useVolunteerJoinEventMutation } from "@/_hooks/useParticipants";
-import { getImageUrl, parseApiError } from "@/utils";
-import { showToast } from "./ui/Toast";
+import { getImageUrl } from "@/utils";
 import { useEventById } from "@/_hooks/useEvents";
 import { useModalStore } from "@/stores/useAppStore";
 import { AsyncImage } from "loadable-image";
@@ -32,14 +31,13 @@ export default function JoinEventModal() {
 	} = useModalStore();
 	const [agreed, setAgreed] = useState(false);
 	const [success, setSuccess] = useState(false);
-	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	const { isLoading, setLoading } = useAuthStore();
 
 	const joinMutation = useVolunteerJoinEventMutation(); // mutation hook untuk join event
 
 	// fetch fresh detail only when modal is open; use store event as initialData
-	const { data: freshEvent, refetch: refetchEvent } = useEventById(event?.id, {
-		enabled: !!event?.id && !!isJoinModalOpen,
-	});
+	const { data: freshEvent } = useEventById(event?.id);
 
 	// pakai freshEvent jika sudah ada, fallback ke store event
 	const participantsFromEvent =
@@ -47,14 +45,23 @@ export default function JoinEventModal() {
 	const alreadyRegistered =
 		!!user?.id &&
 		participantsFromEvent.some((p) => Number(p.user_id) === Number(user.id));
+
 	const [formData, setFormData] = useState({
 		catatan: "",
 	});
+
+	// Reset loading state saat modal dibuka
+	useEffect(() => {
+		if (isJoinModalOpen) {
+			setLoading(false);
+		}
+	}, [isJoinModalOpen, setLoading]);
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setFormData((s) => ({ ...s, [name]: value }));
 	};
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (!agreed || !event?.id) return;
@@ -64,7 +71,6 @@ export default function JoinEventModal() {
 			navigate("/login", { state: { from: location }, replace: true });
 			return;
 		}
-		setIsSubmitting(true);
 
 		try {
 			const payload = {
@@ -72,30 +78,24 @@ export default function JoinEventModal() {
 				user_id: user?.id,
 				catatan: formData.catatan || "",
 			};
+
+			// Tunggu join selesai
 			await joinMutation.mutateAsync(payload);
-			// tunggu refetch detail agar participants / alreadyRegistered ter-update segera
-			if (refetchEvent) await refetchEvent();
+
+			// Langsung tampilkan success animation setelah request berhasil
 			setSuccess(true);
-			// tutup modal setelah animasi sukses singkat
+
+			// Tutup modal setelah animasi sukses singkat
 			setTimeout(() => {
 				setSuccess(false);
 				setAgreed(false);
-				// reset form and close modal
 				setFormData({ catatan: "" });
+				setLoading(false); // Reset loading state sebelum tutup modal
 				closeJoinModal();
 			}, 1500);
 		} catch (err) {
-			const msg = parseApiError(err);
-			showToast({
-				type: "error",
-				tipIcon: "💡",
-				tipText: msg,
-				duration: 3000,
-				position: "top-center",
-			});
-			console.error(err);
-		} finally {
-			setIsSubmitting(false);
+			// Error sudah dihandle di hook
+			console.error("Join event error:", err);
 		}
 	};
 
@@ -103,10 +103,11 @@ export default function JoinEventModal() {
 	 * Handler untuk menutup modal dan reset form
 	 */
 	const handleClose = () => {
-		if (!isSubmitting) {
+		if (!isLoading) {
 			setAgreed(false);
 			setSuccess(false);
 			setFormData({ catatan: "" });
+			setLoading(false); // Pastikan loading state direset
 			closeJoinModal();
 		}
 	};
@@ -310,24 +311,28 @@ export default function JoinEventModal() {
 						</div>
 
 						{/* Actions */}
-						<div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-100">
+						<div className="flex flex-col sm:flex-row gap-3 pt-4 border-gray-100">
 							<DynamicButton
 								type="button"
 								variant="outline"
 								onClick={handleClose}
-								disabled={isSubmitting}
+								disabled={isLoading && !alreadyRegistered}
 								className="flex-1 order-2 sm:order-1">
 								Batal
 							</DynamicButton>
 							<DynamicButton
 								type="submit"
 								variant={alreadyRegistered ? "outline" : "success"}
-								disabled={!agreed || isSubmitting || alreadyRegistered}
-								loading={isSubmitting}
+								disabled={
+									alreadyRegistered ||
+									!agreed ||
+									(isLoading && !alreadyRegistered)
+								}
+								loading={isLoading && !alreadyRegistered}
 								className="flex-1 order-1 sm:order-2">
 								{alreadyRegistered
 									? "Sudah Daftar"
-									: isSubmitting
+									: isLoading
 									? "Mendaftarkan..."
 									: "✨ Daftar Sekarang"}
 							</DynamicButton>
