@@ -207,7 +207,9 @@ export default function EventCard({
 						Detail
 					</DynamicButton>
 					<DynamicButton
-						variant="success"
+						variant={
+							isCancelled || isFull || isStartedOrPast ? "danger" : "success"
+						}
 						size="sm"
 						className="flex-1"
 						disabled={registrationClosed}
