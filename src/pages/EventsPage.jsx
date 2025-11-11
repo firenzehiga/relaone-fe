@@ -367,6 +367,12 @@ export default function EventsPage() {
 								}
 							</Badge>
 						)}
+						{filters.city && (
+							<Badge variant="success">
+								<MapPin size={14} className="mr-1" />
+								{filters.city}
+							</Badge>
+						)}
 						{filters.tanggal_mulai && (
 							<Badge variant="warning">
 								<Calendar size={14} className="mr-1" />

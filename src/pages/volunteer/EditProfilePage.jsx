@@ -520,7 +520,7 @@ export default function EditProfilePage() {
 									<div className="flex items-center mb-4">
 										<Award className="w-5 h-5 text-purple-500 mr-2" />
 										<h3 className="text-lg font-bold text-gray-900">
-											Informasi Tambahan (kolom belum di develop di backend)
+											Informasi Tambahan
 										</h3>
 									</div>
 
