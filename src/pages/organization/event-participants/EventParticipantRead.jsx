@@ -382,6 +382,9 @@ export default function OrganizationEventParticipant() {
 					: null;
 				const isEventCompleted = eventEndDate && eventEndDate < today;
 
+				if (isLoading)
+					return <Loader2 className="text-emerald-600 animate-spin" />; // Show spinner while isLoading
+
 				return (
 					<Menu>
 						<MenuButton
