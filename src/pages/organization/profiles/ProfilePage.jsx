@@ -362,7 +362,11 @@ export default function OrganizationProfilePage() {
 												<div className="flex items-center">
 													<Globe className="w-3 h-3 text-gray-400 mr-2" />
 													<a
-														href={profile.role_data.website}
+														href={
+															profile.role_data.website.startsWith("http")
+																? profile.role_data.website
+																: `https://${profile.role_data.website}`
+														}
 														target="_blank"
 														rel="noopener noreferrer"
 														className="text-blue-600 hover:text-blue-800 text-sm underline">
