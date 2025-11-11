@@ -76,8 +76,8 @@ export default function EditProfilePage() {
 			return {
 				nama: profileData.nama,
 				email: profileData.email,
-				telepon: profileData.telepon,
-				alamat: profileData.alamat,
+				telepon: profileData.telepon || "",
+				alamat: profileData.alamat || "",
 				tanggal_lahir: toInputDate(profileData.tanggal_lahir) || "",
 				jenis_kelamin: profileData.jenis_kelamin || "",
 				bio: profileData.bio || "",
@@ -93,6 +93,8 @@ export default function EditProfilePage() {
 			setImagePreview(getImageUrl(`foto_profil/${profileData.foto_profil}`));
 		}
 	}, [profileData]);
+
+	console.log("Loaded profile data into form:", formData);
 
 	// Handle change - gabungan untuk input biasa dan file
 	const handleChange = (e) => {
@@ -255,7 +257,9 @@ export default function EditProfilePage() {
 					<p className="text-gray-600 mb-4">
 						Terjadi kesalahan saat memuat data profile
 					</p>
-					<Button onClick={() => navigate("/profile")} variant="primary">
+					<Button
+						onClick={() => navigate("/volunteer/profile")}
+						variant="primary">
 						Kembali ke Profile
 					</Button>
 				</Card>
@@ -602,7 +606,7 @@ export default function EditProfilePage() {
 								<Button
 									type="button"
 									variant="outline"
-									onClick={() => navigate("/profile")}
+									onClick={() => navigate("/volunteer/profile")}
 									disabled={isLoading}
 									size="sm">
 									Batal

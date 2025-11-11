@@ -18,8 +18,8 @@ export const getParticipants = async (params = {}) => {
 /** * Join event sebagai participant
  *
  * @async
- * @function adminCreateParticipant
- * @endpoint POST /admin/event-participants
+ * @function volunteerJoinEvent
+ * @endpoint POST /volunteer/events/join
  * @param {Object} data - Data participant baru
  * @returns {Promise<any>} Data participant baru
  */
@@ -31,6 +31,58 @@ export const volunteerJoinEvent = async (data) => {
 		console.log("Error joining event:", error);
 		throw error;
 	}
+};
+
+/** * Buat generate QR Code untuk absen
+ *
+ * @async
+ * @function volunteerGenerateQrCode
+ * @endpoint POST /volunteer/event-participants/generate-qr
+ * @returns {Promise<any>} QR Code untuk check-in
+ */
+export const volunteerGenerateQrCode = async () => {
+	try {
+		const response = await api.post(
+			"/volunteer/event-participations/generate-qr"
+		);
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error creating QR Code:", error);
+		throw error;
+	}
+};
+
+/** * Volunteer lihat histori aktivitas mereka
+ *
+ * @async
+ * @function volunteerGetHistory
+ * @endpoint GET /volunteer/event-participations/history
+ * @param {Object} data - Data participant baru
+ * @returns {Promise<any>} Data participant baru
+ */
+export const volunteerGetHistory = async () => {
+	try {
+		const response = await api.get("/volunteer/event-participations/history");
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error getting volunteer history:", error);
+		throw error;
+	}
+};
+
+/** Volunteer lihat detail aktivitas berdasarkan ID event participant.
+ *
+ * @async
+ * @function volunteerGetHistoryById
+ * @endpoint GET /volunteer/event-participations/history/{id}
+ * @param {string|number} id - ID event participant
+ * @returns {Promise<any>} Data detail participant
+ */
+export const volunteerGetHistoryById = async (id) => {
+	const response = await api.get(
+		`/volunteer/event-participations/history/${id}`
+	);
+	return response.data.data || response.data;
 };
 
 // ADMIN SERVICES

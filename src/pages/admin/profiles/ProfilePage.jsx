@@ -178,7 +178,7 @@ export default function AdminProfilePage() {
 												Nama Lengkap
 											</label>
 											<p className="text-gray-900 font-medium text-sm">
-												{profile?.nama || "Tidak tersedia"}
+												{profile?.nama || "Belum ditambahkan"}
 											</p>
 										</div>
 
@@ -189,7 +189,7 @@ export default function AdminProfilePage() {
 											<div className="flex items-center">
 												<Mail className="w-3 h-3 text-gray-400 mr-2" />
 												<p className="text-gray-900 text-sm">
-													{profile?.email || "Tidak tersedia"}
+													{profile?.email || "Belum ditambahkan"}
 												</p>
 											</div>
 										</div>
@@ -201,7 +201,7 @@ export default function AdminProfilePage() {
 											<div className="flex items-center">
 												<Phone className="w-3 h-3 text-gray-400 mr-2" />
 												<p className="text-gray-900 text-sm">
-													{profile?.telepon || "Tidak tersedia"}
+													{profile?.telepon || "Belum ditambahkan"}
 												</p>
 											</div>
 										</div>
@@ -216,7 +216,7 @@ export default function AdminProfilePage() {
 											<div className="flex items-start">
 												<MapPin className="w-3 h-3 text-gray-400 mr-2 mt-0.5" />
 												<p className="text-gray-900 text-sm">
-													{profile?.alamat || "Tidak tersedia"}
+													{profile?.alamat || "Belum ditambahkan"}
 												</p>
 											</div>
 										</div>

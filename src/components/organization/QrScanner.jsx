@@ -312,7 +312,7 @@ function QrScanner({ eventId, onScanSuccess, onScanError }) {
 							{result.volunteer && (
 								<div className="flex items-center gap-2 sm:gap-3 bg-white rounded-lg p-2 sm:p-3 mt-2">
 									<img
-										src={result.volunteer.foto || "/default-avatar.png"}
+										src={result.volunteer.foto || "/images/logo_be.png"}
 										alt={result.volunteer.nama}
 										className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-gray-200 flex-shrink-0"
 									/>

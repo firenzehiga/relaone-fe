@@ -517,3 +517,157 @@ function AnalyticsSkeleton() {
 	);
 }
 Skeleton.AnalyticsSkeleton = AnalyticsSkeleton;
+
+// Skeleton untuk Activity Detail Page
+function ActivityDetailSkeleton() {
+	return (
+		<div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
+			<div className="max-w-6xl mx-auto p-6 space-y-6">
+				{/* Back Button */}
+				<div className="mb-6">
+					<ChkSkeleton height="40px" width="120px" borderRadius="lg" />
+				</div>
+
+				{/* Left Column - Event Banner & Info */}
+				<div className="lg:col-span-2 space-y-6">
+					{/* Status & Timeline */}
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<div className="bg-white rounded-xl p-6 border-2 border-emerald-200">
+							<ChkSkeleton height="20px" width="120px" mb={4} />
+							<div className="space-y-3">
+								{Array.from({ length: 2 }).map((_, i) => (
+									<div key={i} className="flex items-center gap-3">
+										<ChkSkeleton width="32px" height="32px" borderRadius="lg" />
+										<div className="flex-1">
+											<ChkSkeleton height="16px" width="100px" mb={1} />
+											<ChkSkeleton height="14px" width="140px" />
+										</div>
+									</div>
+								))}
+							</div>
+						</div>
+
+						<div className="bg-white rounded-xl p-6 border-2 border-teal-200">
+							<ChkSkeleton height="20px" width="100px" mb={4} />
+							<div className="space-y-3">
+								{Array.from({ length: 2 }).map((_, i) => (
+									<div key={i} className="flex items-center gap-3">
+										<ChkSkeleton
+											width="32px"
+											height="32px"
+											borderRadius="full"
+										/>
+										<div className="flex-1">
+											<ChkSkeleton height="16px" width="120px" mb={1} />
+											<ChkSkeleton height="14px" width="160px" />
+										</div>
+									</div>
+								))}
+							</div>
+						</div>
+					</div>
+					{/* Event Banner */}
+					<div className="bg-white rounded-xl shadow-md overflow-hidden border-2 border-emerald-200">
+						<ChkSkeleton height="300px" width="100%" />
+						<div className="p-6 space-y-4">
+							<ChkSkeleton height="32px" width="80%" />
+							<div className="flex items-center gap-4">
+								<ChkSkeleton width="24px" height="24px" />
+								<ChkSkeleton height="16px" width="150px" />
+							</div>
+							<div className="flex items-center gap-4">
+								<ChkSkeleton width="24px" height="24px" />
+								<ChkSkeleton height="16px" width="200px" />
+							</div>
+							<ChkSkeletonText mt={4} noOfLines={3} spacing="2" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
+Skeleton.ActivityDetailSkeleton = ActivityDetailSkeleton;
+
+// Skeleton untuk My Activities Page
+function MyActivitiesSkeleton() {
+	return (
+		<div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 py-8">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				{/* Hero Header */}
+				<div className="mb-8 text-center">
+					<ChkSkeleton height="48px" width="300px" mx="auto" mb={4} />
+					<ChkSkeleton height="24px" width="500px" mx="auto" />
+				</div>
+
+				{/* Stats Cards */}
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+					{Array.from({ length: 3 }).map((_, i) => (
+						<div
+							key={i}
+							className="bg-white rounded-xl shadow-md p-6 border-2 border-emerald-200">
+							<div className="flex items-center justify-between mb-4">
+								<ChkSkeleton width="48px" height="48px" borderRadius="lg" />
+								<ChkSkeleton height="32px" width="60px" />
+							</div>
+							<ChkSkeleton height="20px" width="120px" />
+						</div>
+					))}
+				</div>
+
+				{/* Tabs */}
+				<div className="bg-white rounded-xl shadow-md mb-6 border-2 border-emerald-200">
+					<div className="flex border-b">
+						{Array.from({ length: 4 }).map((_, i) => (
+							<div
+								key={i}
+								className="flex-1 p-4 text-center border-r last:border-r-0">
+								<ChkSkeleton height="20px" width="80px" mx="auto" />
+							</div>
+						))}
+					</div>
+				</div>
+
+				{/* Activity Cards Grid */}
+				<div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-6">
+					{Array.from({ length: 3 }).map((_, i) => (
+						<div
+							key={i}
+							className="bg-white rounded-xl shadow-md overflow-hidden border-2 border-emerald-200">
+							{/* Image */}
+							<ChkSkeleton height="200px" width="100%" />
+
+							{/* Content */}
+							<div className="p-4 space-y-3">
+								<div className="flex items-start justify-between">
+									<ChkSkeleton height="24px" width="70%" />
+									<ChkSkeleton height="24px" width="60px" borderRadius="full" />
+								</div>
+
+								<div className="space-y-2">
+									<div className="flex items-center gap-2">
+										<ChkSkeleton width="16px" height="16px" />
+										<ChkSkeleton height="14px" width="120px" />
+									</div>
+									<div className="flex items-center gap-2">
+										<ChkSkeleton width="16px" height="16px" />
+										<ChkSkeleton height="14px" width="150px" />
+									</div>
+									<div className="flex items-center gap-2">
+										<ChkSkeleton width="16px" height="16px" />
+										<ChkSkeleton height="14px" width="100px" />
+									</div>
+								</div>
+
+								<div className="pt-3 border-t">
+									<ChkSkeleton height="40px" width="100%" borderRadius="lg" />
+								</div>
+							</div>
+						</div>
+					))}
+				</div>
+			</div>
+		</div>
+	);
+}
+Skeleton.MyActivitiesSkeleton = MyActivitiesSkeleton;

@@ -451,7 +451,7 @@ export default function AdminEventCreate() {
 									</div>
 								</div>
 
-								<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+								<div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
 									<div className="mb-4">
 										<label
 											htmlFor="batas_pendaftaran"
@@ -503,27 +503,6 @@ export default function AdminEventCreate() {
 											{locations.map((location) => (
 												<option key={location.id} value={location.id}>
 													{location.nama}
-												</option>
-											))}
-										</select>
-									</div>
-									<div className="mb-4">
-										<label
-											htmlFor="organization_id"
-											className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
-											Organisasi <span className="text-red-500">*</span>
-										</label>
-										<select
-											id="organization_id"
-											name="organization_id"
-											value={formData.organization_id}
-											onChange={handleChange}
-											required
-											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-											<option value="">Pilih Organisasi</option>
-											{organizations.map((organization) => (
-												<option key={organization.id} value={organization.id}>
-													{organization.nama}
 												</option>
 											))}
 										</select>
@@ -687,7 +666,8 @@ export default function AdminEventCreate() {
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
-
+								</div>
+								<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 									<div className="mb-4">
 										<label
 											htmlFor="email_kontak"
@@ -705,7 +685,30 @@ export default function AdminEventCreate() {
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
+									<div className="mb-4">
+										<label
+											htmlFor="organization_id"
+											className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+											Organisasi <span className="text-red-500">*</span>
+										</label>
+										<select
+											id="organization_id"
+											name="organization_id"
+											value={formData.organization_id}
+											onChange={handleChange}
+											required
+											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+											<option value="">Pilih Organisasi</option>
+											{organizations.map((organization) => (
+												<option key={organization.id} value={organization.id}>
+													{organization.nama}
+												</option>
+											))}
+										</select>
+									</div>
+								</div>
 
+								<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 items-start">
 									<div className="mb-4">
 										<label
 											htmlFor="status"

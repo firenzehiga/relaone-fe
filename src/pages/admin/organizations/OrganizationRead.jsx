@@ -144,7 +144,11 @@ export default function AdminOrganization() {
 			selector: (row) =>
 				row.website ? (
 					<a
-						href={`https://${row.website}`}
+						href={
+							row.website.startsWith("http")
+								? row.website
+								: `https://${row.website}`
+						}
 						target="_blank"
 						rel="noopener noreferrer"
 						className="text-blue-600 hover:underline">

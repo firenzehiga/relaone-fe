@@ -122,7 +122,6 @@ export default function AdminOrganizationEdit() {
 		const payload = new FormData();
 		payload.append("_method", "PUT");
 		// append form values
-		// Note: we purposely do NOT normalize/trim website here per request
 		for (const key in formData) {
 			if (key === "logo") {
 				// only append logo when user selected a new File
@@ -177,20 +176,17 @@ export default function AdminOrganizationEdit() {
 
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Website
+								Website / Company Profile
 							</label>
 							<div className="mt-1">
 								<InputGroup>
-									<InputLeftAddon
-										children={<span className="text-sm">https://</span>}
-									/>
 									<Input
 										name="website"
-										type="text"
+										type="url"
 										required
 										value={formData.website}
 										onChange={handleChange}
-										placeholder="yoursite.com"
+										placeholder="diawali dengan https://"
 									/>
 								</InputGroup>
 							</div>

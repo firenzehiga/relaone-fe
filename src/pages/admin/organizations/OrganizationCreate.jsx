@@ -82,13 +82,7 @@ export default function AdminOrganizationCreate() {
 		e.preventDefault();
 
 		const payload = new FormData();
-		// normalize website
-		const website = formData.website
-			? formData.website.trim().startsWith("http")
-				? formData.website.trim()
-				: `https://${formData.website.trim()}`
-			: "";
-		const dataToAppend = { ...formData, website };
+		const dataToAppend = { ...formData };
 		for (const key in dataToAppend) {
 			const val = dataToAppend[key];
 			if (val === null || val === undefined) continue;
@@ -138,20 +132,17 @@ export default function AdminOrganizationCreate() {
 
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Website
+								Website / Company Profile
 							</label>
 							<div className="mt-1">
 								<InputGroup>
-									<InputLeftAddon
-										children={<span className="text-sm">https://</span>}
-									/>
 									<Input
 										name="website"
-										type="text"
+										type="url"
 										required
 										value={formData.website}
 										onChange={handleChange}
-										placeholder="yoursite.com"
+										placeholder="diawali dengan https://"
 									/>
 								</InputGroup>
 							</div>

@@ -18,7 +18,7 @@ const getToken = () => localStorage.getItem("token"); // Tidak lagi menggunakan 
  * @param {Date|number|string} input
  * @returns {dayjs.Dayjs}
  */
-const toDayjs = (input) => {
+export const toDayjs = (input) => {
 	if (input instanceof Date) return dayjs(input);
 	if (typeof input === "number") return dayjs(input);
 	if (typeof input === "string") {
@@ -28,6 +28,17 @@ const toDayjs = (input) => {
 	}
 	// fallback: coba dayjs langsung
 	return dayjs(input);
+};
+
+/**
+ * Mengembalikan tanggal dalam format 'YYYY-MM-DD' yang cocok dipakai
+ * sebagai nilai untuk <input type="date" />.
+ * Menerima Date, timestamp, atau string (ISO / 'YYYY-MM-DD HH:mm:ss').
+ */
+export const toInputDate = (input) => {
+    const d = toDayjs(input);
+    if (!d || !d.isValid()) return "";
+    return d.format("YYYY-MM-DD");
 };
 
 /**

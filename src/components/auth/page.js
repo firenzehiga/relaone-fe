@@ -11,7 +11,7 @@
  * @property {string[]} organization - Array route yang diizinkan untuk role "organization".
  * @property {string[]} volunteer - Array route yang diizinkan untuk role "volunteer".
  */
-export const HeaderNotAllowed = {
+export const pageAllowed = {
 	admin: ["/admin/profile", "/admin/profile/edit"],
 	organization: [
 		"/organization/dashboard",
@@ -32,7 +32,9 @@ export const HeaderNotAllowed = {
 
 // Helper function untuk mengecek apakah path diizinkan untuk role tertentu
 export function isPathAllowedForRole(role, path) {
-	const allowed = roleAllowed[role] || [];
+	// Use the exported `pageAllowed` map. `roleAllowed` is undefined and
+	// would throw at runtime.
+	const allowed = pageAllowed[role] || [];
 	if (allowed.length === 0) return false;
 
 	const normalized =

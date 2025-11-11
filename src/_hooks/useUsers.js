@@ -55,7 +55,7 @@ export const useUpdateUserMutation = () => {
 					break;
 				case "volunteer":
 				default:
-					navigate("/profile");
+					navigate("/volunteer/profile");
 					break;
 			}
 

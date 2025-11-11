@@ -180,20 +180,18 @@ export default function Header() {
 											{user?.role === "volunteer" ? (
 												<>
 													<Link
-														to="/profile"
+														to="/volunteer/profile"
 														className="flex items-center px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors rounded-t-xl"
 														onClick={() => setUserMenuOpen(false)}>
 														<User size={18} className="mr-3" />
 														<span className="font-medium">Profile</span>
 													</Link>
 													<Link
-														to="/my-registrations"
+														to="/volunteer/my-activities"
 														className="flex items-center px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors rounded-lg"
 														onClick={() => setUserMenuOpen(false)}>
 														<Calendar size={18} className="mr-3" />
-														<span className="font-medium">
-															Pendaftaran Saya
-														</span>
+														<span className="font-medium">Aktivitas Saya</span>
 													</Link>
 												</>
 											) : (

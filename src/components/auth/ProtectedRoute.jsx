@@ -87,6 +87,15 @@ export function OrganizationRoute({ children }) {
  */
 export function VolunteerRoute({ children }) {
 	return (
+		<ProtectedRoute allowedRoles={["volunteer"]}>{children}</ProtectedRoute>
+	);
+}
+
+/**
+ * Component untuk melindungi route volunteer saja
+ */
+export function PublicRoute({ children }) {
+	return (
 		<ProtectedRoute allowedRoles={["volunteer", ""]}>{children}</ProtectedRoute>
 	);
 }

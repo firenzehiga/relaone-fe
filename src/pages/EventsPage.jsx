@@ -10,6 +10,7 @@ import { useEvents } from "@/_hooks/useEvents";
 import { useCategory } from "@/_hooks/useCategories";
 import { useModalStore } from "@/stores/useAppStore";
 import { getImageUrl } from "@/utils";
+import { toInputDate } from "@/utils/dateFormatter";
 import { AsyncImage } from "loadable-image";
 import { Fade } from "transitions-kit";
 
@@ -74,7 +75,11 @@ export default function EventsPage() {
 		}
 
 		if (filters.tanggal_mulai) {
-			list = list.filter((e) => e.tanggal_mulai === filters.tanggal_mulai);
+			// Karena format tanggal backend stabil, cukup bandingkan versi YYYY-MM-DD saja.
+			list = list.filter((e) => {
+				if (!e.tanggal_mulai) return false;
+				return toInputDate(e.tanggal_mulai) === filters.tanggal_mulai;
+			});
 		}
 
 		if (filters.city) {

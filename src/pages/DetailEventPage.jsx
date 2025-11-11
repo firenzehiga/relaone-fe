@@ -246,9 +246,10 @@ export default function DetailEventPage() {
 						{event.organization && (
 							<div className="mt-8 border border-gray-200 rounded-lg p-4 flex items-center gap-4">
 								<Avatar
-									src={event.organization.logo}
+									src={getImageUrl(`organizations/${event.organization.logo}`)}
 									alt={event.organization.nama}
 									size="md"
+									fallback={event.organization.nama}
 								/>
 								<div>
 									<div className="font-medium text-gray-900">

@@ -8,6 +8,7 @@ import GuestRoute from "@/components/auth/GuestRoute";
 import {
 	AdminRoute,
 	OrganizationRoute,
+	PublicRoute,
 	VolunteerRoute,
 } from "@/components/auth/ProtectedRoute";
 
@@ -16,8 +17,10 @@ import LandingPage from "@/pages/LandingPage";
 import EventsPage from "@/pages/EventsPage";
 import OrganizationsPage from "@/pages/OrganizationsPage";
 import DetailEventPage from "@/pages/DetailEventPage";
-import ProfilePage from "@/pages/ProfilePage";
-import EditProfilePage from "@/pages/EditProfilePage";
+import ProfilePage from "@/pages/volunteer/ProfilePage";
+import EditProfilePage from "@/pages/volunteer/EditProfilePage";
+import MyActivitiesPage from "@/pages/volunteer/MyActivitiesPage";
+import ActivityDetailPage from "@/pages/volunteer/ActivityDetailPage";
 
 // Auth Pages
 import LoginPage from "@/pages/auth/LoginPage";
@@ -95,9 +98,9 @@ function App() {
 				{/* PUBLIC ROUTES (bareng volunteer nanti) */}
 				<Route
 					element={
-						<VolunteerRoute>
+						<PublicRoute>
 							<MainLayout />
-						</VolunteerRoute>
+						</PublicRoute>
 					}>
 					<Route path="/" element={<LandingPage />} />
 					<Route path="events">
@@ -105,11 +108,24 @@ function App() {
 						<Route path="details/:eventId" element={<DetailEventPage />} />
 					</Route>
 					<Route path="organizations" element={<OrganizationsPage />} />
+				</Route>
+				<Route
+					path="volunteer"
+					element={
+						<VolunteerRoute>
+							<MainLayout />
+						</VolunteerRoute>
+					}>
 					<Route path="profile">
 						<Route index element={<ProfilePage />} />
 						<Route path="edit" element={<EditProfilePage />} />
 					</Route>
+					<Route path="my-activities">
+						<Route index element={<MyActivitiesPage />} />
+						<Route path=":id" element={<ActivityDetailPage />} />
+					</Route>
 				</Route>
+
 				<Route
 					path="forgot-password"
 					element={

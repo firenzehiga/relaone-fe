@@ -20,8 +20,6 @@ import {
 	ArrowLeft,
 	FileText,
 	Award,
-	Target,
-	Briefcase,
 	UserCircle2,
 } from "lucide-react";
 import Card from "@/components/ui/Card";
@@ -74,8 +72,8 @@ export default function AdminEditProfilePage() {
 			return {
 				nama: profileData.nama,
 				email: profileData.email,
-				telepon: profileData.telepon,
-				alamat: profileData.alamat,
+				telepon: profileData.telepon || "",
+				alamat: profileData.alamat || "",
 				tanggal_lahir: toInputDate(profileData.tanggal_lahir) || "",
 				jenis_kelamin: profileData.jenis_kelamin || "",
 				bio: profileData.bio || "",

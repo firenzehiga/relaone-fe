@@ -130,7 +130,7 @@ export default function OrganizationProfilePage() {
 										className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-lg"
 									/>
 								) : (
-									<div className="w-32 h-32 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full mx-auto flex items-center justify-center border-4 border-white shadow-lg">
+									<div className="w-32 h-32 bg-gradient-to-br from-blue-400 to-green-500 rounded-full mx-auto flex items-center justify-center border-4 border-white shadow-lg">
 										<Building2 className="w-16 h-16 text-white" />
 									</div>
 								)}
@@ -245,7 +245,7 @@ export default function OrganizationProfilePage() {
 												Nama Lengkap
 											</label>
 											<p className="text-gray-900 font-medium text-sm">
-												{profile?.nama || "Tidak tersedia"}
+												{profile?.nama || "Belum ditambahkan"}
 											</p>
 										</div>
 										<div>
@@ -253,7 +253,7 @@ export default function OrganizationProfilePage() {
 												Jenis Kelamin
 											</label>
 											<p className="text-gray-900 font-medium text-sm">
-												{profile?.jenis_kelamin || "Tidak tersedia"}
+												{profile?.jenis_kelamin || "Belum ditambahkan"}
 											</p>
 										</div>
 
@@ -264,7 +264,7 @@ export default function OrganizationProfilePage() {
 											<div className="flex items-center">
 												<Mail className="w-3 h-3 text-gray-400 mr-2" />
 												<p className="text-gray-900 text-sm">
-													{profile?.email || "Tidak tersedia"}
+													{profile?.email || "Belum ditambahkan"}
 												</p>
 											</div>
 										</div>
@@ -276,7 +276,7 @@ export default function OrganizationProfilePage() {
 											<div className="flex items-center">
 												<Phone className="w-3 h-3 text-gray-400 mr-2" />
 												<p className="text-gray-900 text-sm">
-													{profile?.telepon || "Tidak tersedia"}
+													{profile?.telepon || "Belum ditambahkan"}
 												</p>
 											</div>
 										</div>
@@ -291,7 +291,7 @@ export default function OrganizationProfilePage() {
 											<div className="flex items-start">
 												<MapPin className="w-3 h-3 text-gray-400 mr-2 mt-0.5" />
 												<p className="text-gray-900 text-sm">
-													{profile?.alamat || "Tidak tersedia"}
+													{profile?.alamat || "Belum ditambahkan"}
 												</p>
 											</div>
 										</div>

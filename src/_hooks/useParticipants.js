@@ -84,6 +84,95 @@ export const useVolunteerJoinEventMutation = () => {
 	});
 };
 
+/**
+ * Generate QR Code untuk check-in.
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["volunteerProfile"]
+ */
+export const useVolunteerGenerateQrCodeMutation = () => {
+	const { setLoading, clearError, setError } = useAuthStore();
+
+	return useMutation({
+		mutationKey: ["volunteerGenerateQrCode"],
+		mutationFn: eventParticipantService.volunteerGenerateQrCode,
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: async () => {
+			setLoading(false);
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "QR Code berhasil dibuat",
+				duration: 3000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Gagal membuat QR Code";
+			setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali logic yang Anda buat.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Confirm participant error:", error);
+		},
+	});
+};
+
+/**
+ *
+ * Volunteer mengambil partisipasi mereka
+ * @returns {Object} Query result dengan data, isLoading, error, etc
+ */
+export const useVolunteerHistory = () => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "volunteer";
+
+	return useQuery({
+		queryKey: ["volunteerHistory"],
+		queryFn: async () => {
+			const response = await eventParticipantService.volunteerGetHistory();
+			return response;
+		},
+		enabled,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
+	});
+};
+
+/**
+ * Volunteer mengambil ambil detail partisipasi berdasarkan ID.
+ *
+ * @param {string|number} participantId - ID participant
+ * @returns {UseQueryResult<Object>} Data detail participant
+ */
+export const userVolunteerHistoryById = (id) => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "volunteer" && !!id;
+	return useQuery({
+		queryKey: ["volunteerHistory", id],
+		queryFn: async () => {
+			const response = await eventParticipantService.volunteerGetHistoryById(
+				id
+			);
+			return response;
+		},
+		enabled,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
+	});
+};
+
 /** ADMIN HOOKS
  *
  * Hook untuk mengambil data event participants hanya untuk admin

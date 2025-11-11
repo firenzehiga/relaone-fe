@@ -75,8 +75,8 @@ export default function OrganizationEditProfilePage() {
 			return {
 				nama: profileData.nama,
 				email: profileData.email,
-				telepon: profileData.telepon,
-				alamat: profileData.alamat,
+				telepon: profileData.telepon || "",
+				alamat: profileData.alamat || "",
 				tanggal_lahir: toInputDate(profileData.tanggal_lahir) || "",
 				jenis_kelamin: profileData.jenis_kelamin || "",
 				bio: profileData.bio || "",
@@ -143,10 +143,17 @@ export default function OrganizationEditProfilePage() {
 			reader.readAsDataURL(file);
 
 			// Clear error jika ada
-			if (errors[name]) {
+			if (errors.foto_profil) {
 				setErrors((prev) => ({
 					...prev,
-					[name]: "",
+					foto_profil: "",
+				}));
+			}
+
+			if (errors.organization_logo) {
+				setErrors((prev) => ({
+					...prev,
+					organization_logo: "",
 				}));
 			}
 		} else {
@@ -669,7 +676,7 @@ export default function OrganizationEditProfilePage() {
 										{/* Organization Website */}
 										<div>
 											<label className="block text-sm font-medium text-gray-700 mb-1">
-												Website Organisasi
+												Website / Company Profile
 											</label>
 											<div className="relative">
 												<Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -683,7 +690,7 @@ export default function OrganizationEditProfilePage() {
 															? "border-red-500"
 															: "border-gray-300"
 													}`}
-													placeholder="https://example.com"
+													placeholder="Diawali dengan https://"
 												/>
 											</div>
 											{errors.organization_website && (
