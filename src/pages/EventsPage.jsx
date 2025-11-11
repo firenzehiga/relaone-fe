@@ -368,7 +368,7 @@ export default function EventsPage() {
 							</Badge>
 						)}
 						{filters.city && (
-							<Badge variant="success">
+							<Badge variant="info">
 								<MapPin size={14} className="mr-1" />
 								{filters.city}
 							</Badge>

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
 	ArrowRight,
+	GraduationCap,
 	Calendar,
 	Users,
 	Heart,
@@ -11,6 +12,7 @@ import {
 	BookOpen,
 	Stethoscope,
 } from "lucide-react";
+import * as Lucide from "lucide-react";
 import DynamicButton from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import EventCard from "@/components/EventCard";
@@ -18,10 +20,18 @@ import Skeleton from "@/components/ui/Skeleton";
 import { useEvents } from "@/_hooks/useEvents";
 import { useModalStore } from "@/stores/useAppStore";
 import Hero from "@/components/Hero";
+import { useCategory } from "@/_hooks/useCategories";
 
 export default function LandingPage() {
 	const navigate = useNavigate();
 	const { data: events = [], isLoading: eventsLoading } = useEvents();
+
+	const {
+		data: categories = [],
+		isLoading: categoriesLoading,
+		error: categoriesError,
+	} = useCategory();
+
 	const { openJoinModal } = useModalStore();
 
 	const [stats, setStats] = useState({
@@ -59,30 +69,6 @@ export default function LandingPage() {
 			title: "Berbagi Kebaikan",
 			description:
 				"Kontribusi nyata untuk masyarakat dan rasakan kepuasan membantu sesama.",
-		},
-	];
-
-	const categories = [
-		{
-			name: "Lingkungan",
-			icon: Leaf,
-			color: "text-green-400",
-			bgColor: "bg-green-400/10",
-			description: "Aksi peduli lingkungan",
-		},
-		{
-			name: "Pendidikan",
-			icon: BookOpen,
-			color: "text-blue-400",
-			bgColor: "bg-blue-400/10",
-			description: "Edukasi dan pembelajaran",
-		},
-		{
-			name: "Kesehatan",
-			icon: Stethoscope,
-			color: "text-red-400",
-			bgColor: "bg-red-400/10",
-			description: "Layanan kesehatan",
 		},
 	];
 
@@ -198,29 +184,34 @@ export default function LandingPage() {
 						</div>
 
 						<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-							{categories.map((category, index) => (
-								<motion.div
-									key={category.name}
-									initial={{ opacity: 0, scale: 0.9 }}
-									animate={{ opacity: 1, scale: 1 }}
-									transition={{ delay: index * 0.1 }}
-									exit={{ opacity: 0 }}
-									className="cursor-pointer"
-									onClick={() =>
-										navigate(`/events?category=${category.name.toLowerCase()}`)
-									}>
-									<Card className="text-center hover:scale-105 transition-transform ease-out duration-300">
-										<div
-											className={`mx-auto w-16 h-16 ${category.bgColor} rounded-full flex items-center justify-center mb-6`}>
-											<category.icon className={category.color} size={32} />
-										</div>
-										<h3 className="text-xl font-semibold text-gray-500 mb-2">
-											{category.name}
-										</h3>
-										<p className="text-gray-400">{category.description}</p>
-									</Card>
-								</motion.div>
-							))}
+							{categories.map((category, index) => {
+								// pakai Lucide untuk mendapatkan icon berdasarkan nama string
+								const Icon = Lucide[category.icon];
+								return (
+									<motion.div
+										key={category.nama}
+										initial={{ opacity: 0, scale: 0.9 }}
+										animate={{ opacity: 1, scale: 1 }}
+										transition={{ delay: index * 0.1 }}
+										exit={{ opacity: 0 }}
+										className="cursor-pointer"
+										onClick={() => navigate(`/events?category=${category.id}`)}>
+										<Card className="text-center hover:scale-105 transition-transform ease-out duration-300">
+											<div
+												className={`mx-auto w-16 h-16  rounded-full flex items-center justify-center mb-6`}
+												style={{ backgroundColor: `${category.warna}20` }}>
+												{Icon ? (
+													<Icon style={{ color: category.warna }} size={32} />
+												) : null}
+											</div>
+											<h3 className="text-xl font-semibold text-gray-500 mb-2">
+												{category.nama}
+											</h3>
+											<p className="text-gray-400">{category.deskripsi}</p>
+										</Card>
+									</motion.div>
+								);
+							})}
 						</div>
 					</div>
 				</section>
