@@ -36,10 +36,6 @@ export default function OrganizationsPage() {
 			org.deskripsi?.toLowerCase().includes(searchTerm.toLowerCase())
 	);
 
-	if (isLoading) {
-		return <Skeleton.OrgSkeleton />;
-	}
-
 	if (error) {
 		return (
 			<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-emerald-50 via-white to-teal-50">
@@ -66,30 +62,26 @@ export default function OrganizationsPage() {
 		);
 	}
 
+	if (isLoading) {
+		return <Skeleton.OrgSkeleton />;
+	}
+
 	return (
-		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-emerald-50 via-white to-teal-50">
+		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-emerald-50 via-white to-blue-50">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Hero Header */}
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.5 }}
-					className="mb-8 text-center">
-					<h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent mb-4">
+				<div className="mb-8 text-center">
+					<h1 className="text-4xl lg:text-5xl font-bold  text-emerald-600 mb-4">
 						Organisasi Komunitas
 					</h1>
 					<p className="text-xl text-gray-600 max-w-2xl mx-auto">
 						Bergabunglah dengan berbagai organisasi komunitas yang berkontribusi
 						untuk membuat perubahan positif di masyarakat
 					</p>
-				</motion.div>
+				</div>
 
 				{/* Search Bar */}
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.5, delay: 0.2 }}
-					className="mb-8">
+				<div className="mb-8">
 					<Card className="p-4">
 						<div className="relative">
 							<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -102,7 +94,7 @@ export default function OrganizationsPage() {
 							/>
 						</div>
 					</Card>
-				</motion.div>
+				</div>
 
 				{/* Organizations List */}
 				{filteredOrganizations.length === 0 ? (

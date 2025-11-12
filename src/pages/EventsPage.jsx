@@ -191,7 +191,7 @@ export default function EventsPage() {
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="text-center py-12">
 						<h2 className="text-2xl font-bold text-red-600 mb-4">
-							❌ Gagal Memuat Events
+							Gagal Memuat Events
 						</h2>
 						<p className="text-gray-600 mb-6">
 							{eventsError?.message || categoriesError?.message}
@@ -207,12 +207,16 @@ export default function EventsPage() {
 		);
 	}
 
+	if (eventsLoading || categoriesLoading) {
+		return <Skeleton.EventsSkeleton />;
+	}
+
 	return (
-		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-slate-50 via-white to-blue-50">
+		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-emerald-50 via-white to-blue-50">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Header */}
-				<div className="mb-8">
-					<h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent mb-4">
+				<div className="mb-8 text-center">
+					<h1 className="text-4xl lg:text-5xl font-bold text-emerald-600 mb-4">
 						Event Relawan
 					</h1>
 					<p className="text-xl text-gray-600">
@@ -383,20 +387,12 @@ export default function EventsPage() {
 				{/* Results Count */}
 				<div className="flex items-center justify-between mb-6">
 					<p className="text-gray-600 font-medium">
-						{eventsLoading || categoriesLoading
-							? "Sedang Memuat..."
-							: `${filteredEvents.length} event ditemukan`}
+						{`${filteredEvents.length} event ditemukan`}
 					</p>
 				</div>
 
 				{/* Events Display */}
-				{eventsLoading || categoriesLoading ? (
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-						{Array.from({ length: 6 }).map((_, i) => (
-							<Skeleton.EventCard key={i} />
-						))}
-					</div>
-				) : filteredEvents.length > 0 ? (
+				{filteredEvents.length > 0 ? (
 					<>
 						{/* Grid View */}
 						{viewMode === "grid" && (

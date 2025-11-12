@@ -44,17 +44,56 @@ function SkeletonEventCard({ className }) {
 	return (
 		<div
 			className={cn(
-				"bg-slate-300 border rounded-lg overflow-hidden",
+				"bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-lg",
 				className
 			)}>
-			<Skeleton className="h-48 w-full" />
-			<div className="p-4">
-				<Skeleton className="h-5 w-3/4 mb-2" />
-				<Skeleton className="h-3 w-full mb-2" />
-				<Skeleton className="h-3 w-2/3 mb-4" />
-				<div className="flex justify-between items-center">
-					<Skeleton className="h-6 w-16" />
-					<Skeleton className="h-8 w-20" />
+			{/* Banner */}
+			<div className="relative h-48 overflow-hidden">
+				<ChkSkeleton height="100%" width="100%" />
+				{/* Status badge */}
+				<div className="absolute top-3 left-3">
+					<ChkSkeleton height="20px" width="82px" borderRadius="full" />
+				</div>
+				{/* Category badge */}
+				<div className="absolute top-3 right-3">
+					<ChkSkeleton height="20px" width="92px" borderRadius="full" />
+				</div>
+			</div>
+
+			<div className="p-6">
+				{/* Title */}
+				<ChkSkeleton height="20px" width="70%" mb={3} />
+
+				{/* Short description */}
+				<ChkSkeleton height="14px" width="100%" mb={2} />
+				<ChkSkeleton height="14px" width="80%" mb={4} />
+
+				{/* Details (date, location, participants) */}
+				<div className="space-y-3 mb-6">
+					<div className="flex items-center text-sm">
+						<ChkSkeleton height="16px" width="16px" mr={3} />
+						<ChkSkeleton height="16px" width="60%" />
+					</div>
+
+					<div className="flex items-start text-sm">
+						<ChkSkeleton height="16px" width="16px" mr={3} />
+						<div className="flex-1">
+							<ChkSkeleton height="14px" width="50%" mb={2} />
+							<ChkSkeleton height="12px" width="100%" mb={1} />
+							<ChkSkeleton height="12px" width="60%" />
+						</div>
+					</div>
+
+					<div className="flex items-center text-sm">
+						<ChkSkeleton height="16px" width="16px" mr={3} />
+						<ChkSkeleton height="16px" width="40%" />
+					</div>
+				</div>
+
+				{/* Action buttons */}
+				<div className="flex gap-3">
+					<ChkSkeleton height="40px" width="100%" borderRadius="lg" />
+					<ChkSkeleton height="40px" width="100%" borderRadius="lg" />
 				</div>
 			</div>
 		</div>
@@ -211,26 +250,18 @@ function OrgSkeleton() {
 		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-emerald-50 via-white to-teal-50">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Hero Header */}
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.5 }}
-					className="mb-8 text-center">
-					<h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent mb-4">
+				<div className="mb-8 text-center">
+					<h1 className="text-4xl lg:text-5xl font-bold text-emerald-600 mb-4">
 						Organisasi Komunitas
 					</h1>
 					<p className="text-xl text-gray-600 max-w-2xl mx-auto">
 						Bergabunglah dengan berbagai organisasi komunitas yang berkontribusi
 						untuk membuat perubahan positif di masyarakat
 					</p>
-				</motion.div>
+				</div>
 
 				{/* Search Bar */}
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.5, delay: 0.2 }}
-					className="mb-8">
+				<div className="mb-8">
 					<Card className="p-4">
 						<div className="relative">
 							<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -242,7 +273,7 @@ function OrgSkeleton() {
 							/>
 						</div>
 					</Card>
-				</motion.div>
+				</div>
 
 				{/* Organizations Grid - 2 columns on desktop */}
 				<div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
@@ -307,6 +338,69 @@ function OrgSkeleton() {
 	);
 }
 Skeleton.OrgSkeleton = OrgSkeleton;
+
+// Skeleton untuk Events Page (full page skeleton mirip EventsPage)
+function EventsSkeleton() {
+	return (
+		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-emerald-50 via-white to-blue-50">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				{/* Hero Header - mirror actual EventsPage */}
+				<div className="mb-8 text-center">
+					<h1 className="text-4xl lg:text-5xl font-bold text-emerald-600 mb-4">
+						Event Relawan
+					</h1>
+					<p className="text-xl text-gray-600">
+						Temukan berbagai kegiatan sosial yang dapat Anda ikuti
+					</p>
+				</div>
+
+				{/* Search and Filters Skeleton - mirror layout from EventsPage */}
+				<div className="bg-white border border-gray-200 rounded-2xl p-6 mb-8 shadow-lg">
+					<div className="mb-4">
+						<div className="relative">
+							<Search
+								className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+								size={20}
+							/>
+							<input
+								type="text"
+								placeholder="Cari event berdasarkan nama, deskripsi, atau lokasi..."
+								disabled
+								className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-500 cursor-not-allowed"
+							/>
+						</div>
+					</div>
+
+					<div className="flex items-center justify-between">
+						<div className="h-8 w-36 bg-gray-100 rounded-lg" />
+
+						<div className="flex items-center gap-2">
+							<div className="flex bg-gray-100 rounded-lg p-1">
+								<div className="h-8 w-20 bg-gray-100 rounded-md" />
+								<div className="h-8 w-16 bg-gray-100 rounded-md ml-2" />
+							</div>
+						</div>
+					</div>
+				</div>
+
+				{/* Active Filters & Results count skeleton */}
+				<div className="flex flex-wrap items-center gap-2 mb-6">
+					<div className="h-4 w-32 bg-gray-100 rounded" />
+				</div>
+
+				{/* Cards grid skeleton */}
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+					{Array.from({ length: 6 }).map((_, i) => (
+						<div key={i} className="animate-pulse">
+							<SkeletonEventCard />
+						</div>
+					))}
+				</div>
+			</div>
+		</div>
+	);
+}
+Skeleton.EventsSkeleton = EventsSkeleton;
 
 // Komponen Skeleton untuk ProfilePage
 function ProfileSkeleton() {
