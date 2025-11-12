@@ -153,6 +153,8 @@ export default function OrganizationEventParticipant() {
 		if (!selectedEvent?.tanggal_selesai) return false;
 		const today = new Date();
 		const endDate = new Date(selectedEvent.tanggal_selesai);
+		endDate.setHours(23, 59, 59, 999); // artinya sampai akhir hari
+
 		return endDate < today;
 	}, [selectedEvent]);
 
@@ -764,6 +766,22 @@ export default function OrganizationEventParticipant() {
 														{data.event?.tanggal_mulai
 															? new Date(
 																	data.event.tanggal_mulai.replace(" ", "T")
+															  ).toLocaleDateString("id-ID", {
+																	day: "numeric",
+																	month: "long",
+																	year: "numeric",
+															  })
+															: "-"}
+													</div>
+												</div>
+												<div className="flex items-start">
+													<div className="text-sm text-gray-700 font-semibold">
+														Tanggal Selesai:
+													</div>
+													<div className="text-sm text-gray-900 ml-2">
+														{data.event?.tanggal_selesai
+															? new Date(
+																	data.event.tanggal_selesai.replace(" ", "T")
 															  ).toLocaleDateString("id-ID", {
 																	day: "numeric",
 																	month: "long",

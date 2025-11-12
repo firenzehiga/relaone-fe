@@ -86,7 +86,9 @@ export default function OrganizationFeedback() {
 		},
 		{
 			name: "Nama User",
-			selector: (row) => row.user?.nama || "Anonymous",
+			selector: (row) => {
+				return row.is_anonim === 1 ? "Peserta Anonim" : row.user?.nama || "-";
+			},
 			sortable: true,
 			wrap: true,
 			width: "200px",

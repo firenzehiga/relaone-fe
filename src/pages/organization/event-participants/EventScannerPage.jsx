@@ -63,12 +63,11 @@ export default function EventScannerPage() {
 			return "unknown";
 
 		const today = new Date();
-		today.setHours(0, 0, 0, 0);
 
 		const startDate = new Date(eventInfo.tanggal_mulai);
 		const endDate = new Date(eventInfo.tanggal_selesai);
 		startDate.setHours(0, 0, 0, 0);
-		endDate.setHours(23, 59, 59, 999);
+		endDate.setHours(23, 59, 59, 999); // artinya sampai akhir hari
 
 		if (startDate > today) return "upcoming";
 		if (startDate <= today && endDate >= today) return "ongoing";
