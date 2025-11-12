@@ -278,12 +278,6 @@ export default function LandingPage() {
 								<DynamicButton
 									size="lg"
 									variant="secondary"
-									onClick={() => navigate("/register")}>
-									Daftar Sekarang
-								</DynamicButton>
-								<DynamicButton
-									size="lg"
-									variant="secondary"
 									className="border-white text-black hover:bg-white hover:text-emerald-600"
 									onClick={() => navigate("/events")}>
 									Jelajahi Event

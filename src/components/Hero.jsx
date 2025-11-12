@@ -2,8 +2,10 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import DynamicButton from "@/components/ui/Button";
+import { useAuthStore } from "@/_hooks/useAuth";
 export default function Hero() {
 	const navigate = useNavigate();
+	const { isAuthenticated } = useAuthStore();
 
 	return (
 		<section className="relative w-full min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -48,11 +50,18 @@ export default function Hero() {
 										className="ml-2 group-hover:translate-x-1 transition-transform"
 									/>
 								</DynamicButton>
+								{/* jika belum login diarahkan ke register, kalo sudah dibuat scroll sedikit kebawah */}
 								<DynamicButton
 									size="lg"
 									variant="outline"
-									onClick={() => navigate("/register")}>
-									Buat Event
+									onClick={() =>
+										navigate({
+											pathname: isAuthenticated
+												? scrollTo({ top: 1800, behavior: "smooth" })
+												: "/register",
+										})
+									}>
+									Bergabung
 								</DynamicButton>
 							</div>
 						</div>
