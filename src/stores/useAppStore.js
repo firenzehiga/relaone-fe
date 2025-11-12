@@ -172,6 +172,21 @@ export const useModalStore = create((set) => ({
 			selectedCancelParticipant: null,
 		}),
 
+	// ACTIONS - Feedback Modal
+	isFeedbackModalOpen: false,
+	selectedFeedbackParticipant: null,
+	openFeedbackModal: (participant = null) =>
+		set({
+			isFeedbackModalOpen: true,
+			selectedFeedbackParticipant: participant,
+		}),
+
+	closeFeedbackModal: () =>
+		set({
+			isFeedbackModalOpen: false,
+			selectedFeedbackParticipant: null,
+		}),
+
 	// ACTIONS - Detail Modal
 	// ACTIONS - Close All
 	closeAllModals: () =>

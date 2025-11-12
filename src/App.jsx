@@ -31,6 +31,7 @@ import ResetPasswordPage from "@/pages/auth/ResetPassword";
 // Modals
 import JoinEventModal from "@/components/JoinEventModal";
 import CancelJoinModal from "@/components/CancelJoinModal";
+import FeedbackModal from "@/components/FeedbackModal";
 import NotFound from "@/components/fallback/NotFound";
 
 // Admin Pages
@@ -255,6 +256,7 @@ function App() {
 			{/* Global Modals */}
 			<JoinEventModal />
 			<CancelJoinModal />
+			<FeedbackModal />
 		</>
 	);
 }

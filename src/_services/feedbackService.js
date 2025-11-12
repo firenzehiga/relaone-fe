@@ -1,5 +1,26 @@
 import api from "@/_api";
 
+// VOLUNTEER SERVICES
+/** * kirim feedback
+ *
+ * @async
+ * @function volunteerSendFeedback
+ * @endpoint POST /volunteer/event-participations/feedbacks
+ * @param {Object} data - Data feedback baru
+ */
+export const volunteerSendFeedback = async (data) => {
+	try {
+		const response = await api.post(
+			`/volunteer/event-participations/feedback`,
+			data
+		);
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error sending feedback:", error);
+		throw error;
+	}
+};
+
 // ADMIN SERVICES
 /** Mengambil semua feedbacks dengan optional filtering
  *

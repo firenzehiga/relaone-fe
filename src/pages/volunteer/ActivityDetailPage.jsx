@@ -536,8 +536,8 @@ export default function ActivityDetailPage() {
 					</Card>
 				</motion.div>
 
-				{/* QR Code - Only show for confirmed or attended */}
-				{(data.status === "confirmed" || data.status === "attended") && (
+				{/* QR Code - Tampil jika sudah dikonfirmasi */}
+				{data.status === "confirmed" && (
 					<motion.div
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}

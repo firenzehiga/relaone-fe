@@ -5,6 +5,78 @@ import { parseApiError } from "@/utils";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "@/components/ui/Toast";
 
+// === VOLUNTEER HOOKS ===
+
+/**
+ * Batalkan Join event untuk participant.
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["volunteer", "sendFeedback"]
+ */
+export const useVolunteerSendFeedbackMutation = () => {
+	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
+
+	return useMutation({
+		mutationKey: ["volunteer", "sendFeedback"],
+		mutationFn: feedbackService.volunteerSendFeedback,
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: async (_data, variables) => {
+			const eventId = variables?.event_id || variables?.id;
+
+			// Invalidate kueri yang relevan setelah batal join
+			// - detailEvent (untuk event detail page)
+			// - events (list of events, to update counters)
+			// - participants (participant lists used on activity pages)
+			// - volunteerHistory (the volunteer's own history page)
+			if (eventId) {
+				queryClient.invalidateQueries({
+					queryKey: ["detailEvent", eventId],
+					refetchType: "active",
+				});
+			}
+
+			queryClient.invalidateQueries({
+				queryKey: ["events"],
+				refetchType: "active",
+			});
+
+			// Invalidate participants listing and volunteer history so pages that
+			// show the user's registration state update correctly.
+			queryClient.invalidateQueries({ queryKey: ["participants"] });
+			queryClient.invalidateQueries({ queryKey: ["volunteerHistory"] });
+
+			// Loading will be handled by the component after animation completes
+			// setLoading will be called manually in the component if needed
+
+			// Show success toast
+			showToast({
+				type: "success",
+				title: "Terima kasih!",
+				message: "Feedback berhasil dikirim",
+				duration: 3000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Gagal mengirim feedback";
+			setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Send feedback error:", error);
+		},
+	});
+};
+
 // === ADMIN HOOKS ===
 /**
  * Hook untuk mengambil data feedbacks (admin)

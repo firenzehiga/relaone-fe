@@ -124,6 +124,13 @@ export const useVolunteerCancelJoinMutation = () => {
 			queryClient.invalidateQueries({ queryKey: ["participants"] });
 			queryClient.invalidateQueries({ queryKey: ["volunteerHistory"] });
 
+			showToast({
+				type: "success",
+				title: "Terima kasih!",
+				message: "Berhasil membatalkan pendaftaran event",
+				duration: 3000,
+				position: "top-center",
+			});
 			// Loading will be handled by the component after animation completes
 			// setLoading will be called manually in the component if needed
 		},

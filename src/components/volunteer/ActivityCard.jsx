@@ -50,6 +50,9 @@ export default function ActivityCard({ data, onClick }) {
 
 	const statusBadge = getStatusBadge(data.status);
 
+	// Cek apakah sudah kirim feedback
+	const hasFeedback = data.has_feedback || false;
+
 	return (
 		<Card
 			className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-lg transition-transform duration-500 ease-out hover:shadow-2xl hover:shadow-emerald-500/10 cursor-pointer group"
@@ -216,6 +219,43 @@ export default function ActivityCard({ data, onClick }) {
 								Batal Ikut
 							</DynamicButton>
 						)}
+
+						{/* Show feedback button jika participant telah hadir dan belum dikirim feedback & tampilkan button "sudah kirim feedback untuk menandakan jika sudah kirim feedback" */}
+						{data.status === "attended" &&
+							(() => {
+								const endDate = data.event?.tanggal_selesai
+									? new Date(data.event.tanggal_selesai)
+									: null;
+								const now = new Date();
+								if (endDate && now > endDate) {
+									if (hasFeedback) {
+										return (
+											<DynamicButton
+												variant="outline"
+												size="sm"
+												disabled
+												className="cursor-not-allowed">
+												Sudah Kasih Feedback
+											</DynamicButton>
+										);
+									} else {
+										return (
+											<DynamicButton
+												variant="primary"
+												size="sm"
+												onClick={(e) => {
+													e.stopPropagation();
+													const { openFeedbackModal } =
+														useModalStore.getState();
+													openFeedbackModal(data);
+												}}>
+												Kirim Feedback
+											</DynamicButton>
+										);
+									}
+								}
+								return null;
+							})()}
 					</div>
 				</div>
 			</div>

@@ -12,7 +12,7 @@ export default function Skeleton({ className, ...props }) {
 	return (
 		<motion.div
 			animate={{
-				opacity: [0.5, 1, 0.5],
+				opacity: [0.6, 1, 0.6],
 			}}
 			transition={{
 				duration: 1.5,
@@ -161,7 +161,7 @@ function SkeletonDetail() {
 
 Skeleton.Detail = SkeletonDetail;
 
-function FormSkeleton({ title = "", rows = 6 }) {
+function FormSkeleton({ title = "", rows = 4 }) {
 	return (
 		<div className="w-full mx-auto p-4 sm:p-6 min-h-[calc(100vh-4rem)]">
 			<div className="bg-white shadow-lg rounded-lg p-4 sm:p-6 max-w-7xl mx-auto">
@@ -246,7 +246,7 @@ function OrgSkeleton() {
 
 				{/* Organizations Grid - 2 columns on desktop */}
 				<div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
-					{Array.from({ length: 6 }).map((_, i) => (
+					{Array.from({ length: 2 }).map((_, i) => (
 						<Card
 							key={i}
 							className="h-full overflow-hidden animate-pulse"
@@ -315,25 +315,32 @@ function ProfileSkeleton() {
 			<div className="max-w-7xl mx-auto">
 				{/* Header Skeleton */}
 				<div className="text-center mb-6">
-					<ChkSkeleton height="32px" width="200px" mx="auto" mb={2} />
-					<ChkSkeleton height="16px" width="300px" mx="auto" />
+					<Skeleton className="h-6 w-36 mx-auto mb-2 bg-slate-200 animate-pulse" />
+					<Skeleton className="h-4 w-72 mx-auto bg-slate-200 animate-pulse" />
 				</div>
 
+				{/* Gunakan staggered animation untuk mengurangi lag */}
 				<div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
 					{/* Profile Card Skeleton */}
 					<div className="xl:col-span-1">
 						<Card className="text-center h-fit">
 							{/* Avatar Skeleton */}
 							<div className="relative mb-4">
-								<SkeletonCircle size="128px" mx="auto" />
+								<Skeleton className="w-32 h-32 rounded-full mx-auto bg-slate-200 animate-pulse" />
 							</div>
 
 							{/* Basic Info Skeleton */}
-							<ChkSkeleton height="24px" width="150px" mx="auto" mb={2} />
-							<ChkSkeleton height="16px" width="200px" mx="auto" mb={4} />
+							<Skeleton className="h-6 w-36 mx-auto mb-2 bg-slate-200 animate-pulse" />
+							<Skeleton className="h-4 w-48 mx-auto mb-4 bg-slate-200 animate-pulse" />
 
 							{/* Edit Button Skeleton */}
-							<ChkSkeleton height="32px" width="100%" borderRadius="lg" />
+							<Skeleton className="h-8 w-full rounded-lg bg-slate-200 animate-pulse" />
+							{/* Basic Info Skeleton */}
+							<Skeleton className="h-6 w-36 mx-auto mb-2 bg-slate-200 animate-pulse" />
+							<Skeleton className="h-4 w-48 mx-auto mb-4 bg-slate-200 animate-pulse" />
+
+							{/* Edit Button Skeleton */}
+							<Skeleton className="h-8 w-full rounded-lg bg-slate-200 animate-pulse" />
 						</Card>
 					</div>
 
@@ -344,17 +351,28 @@ function ProfileSkeleton() {
 								{/* Personal Information Skeleton */}
 								<div>
 									<div className="flex items-center mb-4">
-										<ChkSkeleton width="20px" height="20px" mr={2} />
-										<ChkSkeleton height="24px" width="150px" />
+										<Skeleton className="w-5 h-5 mr-2 bg-slate-200 animate-pulse" />
+										<Skeleton className="h-6 w-36 bg-slate-200 animate-pulse" />
 									</div>
 
 									<div className="space-y-3">
 										{[...Array(6)].map((_, index) => (
 											<div key={index}>
-												<ChkSkeleton height="12px" width="80px" mb={1} />
+												<Skeleton className="h-3 w-20 mb-1 bg-slate-200 animate-pulse" />
 												<div className="flex items-center">
-													<ChkSkeleton width="12px" height="12px" mr={2} />
-													<ChkSkeleton height="16px" width="120px" />
+													<Skeleton className="w-3 h-3 mr-2 bg-slate-200 animate-pulse" />
+													<Skeleton className="h-4 w-28 bg-slate-200 animate-pulse" />
+												</div>
+											</div>
+										))}
+									</div>
+									<div className="space-y-3">
+										{[...Array(6)].map((_, index) => (
+											<div key={index}>
+												<Skeleton className="h-3 w-20 mb-1 bg-slate-200 animate-pulse" />
+												<div className="flex items-center">
+													<Skeleton className="w-3 h-3 mr-2 bg-slate-200 animate-pulse" />
+													<Skeleton className="h-4 w-28 bg-slate-200 animate-pulse" />
 												</div>
 											</div>
 										))}
@@ -364,19 +382,30 @@ function ProfileSkeleton() {
 								{/* Additional Information Skeleton */}
 								<div>
 									<div className="flex items-center mb-4">
-										<ChkSkeleton width="20px" height="20px" mr={2} />
-										<ChkSkeleton height="24px" width="180px" />
+										<Skeleton className="w-5 h-5 mr-2 bg-slate-200 animate-pulse" />
+										<Skeleton className="h-6 w-44 bg-slate-200 animate-pulse" />
 									</div>
 
 									<div className="space-y-3">
 										{[...Array(4)].map((_, index) => (
 											<div key={index}>
-												<ChkSkeleton height="12px" width="60px" mb={1} />
-												<ChkSkeletonText
-													mt={1}
-													noOfLines={index === 0 ? 2 : 1}
-													spacing="2"
-													skeletonHeight="2"
+												<Skeleton className="h-3 w-16 mb-1 bg-slate-200 animate-pulse" />
+												<Skeleton
+													className={`h-4 ${
+														index === 0 ? "w-full" : "w-3/4"
+													} bg-slate-200 animate-pulse`}
+												/>
+											</div>
+										))}
+									</div>
+									<div className="space-y-3">
+										{[...Array(4)].map((_, index) => (
+											<div key={index}>
+												<Skeleton className="h-3 w-16 mb-1 bg-slate-200 animate-pulse" />
+												<Skeleton
+													className={`h-4 ${
+														index === 0 ? "w-full" : "w-3/4"
+													} bg-slate-200 animate-pulse`}
 												/>
 											</div>
 										))}
