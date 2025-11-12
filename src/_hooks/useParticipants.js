@@ -48,8 +48,6 @@ export const useVolunteerJoinEventMutation = () => {
 		onSuccess: async (_data, variables) => {
 			const eventId = variables?.event_id || variables?.id;
 
-			console.log("Join event success:", eventId);
-
 			// Hanya invalidate query yang benar-benar perlu
 			if (eventId) {
 				// Invalidate detail event spesifik (bukan await, biar tidak blocking)
@@ -62,7 +60,7 @@ export const useVolunteerJoinEventMutation = () => {
 			// Invalidate list events untuk update counter peserta
 			queryClient.invalidateQueries({
 				queryKey: ["events"],
-				refetchType: "none", // Jangan auto refetch, tunggu manual
+				refetchType: "active", // Jangan auto refetch, tunggu manual
 			});
 
 			// Loading akan di-handle di component setelah animation selesai
@@ -80,6 +78,67 @@ export const useVolunteerJoinEventMutation = () => {
 				position: "top-center",
 			});
 			console.error("Join event error:", error);
+		},
+	});
+};
+
+/**
+ * Batalkan Join event untuk participant.
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["participants", "detailEvent", "events"]
+ */
+export const useVolunteerCancelJoinMutation = () => {
+	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
+
+	return useMutation({
+		mutationKey: ["participants", "cancelJoin"],
+		mutationFn: eventParticipantService.volunteerCancelJoin,
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: async (_data, variables) => {
+			const eventId = variables?.event_id || variables?.id;
+
+			// Invalidate kueri yang relevan setelah batal join
+			// - detailEvent (untuk event detail page)
+			// - events (list of events, to update counters)
+			// - participants (participant lists used on activity pages)
+			// - volunteerHistory (the volunteer's own history page)
+			if (eventId) {
+				queryClient.invalidateQueries({
+					queryKey: ["detailEvent", eventId],
+					refetchType: "active",
+				});
+			}
+
+			queryClient.invalidateQueries({
+				queryKey: ["events"],
+				refetchType: "active",
+			});
+
+			// Invalidate participants listing and volunteer history so pages that
+			// show the user's registration state update correctly.
+			queryClient.invalidateQueries({ queryKey: ["participants"] });
+			queryClient.invalidateQueries({ queryKey: ["volunteerHistory"] });
+
+			// Loading will be handled by the component after animation completes
+			// setLoading will be called manually in the component if needed
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Gagal membatalkan join event";
+			setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Cancel join event error:", error);
 		},
 	});
 };

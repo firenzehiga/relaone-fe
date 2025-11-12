@@ -11,6 +11,7 @@ import {
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import DynamicButton from "@/components/ui/Button";
+import { useModalStore } from "@/stores/useAppStore";
 import { getImageUrl, formatDate, formatTime } from "@/utils";
 import { AsyncImage } from "loadable-image";
 import { Fade } from "transitions-kit";
@@ -39,8 +40,8 @@ export default function ActivityCard({ data, onClick }) {
 				variant: "danger",
 			},
 			cancelled: {
-				label: "Dibatalkan",
-				variant: "default",
+				label: "Batal Ikut",
+				variant: "danger",
 			},
 		};
 
@@ -204,15 +205,15 @@ export default function ActivityCard({ data, onClick }) {
 
 						{data.status === "registered" && (
 							<DynamicButton
-								variant="outline"
+								variant="danger"
 								size="sm"
 								onClick={(e) => {
 									e.stopPropagation();
-									// TODO: Add cancel functionality
-									console.log("Cancel registration");
+									const { openCancelModal } = useModalStore.getState();
+									openCancelModal(data);
 								}}>
 								<Ban size={14} className="mr-1" />
-								Batalkan
+								Batal Ikut
 							</DynamicButton>
 						)}
 					</div>

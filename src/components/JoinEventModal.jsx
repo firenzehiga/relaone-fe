@@ -14,7 +14,6 @@ import { AsyncImage } from "loadable-image";
 
 /**
  * Modal untuk join event volunteer
- * Menggunakan TanStack Query untuk fetch event detail dan join mutation
  * Menampilkan form untuk notes dan agreement sebelum join
  *
  * @returns {JSX.Element} Modal untuk pendaftaran event
@@ -75,7 +74,6 @@ export default function JoinEventModal() {
 		try {
 			const payload = {
 				event_id: event.id,
-				user_id: user?.id,
 				catatan: formData.catatan || "",
 			};
 

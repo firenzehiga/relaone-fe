@@ -18,14 +18,12 @@ import { Fade } from "transitions-kit";
  * Halaman Events untuk menampilkan daftar event volunteer
  * Menyediakan fitur search, filter, dan multiple view mode (grid, list, map)
  * Terintegrasi dengan URL search params untuk bookmarking dan sharing
- * Menggunakan TanStack Query + Axios untuk data fetching
- *
  * @returns {JSX.Element} Halaman daftar events dengan filtering dan search
  */
 export default function EventsPage() {
 	const navigate = useNavigate();
 	const [searchParams, setSearchParams] = useSearchParams();
-	// Menggunakan TanStack Query hooks untuk data fetching
+
 	const {
 		data: events = [],
 		isLoading: eventsLoading,

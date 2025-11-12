@@ -25,6 +25,7 @@ import { getImageUrl, formatDate, formatTime } from "@/utils";
 import QrCodeDisplay from "@/components/volunteer/QrCodeDisplay";
 import { AsyncImage } from "loadable-image";
 import { Fade } from "transitions-kit";
+import { useModalStore } from "@/stores/useAppStore";
 
 export default function ActivityDetailPage() {
 	const { id } = useParams();
@@ -585,14 +586,23 @@ export default function ActivityDetailPage() {
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.8 }}
 					className="flex flex-col sm:flex-row gap-4">
+					<DynamicButton
+						variant="outline"
+						size="lg"
+						className="flex-1"
+						onClick={() => navigate("/volunteer/my-activities")}>
+						<ArrowLeft size={18} className="mr-2" />
+						Kembali ke Aktivitas
+					</DynamicButton>
+
 					{data.status === "registered" && (
 						<DynamicButton
 							variant="danger"
 							size="lg"
 							className="flex-1"
 							onClick={() => {
-								// TODO: Add cancel functionality
-								console.log("Cancel registration");
+								const { openCancelModal } = useModalStore.getState();
+								openCancelModal(data);
 							}}>
 							<Ban size={18} className="mr-2" />
 							Batalkan Pendaftaran
@@ -612,15 +622,6 @@ export default function ActivityDetailPage() {
 							Petunjuk Arah
 						</DynamicButton>
 					)}
-
-					<DynamicButton
-						variant="outline"
-						size="lg"
-						className="flex-1"
-						onClick={() => navigate("/volunteer/my-activities")}>
-						<ArrowLeft size={18} className="mr-2" />
-						Kembali ke Aktivitas
-					</DynamicButton>
 				</motion.div>
 			</div>
 		</div>

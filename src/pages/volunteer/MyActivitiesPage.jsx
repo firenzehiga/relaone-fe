@@ -57,6 +57,13 @@ export default function MyActivitiesPage() {
 			color: "text-amber-600",
 		},
 		{
+			id: "cancelled",
+			label: "Batal Ikut",
+			Icon: XCircle,
+			count: data?.cancelled?.length || 0,
+			color: "text-red-600",
+		},
+		{
 			id: "upcoming",
 			label: "Akan Datang",
 			Icon: Calendar,

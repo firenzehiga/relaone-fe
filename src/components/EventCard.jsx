@@ -21,7 +21,6 @@ import {
 } from "@/utils";
 import { AsyncImage } from "loadable-image";
 import { Fade } from "transitions-kit";
-import { useAuthStore } from "@/_hooks/useAuth";
 /**
  * Komponen EventCard untuk menampilkan informasi singkat suatu event volunteer
  * Menampilkan informasi seperti judul, tanggal, lokasi, peserta, dan tombol aksi
@@ -73,13 +72,6 @@ export default function EventCard({
 	const now = new Date();
 	const isStartedOrPast = eventStart ? now >= eventStart : false;
 	const registrationClosed = isCancelled || isFull || isStartedOrPast;
-
-	// Cek apakah user saat ini sudah terdaftar di event ini
-	const { user } = useAuthStore();
-	const participantsFromEvent = event?.participants ?? [];
-	const alreadyRegistered =
-		!!user?.id &&
-		participantsFromEvent.some((p) => Number(p.user_id) === Number(user.id));
 
 	return (
 		<div
@@ -216,32 +208,18 @@ export default function EventCard({
 					</DynamicButton>
 					<DynamicButton
 						variant={
-							alreadyRegistered
-								? "outline"
-								: isCancelled || isFull || isStartedOrPast
-								? "danger"
-								: "success"
+							isCancelled || isFull || isStartedOrPast ? "outline" : "success"
 						}
 						size="sm"
 						className="flex-1"
-						disabled={registrationClosed || alreadyRegistered}
-						onClick={() => onJoin?.(event.id)}
-						aria-disabled={registrationClosed || alreadyRegistered}
-						title={
-							alreadyRegistered
-								? "Anda sudah terdaftar"
-								: registrationClosed
-								? "Pendaftaran ditutup"
-								: "Daftar ke event"
-						}>
+						disabled={registrationClosed}
+						onClick={() => onJoin?.(event.id)}>
 						{isCancelled
 							? "Dibatalkan"
 							: isFull
 							? "Penuh"
 							: isStartedOrPast
 							? "Pendaftaran Ditutup"
-							: alreadyRegistered
-							? "Sudah Daftar"
 							: "Daftar"}
 					</DynamicButton>
 				</div>

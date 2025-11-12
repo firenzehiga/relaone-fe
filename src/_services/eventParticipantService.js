@@ -33,6 +33,24 @@ export const volunteerJoinEvent = async (data) => {
 	}
 };
 
+/** * Batalkan Join event untuk participant
+ *
+ * @async
+ * @function volunteerCancelJoin
+ * @endpoint POST /volunteer/events/cancel
+ * @param {Object} data - Data participant baru
+ * @returns {Promise<any>} Data participant baru
+ */
+export const volunteerCancelJoin = async (data) => {
+	try {
+		const response = await api.post(`/volunteer/events/cancel`, data);
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error canceling join event:", error);
+		throw error;
+	}
+};
+
 /** * Buat generate QR Code untuk absen
  *
  * @async

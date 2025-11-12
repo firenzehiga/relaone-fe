@@ -345,6 +345,8 @@ export default function OrganizationEventParticipant() {
 				<>
 					{row.status === "registered" ? (
 						<Badge variant={"warning"}>Sudah Daftar</Badge>
+					) : row.status === "cancelled" ? (
+						<Badge variant={"danger"}>Dibatalkan</Badge>
 					) : row.status === "confirmed" ? (
 						<Badge variant={"primary"}>Dikonfirmasi</Badge>
 					) : row.status === "attended" ? (
@@ -365,6 +367,7 @@ export default function OrganizationEventParticipant() {
 				// Tidak tampilkan tombol aksi untuk status rejected atau attended
 				if (
 					row.status === "rejected" ||
+					row.status === "cancelled" ||
 					row.status === "attended" ||
 					row.status === "no_show"
 				) {

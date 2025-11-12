@@ -138,11 +138,12 @@ export const useEventStore = create((set, get) => ({
 export const useModalStore = create((set) => ({
 	// STATE
 	isJoinModalOpen: false,
-	isDetailModalOpen: false,
-	isLoginModalOpen: false,
-	isRegisterModalOpen: false,
 	selectedEventId: null,
 	selectedEventDetail: null,
+
+	// Cancel Join modal state
+	isCancelModalOpen: false,
+	selectedCancelParticipant: null,
 
 	// ACTIONS - Join Modal
 	// accept optional full event object to avoid waiting for API fetch
@@ -158,28 +159,28 @@ export const useModalStore = create((set) => ({
 			selectedEventDetail: null,
 		}),
 
+	// ACTIONS - Cancel Modal
+	openCancelModal: (participant = null) =>
+		set({
+			isCancelModalOpen: true,
+			selectedCancelParticipant: participant,
+		}),
+
+	closeCancelModal: () =>
+		set({
+			isCancelModalOpen: false,
+			selectedCancelParticipant: null,
+		}),
+
 	// ACTIONS - Detail Modal
-	openDetailModal: (event) =>
-		set({ isDetailModalOpen: true, selectedEventDetail: event }),
-
-	closeDetailModal: () =>
-		set({ isDetailModalOpen: false, selectedEventDetail: null }),
-
-	// ACTIONS - Auth Modals
-	openLoginModal: () => set({ isLoginModalOpen: true }),
-	closeLoginModal: () => set({ isLoginModalOpen: false }),
-
-	openRegisterModal: () => set({ isRegisterModalOpen: true }),
-	closeRegisterModal: () => set({ isRegisterModalOpen: false }),
-
 	// ACTIONS - Close All
 	closeAllModals: () =>
 		set({
 			isJoinModalOpen: false,
-			isDetailModalOpen: false,
-			isLoginModalOpen: false,
-			isRegisterModalOpen: false,
 			selectedEventId: null,
 			selectedEventDetail: null,
+			// cancel modal
+			isCancelModalOpen: false,
+			selectedCancelParticipant: null,
 		}),
 }));
