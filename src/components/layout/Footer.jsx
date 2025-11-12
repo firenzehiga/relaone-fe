@@ -39,7 +39,7 @@ export default function Footer() {
 						<h4 className="text-lg text-gray-900 font-medium mb-7">Page</h4>
 						<ul className=" transition-all duration-500">
 							<li className="mb-6">
-								<Link to="/home" className="text-gray-600 hover:text-gray-900">
+								<Link to="/" className="text-gray-600 hover:text-gray-900">
 									Home
 								</Link>
 							</li>
