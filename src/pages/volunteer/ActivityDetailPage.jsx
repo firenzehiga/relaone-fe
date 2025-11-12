@@ -118,8 +118,8 @@ export default function ActivityDetailPage() {
 			finished: {
 				label: "Selesai",
 				Icon: CheckCircle,
-				color: "text-gray-600",
-				bg: "bg-gray-100",
+				color: "text-blue-600",
+				bg: "bg-blue-100",
 			},
 		};
 		return configs[timeline] || configs.upcoming;
