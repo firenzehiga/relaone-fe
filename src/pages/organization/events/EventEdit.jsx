@@ -735,23 +735,26 @@ export default function OrganizationEventEdit() {
 								</div>
 
 								<div className="grid grid-cols-1 gap-4 sm:grid-cols-3 items-start">
-									<div>
-										<label
-											htmlFor="status"
-											className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
-											Status <span className="text-red-500">*</span>
-										</label>
-										<select
-											id="status"
-											name="status"
-											value={formData.status}
-											onChange={handleChange}
-											required
-											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-											<option value="draft">Draft</option>
-											<option value="published">Published</option>
-										</select>
-									</div>
+									{formData.status === "published" ||
+									formData.status === "draft" ? (
+										<div>
+											<label
+												htmlFor="status"
+												className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+												Status <span className="text-red-500">*</span>
+											</label>
+											<select
+												id="status"
+												name="status"
+												value={formData.status}
+												onChange={handleChange}
+												required
+												className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+												<option value="draft">Draft</option>
+												<option value="published">Published</option>
+											</select>
+										</div>
+									) : null}
 								</div>
 							</TabPanel>
 						</TabPanels>

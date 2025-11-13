@@ -286,11 +286,7 @@ export default function EditProfilePage() {
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-4 px-4">
-			<motion.div
-				className="max-w-7xl mx-auto"
-				variants={containerVariants}
-				initial="hidden"
-				animate="visible">
+			<motion.div className="max-w-7xl mx-auto">
 				{/* Header Section - Compact */}
 				<motion.div
 					variants={itemVariants}
@@ -305,7 +301,7 @@ export default function EditProfilePage() {
 					</div>
 					<Button
 						variant="outline"
-						onClick={() => navigate("/profile")}
+						onClick={() => navigate("/volunteer/profile")}
 						className="flex items-center"
 						size="sm">
 						<ArrowLeft className="w-3 h-3 mr-2" />

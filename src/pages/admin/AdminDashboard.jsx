@@ -1,5 +1,5 @@
 import { useAdminAnalytics } from "@/_hooks/useUsers";
-import AnalyticsDashboard from "@/components/admin/AnalyticsDashboard";
+import AdminAnalytics from "@/components/admin/AdminAnalytics";
 
 export default function AdminDashboard() {
 	const { data: analyticsData, isLoading, error } = useAdminAnalytics();
@@ -8,7 +8,7 @@ export default function AdminDashboard() {
 		<div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
 			<div className="max-w-7xl mx-auto">
 				{/* Analytics Dashboard Component */}
-				<AnalyticsDashboard
+				<AdminAnalytics
 					data={analyticsData}
 					isLoading={isLoading}
 					error={error}

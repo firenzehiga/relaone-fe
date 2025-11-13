@@ -594,7 +594,7 @@ export default function AdminEditProfilePage() {
 								<Button
 									type="button"
 									variant="outline"
-									onClick={() => navigate("/profile")}
+									onClick={() => navigate("/admin/profile")}
 									disabled={isLoading}
 									size="sm">
 									Batal

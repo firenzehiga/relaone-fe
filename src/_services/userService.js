@@ -96,7 +96,23 @@ export const adminGetVolunteerUsers = async (params = {}) => {
  * @endpoint GET /admin/dashboard/analytics
  * @returns {Promise<any>} Data analytics untuk dashboard.
  */
-export const adminGetAnalytics = async (params = {}) => {
+export const adminGetDashboardAnalytics = async (params = {}) => {
 	const response = await api.get("/admin/analytics/dashboard", { params });
+	return response.data.data || response.data;
+};
+
+// ORGANIZATIONS SERVICES
+
+/** Mengambil data analytics untuk dashboard.
+
+ * @async
+ * @function orgGetDashboardAnalytics
+ * @endpoint GET /organization/dashboard/analytics
+ * @returns {Promise<any>} Data analytics untuk dashboard.
+ */
+export const orgGetDashboardAnalytics = async (params = {}) => {
+	const response = await api.get("/organization/analytics/dashboard", {
+		params,
+	});
 	return response.data.data || response.data;
 };

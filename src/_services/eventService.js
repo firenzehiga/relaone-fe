@@ -194,3 +194,47 @@ export const orgDeleteEvent = async (id) => {
 		throw error;
 	}
 };
+
+/**
+ * Start event (organization) - sets status published -> ongoing
+ * @endpoint POST /organization/events/{eventId}/start
+ */
+export const orgStartEvent = async (id) => {
+	try {
+		const response = await api.post(`/organization/events/${id}/start`);
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error starting event:", error);
+		throw error;
+	}
+};
+
+/**
+ * Complete event (organization) - sets status ongoing -> completed
+ * @endpoint POST /organization/events/{eventId}/complete
+ */
+export const orgCompleteEvent = async (id) => {
+	try {
+		const response = await api.post(`/organization/events/${id}/complete`);
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error completing event:", error);
+		throw error;
+	}
+};
+
+/**
+ * Cancel event (organization) - sets status -> cancelled and accepts optional reason
+ * @endpoint POST /organization/events/{eventId}/cancel
+ * @param {string|number} id
+ * @param {Object} data - optional payload (e.g. { reason: '...') }
+ */
+export const orgCancelEvent = async (id, data = {}) => {
+	try {
+		const response = await api.post(`/organization/events/${id}/cancel`, data);
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error cancelling event:", error);
+		throw error;
+	}
+};

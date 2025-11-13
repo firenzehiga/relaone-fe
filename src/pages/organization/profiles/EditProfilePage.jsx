@@ -321,7 +321,7 @@ export default function OrganizationEditProfilePage() {
 					</div>
 					<Button
 						variant="outline"
-						onClick={() => navigate("/profile")}
+						onClick={() => navigate("/organization/profile")}
 						className="flex items-center"
 						size="sm">
 						<ArrowLeft className="w-3 h-3 mr-2" />

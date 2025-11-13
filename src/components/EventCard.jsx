@@ -45,8 +45,10 @@ export default function EventCard({
 	 */
 	const getStatusBadge = (status) => {
 		const statusConfig = {
-			published: { variant: "success", text: "Terbuka" },
 			draft: { variant: "warning", text: "Draft" },
+			published: { variant: "success", text: "Terbuka" },
+			ongoing: { variant: "warning", text: "Sedang Berlangsung" },
+			completed: { variant: "primary", text: "Sudah Selesai" },
 			cancelled: { variant: "danger", text: "Dibatalkan" },
 			full: { variant: "secondary", text: "Penuh" },
 		};

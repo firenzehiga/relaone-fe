@@ -147,7 +147,29 @@ export const useAdminAnalytics = () => {
 	return useQuery({
 		queryKey: ["adminAnalytics"],
 		queryFn: async () => {
-			const response = await userService.adminGetAnalytics();
+			const response = await userService.adminGetDashboardAnalytics();
+			return response;
+		},
+		enabled,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
+	});
+};
+
+// === ORGANIZATIONS HOOKS ===
+/**
+ * Hook untuk mengambil data semua analytics dashboard (khusus organisasi)
+ * @returns {Object} Query result dengan data, isLoading, error, etc
+ */
+export const useOrgAnalytics = (params = {}) => {
+	const currentRole = useUserRole();
+	const enabled = currentRole === "organization";
+
+	return useQuery({
+		queryKey: ["orgAnalytics", params],
+		queryFn: async () => {
+			const response = await userService.orgGetDashboardAnalytics(params);
 			return response;
 		},
 		enabled,

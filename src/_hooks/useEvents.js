@@ -387,3 +387,96 @@ export const useOrgDeleteEventMutation = () => {
 		},
 	});
 };
+
+/**
+ * Start event (organization) mutation
+ */
+export const useOrgStartEventMutation = () => {
+	const queryClient = useQueryClient();
+	const { setLoading } = useAuthStore();
+
+	return useMutation({
+		mutationFn: eventService.orgStartEvent,
+		onMutate: () => setLoading(true),
+		onSuccess: (data, id) => {
+			// invalidate relevant queries
+			queryClient.invalidateQueries(["orgEvents"]);
+			queryClient.invalidateQueries(["orgEvents", id]);
+			queryClient.invalidateQueries(["events"]);
+			queryClient.invalidateQueries(["detailEvent", id]);
+			setLoading(false);
+			showToast({
+				type: "success",
+				title: "Berhasil",
+				message: "Event dimulai.",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Gagal memulai event.";
+			showToast({ type: "error", message: msg });
+		},
+	});
+};
+
+/**
+ * Complete event (organization) mutation
+ */
+export const useOrgCompleteEventMutation = () => {
+	const queryClient = useQueryClient();
+	const { setLoading } = useAuthStore();
+
+	return useMutation({
+		mutationFn: eventService.orgCompleteEvent,
+		onMutate: () => setLoading(true),
+		onSuccess: (data, id) => {
+			queryClient.invalidateQueries(["orgEvents"]);
+			queryClient.invalidateQueries(["orgEvents", id]);
+			queryClient.invalidateQueries(["events"]);
+			queryClient.invalidateQueries(["detailEvent", id]);
+			setLoading(false);
+			showToast({
+				type: "success",
+				title: "Berhasil",
+				message: "Event selesai.",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Gagal menyelesaikan event.";
+			showToast({ type: "error", message: msg });
+		},
+	});
+};
+
+/**
+ * Cancel event (organization) mutation
+ * Expects variables: { id, data }
+ */
+export const useOrgCancelEventMutation = () => {
+	const queryClient = useQueryClient();
+	const { setLoading } = useAuthStore();
+
+	return useMutation({
+		mutationFn: ({ id, data }) => eventService.orgCancelEvent(id, data),
+		onMutate: () => setLoading(true),
+		onSuccess: (data, vars) => {
+			const id = vars?.id;
+			queryClient.invalidateQueries(["orgEvents"]);
+			if (id) queryClient.invalidateQueries(["orgEvents", id]);
+			queryClient.invalidateQueries(["events"]);
+			if (id) queryClient.invalidateQueries(["detailEvent", id]);
+			setLoading(false);
+			showToast({
+				type: "success",
+				title: "Berhasil",
+				message: "Event dibatalkan.",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Gagal membatalkan event.";
+			showToast({ type: "error", message: msg });
+		},
+	});
+};

@@ -2,7 +2,13 @@ import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
-import { useOrgDeleteEventMutation, useOrgEvents } from "@/_hooks/useEvents";
+import {
+	useOrgDeleteEventMutation,
+	useOrgEvents,
+	useOrgStartEventMutation,
+	useOrgCompleteEventMutation,
+	useOrgCancelEventMutation,
+} from "@/_hooks/useEvents";
 import {
 	ChevronDown,
 	Plus,
@@ -12,6 +18,9 @@ import {
 	EditIcon,
 	EllipsisVerticalIcon,
 	AlertCircle,
+	Play,
+	CheckCircle,
+	XCircle,
 } from "lucide-react";
 import {
 	Menu,
@@ -26,6 +35,7 @@ import { Link } from "react-router-dom";
 import { getImageUrl, parseApiError } from "@/utils";
 import FetchLoader from "@/components/ui/FetchLoader";
 import { formatDate } from "@/utils/";
+import { useAuthStore } from "@/_hooks/useAuth";
 
 export default function OrganizationEvent() {
 	const {
@@ -36,6 +46,11 @@ export default function OrganizationEvent() {
 	} = useOrgEvents();
 
 	const deleteEventMutation = useOrgDeleteEventMutation();
+	const startEventMutation = useOrgStartEventMutation();
+	const completeEventMutation = useOrgCompleteEventMutation();
+	const cancelEventMutation = useOrgCancelEventMutation();
+
+	const { isLoading } = useAuthStore();
 
 	// Local state for search/filter
 	const [searchEvent, setSearchEvent] = useState("");
@@ -61,6 +76,8 @@ export default function OrganizationEvent() {
 					return startDate <= today && endDate >= today;
 				} else if (statusFilter === "completed") {
 					return endDate < today;
+				} else if (statusFilter === "cancelled") {
+					return eventItem.status === "cancelled";
 				}
 				return true;
 			});
@@ -121,6 +138,128 @@ export default function OrganizationEvent() {
 		});
 	};
 
+	const canStart = (row) => {
+		if (!row) return false;
+		if (row.status !== "published") return false;
+		if (!row.tanggal_mulai) return false;
+
+		try {
+			const start = new Date(row.tanggal_mulai);
+			if (row.waktu_mulai) {
+				// combine time
+				const [h, m, s] = row.waktu_mulai.split(":");
+				if (h !== undefined)
+					start.setHours(Number(h), Number(m || 0), Number(s || 0), 0);
+			} else {
+				start.setHours(0, 0, 0, 0);
+			}
+			return new Date() >= start;
+		} catch (e) {
+			return false;
+		}
+	};
+
+	const canComplete = (row) => {
+		if (!row) return false;
+		if (row.status !== "ongoing") return false;
+		if (!row.tanggal_selesai) return false;
+
+		try {
+			const end = new Date(row.tanggal_selesai);
+			if (row.waktu_selesai) {
+				const [h, m, s] = row.waktu_selesai.split(":");
+				if (h !== undefined)
+					end.setHours(Number(h), Number(m || 0), Number(s || 0), 0);
+			} else {
+				end.setHours(23, 59, 59, 999);
+			}
+			return new Date() >= end;
+		} catch (e) {
+			return false;
+		}
+	};
+
+	const canCancel = (row) => {
+		if (!row) return false;
+		// di backend meelarang membatalkan event yang sudah selesai, dibatalkan, atau sedang berlangsung
+		return !["completed", "cancelled", "ongoing"].includes(row.status);
+	};
+
+	const handleStart = (row) => {
+		Swal.fire({
+			title: "Mulai event?",
+			text: "Aksi ini akan mengubah status event menjadi 'ongoing'. Lanjutkan?",
+			showCancelButton: true,
+			confirmButtonText: "Ya, mulai",
+			cancelButtonText: "Batal",
+			customClass: {
+				popup: "bg-white rounded-xl shadow-xl p-5 max-w-md w-full",
+				title: "text-lg font-semibold text-gray-900",
+				content: "text-sm text-gray-600 dark:text-gray-300 mt-1",
+				actions: "flex gap-3 justify-center mt-4",
+				confirmButton:
+					"px-4 py-2 focus:outline-none rounded-md bg-emerald-500 hover:bg-emerald-600 text-white",
+				cancelButton:
+					"px-4 py-2 rounded-md border border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700",
+			},
+		}).then((result) => {
+			if (result.isConfirmed) {
+				startEventMutation.mutate(row.id);
+			}
+		});
+	};
+
+	const handleComplete = (row) => {
+		Swal.fire({
+			title: "Selesaikan event?",
+			text: "Aksi ini akan mengubah status event menjadi 'completed' dan menandai peserta yang belum hadir.",
+			showCancelButton: true,
+			confirmButtonText: "Ya, selesaikan",
+			cancelButtonText: "Batal",
+			customClass: {
+				popup: "bg-white rounded-xl shadow-xl p-5 max-w-md w-full",
+				title: "text-lg font-semibold text-gray-900",
+				content: "text-sm text-gray-600 dark:text-gray-300 mt-1",
+				actions: "flex gap-3 justify-center mt-4",
+				confirmButton:
+					"px-4 py-2 focus:outline-none rounded-md bg-emerald-500 hover:bg-emerald-600 text-white",
+				cancelButton:
+					"px-4 py-2 rounded-md border border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700",
+			},
+		}).then((result) => {
+			if (result.isConfirmed) {
+				completeEventMutation.mutate(row.id);
+			}
+		});
+	};
+
+	const handleCancel = (row) => {
+		Swal.fire({
+			title: "Batalkan event?",
+			text: "Masukkan alasan pembatalan (opsional).",
+			input: "textarea",
+			inputPlaceholder: "Alasan pembatalan...",
+			showCancelButton: true,
+			confirmButtonText: "Ya, batalkan",
+			cancelButtonText: "Batal",
+			customClass: {
+				popup: "bg-white rounded-xl shadow-xl p-5 max-w-md w-full",
+				title: "text-lg font-semibold text-gray-900",
+				content: "text-sm text-gray-600 dark:text-gray-300 mt-1",
+				actions: "flex gap-3 justify-center mt-4",
+				confirmButton:
+					"px-4 py-2 focus:outline-none rounded-md bg-red-500 hover:bg-red-600 text-white",
+				cancelButton:
+					"px-4 py-2 rounded-md border border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700",
+			},
+		}).then((result) => {
+			if (result.isConfirmed) {
+				const reason = result.value || null;
+				cancelEventMutation.mutate({ id: row.id, data: { reason } });
+			}
+		});
+	};
+
 	const columns = [
 		{
 			name: "No",
@@ -176,40 +315,69 @@ export default function OrganizationEvent() {
 
 		{
 			name: "Aksi",
-			cell: (row) => (
-				<Menu>
-					<MenuButton
-						as={IconButton}
-						aria-label="Options"
-						icon={<EllipsisVerticalIcon />}
-						variant="ghost"
-					/>
-					<Portal>
-						<MenuList className="font-semibold">
-							<Link to={`/organization/events/edit/${row.id}`}>
+			cell: (row) => {
+				if (isLoading) {
+					return <Loader2 className="animate-spin h-5 w-5 text-emerald-600" />;
+				}
+				return (
+					<Menu>
+						<MenuButton
+							as={IconButton}
+							aria-label="Options"
+							icon={<EllipsisVerticalIcon />}
+							variant="ghost"
+						/>
+						<Portal>
+							<MenuList className="font-semibold">
+								{canStart(row) && (
+									<MenuItem
+										onClick={() => handleStart(row)}
+										disabled={startEventMutation.isLoading}
+										icon={
+											<Play className="text-emerald-500 hover:text-emerald-600" />
+										}>
+										Mulai Kegiatan
+									</MenuItem>
+								)}
+								{canComplete(row) && (
+									<MenuItem
+										onClick={() => handleComplete(row)}
+										disabled={completeEventMutation.isLoading}
+										icon={
+											<CheckCircle className="text-emerald-500 hover:text-emerald-600" />
+										}>
+										Selesaikan
+									</MenuItem>
+								)}
+								{canCancel(row) && (
+									<MenuItem
+										onClick={() => handleCancel(row)}
+										disabled={cancelEventMutation.isLoading}
+										icon={
+											<XCircle className="text-red-500 hover:text-red-600" />
+										}>
+										Batalkan
+									</MenuItem>
+								)}
+								<Link to={`/organization/events/edit/${row.id}`}>
+									<MenuItem
+										icon={
+											<EditIcon className="text-yellow-500 hover:text-yellow-600" />
+										}>
+										Edit
+									</MenuItem>
+								</Link>
 								<MenuItem
-									icon={<Eye className="text-blue-500 hover:text-blue-600" />}>
-									Lihat
+									onClick={() => handleDelete(row.id)}
+									disabled={deleteEventMutation.isLoading}
+									icon={<Trash className="text-red-500 hover:text-red-600" />}>
+									Hapus
 								</MenuItem>
-							</Link>
-							<Link to={`/organization/events/edit/${row.id}`}>
-								<MenuItem
-									icon={
-										<EditIcon className="text-yellow-500 hover:text-yellow-600" />
-									}>
-									Edit
-								</MenuItem>
-							</Link>
-							<MenuItem
-								onClick={() => handleDelete(row.id)}
-								disabled={deleteEventMutation.isLoading}
-								icon={<Trash className="text-red-500 hover:text-red-600" />}>
-								Hapus
-							</MenuItem>
-						</MenuList>
-					</Portal>
-				</Menu>
-			),
+							</MenuList>
+						</Portal>
+					</Menu>
+				);
+			},
 			width: "140px",
 		},
 	];
@@ -266,6 +434,7 @@ export default function OrganizationEvent() {
 										onChange={(e) => setStatusFilter(e.target.value)}
 										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
 										<option value="all">Semua Status</option>
+										<option value="cancelled">Dibatalkan</option>
 										<option value="upcoming">Belum Mulai</option>
 										<option value="ongoing">Sedang Berlangsung</option>
 										<option value="completed">Sudah Selesai</option>

@@ -4,6 +4,7 @@ import {
 	Line,
 	BarChart,
 	Bar,
+	LabelList,
 	PieChart,
 	Pie,
 	Cell,
@@ -19,16 +20,16 @@ import Card from "../ui/Card";
 import Skeleton from "../ui/Skeleton";
 import { formatRelativeTime } from "@/utils/dateFormatter";
 /**
- * AnalyticsDashboard Component
+ * AdminAnalytics Component
  * Component untuk menampilkan analytics dashboard dengan berbagai statistik dan charts
  *
- * @param {Object} props - Props untuk AnalyticsDashboard component
+ * @param {Object} props - Props untuk AdminAnalytics component
  * @param {Object} props.data - Data analytics dari API
  * @param {boolean} props.isLoading - Status loading
  * @param {Object} props.error - Error object jika ada error
- * @returns {JSX.Element} AnalyticsDashboard component
+ * @returns {JSX.Element} AdminAnalytics component
  */
-export default function AnalyticsDashboard({ data, isLoading, error }) {
+export default function AdminAnalytics({ data, isLoading, error }) {
 	// Chart colors
 	const COLORS = {
 		primary: "#3b82f6",
@@ -367,7 +368,10 @@ export default function AnalyticsDashboard({ data, isLoading, error }) {
 						<LineChart data={loginTrendData}>
 							<CartesianGrid strokeDasharray="3 3" />
 							<XAxis dataKey="date" />
-							<YAxis />
+							<YAxis
+								allowDecimals={false}
+								tickFormatter={(v) => (Number.isInteger(v) ? v : Math.round(v))}
+							/>
 							<Tooltip content={<CustomTooltip />} />
 							<Legend />
 							<Line
@@ -392,7 +396,10 @@ export default function AnalyticsDashboard({ data, isLoading, error }) {
 						<LineChart data={registrationTrendData}>
 							<CartesianGrid strokeDasharray="3 3" />
 							<XAxis dataKey="date" />
-							<YAxis />
+							<YAxis
+								allowDecimals={false}
+								tickFormatter={(v) => (Number.isInteger(v) ? v : Math.round(v))}
+							/>
 							<Tooltip content={<CustomTooltip />} />
 							<Legend />
 							<Line
@@ -418,15 +425,23 @@ export default function AnalyticsDashboard({ data, isLoading, error }) {
 					<BarChart data={participantsByStatusData}>
 						<CartesianGrid strokeDasharray="3 3" />
 						<XAxis dataKey="name" />
-						<YAxis />
+						<YAxis
+							allowDecimals={false}
+							tickFormatter={(v) => (Number.isInteger(v) ? v : Math.round(v))}
+						/>
 						<Tooltip content={<CustomTooltip />} />
 						<Legend />
 						<Bar
 							dataKey="value"
 							name="Count"
 							fill={COLORS.primary}
-							radius={[8, 8, 0, 0]}
-						/>
+							radius={[8, 8, 0, 0]}>
+							<LabelList
+								dataKey="value"
+								position="top"
+								formatter={(v) => Math.round(v)}
+							/>
+						</Bar>
 					</BarChart>
 				</ResponsiveContainer>
 			</Card>
