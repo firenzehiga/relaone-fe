@@ -21,6 +21,7 @@ import { useEvents } from "@/_hooks/useEvents";
 import { useModalStore } from "@/stores/useAppStore";
 import Hero from "@/components/Hero";
 import { useCategory } from "@/_hooks/useCategories";
+import VideoShowcase from "@/components/VideoShowcase";
 
 export default function LandingPage() {
 	const navigate = useNavigate();
@@ -170,6 +171,9 @@ export default function LandingPage() {
 						</div>
 					</div>
 				</section>
+
+				{/* Video Showcase Section */}
+				<VideoShowcase />
 
 				{/* Categories Section */}
 				<section className="w-full py-20 bg-white">
