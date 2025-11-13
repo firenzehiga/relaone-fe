@@ -244,51 +244,54 @@ export default function OrganizationLocation() {
                 sortIcon={<ChevronDown />}
                 expandableRows
                 expandableRowsComponent={({ data }) => (
-                  <div className="p-4 bg-emerald-100 rounded-md">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm text-gray-600">
-                          <strong>Lokasi:</strong> {data.nama || "-"}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          <strong>Alamat:</strong> {data.alamat || "-"}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          <strong>Kota:</strong> {data.kota || "-"}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          <strong>Provinsi:</strong> {data.provinsi || "-"}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600">
-                          <strong>Koordinat Peta:</strong>
-                        </p>
-                        <p className="text-sm text-gray-800 mt-1">
-                          <strong>Lat:</strong> {data.latitude ?? 0} <br />
-                          <strong>Long:</strong> {data.longitude ?? 0}
-                        </p>
-
-                        <div className="mt-3">
-                          <a
-                            href={getGoogleMapsUrl({ location: data })}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-sm text-blue-600 hover:underline"
-                          >
-                            Buka di Google Maps
-                          </a>
-                        </div>
-
-                        {data.alamat_lengkap && (
-                          <p className="text-sm text-gray-600 mt-2">
-                            <strong>Alamat Lengkap:</strong>{" "}
-                            {data.alamat_lengkap}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                  <div className="p-4 bg-white rounded-md border border-gray-100 shadow-sm">
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+											<div className="space-y-3">
+												<p className="text-sm text-gray-600">
+													<strong>Lokasi:</strong> {data.nama || "-"}
+												</p>
+												<p className="text-sm text-gray-600">
+													<strong>Alamat:</strong> {data.alamat || "-"}
+												</p>
+												<p className="text-sm text-gray-600">
+													<strong>Kota:</strong> {data.kota || "-"}
+												</p>
+												<p className="text-sm text-gray-600">
+													<strong>Provinsi:</strong> {data.provinsi || "-"}
+												</p>
+												</div>
+												<div>
+												<p className="text-sm text-gray-600">
+													<strong>Koordinat Peta:</strong>
+												</p>
+												<p className="text-sm text-gray-800 mt-1">
+													<strong>Lat:</strong> {data.latitude ?? 0} <br />
+													<strong>Long:</strong> {data.longitude ?? 0}
+												</p>
+						
+												<div className="mt-3">
+													<a
+													href={getGoogleMapsUrl({ location: data })}
+													target="_blank"
+													rel="noreferrer"
+													className="text-sm text-blue-600 hover:underline"
+													>
+													Buka di Google Maps
+													</a>
+												</div>
+											</div>
+											{data.alamat_lengkap && (
+												<div className="md:col-span-2">
+												<p className="text-sm text-gray-600 mb-1">
+													<strong>Alamat Lengkap:</strong>{" "}
+												</p>
+												<p className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
+													{data.alamat_lengkap || "-"}
+												</p>
+												</div>
+											)}
+										</div>
+									</div>
                 )}
                 noDataComponent={
                   <div className="flex flex-col items-center justify-center h-64 text-gray-600">

@@ -12,7 +12,7 @@ import DynamicButton from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import { useAdminUsers } from "@/_hooks/useUsers";
 import FetchLoader from "@/components/ui/FetchLoader";
-import { getImageUrl } from "@/utils";
+import { formatDate, getImageUrl } from "@/utils";
 
 export default function AdminUser() {
 	const {
@@ -187,40 +187,48 @@ export default function AdminUser() {
 								sortIcon={<ChevronDown />}
 								expandableRows
 								expandableRowsComponent={({ data }) => (
-									<div className="p-3 md:p-4 bg-gray-50 rounded-md text-sm md:text-base">
-										<p className="text-sm text-gray-600">
-											<strong>Alamat:</strong> {data?.alamat || "-"}
-										</p>
-										<p className="text-sm text-gray-600 mt-2">
-											<strong>No Telepon:</strong>
-										</p>
-										<p className="text-sm text-gray-800 mt-1">
-											{data.telepon || "-"}
-										</p>
-										<p className="text-sm text-gray-600 mt-2">
-											<strong>Tanggal Lahir:</strong>
-										</p>
-										<p className="text-sm text-gray-800 mt-1">
-											{data.tanggal_lahir
-												? new Date(
-														data.tanggal_lahir.replace(" ", "T")
-												  ).toLocaleDateString("id-ID", {
-														day: "numeric",
-														month: "long",
-														year: "numeric",
-												  })
-												: "-"}
-										</p>
-										<p className="text-sm text-gray-600 mt-2">
-											<strong>Jenis Kelamin:</strong>
-										</p>
-										{data.jenis_kelamin === "laki-laki" ? (
-											<p className="text-sm text-gray-800 mt-1">Laki-laki</p>
-										) : data.jenis_kelamin === "perempuan" ? (
-											<p className="text-sm text-gray-800 mt-1">Perempuan</p>
-										) : (
-											<p className="text-sm text-gray-800 mt-1">-</p>
-										)}
+									<div className="p-6 bg-white rounded-md border border-gray-100 shadow-sm">
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+											{/* Left column */}
+											<div className="space-y-3">
+												<div className="flex items-start">
+													<div className="text-sm text-gray-700 font-semibold">
+														Jenis Kelamin:
+													</div>
+													<div className="text-sm ml-2">
+														{data.jenis_kelamin === "laki-laki" ? (
+															<p className="text-sm text-gray-800 mt-1">Laki-laki</p>
+														) : data.jenis_kelamin === "perempuan" ? (
+															<p className="text-sm text-gray-800 mt-1">Perempuan</p>
+														) : (
+															<p className="text-sm text-gray-800 mt-1">-</p>
+														)}
+													</div>
+												</div>
+												<div className="text-sm text-gray-700">
+													<span className="font-semibold">Tanggal Lahir:</span>
+													<span className="ml-2 text-gray-900">
+														{formatDate(data.tanggal_lahir) || "-"}
+													</span>
+												</div>
+											</div>
+
+											{/* Right column */}
+											<div className="space-y-3">
+												<div className="text-sm text-gray-700">
+													<span className="font-semibold">No Telepon:</span>
+													<span className="ml-2 text-gray-900">
+														{data.telepon || "-"}
+													</span>
+												</div>
+												<div className="text-sm text-gray-700">
+													<span className="font-semibold">Alamat:</span>
+													<span className="ml-2 text-gray-900">
+														{data?.alamat || "-"}
+													</span>
+												</div>
+											</div>
+										</div>
 									</div>
 								)}
 								noDataComponent={

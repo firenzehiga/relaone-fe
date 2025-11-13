@@ -30,7 +30,7 @@ import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom";
 import FetchLoader from "@/components/ui/FetchLoader";
-import { parseApiError } from "@/utils";
+import { formatDate, parseApiError } from "@/utils";
 import Badge from "@/components/ui/Badge";
 
 export default function AdminEventParticipant() {
@@ -155,16 +155,7 @@ export default function AdminEventParticipant() {
 		{
 			name: "Tanggal Daftar",
 			selector: (row) =>
-				row.tanggal_daftar
-					? new Date(row.tanggal_daftar.replace(" ", "T")).toLocaleDateString(
-							"id-ID",
-							{
-								day: "numeric",
-								month: "long",
-								year: "numeric",
-							}
-					  )
-					: "-",
+				formatDate(row.tanggal_daftar) || "-",
 			sortable: true,
 			width: "170px",
 		},
@@ -178,10 +169,10 @@ export default function AdminEventParticipant() {
 						<Badge variant={"primary"}>Dikonfirmasi</Badge>
 					) : row.status === "attended" ? (
 						<Badge variant={"success"}>Hadir</Badge>
-					) : row.status === "absent" ? (
+					) : row.status === "no_show" ? (
 						<Badge variant={"danger"}>Tidak Hadir</Badge>
 					) : (
-						<Badge variant={"secondary"}>{row.status || "-"}</Badge>
+						<Badge variant={"danger"}>{row.status || "-"}</Badge>
 					)}
 				</>
 			),
@@ -421,11 +412,13 @@ export default function AdminEventParticipant() {
 														{data.user?.nama || "-"}
 													</span>
 												</div>
-												<div className="text-sm text-gray-700">
-													<span className="font-semibold">Event:</span>
-													<span className="ml-2 text-gray-900">
-														{data.event?.judul || "-"}
-													</span>
+												<div className="flex items-start">
+													<div className="text-sm text-gray-700 font-semibold">
+														Tanggal:
+													</div>
+													<div className="text-sm text-gray-900 ml-2">
+														{formatDate(data.event?.tanggal_mulai) || "-"} - {formatDate(data.event?.tanggal_selesai) || "-"}
+													</div>
 												</div>
 
 												<div>
@@ -445,15 +438,7 @@ export default function AdminEventParticipant() {
 														Tanggal Daftar:
 													</div>
 													<div className="text-sm text-gray-900 ml-2">
-														{data.tanggal_daftar
-															? new Date(
-																	data.tanggal_daftar.replace(" ", "T")
-															  ).toLocaleDateString("id-ID", {
-																	day: "numeric",
-																	month: "long",
-																	year: "numeric",
-															  })
-															: "-"}
+														{formatDate(data.tanggal_daftar) || "-"}
 													</div>
 												</div>
 
@@ -464,17 +449,11 @@ export default function AdminEventParticipant() {
 													<div className="text-sm ml-2">
 														{data.tanggal_konfirmasi ? (
 															<span className="text-gray-900">
-																{new Date(
-																	data.tanggal_konfirmasi.replace(" ", "T")
-																).toLocaleDateString("id-ID", {
-																	day: "numeric",
-																	month: "long",
-																	year: "numeric",
-																})}
+																{formatDate(data.tanggal_konfirmasi)}
 															</span>
 														) : (
-															<Badge variant="secondary">
-																Status Belum Dikonfirmasi
+															<Badge variant="default">
+																Belum Dikonfirmasi
 															</Badge>
 														)}
 													</div>

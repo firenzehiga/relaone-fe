@@ -32,10 +32,11 @@ import {
 } from "@chakra-ui/react";
 import { LinkButton } from "@/components/ui/Button";
 import { Link } from "react-router-dom";
-import { getImageUrl, parseApiError } from "@/utils";
+import { formatTime, getImageUrl, parseApiError } from "@/utils";
 import FetchLoader from "@/components/ui/FetchLoader";
 import { formatDate } from "@/utils/";
 import { useAuthStore } from "@/_hooks/useAuth";
+import Badge from "@/components/ui/Badge";
 
 export default function OrganizationEvent() {
 	const {
@@ -272,7 +273,7 @@ export default function OrganizationEvent() {
 			selector: (row) => row.judul || "-",
 			sortable: true,
 			wrap: true,
-			width: "250px",
+			width: "300px",
 		},
 		{
 			name: "Banner",
@@ -292,26 +293,41 @@ export default function OrganizationEvent() {
 				</div>
 			),
 			sortable: true,
-			width: "110px",
+			width: "100px",
 		},
 		{
 			name: "Batas Pendaftaran",
 			selector: (row) => formatDate(row.batas_pendaftaran || "-"),
 			sortable: false,
-			width: "150px",
+			width: "200px",
 		},
 		{
-			name: "Tanggal Mulai",
-			selector: (row) => formatDate(row.tanggal_mulai || "-"),
+			name: "Kategori",
+			selector: (row) => row.category?.nama || "-",
 			sortable: false,
 			width: "150px",
 		},
 		{
-			name: "Tanggal Selesai",
-			selector: (row) => formatDate(row.tanggal_selesai || "-"),
+			name: "Status",
+			selector: (row) => (
+				<>
+					{row.status === "draft" ? (
+						<Badge variant={"default"}>Draft</Badge>
+					) : row.status === "published" ? (
+						<Badge variant={"primary"}>Published</Badge>
+					) : row.status === "ongoing" ? (
+						<Badge variant={"warning"}>Ongoing</Badge>
+					) : row.status === "completed" ? (
+						<Badge variant={"success"}>Completed</Badge>
+					) : (
+						<Badge variant={"danger"}>Cancelled</Badge>
+					)}
+				</>
+			),
 			sortable: false,
-			width: "150px",
+			width: "110px",
 		},
+
 
 		{
 			name: "Aksi",
@@ -378,7 +394,7 @@ export default function OrganizationEvent() {
 					</Menu>
 				);
 			},
-			width: "140px",
+			wrap: true,
 		},
 	];
 
@@ -455,21 +471,66 @@ export default function OrganizationEvent() {
 								sortIcon={<ChevronDown />}
 								expandableRows
 								expandableRowsComponent={({ data }) => (
-									<div className="p-4 bg-gray-50 rounded-md">
-										<p className="text-sm text-gray-600">
-											<strong>Judul:</strong> {data.judul || "-"}
-										</p>
-										<p className="text-sm text-gray-600 mt-2">
-											<strong>Deskripsi:</strong>
-										</p>
-										<p className="text-sm text-gray-800 mt-1">
-											{data.deskripsi || "-"}
-										</p>
-										{data.lokasi && (
-											<p className="text-sm text-gray-600 mt-2">
-												<strong>Lokasi:</strong> {data.lokasi}
-											</p>
-										)}
+									<div className="p-6 bg-white rounded-md border border-gray-100 shadow-sm">
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+											{/* Left column */}
+											<div className="space-y-3">
+												<div className="text-sm text-gray-700">
+													<span className="font-semibold">Judul:</span>
+													<span className="ml-2 text-gray-900">
+														{data.judul || "-"}
+													</span>
+												</div>
+												<div className="text-sm text-gray-700">
+													<span className="font-semibold">Lokasi:</span>
+													<span className="ml-2 text-gray-900">
+														{data.location?.nama || "-"}
+													</span>
+												</div>
+												<div className="text-sm text-gray-700">
+													<span className="font-semibold">Alamat:</span>
+													<span className="ml-2 text-gray-900">
+														{data.location?.alamat || "-"}
+													</span>
+												</div>
+											</div>
+
+											{/* Right column */}
+											<div className="space-y-3">
+												<div className="flex items-start">
+													<div className="text-sm text-gray-700 font-semibold">
+														Tanggal:
+													</div>
+													<div className="text-sm text-gray-900 ml-2">
+														{formatDate(data.tanggal_mulai) || "-"} - {formatDate(data.tanggal_selesai) || "-"} WIB
+													</div>
+												</div>
+												<div className="flex items-start">
+													<div className="text-sm text-gray-700 font-semibold">
+														Waktu:
+													</div>
+													<div className="text-sm ml-2">
+														{formatTime(data.waktu_mulai) || "-"} - {formatTime(data.waktu_selesai) || "-"}
+													</div>
+												</div>
+												<div className="flex items-start">
+													<div className="text-sm text-gray-700 font-semibold">
+														Jumlah Perserta:
+													</div>
+													<div className="text-sm ml-2">
+														{data.peserta_saat_ini || 0} / {data.maks_peserta || 0} Peserta
+													</div>
+												</div>
+											</div>
+										</div>
+										<div className="mt-4">
+											<div className="text-sm font-semibold text-gray-700 mb-1">
+												Deskripsi:
+											</div>
+											<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
+												{data.deskripsi || "-"}
+											</div>
+										</div>
 									</div>
 								)}
 								noDataComponent={
