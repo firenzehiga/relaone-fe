@@ -294,7 +294,7 @@ export default function AdminEditProfilePage() {
 					</div>
 					<Button
 						variant="outline"
-						onClick={() => navigate("/profile")}
+						onClick={() => navigate("/admin/profile")}
 						className="flex items-center"
 						size="sm">
 						<ArrowLeft className="w-3 h-3 mr-2" />

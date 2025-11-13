@@ -26,8 +26,9 @@ import {
 } from "@chakra-ui/react";
 import DynamicButton, { LinkButton } from "@/components/ui/Button";
 import { Link } from "react-router-dom";
-import { getImageUrl, parseApiError } from "@/utils";
+import { formatDate, formatTime, getImageUrl, parseApiError } from "@/utils";
 import FetchLoader from "@/components/ui/FetchLoader";
+import Badge from "@/components/ui/Badge";
 
 export default function AdminEvent() {
 	const {
@@ -159,7 +160,7 @@ export default function AdminEvent() {
 			selector: (row) => row.judul || "-",
 			sortable: true,
 			wrap: true,
-			width: "300px",
+			width: "250px",
 		},
 		{
 			name: "Banner",
@@ -179,20 +180,40 @@ export default function AdminEvent() {
 				</div>
 			),
 			sortable: true,
-			width: "150px",
-		},
-
-		{
-			name: "Organisasi",
-			selector: (row) => row.organization?.nama || "-",
-			sortable: true,
-			width: "220px",
+			width: "120px",
 		},
 		{
 			name: "Deskripsi Singkat",
 			selector: (row) => row.deskripsi_singkat,
 			sortable: false,
 			wrap: true,
+			width: "230px",
+		},
+		{
+			name: "Jumlah Peserta",
+			selector: (row) => (`${row.peserta_saat_ini}/${row.maks_peserta}`),
+			sortable: false,
+			wrap: true,
+		},
+		{
+			name: "Status",
+			selector: (row) => (
+				<>
+					{row.status === "draft" ? (
+						<Badge variant={"default"}>Draft</Badge>
+					) : row.status === "published" ? (
+						<Badge variant={"primary"}>Published</Badge>
+					) : row.status === "ongoing" ? (
+						<Badge variant={"warning"}>Ongoing</Badge>
+					) : row.status === "completed" ? (
+						<Badge variant={"success"}>Completed</Badge>
+					) : (
+						<Badge variant={"danger"}>Cancelled</Badge>
+					)}
+				</>
+			),
+			sortable: false,
+			width: "120px",
 		},
 
 		{
@@ -321,21 +342,66 @@ export default function AdminEvent() {
 								sortIcon={<ChevronDown />}
 								expandableRows
 								expandableRowsComponent={({ data }) => (
-									<div className="p-4 bg-gray-50 rounded-md">
-										<p className="text-sm text-gray-600">
-											<strong>Judul:</strong> {data.judul || "-"}
-										</p>
-										<p className="text-sm text-gray-600 mt-2">
-											<strong>Deskripsi:</strong>
-										</p>
-										<p className="text-sm text-gray-800 mt-1">
-											{data.deskripsi || "-"}
-										</p>
-										{data.lokasi && (
-											<p className="text-sm text-gray-600 mt-2">
-												<strong>Lokasi:</strong> {data.lokasi}
-											</p>
-										)}
+									<div className="p-6 bg-white rounded-md border border-gray-100 shadow-sm">
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+											{/* Left column */}
+											<div className="space-y-3">
+												<div className="text-sm text-gray-700">
+													<span className="font-semibold">Organisasi:</span>
+													<span className="ml-2 text-gray-900">
+														{data.organization?.nama || "-"}
+													</span>
+												</div>
+												<div className="text-sm text-gray-700">
+													<span className="font-semibold">Lokasi:</span>
+													<span className="ml-2 text-gray-900">
+														{data.location?.nama || "-"}
+													</span>
+												</div>
+												<div className="text-sm text-gray-700">
+													<span className="font-semibold">Alamat:</span>
+													<span className="ml-2 text-gray-900">
+														{data.location?.alamat || "-"}
+													</span>
+												</div>
+											</div>
+
+											{/* Right column */}
+											<div className="space-y-3">
+												<div className="flex items-start">
+													<div className="text-sm text-gray-700 font-semibold">
+														Tanggal:
+													</div>
+													<div className="text-sm text-gray-900 ml-2">
+														{formatDate(data.tanggal_mulai) || "-"} - {formatDate(data.tanggal_selesai) || "-"}
+													</div>
+												</div>
+												<div className="flex items-start">
+													<div className="text-sm text-gray-700 font-semibold">
+														Waktu:
+													</div>
+													<div className="text-sm ml-2">
+														{formatTime(data.waktu_mulai) || "-"} - {formatTime(data.waktu_selesai) || "-"} WIB
+													</div>
+												</div>
+												<div className="flex items-start">
+													<div className="text-sm text-gray-700 font-semibold">
+														Jumlah Perserta:
+													</div>
+													<div className="text-sm ml-2">
+														{data.peserta_saat_ini || 0} / {data.maks_peserta || 0} Peserta
+													</div>
+												</div>
+											</div>
+										</div>
+										<div className="mt-4">
+											<div className="text-sm font-semibold text-gray-700 mb-1">
+												Deskripsi:
+											</div>
+											<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
+												{data.deskripsi || "-"}
+											</div>
+										</div>
 									</div>
 								)}
 								noDataComponent={
