@@ -12,13 +12,12 @@ import Badge from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
 import {
 	cn,
-	formatDate,
-	formatTime,
 	getImageUrl,
 	getGoogleMapsUrl,
 	getDirectionsUrl,
 	getStaticMapUrl,
 } from "@/utils";
+import { formatDate, formatTime } from "@/utils/dateFormatter";
 import { AsyncImage } from "loadable-image";
 import { Fade } from "transitions-kit";
 /**
@@ -125,7 +124,7 @@ export default function EventCard({
 						<span className="font-semibold">
 							{formatDate(event.tanggal_mulai)} •{" "}
 							{formatTime(event.waktu_mulai)} -{" "}
-							{formatTime(event.waktu_selesai)}
+							{formatTime(event.waktu_selesai, "WIB")}
 						</span>
 					</div>
 

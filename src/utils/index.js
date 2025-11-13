@@ -1,3 +1,9 @@
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/id";
+
+// Extend dayjs with relative time plugin
+dayjs.extend(relativeTime);
 /**
  * Utility function untuk menggabungkan class names CSS dengan aman
  * Menghilangkan class yang falsy (null, undefined, false, empty string)
@@ -64,18 +70,35 @@ export const parseApiError = (err) => {
 };
 
 /**
+ * Util: Normalisasi input menjadi objek dayjs.
+ * Menerima: Date, number (timestamp), atau string (termasuk format "YYYY-MM-DD HH:mm:ss" atau ISO).
+ *
+ * @param {Date|number|string} input
+ * @returns {dayjs.Dayjs}
+ */
+export const toDayjs = (input) => {
+	if (input instanceof Date) return dayjs(input);
+	if (typeof input === "number") return dayjs(input);
+	if (typeof input === "string") {
+		// Ganti spasi pertama menjadi 'T' agar dayjs mengenali 'YYYY-MM-DD HH:mm:ss'
+		const isoLike = input.replace(" ", "T");
+		return dayjs(isoLike);
+	}
+	// fallback: coba dayjs langsung
+	return dayjs(input);
+};
+
+/**
  * Memformat string tanggal menjadi format Indonesia yang lebih ringkas
  *
  * @param {string} dateString - String tanggal dalam format apapun yang bisa di-parse Date
  * @returns {string} Tanggal dalam format "DD MMM YYYY"
  */
-export const formatDate = (dateString) => {
-	const date = new Date(dateString);
-	return date.toLocaleDateString("id-ID", {
-		day: "numeric",
-		month: "long",
-		year: "numeric",
-	});
+export const formatDate = (tgl) => {
+	if (!tgl && tgl !== 0) return "-";
+
+	const d = toDayjs(tgl);
+	return d.isValid() ? d.locale("id").format("D MMMM YYYY") : "-";
 };
 
 /**
