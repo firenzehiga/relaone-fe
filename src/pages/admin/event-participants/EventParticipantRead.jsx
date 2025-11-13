@@ -154,8 +154,7 @@ export default function AdminEventParticipant() {
 		},
 		{
 			name: "Tanggal Daftar",
-			selector: (row) =>
-				formatDate(row.tanggal_daftar) || "-",
+			selector: (row) => formatDate(row.tanggal_daftar) || "-",
 			sortable: true,
 			width: "170px",
 		},
@@ -417,7 +416,8 @@ export default function AdminEventParticipant() {
 														Tanggal:
 													</div>
 													<div className="text-sm text-gray-900 ml-2">
-														{formatDate(data.event?.tanggal_mulai) || "-"} - {formatDate(data.event?.tanggal_selesai) || "-"}
+														{formatDate(data.event?.tanggal_mulai) || "-"} -{" "}
+														{formatDate(data.event?.tanggal_selesai) || "-"}
 													</div>
 												</div>
 

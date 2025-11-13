@@ -133,7 +133,7 @@ export default function AdminHeader() {
 					</Link>
 
 					{/* Desktop Navigation - Centered */}
-					<nav className="hidden md:flex items-center space-x-4 flex-1 justify-center">
+					<nav className="hidden lg:flex items-center space-x-4 flex-1 justify-center">
 						{navItems.map((item) => {
 							const active =
 								isActive(item.href) ||
@@ -266,7 +266,7 @@ export default function AdminHeader() {
 								</AnimatePresence>
 							</div>
 						) : (
-							<div className="hidden md:flex items-center space-x-2">
+							<div className="hidden lg:flex items-center space-x-2">
 								<DynamicButton
 									variant="success"
 									size="sm"
@@ -280,7 +280,7 @@ export default function AdminHeader() {
 						{/* Mobile Menu Button */}
 						<button
 							onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-							className="md:hidden text-gray-600 hover:text-gray-900">
+							className="lg:hidden text-gray-600 hover:text-gray-900">
 							{mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
 						</button>
 					</div>
@@ -299,7 +299,7 @@ export default function AdminHeader() {
 								opacity: { duration: 0.15 },
 								scaleY: { duration: 0.2 },
 							}}
-							className="md:hidden origin-top overflow-hidden border-t border-gray-200"
+							className="lg:hidden origin-top overflow-hidden border-t border-gray-200"
 							style={{ transformOrigin: "top" }}>
 							<div className="py-4 px-2">
 								<nav className="space-y-1">
