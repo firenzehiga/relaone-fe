@@ -190,10 +190,11 @@ export default function AdminEvent() {
 			width: "230px",
 		},
 		{
-			name: "Jumlah Peserta",
-			selector: (row) => (`${row.peserta_saat_ini}/${row.maks_peserta}`),
+			name: "Kategori",
+			selector: (row) => row.category?.nama || "-",
 			sortable: false,
 			wrap: true,
+			width: "110px",
 		},
 		{
 			name: "Status",
