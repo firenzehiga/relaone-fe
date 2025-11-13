@@ -34,9 +34,8 @@ import {
 	Portal,
 	IconButton,
 } from "@chakra-ui/react";
-import { use, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
-import { Link } from "react-router-dom";
 import FetchLoader from "@/components/ui/FetchLoader";
 import { formatDate, parseApiError } from "@/utils";
 import Badge from "@/components/ui/Badge";
@@ -311,15 +310,13 @@ export default function OrganizationEventParticipant() {
 
 		{
 			name: "Tanggal Daftar",
-			selector: (row) =>
-				formatDate(row.tanggal_daftar) || "-",
+			selector: (row) => formatDate(row.tanggal_daftar) || "-",
 			sortable: true,
 			width: "170px",
 		},
 		{
 			name: "Tanggal Hadir",
-			selector: (row) =>
-				formatDate(row.tanggal_hadir) || "-",
+			selector: (row) => formatDate(row.tanggal_hadir) || "-",
 			sortable: true,
 			width: "170px",
 		},
@@ -515,8 +512,7 @@ export default function OrganizationEventParticipant() {
 											className={`text-xs ${
 												isEventFinished ? "text-gray-700" : "text-blue-700"
 											}`}>
-											{formatDate(selectedEvent.tanggal_mulai)}
-											{" "}-{" "}
+											{formatDate(selectedEvent.tanggal_mulai)} -{" "}
 											{formatDate(selectedEvent.tanggal_selesai)}
 										</p>
 									</div>
@@ -726,7 +722,8 @@ export default function OrganizationEventParticipant() {
 														Tanggal:
 													</div>
 													<div className="text-sm text-gray-900 ml-2">
-														{formatDate(data.event?.tanggal_mulai) || "-"} - {formatDate(data.event?.tanggal_selesai) || "-"}
+														{formatDate(data.event?.tanggal_mulai) || "-"} -{" "}
+														{formatDate(data.event?.tanggal_selesai) || "-"}
 													</div>
 												</div>
 
