@@ -46,7 +46,6 @@ export default function EventsPage() {
 	});
 
 	const [showFilters, setShowFilters] = useState(false);
-	const [viewMode, setViewMode] = useState("grid"); // grid, list, map
 
 	const filteredEvents = useMemo(() => {
 		if (!events.length) return [];
@@ -254,25 +253,6 @@ export default function EventsPage() {
 						</DynamicButton>
 
 						<div className="flex items-center gap-2">
-							{/* View Mode Toggle */}
-							<div className="flex bg-gray-100 rounded-lg p-1">
-								<DynamicButton
-									variant={viewMode === "grid" ? "success" : "ghost"}
-									size="xs"
-									onClick={() => setViewMode("grid")}
-									className="px-3 py-1">
-									Grid
-								</DynamicButton>
-								<DynamicButton
-									variant={viewMode === "map" ? "success" : "ghost"}
-									size="xs"
-									onClick={() => setViewMode("map")}
-									className="px-3 py-1">
-									<Map size={14} className="mr-1" />
-									Peta
-								</DynamicButton>
-							</div>
-
 							{hasActiveFilters && (
 								<DynamicButton
 									variant="outline"
@@ -394,102 +374,23 @@ export default function EventsPage() {
 				{/* Events Display */}
 				{filteredEvents.length > 0 ? (
 					<>
-						{/* Grid View */}
-						{viewMode === "grid" && (
-							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-								{filteredEvents.map((event, index) => (
-									<motion.div
-										key={event.id}
-										initial={{ opacity: 0, y: 20 }}
-										animate={{ opacity: 1, y: 0 }}
-										exit={{ opacity: 0 }}
-										transition={{ delay: index * 0.1 }}>
-										<EventCard
-											event={{
-												...event,
-											}}
-											onJoin={handleJoinEvent}
-										/>
-									</motion.div>
-								))}
-							</div>
-						)}
-
-						{/* Map View */}
-						{viewMode === "map" && (
-							<div className="space-y-6">
-								{/* Google Maps */}
-								<div className="bg-gray-100 rounded-lg overflow-hidden shadow-inner h-96">
-									<iframe
-										width="100%"
-										height="100%"
-										style={{ border: 0 }}
-										loading="lazy"
-										allowFullScreen
-										referrerPolicy="no-referrer-when-downgrade"
-										src={`https://www.google.com/maps/embed/v1/search?key=YOUR_GOOGLE_MAPS_API_KEY&q=events+jakarta&zoom=12`}
-										className="rounded-lg"
+						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+							{filteredEvents.map((event, index) => (
+								<motion.div
+									key={event.id}
+									initial={{ opacity: 0, y: 20 }}
+									animate={{ opacity: 1, y: 0 }}
+									exit={{ opacity: 0 }}
+									transition={{ delay: index * 0.1 }}>
+									<EventCard
+										event={{
+											...event,
+										}}
+										onJoin={handleJoinEvent}
 									/>
-								</div>
-
-								{/* Events List Below Map */}
-								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-									{filteredEvents.map((event, index) => (
-										<motion.div
-											key={event.id}
-											initial={{ opacity: 0, x: -20 }}
-											animate={{ opacity: 1, x: 0 }}
-											transition={{ delay: index * 0.05 }}>
-											<div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
-												<div className="flex gap-4">
-													<AsyncImage
-														loading="lazy"
-														transition={Fade}
-														src={getImageUrl(`events/${event.gambar}`)}
-														alt={event.judul}
-														className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
-														onError={(e) => {
-															e.target.onerror = null;
-															e.target.src = "https://placehold.co/400";
-														}}
-													/>
-
-													<div className="flex-1 min-w-0">
-														<h3 className="font-semibold text-gray-900 line-clamp-1 mb-1">
-															{event.judul}
-														</h3>
-														<p className="text-sm text-gray-600 line-clamp-2 mb-2">
-															{event.deskripsi}
-														</p>
-														<div className="flex items-center text-xs text-gray-500 mb-2">
-															<MapPin size={12} className="mr-1" />
-															<span className="line-clamp-1">
-																{event.location?.alamat}
-															</span>
-														</div>
-														<div className="flex gap-2">
-															<DynamicButton
-																variant="outline"
-																size="sm"
-																onClick={() => handleViewEventDetail(event.id)}>
-																Detail
-															</DynamicButton>
-															<DynamicButton
-																variant="success"
-																size="sm"
-																onClick={() => openJoinModal(event.id, event)}
-																disabled={isRegistrationClosedFor(event)}>
-																{registrationLabelFor(event)}
-															</DynamicButton>
-														</div>
-													</div>
-												</div>
-											</div>
-										</motion.div>
-									))}
-								</div>
-							</div>
-						)}
+								</motion.div>
+							))}
+						</div>
 					</>
 				) : (
 					<div className="text-center py-16">

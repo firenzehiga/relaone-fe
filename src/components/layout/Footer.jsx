@@ -64,13 +64,15 @@ export default function Footer() {
 						<h4 className="text-lg text-gray-900 font-medium mb-7">Legal</h4>
 						<ul className=" transition-all duration-500">
 							<li className="mb-6">
-								<Link to="/terms" className="text-gray-600 hover:text-gray-900">
+								<Link
+									to="/terms-of-service"
+									className="text-gray-600 hover:text-gray-900">
 									Terms &amp; Conditions
 								</Link>
 							</li>
 							<li>
 								<Link
-									to="/privacy"
+									to="/privacy-policy"
 									className="text-gray-600 hover:text-gray-900">
 									Privacy Policy
 								</Link>

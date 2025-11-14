@@ -519,13 +519,13 @@ export default function RegisterPage() {
 									className="ml-2 text-sm text-gray-600">
 									I agree to the{" "}
 									<Link
-										to="/terms"
+										to="/terms-of-service"
 										className="text-blue-600 hover:text-blue-800">
 										Terms of Service
 									</Link>{" "}
 									and{" "}
 									<Link
-										to="/privacy"
+										to="/privacy-policy"
 										className="text-blue-600 hover:text-blue-800">
 										Privacy Policy
 									</Link>

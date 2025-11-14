@@ -85,6 +85,7 @@ import OrganizationLocationCreate from "@/pages/organization/locations/LocationC
 import OrganizationLocationEdit from "@/pages/organization/locations/LocationEdit";
 import AdminLayout from "./layout/AdminLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
+import { PrivacyPolicyPage, TermsOfServicePage } from "./pages/PrivacyTerms";
 /**
  * Komponen utama aplikasi volunteer platform
  * Mengatur routing dengan layout yang menggunakan Outlet
@@ -111,6 +112,8 @@ function App() {
 					</Route>
 					<Route path="organizations" element={<OrganizationsPage />} />
 				</Route>
+				<Route path="privacy-policy" element={<PrivacyPolicyPage />} />
+				<Route path="terms-of-service" element={<TermsOfServicePage />} />
 				<Route
 					path="volunteer"
 					element={
