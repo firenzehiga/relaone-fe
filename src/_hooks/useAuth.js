@@ -25,6 +25,20 @@ const rehydratedUser = (() => {
 })();
 
 /**
+ * Helper untuk mengambil status verifikasi organisasi tanpa memodifikasi objek user.
+ * Mengcover beberapa kemungkinan shape yang dikembalikan backend.
+ */
+export function getOrgVerificationStatus(user) {
+	return (
+		user?.role_data?.status_verifikasi ??
+		user?.organization?.status_verifikasi ??
+		user?.role_data?.status ??
+		user?.organization?.status ??
+		null
+	);
+}
+
+/**
  * Zustand store untuk auth
  * - Menyimpan user dan token
  * - Mendukung re-hydrate dari localStorage (authUser, authToken)
@@ -133,30 +147,26 @@ const useAuthStore = create((set, get) => ({
 		set({ token, isAuthenticated: true, user: parsedUser, initialized: true });
 
 		// Jalankan verifikasi profil di background tanpa menunggu.
-		// Jika verifikasi gagal, kita bersihkan auth lokal.
+		// TUJUAN: memvalidasi token saja. Jangan menimpa `authUser` yang sudah ada
+		// karena shape dari login/register bisa berbeda. Hanya clear auth bila
+		// server menolak token (401). Untuk error jaringan/transient jangan auto-logout.
 		(async () => {
 			try {
-				const res = await userService.getUserProfile();
-				const remoteUser = res.data;
-				if (remoteUser) {
-					set({ user: remoteUser });
-					try {
-						localStorage.setItem("authUser", JSON.stringify(remoteUser));
-					} catch (e) {}
-				} else {
-					// jika respons tidak valid, hapus data lokal
+				await userService.getUserProfile();
+				// token valid — tidak perlu menimpa local authUser di keadaan normal
+			} catch (err) {
+				const status = err?.response?.status;
+				if (status === 401) {
+					// token invalid/expired -> clear auth
 					set({ user: null, token: null, isAuthenticated: false });
 					try {
 						localStorage.removeItem("authToken");
 						localStorage.removeItem("authUser");
 					} catch (e) {}
+				} else {
+					// network / transient error -> jangan clear auth supaya pengguna tidak
+					// ter-logout karena masalah sementara
 				}
-			} catch (err) {
-				set({ user: null, token: null, isAuthenticated: false });
-				try {
-					localStorage.removeItem("authToken");
-					localStorage.removeItem("authUser");
-				} catch (e) {}
 			}
 		})();
 	},
@@ -234,11 +244,29 @@ export const useRegister = () => {
 			setAuth(data.data.user, data.data.token);
 			setLoading(false);
 
-			// Show success toast
-			toast.success(
-				`Selamat datang di RelaOne, ${data.data.user.nama}! ${data.message}`,
-				{ duration: 2000 }
-			);
+			if (data.data.user.role === "organization") {
+				showToast({
+					type: "success",
+					title: `Selamat datang di RelaOne, ${data.data.user.nama}!`,
+					message: `${data.message}, akun Anda sedang dalam proses verifikasi oleh admin.`,
+					duration: 3000,
+					position: "top-center",
+				});
+
+				// pastikan diarahkan ke profile organisasi (replace supaya tidak kembali ke halaman sebelumnya)
+				queryClient.invalidateQueries(["auth", "profile"]);
+				navigate("/organization/profile", { replace: true });
+				return; // hentikan supaya tidak lanjut ke switch/case lain
+			}
+
+			// non-organization flow
+			showToast({
+				type: "success",
+				title: `Selamat datang di RelaOne, ${data.data.user.nama}!`,
+				message: `${data.message}`,
+				duration: 3000,
+				position: "top-center",
+			});
 
 			// Invalidate and refetch user profile
 			queryClient.invalidateQueries(["auth", "profile"]);
@@ -248,9 +276,6 @@ export const useRegister = () => {
 			switch (userRole) {
 				case "admin":
 					navigate("/admin/dashboard");
-					break;
-				case "organization":
-					navigate("/organization/dashboard");
 					break;
 				case "volunteer":
 				default:

@@ -520,12 +520,14 @@ export default function RegisterPage() {
 									I agree to the{" "}
 									<Link
 										to="/terms-of-service"
+										target="_blank"
 										className="text-blue-600 hover:text-blue-800">
 										Terms of Service
 									</Link>{" "}
 									and{" "}
 									<Link
 										to="/privacy-policy"
+										target="_blank"
 										className="text-blue-600 hover:text-blue-800">
 										Privacy Policy
 									</Link>
