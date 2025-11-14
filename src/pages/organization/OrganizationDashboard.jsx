@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useOrgAnalytics } from "@/_hooks/useUsers";
 import { useOrgEvents } from "@/_hooks/useEvents";
 import OrganizationAnalytics from "@/components/organization/OrganizationAnalytics";
+import { useAuthStore } from "@/_hooks/useAuth";
+import OrganizationPending from "@/components/fallback/OrganizationPending";
 
 export default function OrganizationDashboard() {
 	const [selectedEventId, setSelectedEventId] = useState("");
-
+	const { user } = useAuthStore();
 	// fetch list of org events for selector
 	const { data: eventsData, isLoading: eventsLoading } = useOrgEvents();
 
@@ -17,6 +19,9 @@ export default function OrganizationDashboard() {
 		error,
 	} = useOrgAnalytics(params);
 
+	if (user.organization.status_verifikasi === "pending") {
+		return <OrganizationPending />;
+	}
 	return (
 		<div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
 			<div className="max-w-7xl mx-auto">

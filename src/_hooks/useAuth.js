@@ -252,21 +252,16 @@ export const useRegister = () => {
 					duration: 3000,
 					position: "top-center",
 				});
-
-				// pastikan diarahkan ke profile organisasi (replace supaya tidak kembali ke halaman sebelumnya)
-				queryClient.invalidateQueries(["auth", "profile"]);
-				navigate("/organization/profile", { replace: true });
-				return; // hentikan supaya tidak lanjut ke switch/case lain
+			} else {
+				// Show success toast
+				showToast({
+					type: "success",
+					title: `Selamat datang di RelaOne, ${data.data.user.nama}!`,
+					message: `${data.message}`,
+					duration: 3000,
+					position: "top-center",
+				});
 			}
-
-			// non-organization flow
-			showToast({
-				type: "success",
-				title: `Selamat datang di RelaOne, ${data.data.user.nama}!`,
-				message: `${data.message}`,
-				duration: 3000,
-				position: "top-center",
-			});
 
 			// Invalidate and refetch user profile
 			queryClient.invalidateQueries(["auth", "profile"]);
@@ -276,6 +271,9 @@ export const useRegister = () => {
 			switch (userRole) {
 				case "admin":
 					navigate("/admin/dashboard");
+					break;
+				case "organization":
+					navigate("/organization/dashboard");
 					break;
 				case "volunteer":
 				default:

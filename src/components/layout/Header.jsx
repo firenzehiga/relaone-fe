@@ -79,7 +79,13 @@ export default function Header() {
 		// mengecek status verifikasi organisasi dari authUser di local storage
 		const orgStatus = user?.organization?.status_verifikasi;
 		if (orgStatus === "pending") {
-			navItems = [];
+			navItems = [
+				{
+					name: "Dashboard",
+					href: "/organization/dashboard",
+					icon: Building,
+				},
+			];
 		} else {
 			navItems = orgNav;
 		}
