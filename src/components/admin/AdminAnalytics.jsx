@@ -19,6 +19,7 @@ import StatsCard from "./StatsCard";
 import Card from "../ui/Card";
 import Skeleton from "../ui/Skeleton";
 import { formatRelativeTime } from "@/utils/dateFormatter";
+import Badge from "../ui/Badge";
 /**
  * AdminAnalytics Component
  * Component untuk menampilkan analytics dashboard dengan berbagai statistik dan charts
@@ -50,35 +51,72 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 		COLORS.pink,
 	];
 
-	// Transform data untuk charts
+	/*  usersByRoleData
+	 * Data untuk menampilkan statistik pengguna berdasarkan rolenya dalam bentuk pie chart.
+	 *
+	 * Cara kerja:
+	 * 1. Mengecek apakah data.users.users_by_role tersedia. Jika tidak, mengembalikan array kosong.
+	 * 2. Menggunakan Object.entries untuk mengubah objek users_by_role menjadi array pasangan [role, count].
+	 * 3. Memetakan setiap pasangan menjadi objek dengan properti name (role dengan huruf kapital) dan value (jumlah pengguna).
+	 * 4. Menggunakan filter untuk memilih hanya pasangan yang memiliki count (jumlah pengguna) lebih besar dari 0.
+	 */
 	const usersByRoleData = useMemo(() => {
 		if (!data?.users?.users_by_role) return [];
-		return Object.entries(data.users.users_by_role).map(([role, count]) => ({
-			name: role.charAt(0).toUpperCase() + role.slice(1),
-			value: count,
-		}));
+		return Object.entries(data.users.users_by_role)
+			.map(([role, count]) => ({
+				name: role.charAt(0).toUpperCase() + role.slice(1),
+				value: count,
+			}))
+			.filter((entry) => Number(entry.value) > 0);
 	}, [data]);
 
+	/*  usersByStatusData
+	 * Data untuk menampilkan statistik pengguna berdasarkan statusnya dalam bentuk pie chart.
+	 *
+	 * Cara kerja:
+	 * 1. Mengecek apakah data.users.users_by_status tersedia. Jika tidak, mengembalikan array kosong.
+	 * 2. Menggunakan Object.entries untuk mengubah objek users_by_status menjadi array pasangan [status, count].
+	 * 3. Memetakan setiap pasangan menjadi objek dengan properti name (status dengan huruf kapital) dan value (jumlah pengguna).
+	 * 4. Menggunakan filter untuk memilih hanya pasangan yang memiliki count (jumlah pengguna) lebih besar dari 0.
+	 */
 	const usersByStatusData = useMemo(() => {
 		if (!data?.users?.users_by_status) return [];
-		return Object.entries(data.users.users_by_status).map(
-			([status, count]) => ({
+		return Object.entries(data.users.users_by_status)
+			.map(([status, count]) => ({
 				name: status.charAt(0).toUpperCase() + status.slice(1),
 				value: count,
-			})
-		);
+			}))
+			.filter((entry) => Number(entry.value) > 0);
 	}, [data]);
 
+	/*  participantsByStatusData
+	 * Data untuk menampilkan statistik partisipan berdasarkan statusnya dalam bentuk pie chart.
+	 *
+	 * Cara kerja:
+	 * 1. Mengecek apakah data.participants.participants_by_status tersedia. Jika tidak, mengembalikan array kosong.
+	 * 2. Menggunakan Object.entries untuk mengubah objek participants_by_status menjadi array pasangan [status, count].
+	 * 3. Memetakan setiap pasangan menjadi objek dengan properti name (status dengan huruf kapital) dan value (jumlah partisipan).
+	 * 4. Menggunakan filter untuk memilih hanya pasangan yang memiliki count (jumlah partisipan) lebih besar dari 0.
+	 */
 	const participantsByStatusData = useMemo(() => {
 		if (!data?.participants?.participants_by_status) return [];
-		return Object.entries(data.participants.participants_by_status).map(
-			([status, count]) => ({
+		return Object.entries(data.participants.participants_by_status)
+			.map(([status, count]) => ({
 				name: status.charAt(0).toUpperCase() + status.slice(1),
 				value: count,
-			})
-		);
+			}))
+			.filter((entry) => Number(entry.value) > 0);
 	}, [data]);
 
+	/*  loginTrendData
+	 * Data untuk menampilkan tren login pengguna dalam bentuk line chart.
+	 *
+	 * Cara kerja:
+	 * 1. Mengecek apakah data.users.login_trend tersedia. Jika tidak, mengembalikan array kosong.
+	 * 2. Menggunakan map untuk mengubah array login_trend menjadi array objek dengan properti date (tanggal) dan count (jumlah login).
+	 * 3. Menggunakan toLocaleDateString untuk mengubah format tanggal menjadi format Indonesia.
+	 * 4. Menggunakan filter untuk memilih hanya objek yang memiliki count (jumlah login) lebih besar dari 0.
+	 */
 	const loginTrendData = useMemo(() => {
 		if (!data?.users?.login_trend) return [];
 		return data.users.login_trend.map((item) => ({
@@ -90,6 +128,15 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 		}));
 	}, [data]);
 
+	/*  registrationTrendData
+	 * Data untuk menampilkan tren registrasi partisipan dalam bentuk line chart.
+	 *
+	 * Cara kerja:
+	 * 1. Mengecek apakah data.participants.registration_trend tersedia. Jika tidak, mengembalikan array kosong.
+	 * 2. Menggunakan map untuk mengubah array registration_trend menjadi array objek dengan properti date (tanggal) dan count (jumlah registrasi).
+	 * 3. Menggunakan toLocaleDateString untuk mengubah format tanggal menjadi format Indonesia.
+	 * 4. Menggunakan filter untuk memilih hanya objek yang memiliki count (jumlah registrasi) lebih besar dari 0.
+	 */
 	const registrationTrendData = useMemo(() => {
 		if (!data?.participants?.registration_trend) return [];
 		return data.participants.registration_trend.map((item) => ({
@@ -101,8 +148,13 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 		}));
 	}, [data]);
 
-	// Custom tooltip untuk charts
-	const CustomTooltip = ({ active, payload, label }) => {
+	/*  CustomTooltip
+	 * function untuk menampilkan tooltip kustom pada charts.
+	 *
+	 * Cara kerja:
+	 * 1. Mengecek apakah active dan payload tersedia. Jika tidak, mengembalikan null.
+	 * 2. Mengembalikan elemen div yang berisi informasi label dan value dari payload.
+	 */ const CustomTooltip = ({ active, payload, label }) => {
 		if (active && payload && payload.length) {
 			return (
 				<div className="bg-white px-4 py-2 border border-gray-200 rounded-lg shadow-lg">
@@ -299,30 +351,36 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 					<h3 className="text-lg font-bold text-gray-900 mb-4">
 						Pengguna Berdasarkan Role
 					</h3>
-					<ResponsiveContainer width="100%" height={300}>
-						<PieChart>
-							<Pie
-								data={usersByRoleData}
-								cx="50%"
-								cy="50%"
-								labelLine={false}
-								label={({ name, percent }) =>
-									`${name}: ${(percent * 100).toFixed(0)}%`
-								}
-								outerRadius={80}
-								fill="#8884d8"
-								dataKey="value">
-								{usersByRoleData.map((entry, index) => (
-									<Cell
-										key={`cell-${index}`}
-										fill={PIE_COLORS[index % PIE_COLORS.length]}
-									/>
-								))}
-							</Pie>
-							<Tooltip />
-							<Legend />
-						</PieChart>
-					</ResponsiveContainer>
+					{usersByRoleData.length === 0 ? (
+						<div className="py-16 text-center text-gray-500">
+							Belum ada data role pengguna
+						</div>
+					) : (
+						<ResponsiveContainer width="100%" height={300}>
+							<PieChart>
+								<Pie
+									data={usersByRoleData}
+									cx="50%"
+									cy="50%"
+									labelLine={false}
+									label={({ name, percent }) =>
+										`${name}: ${(percent * 100).toFixed(0)}%`
+									}
+									outerRadius={80}
+									fill="#8884d8"
+									dataKey="value">
+									{usersByRoleData.map((entry, index) => (
+										<Cell
+											key={`cell-${index}`}
+											fill={PIE_COLORS[index % PIE_COLORS.length]}
+										/>
+									))}
+								</Pie>
+								<Tooltip />
+								<Legend />
+							</PieChart>
+						</ResponsiveContainer>
+					)}
 				</Card>
 
 				{/* Users by Status - Pie Chart */}
@@ -330,30 +388,36 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 					<h3 className="text-lg font-bold text-gray-900 mb-4">
 						Pengguna Berdasarkan Status
 					</h3>
-					<ResponsiveContainer width="100%" height={300}>
-						<PieChart>
-							<Pie
-								data={usersByStatusData}
-								cx="50%"
-								cy="50%"
-								labelLine={false}
-								label={({ name, percent }) =>
-									`${name}: ${(percent * 100).toFixed(0)}%`
-								}
-								outerRadius={80}
-								fill="#8884d8"
-								dataKey="value">
-								{usersByStatusData.map((entry, index) => (
-									<Cell
-										key={`cell-${index}`}
-										fill={PIE_COLORS[index % PIE_COLORS.length]}
-									/>
-								))}
-							</Pie>
-							<Tooltip />
-							<Legend />
-						</PieChart>
-					</ResponsiveContainer>
+					{usersByStatusData.length === 0 ? (
+						<div className="py-16 text-center text-gray-500">
+							Belum ada data status pengguna
+						</div>
+					) : (
+						<ResponsiveContainer width="100%" height={300}>
+							<PieChart>
+								<Pie
+									data={usersByStatusData}
+									cx="50%"
+									cy="50%"
+									labelLine={false}
+									label={({ name, percent }) =>
+										`${name}: ${(percent * 100).toFixed(0)}%`
+									}
+									outerRadius={80}
+									fill="#8884d8"
+									dataKey="value">
+									{usersByStatusData.map((entry, index) => (
+										<Cell
+											key={`cell-${index}`}
+											fill={PIE_COLORS[index % PIE_COLORS.length]}
+										/>
+									))}
+								</Pie>
+								<Tooltip />
+								<Legend />
+							</PieChart>
+						</ResponsiveContainer>
+					)}
 				</Card>
 			</div>
 
@@ -421,29 +485,35 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 				<h3 className="text-lg font-bold text-gray-900 mb-4">
 					Partisipan Berdasarkan Status
 				</h3>
-				<ResponsiveContainer width="100%" height={300}>
-					<BarChart data={participantsByStatusData}>
-						<CartesianGrid strokeDasharray="3 3" />
-						<XAxis dataKey="name" />
-						<YAxis
-							allowDecimals={false}
-							tickFormatter={(v) => (Number.isInteger(v) ? v : Math.round(v))}
-						/>
-						<Tooltip content={<CustomTooltip />} />
-						<Legend />
-						<Bar
-							dataKey="value"
-							name="Count"
-							fill={COLORS.primary}
-							radius={[8, 8, 0, 0]}>
-							<LabelList
-								dataKey="value"
-								position="top"
-								formatter={(v) => Math.round(v)}
+				{participantsByStatusData.length === 0 ? (
+					<div className="py-16 text-center text-gray-500">
+						Belum ada data partisipan berdasarkan status
+					</div>
+				) : (
+					<ResponsiveContainer width="100%" height={300}>
+						<BarChart data={participantsByStatusData}>
+							<CartesianGrid strokeDasharray="3 3" />
+							<XAxis dataKey="name" />
+							<YAxis
+								allowDecimals={false}
+								tickFormatter={(v) => (Number.isInteger(v) ? v : Math.round(v))}
 							/>
-						</Bar>
-					</BarChart>
-				</ResponsiveContainer>
+							<Tooltip content={<CustomTooltip />} />
+							<Legend />
+							<Bar
+								dataKey="value"
+								name="Count"
+								fill={COLORS.primary}
+								radius={[8, 8, 0, 0]}>
+								<LabelList
+									dataKey="value"
+									position="top"
+									formatter={(v) => Math.round(v)}
+								/>
+							</Bar>
+						</BarChart>
+					</ResponsiveContainer>
+				)}
 			</Card>
 
 			{/* Recent Logins & Most Active Users */}
@@ -467,9 +537,20 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 										</p>
 									</div>
 									<div className="ml-4">
-										<span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-											{user.role}
-										</span>
+										<Badge
+											variant={
+												user.role === "admin"
+													? "orange"
+													: user.role === "organization"
+													? "success"
+													: "primary"
+											}>
+											{user.role === "admin"
+												? "Admin"
+												: user.role === "organization"
+												? "Organization"
+												: "Volunteer"}
+										</Badge>
 									</div>
 								</div>
 							))

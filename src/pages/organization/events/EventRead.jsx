@@ -182,8 +182,8 @@ export default function OrganizationEvent() {
 
 	const canCancel = (row) => {
 		if (!row) return false;
-		// di backend meelarang membatalkan event yang sudah selesai, dibatalkan, atau sedang berlangsung
-		return !["completed", "cancelled", "ongoing"].includes(row.status);
+		// di backend meelarang membatalkan event yang sudah selesai, dibatalkan, draft, atau sedang berlangsung
+		return !["completed", "cancelled", "ongoing", "draft"].includes(row.status);
 	};
 
 	const handleStart = (row) => {
@@ -327,7 +327,6 @@ export default function OrganizationEvent() {
 			sortable: false,
 			width: "110px",
 		},
-
 
 		{
 			name: "Aksi",
@@ -502,7 +501,8 @@ export default function OrganizationEvent() {
 														Tanggal:
 													</div>
 													<div className="text-sm text-gray-900 ml-2">
-														{formatDate(data.tanggal_mulai) || "-"} - {formatDate(data.tanggal_selesai) || "-"} WIB
+														{formatDate(data.tanggal_mulai) || "-"} -{" "}
+														{formatDate(data.tanggal_selesai) || "-"} WIB
 													</div>
 												</div>
 												<div className="flex items-start">
@@ -510,7 +510,8 @@ export default function OrganizationEvent() {
 														Waktu:
 													</div>
 													<div className="text-sm ml-2">
-														{formatTime(data.waktu_mulai) || "-"} - {formatTime(data.waktu_selesai) || "-"}
+														{formatTime(data.waktu_mulai) || "-"} -{" "}
+														{formatTime(data.waktu_selesai) || "-"}
 													</div>
 												</div>
 												<div className="flex items-start">
@@ -518,7 +519,8 @@ export default function OrganizationEvent() {
 														Jumlah Perserta:
 													</div>
 													<div className="text-sm ml-2">
-														{data.peserta_saat_ini || 0} / {data.maks_peserta || 0} Peserta
+														{data.peserta_saat_ini || 0} /{" "}
+														{data.maks_peserta || 0} Peserta
 													</div>
 												</div>
 											</div>

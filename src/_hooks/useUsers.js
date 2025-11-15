@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { parseApiError } from "@/utils";
+import { showToast } from "@/components/ui/Toast";
 
 // === PUBLIC HOOKS ===
 // Ambil profile (sebelumnya useProfile)
@@ -133,6 +134,41 @@ export const useAdminVolunteerUsers = () => {
 		// staleTime: 1 * 60 * 1000,
 		// cacheTime: 5 * 60 * 1000,
 		// retry: 1,
+	});
+};
+
+/**
+ * Hapus user (admin).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["adminUsers"]
+ * @optimisticUpdate Cache ["adminUsers"] langsung difilter
+ */
+export const useAdminDeleteUserMutation = () => {
+	const queryClient = useQueryClient();
+
+	const { setLoading } = useAuthStore();
+
+	return useMutation({
+		mutationFn: userService.adminDeleteUser,
+		onMutate: () => setLoading(true),
+		onSuccess: (_, id) => {
+			queryClient.setQueryData(["adminUsers"], (oldData) =>
+				oldData.filter((user) => user.id !== id)
+			);
+			queryClient.invalidateQueries(["adminUsers"]);
+			setLoading(false);
+			showToast({
+				type: "success",
+				title: "Berhasil",
+				message: "User berhasil dihapus.",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Gagal memulai event.";
+			showToast({ type: "error", message: msg });
+		},
 	});
 };
 

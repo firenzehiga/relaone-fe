@@ -8,11 +8,12 @@ import {
 	PencilIcon,
 	AlertCircle,
 } from "lucide-react";
-import DynamicButton from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
-import { useAdminUsers } from "@/_hooks/useUsers";
+import { useAdminDeleteUserMutation, useAdminUsers } from "@/_hooks/useUsers";
 import FetchLoader from "@/components/ui/FetchLoader";
 import { formatDate, getImageUrl } from "@/utils";
+import Swal from "sweetalert2";
+import { useAuthStore } from "@/_hooks/useAuth";
 
 export default function AdminUser() {
 	const {
@@ -21,6 +22,10 @@ export default function AdminUser() {
 		error: usersError,
 		isFetching: usersRefetching,
 	} = useAdminUsers();
+
+	const deleteUserMutation = useAdminDeleteUserMutation();
+
+	const { isLoading } = useAuthStore();
 
 	// Local state for search/filter
 	const [searchUser, setSearchUser] = useState("");
@@ -39,6 +44,49 @@ export default function AdminUser() {
 			);
 		});
 	}, [users, searchUser]);
+
+	// Fungsi untuk menangani penghapusan user dengan konfirmasi ketik kata kunci
+	const handleDelete = (id) => {
+		if (!id) return;
+		const confirmText = "HAPUS PERMANEN";
+		Swal.fire({
+			title: "Hapus User?",
+			html:
+				`<span style="color: #dc2626; font-weight:600">⚠️ Aksi ini tidak bisa dibatalkan!</span>` +
+				`<br/><br/>Aksi ini akan menghapus user beserta data terkait seperti, organisasi, event, partisipasi, dan lain sebagainya secara permanen dari sistem.`,
+			icon: "warning",
+			input: "text",
+			inputPlaceholder: `Ketik "${confirmText}" untuk konfirmasi`,
+			showCancelButton: true,
+			confirmButtonText: "Ya, Hapus!",
+			cancelButtonText: "Batal",
+			customClass: {
+				// kurangi ukuran popup (max-w-md vs max-w-lg) supaya card tidak terlalu besar
+				popup: "bg-white rounded-xl shadow-xl p-5 max-w-md w-full",
+				title: "text-lg font-semibold text-gray-900",
+				content: "text-sm text-gray-600 dark:text-gray-300 mt-1",
+				// tambahkan container actions dengan gap agar tombol tidak saling dempet
+				actions: "flex gap-3 justify-center mt-4",
+				confirmButton:
+					"px-4 py-2 focus:outline-none rounded-md bg-emerald-600 hover:bg-emerald-700 text-white",
+				cancelButton:
+					"px-4 py-2 rounded-md border border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700",
+			},
+			backdrop: true,
+			preConfirm: (value) => {
+				if (value !== confirmText) {
+					Swal.showValidationMessage(
+						`Anda harus mengetik "${confirmText}" untuk melanjutkan.`
+					);
+				}
+				return value;
+			},
+		}).then((result) => {
+			if (result.isConfirmed && result.value === confirmText) {
+				deleteUserMutation.mutate(id);
+			}
+		});
+	};
 
 	const columns = [
 		{
@@ -85,11 +133,11 @@ export default function AdminUser() {
 			selector: (row) => (
 				<>
 					{row.role === "admin" ? (
-						<Badge variant={"warning"}>Admin</Badge>
+						<Badge variant={"orange"}>Admin</Badge>
 					) : row.role === "organization" ? (
-						<Badge variant={"primary"}>Organization</Badge>
+						<Badge variant={"success"}>Organization</Badge>
 					) : (
-						<Badge variant={"secondary"}>Volunteer</Badge>
+						<Badge variant={"primary"}>Volunteer</Badge>
 					)}
 				</>
 			),
@@ -112,16 +160,20 @@ export default function AdminUser() {
 		},
 		{
 			name: "Aksi",
-			cell: (row) => (
-				<div className="flex items-center space-x-2">
-					<button className="text-sm text-yellow-600 hover:underline">
-						<PencilIcon className="w-4 h-4 mr-2 hover:text-orange-00" />
-					</button>
-					<button className="text-sm text-red-500 hover:underline">
-						<Trash className="w-4 h-4 mr-2 hover:text-red-600" />
-					</button>
-				</div>
-			),
+			cell: (row) => {
+				if (isLoading) {
+					return <Loader2 className="animate-spin h-5 w-5 text-emerald-600" />;
+				}
+				return (
+					<div className="flex items-center space-x-2">
+						<button
+							onClick={() => handleDelete(row.id)}
+							className="text-sm text-red-500 hover:underline">
+							<Trash className="w-4 h-4 mr-2 hover:text-red-600" />
+						</button>
+					</div>
+				);
+			},
 			width: "140px",
 		},
 	];
@@ -197,9 +249,13 @@ export default function AdminUser() {
 													</div>
 													<div className="text-sm ml-2">
 														{data.jenis_kelamin === "laki-laki" ? (
-															<p className="text-sm text-gray-800 mt-1">Laki-laki</p>
+															<p className="text-sm text-gray-800 mt-1">
+																Laki-laki
+															</p>
 														) : data.jenis_kelamin === "perempuan" ? (
-															<p className="text-sm text-gray-800 mt-1">Perempuan</p>
+															<p className="text-sm text-gray-800 mt-1">
+																Perempuan
+															</p>
 														) : (
 															<p className="text-sm text-gray-800 mt-1">-</p>
 														)}

@@ -26,6 +26,7 @@ export default function Badge({
 		info: "bg-teal-100 text-teal-800 border border-teal-200",
 		success: "bg-green-100 text-green-800 border border-green-200",
 		warning: "bg-yellow-100 text-yellow-800 border border-yellow-200",
+		orange: "bg-orange-100 text-orange-800 border border-orange-200",
 		danger: "bg-red-100 text-red-800 border border-red-200",
 		secondary: "bg-purple-100 text-purple-800 border border-purple-200",
 		outline: "border border-gray-300 text-gray-700 bg-white",

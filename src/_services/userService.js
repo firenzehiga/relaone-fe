@@ -89,6 +89,24 @@ export const adminGetVolunteerUsers = async (params = {}) => {
 	return response.data.data || response.data;
 };
 
+/** Hapus user
+ *
+ * @async
+ * @function adminDeleteUser
+ * @endpoint DELETE /admin/users/{id}
+ * @param {string|number} id - ID user
+ * @returns {Promise<any>} Data user yang dihapus.
+ */
+export const adminDeleteUser = async (id) => {
+	try {
+		const response = await api.delete(`/admin/users/${id}`);
+		return response.data;
+	} catch (error) {
+		console.log("Error deleting user:", error);
+		throw error;
+	}
+};
+
 /** Mengambil data analytics untuk dashboard.
 
  * @async

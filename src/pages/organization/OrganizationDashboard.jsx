@@ -49,6 +49,7 @@ export default function OrganizationDashboard() {
 					data={analyticsData}
 					isLoading={analyticsLoading || eventsLoading}
 					error={error}
+					selectedEventId={selectedEventId}
 				/>
 			</div>
 		</div>
