@@ -143,13 +143,13 @@ export default function EventScannerPage() {
 									</span>
 								)}
 								{eventStatus === "ongoing" && (
-									<span className="inline-flex items-center justify-center w-full sm:w-auto px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-green-100 text-green-800 border border-green-200">
-										🟢 Sedang Berlangsung
+									<span className="inline-flex items-center justify-center w-full sm:w-auto px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+										🕒 Sedang Berlangsung
 									</span>
 								)}
 								{eventStatus === "completed" && (
-									<span className="inline-flex items-center justify-center w-full sm:w-auto px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-gray-100 text-gray-700 border border-gray-200">
-										✓ Sudah Selesai
+									<span className="inline-flex items-center justify-center w-full sm:w-auto px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-success-100 text-success-700 border border-gray-200">
+										✅ Sudah Selesai
 									</span>
 								)}
 							</div>
