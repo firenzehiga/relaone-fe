@@ -58,10 +58,12 @@ export const volunteerCancelJoin = async (data) => {
  * @endpoint POST /volunteer/event-participants/generate-qr
  * @returns {Promise<any>} QR Code untuk check-in
  */
-export const volunteerGenerateQrCode = async () => {
+export const volunteerGenerateQrCode = async (data) => {
 	try {
+		// backend expects event_id in the request body
 		const response = await api.post(
-			"/volunteer/event-participations/generate-qr"
+			"/volunteer/event-participations/generate-qr",
+			data
 		);
 		return response.data.data || response.data;
 	} catch (error) {
