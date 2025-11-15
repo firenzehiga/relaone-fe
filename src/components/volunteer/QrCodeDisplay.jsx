@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import {
 	Download,
