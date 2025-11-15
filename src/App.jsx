@@ -16,6 +16,9 @@ import {
 import LandingPage from "@/pages/LandingPage";
 import EventsPage from "@/pages/EventsPage";
 import OrganizationsPage from "@/pages/OrganizationsPage";
+import AboutPage from "@/pages/AboutPage";
+import { PrivacyPolicyPage, TermsOfServicePage } from "./pages/PrivacyTerms";
+// Volunteer
 import DetailEventPage from "@/pages/DetailEventPage";
 import ProfilePage from "@/pages/volunteer/ProfilePage";
 import EditProfilePage from "@/pages/volunteer/EditProfilePage";
@@ -83,10 +86,8 @@ import OrganizationFeedback from "@/pages/organization/feedbacks/FeedbackRead";
 import OrganizationLocation from "@/pages/organization/locations/LocationRead";
 import OrganizationLocationCreate from "@/pages/organization/locations/LocationCreate";
 import OrganizationLocationEdit from "@/pages/organization/locations/LocationEdit";
-import AdminLayout from "./layout/AdminLayout";
-import { ScrollToTop } from "./components/common/ScrollToTop";
-import { PrivacyPolicyPage, TermsOfServicePage } from "./pages/PrivacyTerms";
-import AboutPage from "./pages/AboutPage";
+import AdminLayout from "@/layout/AdminLayout";
+import { ScrollToTop } from "@/components/common/ScrollToTop";
 /**
  * Komponen utama aplikasi volunteer platform
  * Mengatur routing dengan layout yang menggunakan Outlet
