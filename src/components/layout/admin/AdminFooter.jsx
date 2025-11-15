@@ -1,4 +1,5 @@
 import { Heart } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function AdminFooter() {
 	const currentYear = new Date().getFullYear();
@@ -13,13 +14,13 @@ export default function AdminFooter() {
 				</div>
 
 				<div className="flex items-center gap-4">
-					<a href="#" className="hover:text-blue-600 transition-colors">
+					<Link to="/privacy-policy" className="hover:text-blue-600 transition-colors">
 						Privacy Policy
-					</a>
+					</Link>
 					<span className="text-gray-300">|</span>
-					<a href="#" className="hover:text-blue-600 transition-colors">
+					<Link to="/terms-of-service" className="hover:text-blue-600 transition-colors">
 						Terms of Service
-					</a>
+					</Link>
 					<span className="text-gray-300">|</span>
 					<span>{currentYear} RelaOne Panel</span>
 				</div>

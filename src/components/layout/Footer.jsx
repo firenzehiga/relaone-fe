@@ -37,7 +37,7 @@ export default function Footer() {
 
 					<div className="lg:mx-auto text-left ">
 						<h4 className="text-lg text-gray-900 font-medium mb-7">Page</h4>
-						<ul className=" transition-all duration-500">
+						<ul className="transition-all duration-500">
 							<li className="mb-6">
 								<Link to="/" className="text-gray-600 hover:text-gray-900">
 									Home
@@ -50,11 +50,18 @@ export default function Footer() {
 									Event
 								</Link>
 							</li>
-							<li>
+							<li className="mb-6">
 								<Link
 									to="/organizations"
 									className="text-gray-600 hover:text-gray-900">
 									Organizations
+								</Link>
+							</li>
+							<li>
+								<Link
+									to="/about-us"
+									className="text-gray-600 hover:text-gray-900">
+									About Us
 								</Link>
 							</li>
 						</ul>
