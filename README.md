@@ -69,7 +69,16 @@
 
 ## 📄 **License & Ownership**
 
-Aplikasi ini dikembangkan sebagai bagian dari project kolaboratif pendidikan. Frontend implementation, design, dan user experience dikembangkan oleh **Firenze Higa**.
+Aplikasi ini dikembangkan sebagai bagian dari project kolaboratif pendidikan.
+
+Pengembangan utama frontend, desain, dan user experience dilakukan oleh:
+
+- [**Firenze Higa**](https://github.com/firenzehiga)
+
+Kontributor pendukung yang turut membantu dalam proses pengembangan:
+
+- [**Miftah Adz**](https://github.com/miftahadzdzaudanislam) – Contributor  
+- [**Wahyu Andrianto**](https://github.com/Wahyu2204) – Contributor
 
 📧 **Contact**: firenzehiga@gmail.com  
 🐙 **GitHub**: [@firenzehiga](https://github.com/firenzehiga)
