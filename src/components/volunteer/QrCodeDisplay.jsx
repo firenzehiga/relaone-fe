@@ -22,6 +22,7 @@ import FetchLoader from "../ui/FetchLoader";
 function QrCodeDisplay({ participationId, eventData }) {
 	const [downloaded, setDownloaded] = useState(false);
 	const [qrCodeData, setQrCodeData] = useState(null);
+	const [localError, setLocalError] = useState(null);
 	const [showQR, setShowQR] = useState(false);
 
 	// Mutation untuk generate QR Code
@@ -36,13 +37,28 @@ function QrCodeDisplay({ participationId, eventData }) {
 
 	// Handler untuk generate dan tampilkan QR Code
 	const handleShowQR = () => {
+		// Ensure we have an event id to bind the QR to — backend requires it
+		const eventId = eventData?.id;
+		if (!eventId) {
+			setLocalError(
+				"Event ID tidak tersedia. Buka halaman detail event untuk membuat QR yang terikat ke event tersebut."
+			);
+			return;
+		}
+
+		setLocalError(null);
+
 		if (!qrCodeData) {
-			generateQR(undefined, {
-				onSuccess: (response) => {
-					setQrCodeData(response);
-					setShowQR(true);
-				},
-			});
+			// pass event_id to the mutation so backend can bind QR to specific event
+			generateQR(
+				{ event_id: eventId },
+				{
+					onSuccess: (response) => {
+						setQrCodeData(response);
+						setShowQR(true);
+					},
+				}
+			);
 		} else {
 			setShowQR(true);
 		}
@@ -138,13 +154,15 @@ function QrCodeDisplay({ participationId, eventData }) {
 	}
 
 	// Error state
-	if (error) {
+	if (error || localError) {
 		return (
 			<div className="bg-red-50 border-2 border-red-200 rounded-xl p-6 text-center shadow-sm">
 				<AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
 				<p className="text-red-800 font-semibold mb-2">Gagal Membuat QR Code</p>
 				<p className="text-red-600 text-sm mb-4">
-					{error?.message || "Terjadi kesalahan saat membuat QR Code"}
+					{localError ||
+						error?.message ||
+						"Terjadi kesalahan saat membuat QR Code"}
 				</p>
 				<DynamicButton variant="danger" size="sm" onClick={handleShowQR}>
 					Coba Lagi

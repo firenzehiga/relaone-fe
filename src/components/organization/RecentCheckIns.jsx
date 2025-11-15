@@ -1,5 +1,6 @@
 import { getImageUrl } from "@/utils";
 import { Clock, UserCheck, AlertCircle } from "lucide-react";
+import Avatar from "../ui/Avatar";
 
 /**
  * Component untuk menampilkan daftar volunteer yang baru check-in
@@ -62,13 +63,10 @@ function RecentCheckIns({ checkIns = [], isLoading }) {
 									? "bg-green-50 border-green-200 animate-pulse"
 									: "bg-gray-50 border-gray-200 hover:bg-gray-100"
 							}`}>
-							<img
-								src={
-									getImageUrl(`foto_profil/${item.volunteer?.foto}`) ||
-									"/default-avatar.png"
-								}
-								alt={item.volunteer?.nama}
-								className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-white shadow-sm flex-shrink-0"
+							<Avatar
+								src={getImageUrl(`foto_profil/${item.volunteer?.foto}`)}
+								fallback={item.volunteer?.nama}
+								size="md"
 							/>
 							<div className="flex-1 min-w-0">
 								<p className="font-medium text-gray-800 text-sm sm:text-base truncate">

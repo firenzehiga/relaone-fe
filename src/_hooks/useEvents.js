@@ -408,13 +408,25 @@ export const useOrgStartEventMutation = () => {
 			showToast({
 				type: "success",
 				title: "Berhasil",
-				message: "Event dimulai.",
+				message: data?.message,
+				tipText: `Sekarang: ${data?.now}`,
 			});
 		},
 		onError: (error) => {
 			setLoading(false);
-			const msg = parseApiError(error) || "Gagal memulai event.";
-			showToast({ type: "error", message: msg });
+
+			const msg = parseApiError(error); // tetap gunakan untuk teks pesan
+			const data = error?.response?.data ?? {};
+			const { starts_at: startsAt, now, app_timezone: appTz } = data;
+
+			let tipText = "Periksa kembali logic yang Anda buat.";
+			if (startsAt) {
+				tipText = `Event seharusnya dimulai pada: ${startsAt}`;
+				if (now) tipText += `\nSekarang: ${now}`;
+				if (appTz) tipText += ` (${appTz})`;
+			}
+
+			showToast({ type: "error", message: msg, tipText });
 		},
 	});
 };
