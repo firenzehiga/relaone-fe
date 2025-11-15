@@ -5,6 +5,23 @@ import { parseApiError } from "@/utils";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "@/components/ui/Toast";
 
+// === PUBLIC HOOKS ===
+/**
+ * Hook untuk mengambil data feedbacks
+ * @returns {Object} Query result dengan data feedbacks
+ */
+export const useFeedbacks = () => {
+	return useQuery({
+		queryKey: ["feedbacks"],
+		queryFn: async () => {
+			const response = await feedbackService.getFeedbacks();
+			return response;
+		},
+		// staleTime: 10 * 60 * 1000, // 10 minutes (categories jarang berubah)
+		retry: 1,
+	});
+};
+
 // === VOLUNTEER HOOKS ===
 
 /**

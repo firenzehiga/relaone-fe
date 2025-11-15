@@ -1,5 +1,18 @@
 import api from "@/_api";
 
+// PUBLIC SERVICES
+/** Mengambil Feedback user.
+ *
+ * @async
+ * @function getFeedbacks
+ * @endpoint GET /feedbacks
+ * @returns {Promise<any>} Data semua feedbacks.
+ */
+export const getFeedbacks = async () => {
+	const response = await api.get("/feedbacks");
+	return response.data.data || response.data;
+};
+
 // VOLUNTEER SERVICES
 /** * kirim feedback
  *

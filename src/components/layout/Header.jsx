@@ -14,6 +14,7 @@ import {
 	LogOut,
 	Users,
 	MapPin,
+	Info,
 } from "lucide-react";
 import DynamicButton from "@/components/ui/Button";
 import Avatar from "@/components/ui/Avatar";
@@ -39,6 +40,7 @@ export default function Header() {
 		{ name: "Home", href: "/", icon: Home },
 		{ name: "Event", href: "/events", icon: Calendar },
 		{ name: "Organization", href: "/organizations", icon: Building },
+		{ name: "About Us", href: "/about-us", icon: Info },
 	];
 
 	const orgNav = [
@@ -110,7 +112,7 @@ export default function Header() {
 				<div className="flex items-center justify-between h-16 max-w-7xl mx-auto">
 					{/* Logo */}
 					<Link to="/" className="flex items-center space-x-2 group">
-						<div className="p-1  group-hover:scale-110 transition-transform duration-300">
+						<div className="p-1 group-hover:scale-110 transition-transform duration-300">
 							<img
 								src="/images/logo_fe.png"
 								alt="RelaOne Logo"
