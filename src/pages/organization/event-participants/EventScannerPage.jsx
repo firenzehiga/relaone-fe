@@ -9,6 +9,8 @@ import {
 	useOrgRecentCheckIns,
 	useOrgAttendanceStats,
 } from "@/_hooks/useParticipants";
+import { formatTime } from "@/utils/dateFormatter";
+import Skeleton from "@/components/ui/Skeleton";
 
 /**
  * Halaman Scanner QR untuk check-in volunteer di event
@@ -32,7 +34,8 @@ export default function EventScannerPage() {
 	} = useOrgRecentCheckIns(eventId);
 
 	// Get participants untuk event info saja
-	const { data: participants = [] } = useOrgParticipants();
+	const { data: participants = [], isLoading: isLoadingParticipants } =
+		useOrgParticipants();
 
 	// Extract stats dari response API
 	const stats = statsResponse?.statistics || {
@@ -64,10 +67,12 @@ export default function EventScannerPage() {
 
 		const today = new Date();
 
-		const startDate = new Date(eventInfo.tanggal_mulai);
-		const endDate = new Date(eventInfo.tanggal_selesai);
-		startDate.setHours(0, 0, 0, 0);
-		endDate.setHours(23, 59, 59, 999); // artinya sampai akhir hari
+		const startDate = new Date(
+			`${eventInfo.tanggal_mulai}T${eventInfo.waktu_mulai}`
+		);
+		const endDate = new Date(
+			`${eventInfo.tanggal_selesai}T${eventInfo.waktu_selesai}`
+		);
 
 		if (startDate > today) return "upcoming";
 		if (startDate <= today && endDate >= today) return "ongoing";
@@ -88,6 +93,11 @@ export default function EventScannerPage() {
 		console.error("Scan error:", error);
 	};
 
+	const isLoading = isLoadingStats || isLoadingRecent || isLoadingParticipants;
+
+	if (isLoading) {
+		return <Skeleton.LoadingEventScanner />;
+	}
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-4 sm:py-8">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -132,7 +142,7 @@ export default function EventScannerPage() {
 												? "text-gray-500"
 												: "text-yellow-700"
 										}`}>
-										{eventInfo?.judul || "Loading event..."}
+										{eventInfo?.judul}
 									</p>
 								</div>
 							</div>
@@ -148,7 +158,7 @@ export default function EventScannerPage() {
 									</span>
 								)}
 								{eventStatus === "completed" && (
-									<span className="inline-flex items-center justify-center w-full sm:w-auto px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-success-100 text-success-700 border border-gray-200">
+									<span className="inline-flex items-center justify-center w-full sm:w-auto px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-green-100 text-green-700 border border-green-200">
 										✅ Sudah Selesai
 									</span>
 								)}
@@ -178,7 +188,7 @@ export default function EventScannerPage() {
 
 				{/* Attendance Statistics */}
 				<div className="mb-4 sm:mb-6">
-					<AttendanceStats stats={stats} isLoading={isLoadingStats} />
+					<AttendanceStats stats={stats} />
 				</div>
 
 				{/* Main Content - Scanner & Recent Check-ins */}
@@ -231,6 +241,12 @@ export default function EventScannerPage() {
 													}
 												)}
 											</p>
+
+											<p className="font-medium mt-2 mb-1">Waktu Event:</p>
+											<p className="text-xs sm:text-sm">
+												{formatTime(eventInfo.waktu_mulai)} -{" "}
+												{formatTime(eventInfo.waktu_selesai, "WIB")}
+											</p>
 										</div>
 									)}
 								</div>
@@ -240,10 +256,7 @@ export default function EventScannerPage() {
 
 					{/* Recent Check-ins List */}
 					<div>
-						<RecentCheckIns
-							checkIns={recentCheckIns}
-							isLoading={isLoadingRecent}
-						/>
+						<RecentCheckIns checkIns={recentCheckIns} />
 					</div>
 				</div>
 

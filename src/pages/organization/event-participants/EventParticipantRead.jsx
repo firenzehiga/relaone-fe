@@ -130,6 +130,8 @@ export default function OrganizationEventParticipant() {
 						judul: p.event.judul,
 						tanggal_mulai: p.event.tanggal_mulai,
 						tanggal_selesai: p.event.tanggal_selesai,
+						waktu_mulai: p.event.waktu_mulai,
+						waktu_selesai: p.event.waktu_selesai,
 						count: 0,
 					});
 				}
@@ -148,12 +150,12 @@ export default function OrganizationEventParticipant() {
 	}, [selectedEventId, eventsList]);
 
 	// Simple check if event is finished
-	const isEventFinished = useMemo(() => {
+	const isEventCompleted = useMemo(() => {
 		if (!selectedEvent?.tanggal_selesai) return false;
 		const today = new Date();
-		const endDate = new Date(selectedEvent.tanggal_selesai);
-		endDate.setHours(23, 59, 59, 999); // artinya sampai akhir hari
-
+		const endDate = new Date(
+			`${selectedEvent.tanggal_selesai}T${selectedEvent.waktu_selesai}`
+		);
 		return endDate < today;
 	}, [selectedEvent]);
 
@@ -360,15 +362,15 @@ export default function OrganizationEventParticipant() {
 				}
 
 				// Check if event is completed - disable actions
-				const today = new Date();
-				const eventEndDate = row.event?.tanggal_selesai
-					? new Date(row.event.tanggal_selesai)
-					: null;
-				const isEventCompleted = eventEndDate && eventEndDate < today;
-
 				if (isLoading)
 					return <Loader2 className="text-emerald-600 animate-spin" />; // Show spinner while isLoading
 
+				if (isEventCompleted)
+					return (
+						<span className="text-xs text-gray-400 italic">
+							Event sudah selesai
+						</span>
+					);
 				return (
 					<Menu>
 						<MenuButton
@@ -376,7 +378,6 @@ export default function OrganizationEventParticipant() {
 							aria-label="Options"
 							icon={<EllipsisVerticalIcon />}
 							variant="ghost"
-							isDisabled={isEventCompleted}
 						/>
 						<Portal>
 							<MenuList className="font-semibold">
@@ -411,12 +412,6 @@ export default function OrganizationEventParticipant() {
 											Tolak Peserta
 										</MenuItem>
 									</>
-								)}
-								{/* Show message if event completed */}
-								{isEventCompleted && (
-									<MenuItem isDisabled className="text-xs text-gray-500 italic">
-										Event sudah selesai
-									</MenuItem>
 								)}
 							</MenuList>
 						</Portal>
@@ -490,7 +485,7 @@ export default function OrganizationEventParticipant() {
 					{selectedEvent && (
 						<div
 							className={`mb-4 rounded-lg p-4 border ${
-								isEventFinished
+								isEventCompleted
 									? "bg-gradient-to-r from-gray-50 to-slate-50 border-gray-300"
 									: "bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200"
 							}`}>
@@ -498,19 +493,19 @@ export default function OrganizationEventParticipant() {
 								<div className="flex items-center gap-3">
 									<Calendar
 										className={`w-6 h-6 flex-shrink-0 ${
-											isEventFinished ? "text-gray-600" : "text-blue-600"
+											isEventCompleted ? "text-gray-600" : "text-blue-600"
 										}`}
 									/>
 									<div>
 										<h3
 											className={`text-sm font-semibold mb-1 ${
-												isEventFinished ? "text-gray-900" : "text-blue-900"
+												isEventCompleted ? "text-gray-900" : "text-blue-900"
 											}`}>
 											{selectedEvent.judul}
 										</h3>
 										<p
 											className={`text-xs ${
-												isEventFinished ? "text-gray-700" : "text-blue-700"
+												isEventCompleted ? "text-gray-700" : "text-blue-700"
 											}`}>
 											{formatDate(selectedEvent.tanggal_mulai)} -{" "}
 											{formatDate(selectedEvent.tanggal_selesai)}
@@ -518,7 +513,7 @@ export default function OrganizationEventParticipant() {
 									</div>
 								</div>
 								<div>
-									{isEventFinished ? (
+									{isEventCompleted ? (
 										<Badge variant="secondary" className="text-sm">
 											✓ Event Sudah Selesai
 										</Badge>

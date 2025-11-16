@@ -169,7 +169,7 @@ export default function EventCard({
 						<span className="font-semibold">
 							{event.peserta_saat_ini || 0} / {event.maks_peserta} peserta
 						</span>
-						{slotsRemaining > 0 && (
+						{slotsRemaining > 0 && !registrationClosed && (
 							<span className="text-green-700 ml-2 font-bold text-xs bg-green-50 px-2 py-1 rounded-full">
 								{slotsRemaining} slot tersisa
 							</span>

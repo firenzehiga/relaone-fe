@@ -6,33 +6,9 @@ import Avatar from "../ui/Avatar";
  * Component untuk menampilkan daftar volunteer yang baru check-in
  * Menerima data dari parent (tidak fetch sendiri)
  */
-function RecentCheckIns({ checkIns = [], isLoading }) {
-	if (isLoading) {
-		return (
-			<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
-				<h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-					<Clock className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
-					Check-in Terbaru
-				</h3>
-				<div className="space-y-2 sm:space-y-3">
-					{[1, 2, 3].map((i) => (
-						<div
-							key={i}
-							className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 rounded-lg animate-pulse">
-							<div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 rounded-full flex-shrink-0" />
-							<div className="flex-1 space-y-2">
-								<div className="h-3 sm:h-4 bg-gray-200 rounded w-3/4" />
-								<div className="h-2 sm:h-3 bg-gray-200 rounded w-1/2" />
-							</div>
-						</div>
-					))}
-				</div>
-			</div>
-		);
-	}
-
+function RecentCheckIns({ checkIns = [] }) {
 	return (
-		<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+		<div className="min-h-[337px] bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
 			<div className="flex items-center justify-between mb-4">
 				<h3 className="text-base sm:text-lg font-semibold text-gray-800 flex items-center gap-2">
 					<Clock className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />

@@ -36,9 +36,9 @@ export const toDayjs = (input) => {
  * Menerima Date, timestamp, atau string (ISO / 'YYYY-MM-DD HH:mm:ss').
  */
 export const toInputDate = (input) => {
-    const d = toDayjs(input);
-    if (!d || !d.isValid()) return "";
-    return d.format("YYYY-MM-DD");
+	const d = toDayjs(input);
+	if (!d || !d.isValid()) return "";
+	return d.format("YYYY-MM-DD");
 };
 
 /**

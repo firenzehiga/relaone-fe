@@ -1,12 +1,22 @@
 import { motion } from "framer-motion";
 import { cn } from "@/utils";
-import { Loader2, Search } from "lucide-react";
+import {
+	AlertCircle,
+	ArrowLeft,
+	Camera,
+	Clock,
+	Loader2,
+	QrCodeIcon,
+	Scan,
+	Search,
+} from "lucide-react";
 import {
 	Skeleton as ChkSkeleton,
 	SkeletonCircle,
 	SkeletonText as ChkSkeletonText,
 } from "@chakra-ui/react";
 import Card from "./Card";
+import Avatar from "./Avatar";
 
 export default function Skeleton({ className, ...props }) {
 	return (
@@ -640,6 +650,172 @@ function AnalyticsSkeleton() {
 	);
 }
 Skeleton.AnalyticsSkeleton = AnalyticsSkeleton;
+
+// Komponen Skeleton untuk Halaman Event Scanner Organisasi
+function EventScannerSkeleton() {
+	return (
+		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-4 sm:py-8">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				{/* Back Button */}
+				<div className="mb-4 sm:mb-6">
+					<div className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors text-sm">
+						<ArrowLeft className="w-4 h-4" />
+						<span className="font-medium">Kembali ke Daftar Participants</span>
+					</div>
+				</div>
+				{/* Event Scanner Header */}
+				<div className="rounded-lg shadow-sm border p-4 sm:p-6 bg-yellow-50 border-yellow-200">
+					<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+						<div className="flex items-center gap-3 w-full sm:w-auto">
+							<div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-yellow-500 to-orange-500">
+								<QrCodeIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+							</div>
+							<div className="flex-1 min-w-0">
+								<h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
+									Scanner Check-in Event
+								</h1>
+								<p className="text-xs sm:text-sm mt-1 truncate text-yellow-700">
+									Loading event..
+								</p>
+							</div>
+						</div>
+						<div className="w-full sm:w-auto">
+							<span className="inline-flex items-center justify-center w-full sm:w-auto px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+								🕐 Loading
+							</span>
+						</div>
+					</div>
+
+					{/* Warning banner for non-ongoing events */}
+
+					<div className="mt-4 p-3 rounded-lg border text-xs sm:text-sm bg-yellow-100 border-yellow-300 text-yellow-800">
+						⚠️ Event belum dimulai. Scanner akan aktif saat event berlangsung.
+					</div>
+				</div>
+				{/* Event Banner */}
+				<div className="bg-white rounded-xl shadow-md overflow-hidden border-2 border-emerald-200">
+					<ChkSkeleton height="300px" width="100%" />
+					<div className="p-6 space-y-4">
+						<ChkSkeleton height="32px" width="80%" />
+						<div className="flex items-center gap-4">
+							<ChkSkeleton width="24px" height="24px" />
+							<ChkSkeleton height="16px" width="150px" />
+						</div>
+						<div className="flex items-center gap-4">
+							<ChkSkeleton width="24px" height="24px" />
+							<ChkSkeleton height="16px" width="200px" />
+						</div>
+						<ChkSkeletonText mt={4} noOfLines={3} spacing="2" />
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
+Skeleton.EventScannerSkeleton = EventScannerSkeleton;
+
+// Loading skeleton that mirrors the EventScanner layout more closely
+function LoadingEventScanner() {
+	return (
+		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-4 sm:py-8">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				{/* Header */}
+				<div className="mb-4 sm:mb-6">
+					<div className="inline-flex items-center gap-2 text-gray-600 mb-4 transition-colors text-sm">
+						<ArrowLeft className="w-4 h-4" />
+						<span className="font-medium">Kembali ke Daftar Participants</span>
+					</div>
+
+					<div
+						className={`rounded-lg shadow-sm border p-4 sm:p-6 bg-gray-50 border-gray-200`}>
+						<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+							<div className="flex items-center gap-3 w-full sm:w-auto">
+								<div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-gray-500 to-gray-500">
+									<ChkSkeleton height="20px" width="20px" />
+								</div>
+							</div>
+							<div className="flex-1 min-w-0">
+								<ChkSkeleton height="20px" width="70%" mb={2} />
+								<ChkSkeleton height="14px" width="40%" />
+							</div>
+
+							<div className="w-full sm:w-auto">
+								<ChkSkeleton height="28px" width="120px" borderRadius="full" />
+							</div>
+						</div>
+
+						{/* Warning banner */}
+						<div className="mt-4 p-3 rounded-lg border text-xs sm:text-sm bg-gray-100 border-gray-300 text-gray-800">
+							<ChkSkeleton height="20px" width="40%" />
+						</div>
+					</div>
+				</div>
+				{/* Stats Cards */}
+				<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+					{Array.from({ length: 4 }).map((_, i) => (
+						<div
+							key={i}
+							className="bg-white rounded-xl shadow-md p-3 border-2 border-gray-200">
+							<div className="flex items-center justify-between mb-4">
+								<ChkSkeleton height="20px" width="120px" />
+								<ChkSkeleton height="32px" width="30px" />
+							</div>
+							<ChkSkeleton width="35px" height="35px" borderRadius="lg" />
+						</div>
+					))}
+				</div>
+				<div className="bg-white rounded-xl shadow-md p-6 border-2 border-gray-200 mb-8">
+					<div className="flex items-center justify-between mb-4">
+						<ChkSkeleton height="20px" width="120px" />
+						<div>
+							<div className="flex items-center mb-2">
+								<ChkSkeleton height="16px" width="100px" />
+							</div>
+							<div className="flex items-center gap-2">
+								<ChkSkeleton height="13px" width="120px" />
+								<ChkSkeleton height="13px" width="16px" />
+							</div>
+						</div>
+					</div>
+					<ChkSkeleton width="35px" height="35px" borderRadius="lg" />
+				</div>
+
+				{/* Main Content - Scanner & Recent Check-ins */}
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+					{/* QR Scanner */}
+					<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+						<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4">
+							<h2 className="text-lg sm:text-xl font-semibold text-gray-800 flex items-center gap-2">
+								<Scan className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
+								Scanner Check-in
+							</h2>
+						</div>
+
+						{/* Result Display */}
+
+						<ChkSkeleton height="220px" width="550px" />
+					</div>
+					{/* Recent Check-ins List */}
+					<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+						<div className="flex items-center justify-between mb-4">
+							<h3 className="text-base sm:text-lg font-semibold text-gray-800 flex items-center gap-2">
+								<Clock className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+								Check-in Terbaru
+							</h3>
+
+							<span className="text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+								Live
+							</span>
+						</div>
+						<ChkSkeleton height="220px" width="550px" />
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+Skeleton.LoadingEventScanner = LoadingEventScanner;
 
 // Skeleton untuk Activity Detail Page
 function ActivityDetailSkeleton() {

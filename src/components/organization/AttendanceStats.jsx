@@ -4,20 +4,7 @@ import { Users, CheckCircle, Clock, XCircle, AlertCircle } from "lucide-react";
  * Component untuk menampilkan statistik kehadiran event
  * Menggunakan data dari parent (tidak fetch sendiri)
  */
-function AttendanceStats({ stats, isLoading }) {
-	if (isLoading) {
-		return (
-			<div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-				{[1, 2, 3, 4].map((i) => (
-					<div
-						key={i}
-						className="bg-gray-100 rounded-lg p-3 sm:p-4 h-20 sm:h-24 animate-pulse"
-					/>
-				))}
-			</div>
-		);
-	}
-
+function AttendanceStats({ stats }) {
 	if (!stats) {
 		return (
 			<div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 sm:p-4 text-center">
