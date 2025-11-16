@@ -70,10 +70,12 @@ export default function AdminEvent() {
 			today.setHours(0, 0, 0, 0);
 
 			filtered = filtered.filter((eventItem) => {
-				const startDate = new Date(eventItem.tanggal_mulai);
-				const endDate = new Date(eventItem.tanggal_selesai);
-				startDate.setHours(0, 0, 0, 0);
-				endDate.setHours(23, 59, 59, 999);
+				const startDate = new Date(
+					`${eventItem.tanggal_mulai}T${eventItem.waktu_mulai}`
+				);
+				const endDate = new Date(
+					`${eventItem.tanggal_selesai}T${eventItem.waktu_selesai}`
+				);
 
 				if (statusFilter === "upcoming") {
 					return startDate > today;
@@ -374,7 +376,8 @@ export default function AdminEvent() {
 														Tanggal:
 													</div>
 													<div className="text-sm text-gray-900 ml-2">
-														{formatDate(data.tanggal_mulai) || "-"} - {formatDate(data.tanggal_selesai) || "-"}
+														{formatDate(data.tanggal_mulai) || "-"} -{" "}
+														{formatDate(data.tanggal_selesai) || "-"}
 													</div>
 												</div>
 												<div className="flex items-start">
@@ -382,7 +385,8 @@ export default function AdminEvent() {
 														Waktu:
 													</div>
 													<div className="text-sm ml-2">
-														{formatTime(data.waktu_mulai) || "-"} - {formatTime(data.waktu_selesai) || "-"} WIB
+														{formatTime(data.waktu_mulai) || "-"} -{" "}
+														{formatTime(data.waktu_selesai) || "-"} WIB
 													</div>
 												</div>
 												<div className="flex items-start">
@@ -390,7 +394,8 @@ export default function AdminEvent() {
 														Jumlah Perserta:
 													</div>
 													<div className="text-sm ml-2">
-														{data.peserta_saat_ini || 0} / {data.maks_peserta || 0} Peserta
+														{data.peserta_saat_ini || 0} /{" "}
+														{data.maks_peserta || 0} Peserta
 													</div>
 												</div>
 											</div>

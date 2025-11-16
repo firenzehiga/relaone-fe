@@ -14,6 +14,7 @@ import {
 import { Loader2, Image } from "lucide-react";
 import { useAdminCategory } from "@/_hooks/useCategories";
 import Skeleton from "@/components/ui/Skeleton";
+import { toInputTime } from "@/utils/dateFormatter";
 export default function AdminEventEdit() {
 	const { id } = useParams();
 	const navigate = useNavigate();
@@ -132,8 +133,8 @@ export default function AdminEventEdit() {
 				deskripsi_singkat: showEvent.deskripsi_singkat,
 				tanggal_mulai: toInputDate(showEvent.tanggal_mulai),
 				tanggal_selesai: toInputDate(showEvent.tanggal_selesai),
-				waktu_mulai: showEvent.waktu_mulai,
-				waktu_selesai: showEvent.waktu_selesai,
+				waktu_mulai: toInputTime(showEvent.waktu_mulai), // ubah dari "HH:mm:ss" ke "HH:mm"
+				waktu_selesai: toInputTime(showEvent.waktu_selesai),
 				maks_peserta: showEvent.maks_peserta,
 				gambar: showEvent.gambar,
 				status: showEvent.status,

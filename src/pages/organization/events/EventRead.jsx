@@ -66,10 +66,12 @@ export default function OrganizationEvent() {
 			today.setHours(0, 0, 0, 0);
 
 			filtered = filtered.filter((eventItem) => {
-				const startDate = new Date(eventItem.tanggal_mulai);
-				const endDate = new Date(eventItem.tanggal_selesai);
-				startDate.setHours(0, 0, 0, 0);
-				endDate.setHours(23, 59, 59, 999);
+				const startDate = new Date(
+					`${eventItem.tanggal_mulai}T${eventItem.waktu_mulai}`
+				);
+				const endDate = new Date(
+					`${eventItem.tanggal_selesai}T${eventItem.waktu_selesai}`
+				);
 
 				if (statusFilter === "upcoming") {
 					return startDate > today;
@@ -140,44 +142,17 @@ export default function OrganizationEvent() {
 	};
 
 	const canStart = (row) => {
-		if (!row) return false;
-		if (row.status !== "published") return false;
-		if (!row.tanggal_mulai) return false;
-
-		try {
-			const start = new Date(row.tanggal_mulai);
-			if (row.waktu_mulai) {
-				// combine time
-				const [h, m, s] = row.waktu_mulai.split(":");
-				if (h !== undefined)
-					start.setHours(Number(h), Number(m || 0), Number(s || 0), 0);
-			} else {
-				start.setHours(0, 0, 0, 0);
-			}
-			return new Date() >= start;
-		} catch (e) {
-			return false;
-		}
+		if (!row || row.status !== "published" || !row.tanggal_mulai) return false;
+		const start = new Date(`${row.tanggal_mulai}T${row.waktu_mulai}`); // gabungan tanggal & waktu mulai contoh Tue Nov 18 2025 20:28:00 GMT+0700 (Western Indonesia Time)}
+		if (!start) return false; // langsung keliatan kalau parsing gagal
+		return Date.now() >= start.getTime();
 	};
 
 	const canComplete = (row) => {
-		if (!row) return false;
-		if (row.status !== "ongoing") return false;
-		if (!row.tanggal_selesai) return false;
-
-		try {
-			const end = new Date(row.tanggal_selesai);
-			if (row.waktu_selesai) {
-				const [h, m, s] = row.waktu_selesai.split(":");
-				if (h !== undefined)
-					end.setHours(Number(h), Number(m || 0), Number(s || 0), 0);
-			} else {
-				end.setHours(23, 59, 59, 999);
-			}
-			return new Date() >= end;
-		} catch (e) {
-			return false;
-		}
+		if (!row || row.status !== "ongoing" || !row.tanggal_selesai) return false;
+		const end = new Date(`${row.tanggal_selesai}T${row.waktu_selesai}`); // gabungan tanggal & waktu mulai contoh Tue Nov 18 2025 20:28:00 GMT+0700 (Western Indonesia Time)}
+		if (!end) return false;
+		return Date.now() >= end.getTime();
 	};
 
 	const canCancel = (row) => {

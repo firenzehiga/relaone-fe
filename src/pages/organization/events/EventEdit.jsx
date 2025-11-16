@@ -10,6 +10,7 @@ import { useOrgUpdateEventMutation, useOrgEventById } from "@/_hooks/useEvents";
 import { Loader2, Image } from "lucide-react";
 import { useCategory } from "@/_hooks/useCategories";
 import Skeleton from "@/components/ui/Skeleton";
+import { toInputTime } from "@/utils/dateFormatter";
 
 export default function OrganizationEventEdit() {
 	const { id } = useParams();
@@ -107,6 +108,7 @@ export default function OrganizationEventEdit() {
 		// other types — wrap
 		return [String(v)];
 	};
+
 	// populate form from showEvent once (don't overwrite user edits)
 	useEffect(() => {
 		if (!showEvent) return;
@@ -119,8 +121,8 @@ export default function OrganizationEventEdit() {
 				deskripsi_singkat: showEvent.deskripsi_singkat,
 				tanggal_mulai: toInputDate(showEvent.tanggal_mulai),
 				tanggal_selesai: toInputDate(showEvent.tanggal_selesai),
-				waktu_mulai: showEvent.waktu_mulai,
-				waktu_selesai: showEvent.waktu_selesai,
+				waktu_mulai: toInputTime(showEvent.waktu_mulai),
+				waktu_selesai: toInputTime(showEvent.waktu_selesai),
 				maks_peserta: showEvent.maks_peserta,
 				gambar: showEvent.gambar,
 				status: showEvent.status,

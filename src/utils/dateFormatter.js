@@ -42,6 +42,21 @@ export const toInputDate = (input) => {
 };
 
 /**
+ * Mengembalikan waktu dalam format 'HH:mm' untuk dipakai di form
+ * sebagai nilai untuk <input type="time" />.
+ * Menerima string dalam format 'HH:mm:ss' atau 'HH:mm'.
+ */
+export const toInputTime = (v) => {
+	if (!v) return "";
+	if (typeof v !== "string") return String(v);
+	// jika format "HH:MM:SS" atau "HH:MM", ambil dua bagian pertama
+	const parts = v.split(":");
+	if (parts.length >= 2)
+		return `${parts[0].padStart(2, "0")}:${parts[1].padStart(2, "0")}`;
+	return v.slice(0, 5);
+};
+
+/**
  * Mengformat tanggal menjadi "Hari, D Bulan YYYY"
  *
  * Contoh: "Senin, 1 Januari 2024"

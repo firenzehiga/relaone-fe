@@ -153,9 +153,9 @@ export default function OrganizationEventParticipant() {
 	const isEventCompleted = useMemo(() => {
 		if (!selectedEvent?.tanggal_selesai) return false;
 		const today = new Date();
-		const endDate = new Date(
-			`${selectedEvent.tanggal_selesai}T${selectedEvent.waktu_selesai}`
-		);
+		const endDate = new Date(selectedEvent.tanggal_selesai);
+		endDate.setHours(23, 59, 59, 999); // artinya sampai akhir hari
+
 		return endDate < today;
 	}, [selectedEvent]);
 
