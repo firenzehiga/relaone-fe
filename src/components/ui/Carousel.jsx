@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
-import { File } from "lucide-react";
 import Avatar from "./Avatar";
 import RatingStars from "./RatingStars";
 
@@ -29,19 +28,8 @@ export default function Carousel({
 	round = false,
 }) {
 	const containerPadding = 16;
-	const [containerWidth, setContainerWidth] = useState(null);
-
-	// compute item width from container so the carousel becomes responsive
-	// if we have a measured container width (content box) use it directly;
-	// otherwise fall back to baseWidth minus container padding (old behavior)
-	const itemWidth = containerWidth
-		? containerWidth
-		: baseWidth - containerPadding * 2;
-	const measuredWidth = containerWidth ? containerWidth : baseWidth;
+	const itemWidth = baseWidth - containerPadding * 2;
 	const trackItemOffset = itemWidth + GAP;
-
-	// center offset (space to show peek on both sides)
-	const centerOffset = Math.max(0, (measuredWidth - itemWidth) / 2);
 
 	// make sure `items` is an array (caller might pass objects or undefined)
 	const safeItems = Array.isArray(items)
@@ -56,7 +44,6 @@ export default function Carousel({
 	const [isResetting, setIsResetting] = useState(false);
 
 	const containerRef = useRef(null);
-
 	useEffect(() => {
 		if (pauseOnHover && containerRef.current) {
 			const container = containerRef.current;
@@ -70,22 +57,6 @@ export default function Carousel({
 			};
 		}
 	}, [pauseOnHover]);
-
-	// Resize observer to update container width for responsive layout
-	useEffect(() => {
-		if (!containerRef.current) return;
-		const ro = new ResizeObserver((entries) => {
-			const w = entries[0]?.contentRect?.width;
-			if (w) setContainerWidth(w);
-		});
-		ro.observe(containerRef.current);
-		return () => ro.disconnect();
-	}, [containerRef]);
-
-	// ensure x initial position is zero when containerWidth changes (track uses padding)
-	useEffect(() => {
-		x.set(0);
-	}, [containerWidth]);
 
 	useEffect(() => {
 		if (autoplay && (!pauseOnHover || !isHovered)) {
@@ -150,7 +121,6 @@ export default function Carousel({
 	};
 
 	// Always provide drag constraints so the user can't pull the track beyond available items.
-	// We add symmetric padding on the track (paddingLeft/paddingRight) so items peek equally.
 	const dragProps = {
 		dragConstraints: {
 			left: -trackItemOffset * (carouselItems.length - 1),
@@ -167,9 +137,8 @@ export default function Carousel({
 					: "rounded-[24px] border border-emerald-700"
 			}`}
 			style={{
-				width: "100%",
-				maxWidth: `${baseWidth}px`,
-				...(round && { height: `${Math.max(0, containerWidth)}px` }),
+				width: `${baseWidth}px`,
+				...(round && { height: `${baseWidth}px` }),
 			}}>
 			<motion.div
 				className="flex"
@@ -178,10 +147,9 @@ export default function Carousel({
 				style={{
 					gap: `${GAP}px`,
 					perspective: 1000,
-					// add symmetric side padding so the active card is visually centered
-					paddingLeft: centerOffset,
-					paddingRight: centerOffset,
-					perspectiveOrigin: `50% 50%`,
+					perspectiveOrigin: `${
+						currentIndex * trackItemOffset + itemWidth / 2
+					}px 50%`,
 					x,
 				}}
 				onDragEnd={handleDragEnd}

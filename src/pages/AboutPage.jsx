@@ -148,7 +148,7 @@ export default function AboutPage() {
 													rating: f.rating,
 													komentar: f.komentar || "-",
 												}))}
-												baseWidth={520}
+												baseWidth={425}
 												autoplay={true}
 												autoplayDelay={3000}
 												pauseOnHover={true}
