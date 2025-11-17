@@ -6,6 +6,7 @@ export default function RatingStars({
 	maxRating = 5,
 	size = "sm",
 	interactive = false,
+	showNumber = true,
 	onRatingChange,
 	className,
 }) {
@@ -41,7 +42,11 @@ export default function RatingStars({
 					/>
 				);
 			})}
-			<span className="text-sm text-gray-400 ml-2">({rating.toFixed(1)})</span>
+			{showNumber && (
+				<span className="text-sm text-gray-400 ml-2">
+					({rating.toFixed(1)})
+				</span>
+			)}
 		</div>
 	);
 }

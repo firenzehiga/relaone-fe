@@ -22,6 +22,7 @@ import { useModalStore } from "@/stores/useAppStore";
 import Hero from "@/components/Hero";
 import { useCategory } from "@/_hooks/useCategories";
 import VideoShowcase from "@/components/VideoShowcase";
+import CountUp from "@/components/ui/CountUp";
 
 export default function LandingPage() {
 	const navigate = useNavigate();
@@ -120,8 +121,14 @@ export default function LandingPage() {
 									exit={{ opacity: 0 }}
 									className="text-center group">
 									<div className="text-4xl lg:text-5xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">
-										{stat.value}
-										{stat.suffix}
+										<CountUp
+											from={0}
+											to={stat.value}
+											duration={1.2}
+											separator="."
+											className="inline"
+										/>
+										<span className="ml-1 inline">{stat.suffix}</span>
 									</div>
 									<div className="text-emerald-100 font-medium">
 										{stat.label}

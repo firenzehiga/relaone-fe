@@ -72,17 +72,32 @@ export default function DetailEventPage() {
 
 	const statusBadge = getStatusBadge(event.status);
 	const slotsRemaining = event.maks_peserta - (event.peserta_saat_ini || 0);
-	// Alur penutupan pendaftaran:
-	// - event cancelled  -> closed
-	// - no slots remaining -> closed
-	// - event date has already arrived (registration closed on or after start date)
+
 	const isCancelled = event.status === "cancelled";
 	const isFull = slotsRemaining <= 0;
-	const eventStart = event.tanggal_mulai ? new Date(event.tanggal_mulai) : null;
-	const now = new Date();
-	const isStartedOrPast = eventStart ? now >= eventStart : false;
-	const registrationClosed = isCancelled || isFull || isStartedOrPast;
+	const eventStart = new Date(event.tanggal_mulai);
+	const eventEnd = new Date(`${event.tanggal_selesai}T${event.waktu_selesai}`); // gabungan tanggal & waktu mulai contoh Tue Nov 18 2025 20:28:00 GMT+0700 (Western Indonesia Time)event.tanggal_selesai);
 
+	const now = new Date();
+	const isRegistrationClosed = now >= new Date(event.batas_pendaftaran);
+	const isStarted = now >= eventStart || event.status === "ongoing";
+	const isFinished = now >= eventEnd || event.status === "completed";
+
+	const isRegistrationEnded =
+		isCancelled || isFull || isStarted || isRegistrationClosed;
+
+	// Alur penutupan tombol pendaftaran:
+	// - event cancelled  -> ditutup
+	// - event full       -> ditutup
+	// - event started    -> ditutup
+	// - event registration closed -> ditutup
+	//
+	let actionLabel = "Daftar";
+	if (isCancelled) actionLabel = "Dibatalkan";
+	else if (isFull) actionLabel = "Penuh";
+	else if (isFinished) actionLabel = "Sudah Selesai";
+	else if (isStarted) actionLabel = "Sudah Dimulai";
+	else if (isRegistrationClosed) actionLabel = "Pendaftaran Ditutup";
 	return (
 		<div className="min-h-screen bg-white">
 			<div className="max-w-7xl mx-auto p-6">
@@ -137,14 +152,8 @@ export default function DetailEventPage() {
 								<DynamicButton
 									variant="success"
 									onClick={handleJoinEvent}
-									disabled={registrationClosed}>
-									{isCancelled
-										? "Dibatalkan"
-										: isFull
-										? "Penuh"
-										: isStartedOrPast
-										? "Pendaftaran Ditutup"
-										: "Daftar"}
+									disabled={isRegistrationEnded}>
+									{actionLabel}
 								</DynamicButton>
 							</div>
 						</div>
@@ -185,8 +194,7 @@ export default function DetailEventPage() {
 								</h4>
 								<div className="text-gray-700">
 									<div className="font-medium">
-										{event.peserta_saat_ini || 0} /{" "}
-										{event.maks_peserta } orang
+										{event.peserta_saat_ini || 0} / {event.maks_peserta} orang
 									</div>
 									{slotsRemaining > 0 && (
 										<div className="text-sm text-green-600 font-medium">

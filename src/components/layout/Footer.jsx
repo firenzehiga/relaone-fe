@@ -21,7 +21,7 @@ export default function Footer() {
 							href="/"
 							className="flex justify-center items-center lg:justify-start text-3xl font-bold">
 							<span className="text-gray-900">Rela</span>
-							<span className="text-indigo-600">O</span>
+							<span className="text-emerald-600">O</span>
 							<span className="text-gray-900">ne</span>
 						</a>
 						<p className="py-8 text-gray-500 lg:max-w-xs text-center lg:text-left">
@@ -30,7 +30,7 @@ export default function Footer() {
 						</p>
 						<Link
 							to="/contact"
-							className="py-2.5 px-5 block w-fit bg-indigo-600 rounded-full shadow-sm text-white mx-auto transition-all duration-500 hover:bg-indigo-700 lg:mx-0 font-semibold">
+							className="py-2.5 px-5 block w-fit bg-emerald-600 rounded-full shadow-sm text-white mx-auto transition-all duration-500 hover:bg-emerald-700 lg:mx-0 font-semibold">
 							Contact us
 						</Link>
 					</div>
@@ -120,7 +120,7 @@ export default function Footer() {
 					<div className="flex items-center justify-center flex-col lg:justify-between lg:flex-row">
 						<span className="text-gray-500 ">
 							©{" "}
-							<Link to="/" className="text-indigo-600">
+							<Link to="/" className="text-emerald-600">
 								RelaOne
 							</Link>{" "}
 							{currentYear}, All rights reserved.

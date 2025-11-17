@@ -59,20 +59,33 @@ export default function EventCard({
 	// and be passed directly to the `Badge` component as a `color` prop.
 
 	const statusBadge = getStatusBadge(event.status);
-	const slotsRemaining =
-		(event.maks_peserta ) -
-		(event.peserta_saat_ini || 0);
+	const slotsRemaining = event.maks_peserta - (event.peserta_saat_ini || 0);
 
-	// Alur penutupan pendaftaran:
-	// - event cancelled  -> closed
-	// - no slots remaining -> closed
-	// - event date has already arrived (registration closed on or after start date)
 	const isCancelled = event.status === "cancelled";
 	const isFull = slotsRemaining <= 0;
-	const eventStart = event.tanggal_mulai ? new Date(event.tanggal_mulai) : null;
+	const eventStart = new Date(event.tanggal_mulai);
+	const eventEnd = new Date(`${event.tanggal_selesai}T${event.waktu_selesai}`); // gabungan tanggal & waktu mulai contoh Tue Nov 18 2025 20:28:00 GMT+0700 (Western Indonesia Time)event.tanggal_selesai);
+
 	const now = new Date();
-	const isStartedOrPast = eventStart ? now >= eventStart : false;
-	const registrationClosed = isCancelled || isFull || isStartedOrPast;
+	const isRegistrationClosed = now >= new Date(event.batas_pendaftaran);
+	const isStarted = now >= eventStart || event.status === "ongoing";
+	const isFinished = now >= eventEnd || event.status === "completed";
+
+	const isRegistrationEnded =
+		isCancelled || isFull || isStarted || isRegistrationClosed;
+
+	// Alur penutupan tombol pendaftaran:
+	// - event cancelled  -> ditutup
+	// - event full       -> ditutup
+	// - event started    -> ditutup
+	// - event registration closed -> ditutup
+	//
+	let actionLabel = "Daftar";
+	if (isCancelled) actionLabel = "Dibatalkan";
+	else if (isFull) actionLabel = "Penuh";
+	else if (isFinished) actionLabel = "Sudah Selesai";
+	else if (isStarted) actionLabel = "Sudah Dimulai";
+	else if (isRegistrationClosed) actionLabel = "Pendaftaran Ditutup";
 
 	return (
 		<div
@@ -127,7 +140,6 @@ export default function EventCard({
 							{formatTime(event.waktu_selesai, "WIB")}
 						</span>
 					</div>
-
 					<div className="flex items-start text-gray-700 text-sm">
 						<MapPin
 							size={16}
@@ -169,7 +181,7 @@ export default function EventCard({
 						<span className="font-semibold">
 							{event.peserta_saat_ini || 0} / {event.maks_peserta} peserta
 						</span>
-						{slotsRemaining > 0 && !registrationClosed && (
+						{slotsRemaining > 0 && !isRegistrationEnded && (
 							<span className="text-green-700 ml-2 font-bold text-xs bg-green-50 px-2 py-1 rounded-full">
 								{slotsRemaining} slot tersisa
 							</span>
@@ -208,20 +220,12 @@ export default function EventCard({
 						Detail
 					</DynamicButton>
 					<DynamicButton
-						variant={
-							isCancelled || isFull || isStartedOrPast ? "outline" : "success"
-						}
+						variant={isRegistrationClosed ? "outline" : "success"}
 						size="sm"
 						className="flex-1"
-						disabled={registrationClosed}
+						disabled={isRegistrationEnded}
 						onClick={() => onJoin?.(event.id)}>
-						{isCancelled
-							? "Dibatalkan"
-							: isFull
-							? "Penuh"
-							: isStartedOrPast
-							? "Pendaftaran Ditutup"
-							: "Daftar"}
+						{actionLabel}
 					</DynamicButton>
 				</div>
 			</div>
