@@ -60,8 +60,8 @@ export default function EventCard({
 
 	const statusBadge = getStatusBadge(event.status);
 	const slotsRemaining =
-		(event.maks_peserta || event.capacity) -
-		(event.peserta_saat_ini || event.registered || 0);
+		(event.maks_peserta ) -
+		(event.peserta_saat_ini || 0);
 
 	// Alur penutupan pendaftaran:
 	// - event cancelled  -> closed
@@ -111,7 +111,7 @@ export default function EventCard({
 				</h3>
 
 				<p className="text-gray-600 text-sm mb-4 line-clamp-1 leading-relaxed">
-					{event.deskripsi}
+					{event.deskripsi_singkat}
 				</p>
 
 				{/* Event Details */}

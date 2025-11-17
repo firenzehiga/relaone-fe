@@ -71,9 +71,7 @@ export default function DetailEventPage() {
 	};
 
 	const statusBadge = getStatusBadge(event.status);
-	const slotsRemaining =
-		(event.maks_peserta || event.capacity) -
-		(event.peserta_saat_ini || event.registered || 0);
+	const slotsRemaining = event.maks_peserta - (event.peserta_saat_ini || 0);
 	// Alur penutupan pendaftaran:
 	// - event cancelled  -> closed
 	// - no slots remaining -> closed
@@ -187,8 +185,8 @@ export default function DetailEventPage() {
 								</h4>
 								<div className="text-gray-700">
 									<div className="font-medium">
-										{event.peserta_saat_ini || event.registered || 0} /{" "}
-										{event.maks_peserta || event.capacity} orang
+										{event.peserta_saat_ini || 0} /{" "}
+										{event.maks_peserta } orang
 									</div>
 									{slotsRemaining > 0 && (
 										<div className="text-sm text-green-600 font-medium">

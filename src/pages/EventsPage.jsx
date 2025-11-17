@@ -162,8 +162,7 @@ export default function EventsPage() {
 
 	// Helpers to determine registration availability per event
 	const slotsRemainingFor = (event) =>
-		(event.maks_peserta || event.capacity) -
-		(event.peserta_saat_ini || event.registered || 0);
+		event.maks_peserta - (event.peserta_saat_ini || 0);
 
 	const isRegistrationClosedFor = (event) => {
 		const slots = slotsRemainingFor(event);
