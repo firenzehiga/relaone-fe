@@ -185,7 +185,7 @@ export default function EventsPage() {
 	// Error state handling
 	if (eventsError || categoriesError) {
 		return (
-			<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-slate-50 via-white to-blue-50">
+			<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-blue-50 via-white to-purple-50">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="text-center py-12">
 						<h2 className="text-2xl font-bold text-red-600 mb-4">
@@ -210,7 +210,7 @@ export default function EventsPage() {
 	}
 
 	return (
-		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-emerald-50 via-white to-blue-50">
+		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-blue-50 via-white to-purple-50">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Header */}
 				<div className="mb-8 text-center">

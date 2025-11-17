@@ -26,21 +26,10 @@ export default function Hero() {
 						exit={{ opacity: 0 }}
 						className="flex flex-col justify-center px-8 sm:px-10 lg:px-12 xl:px-16 py-9 lg:py-20">
 						<div className="max-w-xl">
-							<h1 className="text-5xl sm:text-6xl lg:text-6xl xl:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
+							<h1 className="text-5xl sm:text-6xl lg:text-6xl xl:text-6xl font-bold text-gray-900 mb-6 leading-tight">
 								Bergabung dalam
-								<span className="px-2 py-1 relative inline-block">
-									{/* <svg
-										className="stroke-current bottom-0 absolute text-green-200 -translate-x-2"
-										viewBox="0 0 410 18"
-										xmlns="http://www.w3.org/2000/svg">
-										<path
-											d="M6 6.4c16.8 16.8 380.8-11.2 397.6 5.602"
-											stroke-width="12"
-											fill="none"
-											fill-rule="evenodd"
-											stroke-linecap="round"></path>
-									</svg> */}
-									<span className="relative text-emerald-600">Aksi Sosial</span>
+								<span className="block text-transparent bg-clip-text bg-gradient-to-br from-emerald-600 via-emerald-500 to-blue-500 mt-2">
+									Aksi Sosial
 								</span>
 								yang Bermakna
 							</h1>

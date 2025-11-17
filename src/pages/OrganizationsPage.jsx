@@ -67,7 +67,7 @@ export default function OrganizationsPage() {
 	}
 
 	return (
-		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-emerald-50 via-white to-blue-50">
+		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-blue-50 via-white to-purple-50">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Hero Header */}
 				<div className="mb-8 text-center">

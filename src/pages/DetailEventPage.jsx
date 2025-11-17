@@ -112,56 +112,64 @@ export default function DetailEventPage() {
 
 					{/* Right: Content */}
 					<div className="md:col-span-7">
-						<div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-							<div className="md:col-span-2">
+						<div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+							<div className="lg:col-span-2">
 								<Badge variant={statusBadge.variant}>{statusBadge.text}</Badge>
 								<h1 className="text-2xl md:text-3xl font-bold text-gray-900 mt-1">
-									{event.judul || event.title}
+									{event.judul}
 								</h1>
 
-								<div className="flex items-center gap-4 text-sm text-gray-600 mt-3">
+								<div className="flex flex-col lg:flex-row lg:items-center gap-3 text-sm text-gray-600 mt-3">
 									<span className="flex items-center gap-2">
 										<Calendar size={16} className="text-emerald-600" />
 										<span className="text-gray-600 font-semibold">
 											Dimulai pada:
 										</span>
-										{formatDate(event.tanggal_mulai)}
+										<span className="ml-1">
+											{formatDate(event.tanggal_mulai)}
+										</span>
 									</span>
+
 									<span className="flex items-center gap-2">
-										<Clock size={16} />
-										{formatTime(event.waktu_mulai)} -{" "}
-										{formatTime(event.waktu_selesai, "WIB")}
+										<Clock size={16} className="text-emerald-600" />
+										<span className="ml-1">
+											{formatTime(event.waktu_mulai)} -{" "}
+											{formatTime(event.waktu_selesai, "WIB")}
+										</span>
 									</span>
 								</div>
 
 								<div className="mt-2 text-sm">
-									<div className="flex items-center gap-2">
-										<CalendarX size={16} className="text-red-600" />
-										<span className="text-gray-600 font-medium">
-											Batas pendaftaran:
-										</span>
+									<div className="flex flex-col sm:flex-row sm:items-center gap-2">
+										<div className="flex items-center gap-2">
+											<CalendarX size={16} className="text-red-600" />
+											<span className="text-gray-600 font-medium">
+												Batas pendaftaran:
+											</span>
+										</div>
 
-										<>
-											<span className="text-gray-600 ml-1">
+										<div className="ml-0 sm:ml-1">
+											<span className="text-gray-600 break-words">
 												{formatDate(event.batas_pendaftaran)}
 											</span>
-										</>
+										</div>
 									</div>
 								</div>
 							</div>
 
-							<div className="md:col-span-1 flex flex-col items-end gap-2 self-start">
+							<div className="md:col-span-1 flex flex-row md:flex-col items-center md:items-end gap-2 self-start">
 								<DynamicButton
-									variant="ghost"
+									variant="outline"
 									size="sm"
-									disa
+									className="w-full md:w-auto"
 									onClick={() => navigate("/events")}>
 									Kembali
 								</DynamicButton>
 								<DynamicButton
 									variant="success"
 									onClick={handleJoinEvent}
-									disabled={isRegistrationEnded}>
+									disabled={isRegistrationEnded}
+									className="w-full md:w-auto">
 									{actionLabel}
 								</DynamicButton>
 							</div>
@@ -171,9 +179,7 @@ export default function DetailEventPage() {
 							<h3 className="text-lg font-semibold text-gray-900 mb-3">
 								Deskripsi Event
 							</h3>
-							<p className="leading-relaxed">
-								{event.deskripsi || event.description}
-							</p>
+							<p className="leading-relaxed">{event.deskripsi}</p>
 						</div>
 
 						<div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -182,16 +188,13 @@ export default function DetailEventPage() {
 									<MapPin size={18} className="text-purple-600" /> Lokasi
 								</h4>
 								<div className="text-gray-700">
-									<div className="font-medium">
-										{event.location?.nama || event.location}
-									</div>
+									<div className="font-medium">{event.location?.nama}</div>
 									<div className="text-sm text-gray-500">
-										{event.location?.alamat || event.address}
+										{event.location?.alamat}
 									</div>
-									{(event.location?.kota || event.city) && (
+									{event.location?.kota && (
 										<div className="text-sm text-gray-500 mt-1">
-											{event.location?.kota || event.city},{" "}
-											{event.location?.provinsi || event.province}
+											{event.location?.kota}, {event.location?.provinsi}
 										</div>
 									)}
 								</div>
