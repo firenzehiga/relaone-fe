@@ -11,7 +11,7 @@ import { getImageUrl } from "@/utils";
 import { useEventById } from "@/_hooks/useEvents";
 import { useModalStore } from "@/stores/useAppStore";
 import { AsyncImage } from "loadable-image";
-import { formatDate } from "@/utils/dateFormatter";
+import { formatDate, formatTime } from "@/utils/dateFormatter";
 
 /**
  * Modal untuk join event volunteer
@@ -175,7 +175,8 @@ export default function JoinEventModal() {
 											className="mr-2 text-blue-600 flex-shrink-0"
 										/>
 										<span className="font-medium">
-											{event.waktu_mulai} - {event.waktu_selesai}
+											{formatTime(event.waktu_mulai)} -{" "}
+											{formatTime(event.waktu_selesai, "WIB")}
 										</span>
 									</div>
 									<div className="flex items-center text-gray-700 text-sm">
