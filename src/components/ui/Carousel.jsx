@@ -40,8 +40,8 @@ export default function Carousel({
 	const measuredWidth = containerWidth ? containerWidth : baseWidth;
 	const trackItemOffset = itemWidth + GAP;
 
-	// center offset to make the active card centered in the container
-	const centerOffset = (measuredWidth - itemWidth) / 2;
+	// center offset (space to show peek on both sides)
+	const centerOffset = Math.max(0, (measuredWidth - itemWidth) / 2);
 
 	// make sure `items` is an array (caller might pass objects or undefined)
 	const safeItems = Array.isArray(items)
@@ -82,10 +82,9 @@ export default function Carousel({
 		return () => ro.disconnect();
 	}, [containerRef]);
 
-	// ensure x initial position centers the first item when containerWidth changes
+	// ensure x initial position is zero when containerWidth changes (track uses padding)
 	useEffect(() => {
-		// set initial position to center offset so first card isn't flush to the left
-		x.set(centerOffset);
+		x.set(0);
 	}, [containerWidth]);
 
 	useEffect(() => {
@@ -118,7 +117,7 @@ export default function Carousel({
 	const handleAnimationComplete = () => {
 		if (loop && currentIndex === carouselItems.length - 1) {
 			setIsResetting(true);
-			x.set(centerOffset);
+			x.set(0);
 			setCurrentIndex(0);
 			setTimeout(() => setIsResetting(false), 50);
 		}
@@ -151,10 +150,11 @@ export default function Carousel({
 	};
 
 	// Always provide drag constraints so the user can't pull the track beyond available items.
+	// We add symmetric padding on the track (paddingLeft/paddingRight) so items peek equally.
 	const dragProps = {
 		dragConstraints: {
-			left: -trackItemOffset * (carouselItems.length - 1) + centerOffset,
-			right: centerOffset,
+			left: -trackItemOffset * (carouselItems.length - 1),
+			right: 0,
 		},
 	};
 
@@ -178,12 +178,14 @@ export default function Carousel({
 				style={{
 					gap: `${GAP}px`,
 					perspective: 1000,
-					// keep perspective origin centered in the container for symmetric 3D effect
-					perspectiveOrigin: `${Math.max(0, containerWidth / 2)}px 50%`,
+					// add symmetric side padding so the active card is visually centered
+					paddingLeft: centerOffset,
+					paddingRight: centerOffset,
+					perspectiveOrigin: `50% 50%`,
 					x,
 				}}
 				onDragEnd={handleDragEnd}
-				animate={{ x: -(currentIndex * trackItemOffset) + centerOffset }}
+				animate={{ x: -(currentIndex * trackItemOffset) }}
 				transition={effectiveTransition}
 				onAnimationComplete={handleAnimationComplete}>
 				{carouselItems.map((item, index) => {
