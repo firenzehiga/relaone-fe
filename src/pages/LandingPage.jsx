@@ -195,12 +195,12 @@ export default function LandingPage() {
 						</div>
 
 						<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-							{categories.map((category, index) => {
+							{categories.slice(0, 3).map((category, index) => {
 								// pakai Lucide untuk mendapatkan icon berdasarkan nama string
 								const Icon = Lucide[category.icon];
 								return (
 									<motion.div
-										key={category.nama}
+										key={category.id}
 										initial={{ opacity: 0, scale: 0.9 }}
 										animate={{ opacity: 1, scale: 1 }}
 										transition={{ delay: index * 0.1 }}
