@@ -122,16 +122,14 @@ export default function DetailEventPage() {
 								<div className="flex flex-col lg:flex-row lg:items-center gap-3 text-sm text-gray-600 mt-3">
 									<span className="flex items-center gap-2">
 										<Calendar size={16} className="text-emerald-600" />
-										<span className="text-gray-600 font-semibold">
-											Dimulai pada:
-										</span>
+
 										<span className="ml-1">
 											{formatDate(event.tanggal_mulai)}
 										</span>
 									</span>
 
 									<span className="flex items-center gap-2">
-										<Clock size={16} className="text-emerald-600" />
+										<Clock size={16} className="text-blue-600" />
 										<span className="ml-1">
 											{formatTime(event.waktu_mulai)} -{" "}
 											{formatTime(event.waktu_selesai, "WIB")}
@@ -202,7 +200,7 @@ export default function DetailEventPage() {
 
 							<div>
 								<h4 className="font-semibold text-gray-900 flex items-center gap-2 mb-2">
-									<Users size={18} className="text-green-600" /> Peserta
+									<Users size={18} className="text-orange-600" /> Peserta
 								</h4>
 								<div className="text-gray-700">
 									<div className="font-medium">

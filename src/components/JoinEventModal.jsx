@@ -11,6 +11,7 @@ import { getImageUrl } from "@/utils";
 import { useEventById } from "@/_hooks/useEvents";
 import { useModalStore } from "@/stores/useAppStore";
 import { AsyncImage } from "loadable-image";
+import { formatDate } from "@/utils/dateFormatter";
 
 /**
  * Modal untuk join event volunteer
@@ -162,23 +163,16 @@ export default function JoinEventModal() {
 									<div className="flex items-center text-gray-700 text-sm">
 										<Calendar
 											size={16}
-											className="mr-2 text-blue-500 flex-shrink-0"
+											className="mr-2 text-emerald-600 flex-shrink-0"
 										/>
 										<span className="font-medium">
-											{new Date(event.tanggal_mulai).toLocaleDateString(
-												"id-ID",
-												{
-													day: "numeric",
-													month: "long",
-													year: "numeric",
-												}
-											)}
+											{formatDate(event.tanggal_mulai)}
 										</span>
 									</div>
 									<div className="flex items-center text-gray-700 text-sm">
 										<Clock
 											size={16}
-											className="mr-2 text-purple-500 flex-shrink-0"
+											className="mr-2 text-blue-600 flex-shrink-0"
 										/>
 										<span className="font-medium">
 											{event.waktu_mulai} - {event.waktu_selesai}
@@ -187,7 +181,7 @@ export default function JoinEventModal() {
 									<div className="flex items-center text-gray-700 text-sm">
 										<MapPin
 											size={16}
-											className="mr-2 text-green-500 flex-shrink-0"
+											className="mr-2 text-purple-600 flex-shrink-0"
 										/>
 										<span className="font-medium line-clamp-1">
 											{event.location?.nama}
