@@ -29,11 +29,19 @@ export default function Carousel({
 	round = false,
 }) {
 	const containerPadding = 16;
-	const [containerWidth, setContainerWidth] = useState(baseWidth);
+	const [containerWidth, setContainerWidth] = useState(null);
 
 	// compute item width from container so the carousel becomes responsive
-	const itemWidth = (containerWidth || baseWidth) - containerPadding * 2;
+	// if we have a measured container width (content box) use it directly;
+	// otherwise fall back to baseWidth minus container padding (old behavior)
+	const itemWidth = containerWidth
+		? containerWidth
+		: baseWidth - containerPadding * 2;
+	const measuredWidth = containerWidth ? containerWidth : baseWidth;
 	const trackItemOffset = itemWidth + GAP;
+
+	// center offset to make the active card centered in the container
+	const centerOffset = (measuredWidth - itemWidth) / 2;
 
 	// make sure `items` is an array (caller might pass objects or undefined)
 	const safeItems = Array.isArray(items)
@@ -74,6 +82,12 @@ export default function Carousel({
 		return () => ro.disconnect();
 	}, [containerRef]);
 
+	// ensure x initial position centers the first item when containerWidth changes
+	useEffect(() => {
+		// set initial position to center offset so first card isn't flush to the left
+		x.set(centerOffset);
+	}, [containerWidth]);
+
 	useEffect(() => {
 		if (autoplay && (!pauseOnHover || !isHovered)) {
 			const timer = setInterval(() => {
@@ -104,7 +118,7 @@ export default function Carousel({
 	const handleAnimationComplete = () => {
 		if (loop && currentIndex === carouselItems.length - 1) {
 			setIsResetting(true);
-			x.set(0);
+			x.set(centerOffset);
 			setCurrentIndex(0);
 			setTimeout(() => setIsResetting(false), 50);
 		}
@@ -139,8 +153,8 @@ export default function Carousel({
 	// Always provide drag constraints so the user can't pull the track beyond available items.
 	const dragProps = {
 		dragConstraints: {
-			left: -trackItemOffset * (carouselItems.length - 1),
-			right: 0,
+			left: -trackItemOffset * (carouselItems.length - 1) + centerOffset,
+			right: centerOffset,
 		},
 	};
 
@@ -164,13 +178,12 @@ export default function Carousel({
 				style={{
 					gap: `${GAP}px`,
 					perspective: 1000,
-					perspectiveOrigin: `${
-						currentIndex * trackItemOffset + itemWidth / 2
-					}px 50%`,
+					// keep perspective origin centered in the container for symmetric 3D effect
+					perspectiveOrigin: `${Math.max(0, containerWidth / 2)}px 50%`,
 					x,
 				}}
 				onDragEnd={handleDragEnd}
-				animate={{ x: -(currentIndex * trackItemOffset) }}
+				animate={{ x: -(currentIndex * trackItemOffset) + centerOffset }}
 				transition={effectiveTransition}
 				onAnimationComplete={handleAnimationComplete}>
 				{carouselItems.map((item, index) => {
