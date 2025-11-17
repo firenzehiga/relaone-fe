@@ -1,4 +1,4 @@
-import { Calendar, MapPin, Users, Clock, X } from "lucide-react";
+import { Calendar, MapPin, Users, Clock, X, CalendarX } from "lucide-react";
 import Skeleton from "@/components/ui/Skeleton";
 import DynamicButton from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
@@ -9,7 +9,7 @@ import { useModalStore } from "@/stores/useAppStore";
 import { AsyncImage } from "loadable-image";
 import { Fade } from "transitions-kit";
 import { getImageUrl } from "@/utils";
-
+import { formatTime } from "@/utils/dateFormatter";
 /**
  * Halaman detail event (full page) yang menggantikan modal.
  */
@@ -32,11 +32,6 @@ export default function DetailEventPage() {
 			month: "long",
 			year: "numeric",
 		});
-	};
-
-	const formatTime = (timeString) => {
-		if (!timeString) return "00:00";
-		return timeString.slice(0, 5);
 	};
 
 	const getStatusBadge = (status) => {
@@ -110,11 +105,7 @@ export default function DetailEventPage() {
 								transition={Fade}
 								src={getImageUrl(`events/${event.gambar}`)}
 								alt={event.judul}
-								className="w-full h-76 md:h-[640px] object-cover"
-								onError={(e) => {
-									e.target.onerror = null;
-									e.target.src = "https://placehold.co/400";
-								}}
+								className="w-full h-72 md:h-[640px] object-cover"
 							/>
 						</div>
 					</div>
@@ -130,14 +121,32 @@ export default function DetailEventPage() {
 
 								<div className="flex items-center gap-4 text-sm text-gray-600 mt-3">
 									<span className="flex items-center gap-2">
-										<Calendar size={16} />
-										{formatDate(event.tanggal_mulai || event.date)}
+										<Calendar size={16} className="text-emerald-600" />
+										<span className="text-gray-600 font-semibold">
+											Dimulai pada:
+										</span>
+										{formatDate(event.tanggal_mulai)}
 									</span>
 									<span className="flex items-center gap-2">
 										<Clock size={16} />
-										{formatTime(event.waktu_mulai || event.time)} -{" "}
-										{formatTime(event.waktu_selesai || event.end_time)}
+										{formatTime(event.waktu_mulai)} -{" "}
+										{formatTime(event.waktu_selesai, "WIB")}
 									</span>
+								</div>
+
+								<div className="mt-2 text-sm">
+									<div className="flex items-center gap-2">
+										<CalendarX size={16} className="text-red-600" />
+										<span className="text-gray-600 font-medium">
+											Batas pendaftaran:
+										</span>
+
+										<>
+											<span className="text-gray-600 ml-1">
+												{formatDate(event.batas_pendaftaran)}
+											</span>
+										</>
+									</div>
 								</div>
 							</div>
 
