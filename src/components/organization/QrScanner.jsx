@@ -7,19 +7,23 @@ import { useOrgScanQrMutation } from "../../_hooks/useParticipants";
  * Component QR Scanner untuk organization check-in volunteer
  * Scan QR Code volunteer untuk update status menjadi 'attended'
  */
-function QrScanner({ eventId, onScanSuccess, onScanError }) {
+function QrScanner({ eventId }) {
 	const scanQrMutation = useOrgScanQrMutation();
 	const [scanning, setScanning] = useState(false);
 	const [result, setResult] = useState(null);
 	const [resultType, setResultType] = useState(""); // 'success' | 'error' | 'warning'
 	const scannerRef = useRef(null);
+	// Ref merupakan penanda apakah sedang memproses scan
 	const isProcessing = useRef(false);
+	// Ref untuk menandai apakah scanner sedang berhenti
 	const isStopping = useRef(false);
+	// Ref untuk input file (upload QR)
+	const fileInputRef = useRef(null);
 
 	useEffect(() => {
 		let mounted = true;
 
-		// Initialize scanner when scanning is true
+		// Inisialisasi scanner saat scanning diaktifkan
 		if (scanning && !scannerRef.current) {
 			console.log("🎥 Initializing scanner...");
 
@@ -35,36 +39,32 @@ function QrScanner({ eventId, onScanSuccess, onScanError }) {
 
 					const html5QrCode = new Html5Qrcode("qr-reader");
 
-					const onScanSuccess = (decodedText) => {
-						console.log("✅ QR Detected:", decodedText);
+					const handleCameraDetected = (decodedText) => {
 						if (mounted && !isProcessing.current) {
 							handleScan(decodedText);
 						}
 					};
 
-					const onScanFailure = (error) => {
+					const handleCameraError = (error) => {
 						// Ignore common scanning errors
 						if (!error.includes("NotFoundException")) {
 							console.warn("⚠️ Scan error:", error);
 						}
 					};
 
-					console.log("📹 Starting camera...");
-
-					// Start camera with config - larger scanning area
+					// Mulai kamera dengan konfigurasi - area pemindaian lebih besar
 					await html5QrCode.start(
-						{ facingMode: "environment" }, // Use back camera
+						{ facingMode: "environment" }, // Gunakan kamera belakang
 						{
-							fps: 15, // Increased FPS for better detection
-							qrbox: { width: 350, height: 350 }, // Larger scanning area
+							fps: 15, // FPS ditingkatkan untuk deteksi lebih baik
+							qrbox: { width: 350, height: 350 }, // Area pemindaian lebih besar
 							aspectRatio: 1.0,
 						},
-						onScanSuccess,
-						onScanFailure
+						handleCameraDetected,
+						handleCameraError
 					);
 
 					scannerRef.current = html5QrCode;
-					console.log("✅ Scanner initialized successfully!");
 				} catch (error) {
 					console.error("❌ Failed to initialize scanner:", error);
 					alert(
@@ -80,14 +80,14 @@ function QrScanner({ eventId, onScanSuccess, onScanError }) {
 			}, 100);
 		}
 
-		// Cleanup
+		// Bersihkan scanner saat komponen di-unmount atau scanning dimatikan
 		return () => {
 			mounted = false;
 			if (scannerRef.current && !isStopping.current) {
 				const scanner = scannerRef.current;
 				scannerRef.current = null;
 
-				// Cleanup without blocking
+				// Bersihkan tanpa blocking
 				scanner
 					.stop()
 					.then(() => scanner.clear())
@@ -101,10 +101,15 @@ function QrScanner({ eventId, onScanSuccess, onScanError }) {
 	const handleScan = async (decodedText) => {
 		if (!decodedText || isProcessing.current) return;
 
-		// Set processing flag
+		// Set processing flag segera untuk menghindari penanganan ganda
 		isProcessing.current = true;
 
-		// Stop scanner temporarily
+		// Kasih tampilan proses
+		setResult({ message: "Memproses QR Code..." });
+		setResultType("warning");
+		playSound("processing");
+
+		// Hentikan scanner sementara (kami masih menampilkan UI proses saat menunggu berhenti)
 		if (scannerRef.current) {
 			try {
 				await scannerRef.current.stop();
@@ -116,7 +121,7 @@ function QrScanner({ eventId, onScanSuccess, onScanError }) {
 		}
 		setScanning(false);
 
-		// Call mutation to check-in volunteer
+		// Panggil mutation untuk check-in volunteer
 		scanQrMutation.mutate(
 			{
 				eventId,
@@ -134,10 +139,9 @@ function QrScanner({ eventId, onScanSuccess, onScanError }) {
 					// Play success sound (optional)
 					playSound("success");
 
-					// Callback to parent
-					if (onScanSuccess) {
-						onScanSuccess(response.data);
-					}
+					// Tidak perlu memanggil callback ke parent lagi;
+					// invalidation/refetch sudah ditangani oleh hook `useOrgScanQrMutation`.
+					// (Jika suatu saat ingin behavior custom, gunakan props ini dari parent.)
 
 					// Auto clear dan scan lagi setelah 3 detik
 					setTimeout(() => {
@@ -159,10 +163,8 @@ function QrScanner({ eventId, onScanSuccess, onScanError }) {
 					// Play error sound (optional)
 					playSound("error");
 
-					// Callback to parent
-					if (onScanError) {
-						onScanError(errorData);
-					}
+					// Tidak memanggil callback error ke parent karena invalidation
+					// dan notifikasi sudah ditangani di hook.
 
 					// Auto clear dan scan lagi setelah 4 detik
 					setTimeout(() => {
@@ -173,6 +175,78 @@ function QrScanner({ eventId, onScanSuccess, onScanError }) {
 				},
 			}
 		);
+	};
+
+	// Scan QR code from an uploaded file (image). Uses Html5Qrcode.scanFileV2 when available,
+	// otherwise falls back to creating a temporary Html5Qrcode instance and using scanFile.
+	const scanFile = async (file) => {
+		if (!file) return;
+		if (isProcessing.current) return;
+
+		// mark as processing to prevent duplicates
+		isProcessing.current = true;
+		setResult(null);
+
+		try {
+			// Prefer the static/newer API if available
+			if (typeof Html5Qrcode.scanFileV2 === "function") {
+				const res = await Html5Qrcode.scanFileV2(file, true);
+				// scanFileV2 may return a string or an array
+				const decoded = Array.isArray(res) ? res[0] : res;
+				// Ensure we call the same handling pipeline
+				isProcessing.current = false; // allow handleScan to set flag
+				handleScan(decoded);
+				return;
+			}
+
+			// Fallback: create a temporary, hidden element and instance to scan the file
+			const tempId = "html5qr-temp-file-scan";
+			let tempEl = document.getElementById(tempId);
+			if (!tempEl) {
+				tempEl = document.createElement("div");
+				tempEl.id = tempId;
+				tempEl.style.display = "none";
+				document.body.appendChild(tempEl);
+			}
+
+			const tempScanner = new Html5Qrcode(tempId);
+			try {
+				const res = await tempScanner.scanFile(file, true);
+				const decoded = Array.isArray(res) ? res[0] : res;
+				await tempScanner.clear();
+				if (tempEl && tempEl.parentNode) tempEl.parentNode.removeChild(tempEl);
+				isProcessing.current = false; // allow handleScan to set flag
+				handleScan(decoded);
+				return;
+			} catch (err) {
+				// cleanup then rethrow to outer catcher
+				try {
+					await tempScanner.clear();
+				} catch (e) {}
+				if (tempEl && tempEl.parentNode) tempEl.parentNode.removeChild(tempEl);
+				throw err;
+			}
+		} catch (err) {
+			console.error("❌ File scan error:", err);
+			setResult({
+				message: "Gagal memindai file QR Code",
+				details: err?.message || String(err),
+			});
+			setResultType("error");
+			playSound("error");
+
+			setTimeout(() => {
+				setResult(null);
+				isProcessing.current = false;
+			}, 3000);
+		}
+	};
+
+	const handleFileChange = (e) => {
+		const file = e.target.files?.[0];
+		if (file) scanFile(file);
+		// clear input so same file can be reselected later
+		e.target.value = null;
 	};
 
 	const playSound = (type) => {
@@ -260,6 +334,12 @@ function QrScanner({ eventId, onScanSuccess, onScanError }) {
 				<div className="mb-4">
 					<div
 						id="qr-reader"
+						onDragOver={(e) => e.preventDefault()}
+						onDrop={(e) => {
+							e.preventDefault();
+							const f = e.dataTransfer?.files?.[0];
+							if (f) scanFile(f);
+						}}
 						style={{
 							width: "100%",
 							minHeight: "350px",
@@ -271,6 +351,9 @@ function QrScanner({ eventId, onScanSuccess, onScanError }) {
 					/>
 					<p className="text-center text-xs sm:text-sm text-gray-600 mt-3">
 						📹 Arahkan kamera ke QR Code volunteer
+					</p>
+					<p className="text-center text-xs sm:text-sm text-gray-500 mt-1">
+						atau seret gambar QR ke area kamera untuk memindai dari file
 					</p>
 					<p className="text-center text-xs text-gray-500 mt-1">
 						Pastikan QR Code terlihat jelas dalam kotak hijau. Area scanning
@@ -354,8 +437,22 @@ function QrScanner({ eventId, onScanSuccess, onScanError }) {
 					<p className="text-blue-600 text-xs sm:text-sm mt-1">
 						Klik "Mulai Scan" untuk memulai check-in volunteer
 					</p>
+					<p className="text-sm text-gray-700 mt-3">atau unggah gambar QR:</p>
+					<button
+						onClick={() => fileInputRef.current?.click()}
+						className="mt-2 inline-flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
+						Upload QR Image
+					</button>
 				</div>
 			)}
+			{/* Hidden file input used by upload buttons */}
+			<input
+				type="file"
+				accept="image/*"
+				ref={fileInputRef}
+				onChange={handleFileChange}
+				style={{ display: "none" }}
+			/>
 		</div>
 	);
 }

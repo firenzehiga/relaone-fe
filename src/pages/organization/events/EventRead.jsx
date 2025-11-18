@@ -32,9 +32,9 @@ import {
 } from "@chakra-ui/react";
 import { LinkButton } from "@/components/ui/Button";
 import { Link } from "react-router-dom";
-import { formatTime, getImageUrl, parseApiError } from "@/utils";
+import { getImageUrl, parseApiError } from "@/utils";
 import FetchLoader from "@/components/ui/FetchLoader";
-import { formatDate } from "@/utils/";
+import { formatDate, formatTime } from "@/utils/dateFormatter";
 import { useAuthStore } from "@/_hooks/useAuth";
 import Badge from "@/components/ui/Badge";
 

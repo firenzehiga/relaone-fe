@@ -84,8 +84,8 @@ export default function EventScannerPage() {
 	// Callback saat scan berhasil - refetch data
 	const handleScanSuccess = (data) => {
 		// Refetch stats & recent check-ins
-		refetchStats();
-		refetchRecent();
+		// refetchStats();
+		// refetchRecent();
 	};
 
 	// Callback saat scan error
@@ -196,11 +196,7 @@ export default function EventScannerPage() {
 					{/* QR Scanner */}
 					<div>
 						{eventStatus === "ongoing" ? (
-							<QrScanner
-								eventId={eventId}
-								onScanSuccess={handleScanSuccess}
-								onScanError={handleScanError}
-							/>
+							<QrScanner eventId={eventId} />
 						) : (
 							<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sm:p-8">
 								<div className="text-center">

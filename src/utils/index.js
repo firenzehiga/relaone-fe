@@ -1,9 +1,3 @@
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import "dayjs/locale/id";
-
-// Extend dayjs with relative time plugin
-dayjs.extend(relativeTime);
 /**
  * Utility function untuk menggabungkan class names CSS dengan aman
  * Menghilangkan class yang falsy (null, undefined, false, empty string)
@@ -67,63 +61,6 @@ export const parseApiError = (err) => {
 		flatten(data) ||
 		JSON.stringify(data)
 	);
-};
-
-/**
- * Util: Normalisasi input menjadi objek dayjs.
- * Menerima: Date, number (timestamp), atau string (termasuk format "YYYY-MM-DD HH:mm:ss" atau ISO).
- *
- * @param {Date|number|string} input
- * @returns {dayjs.Dayjs}
- */
-export const toDayjs = (input) => {
-	if (input instanceof Date) return dayjs(input);
-	if (typeof input === "number") return dayjs(input);
-	if (typeof input === "string") {
-		// Ganti spasi pertama menjadi 'T' agar dayjs mengenali 'YYYY-MM-DD HH:mm:ss'
-		const isoLike = input.replace(" ", "T");
-		return dayjs(isoLike);
-	}
-	// fallback: coba dayjs langsung
-	return dayjs(input);
-};
-
-/**
- * Memformat string tanggal menjadi format Indonesia yang lebih ringkas
- *
- * @param {string} dateString - String tanggal dalam format apapun yang bisa di-parse Date
- * @returns {string} Tanggal dalam format "DD MMM YYYY"
- */
-export const formatDate = (tgl) => {
-	if (!tgl && tgl !== 0) return "-";
-
-	const d = toDayjs(tgl);
-	return d.isValid() ? d.locale("id").format("D MMMM YYYY") : "-";
-};
-
-/**
- * Memformat string waktu dengan mengambil jam dan menit saja
- * Menangani case dimana timeString bisa undefined/null
- *
- * @param {string} timeString - String waktu dalam format HH:MM:SS atau HH:MM
- * @returns {string} Waktu dalam format HH:MM
- */
-export const formatTime = (timeString) => {
-	if (!timeString) return "00:00";
-	return timeString.slice(0, 5);
-};
-
-// helper: normalize backend date/time -> input friendly
-export const toInputDate = (s) => {
-	if (!s) return "";
-	if (typeof s !== "string") s = String(s);
-	if (s.includes("T")) return s.split("T")[0];
-	if (s.includes(" ")) return s.split(" ")[0];
-	try {
-		return new Date(s).toISOString().slice(0, 10);
-	} catch {
-		return "";
-	}
 };
 
 // GOOGLE MAPS UTILITIES

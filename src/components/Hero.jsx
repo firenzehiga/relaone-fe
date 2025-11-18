@@ -8,7 +8,7 @@ export default function Hero() {
 	const { isAuthenticated } = useAuthStore();
 
 	return (
-		<section className="relative w-full min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50">
+		<section className="relative w-full min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-blue-50 via-green-50 to-purple-50">
 			{/* Background Decorations */}
 			<div className="absolute inset-0 w-full pointer-events-none">
 				<div className="absolute top-0 left-0 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float"></div>

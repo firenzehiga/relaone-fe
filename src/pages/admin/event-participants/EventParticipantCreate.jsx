@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import { useAdminEvents } from "@/_hooks/useEvents";
 import { useAdminVolunteerUsers } from "@/_hooks/useUsers";
 import { useAdminCreateParticipantMutation } from "@/_hooks/useParticipants";
-import { parseApiError, toInputDate } from "@/utils";
+import { toInputDate } from "@/utils/dateFormatter";
 import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
 import { showToast } from "@/components/ui/Toast";

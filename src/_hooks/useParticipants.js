@@ -580,17 +580,23 @@ export const useOrgRecentCheckIns = (eventId) => {
  * @param {string} variables.qr_data - Data QR code yang di-scan
  * @invalidates ["orgParticipants", "orgRecentCheckIns", "orgAttendanceStats"]
  */
+
 export const useOrgScanQrMutation = () => {
 	const queryClient = useQueryClient();
+
+	// Jangan menunggu invalidateQueries karena refetch bisa memperlambat
+	// feedback ke user (toast / UI). Jalankan invalidasi secara asinkron
+	// sehingga response sukses ditampilkan segera.
 
 	return useMutation({
 		mutationFn: eventParticipantService.orgScanQrCheckIn,
 		onSuccess: async (_, variables) => {
 			const eventId = variables?.eventId;
-			await queryClient.invalidateQueries(["orgParticipants"]);
+			// Trigger invalidations tanpa await supaya tidak menunda toast
+			queryClient.invalidateQueries(["orgParticipants"]);
 			if (eventId) {
+				queryClient.invalidateQueries(["orgAttendanceStats", eventId]);
 				await queryClient.invalidateQueries(["orgRecentCheckIns", eventId]);
-				await queryClient.invalidateQueries(["orgAttendanceStats", eventId]);
 			}
 			showToast({
 				type: "success",

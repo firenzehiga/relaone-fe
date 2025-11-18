@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUpdateUserMutation, useUserProfile } from "@/_hooks/useUsers";
-import { toInputDate, getImageUrl } from "@/utils";
+import { getImageUrl } from "@/utils";
+import { toInputDate } from "@/utils/dateFormatter";
 import { useAuthStore } from "@/_hooks/useAuth";
 import { motion } from "framer-motion";
 import {

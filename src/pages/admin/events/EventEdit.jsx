@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { parseApiError, toInputDate, getImageUrl } from "@/utils";
+import { getImageUrl } from "@/utils";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
@@ -11,10 +11,10 @@ import {
 	useAdminUpdateEventMutation,
 	useAdminEventById,
 } from "@/_hooks/useEvents";
-import { Loader2, Image } from "lucide-react";
+import { Image } from "lucide-react";
 import { useAdminCategory } from "@/_hooks/useCategories";
 import Skeleton from "@/components/ui/Skeleton";
-import { toInputTime } from "@/utils/dateFormatter";
+import { toInputTime, toInputDate } from "@/utils/dateFormatter";
 export default function AdminEventEdit() {
 	const { id } = useParams();
 	const navigate = useNavigate();

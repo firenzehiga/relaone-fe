@@ -30,7 +30,8 @@ import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom";
 import FetchLoader from "@/components/ui/FetchLoader";
-import { formatDate, parseApiError } from "@/utils";
+import { parseApiError } from "@/utils";
+import { formatDate } from "@/utils/dateFormatter";
 import Badge from "@/components/ui/Badge";
 
 export default function AdminEventParticipant() {

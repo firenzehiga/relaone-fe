@@ -1,17 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-hot-toast";
-import { Loader2 } from "lucide-react";
 import { useAdminEvents } from "@/_hooks/useEvents";
 import { useAdminVolunteerUsers } from "@/_hooks/useUsers";
 import {
 	useAdminParticipantById,
 	useAdminUpdateParticipantMutation,
 } from "@/_hooks/useParticipants";
-import { parseApiError, toInputDate } from "@/utils";
+import { toInputDate } from "@/utils/dateFormatter";
 import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
-import { showToast } from "@/components/ui/Toast";
 import { useAuthStore } from "@/_hooks/useAuth";
 
 export default function AdminEventParticipantEdit() {

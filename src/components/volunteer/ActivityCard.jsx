@@ -12,7 +12,8 @@ import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import DynamicButton from "@/components/ui/Button";
 import { useModalStore } from "@/stores/useAppStore";
-import { getImageUrl, formatDate, formatTime } from "@/utils";
+import { getImageUrl } from "@/utils";
+import { formatDate, formatTime } from "@/utils/dateFormatter";
 import { AsyncImage } from "loadable-image";
 import { Fade } from "transitions-kit";
 

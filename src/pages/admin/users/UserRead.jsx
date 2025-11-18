@@ -1,17 +1,11 @@
 import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
-import {
-	ChevronDown,
-	Plus,
-	Loader2,
-	Trash,
-	PencilIcon,
-	AlertCircle,
-} from "lucide-react";
+import { ChevronDown, Loader2, Trash, AlertCircle } from "lucide-react";
 import Badge from "@/components/ui/Badge";
 import { useAdminDeleteUserMutation, useAdminUsers } from "@/_hooks/useUsers";
 import FetchLoader from "@/components/ui/FetchLoader";
-import { formatDate, getImageUrl } from "@/utils";
+import { getImageUrl } from "@/utils";
+import { formatDate } from "@/utils/dateFormatter";
 import Swal from "sweetalert2";
 import { useAuthStore } from "@/_hooks/useAuth";
 

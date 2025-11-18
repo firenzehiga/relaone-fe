@@ -6,6 +6,7 @@ import Avatar from "../ui/Avatar";
  * Component untuk menampilkan daftar volunteer yang baru check-in
  * Menerima data dari parent (tidak fetch sendiri)
  */
+
 function RecentCheckIns({ checkIns = [] }) {
 	return (
 		<div className="min-h-[337px] bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">

@@ -9,7 +9,6 @@ dayjs.extend(relativeTime);
  * Util: Ambil token dari localStorage (jika diperlukan di masa depan).
  * @returns {string|null}
  */
-const getToken = () => localStorage.getItem("token"); // Tidak lagi menggunakan localStorage token setelah migrasi ke Sanctum
 
 /**
  * Util: Normalisasi input menjadi objek dayjs.

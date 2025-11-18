@@ -28,7 +28,8 @@ export default function Carousel({
 	round = false,
 }) {
 	const containerPadding = 16;
-	const itemWidth = baseWidth - containerPadding * 2;
+	const [containerWidth, setContainerWidth] = useState(baseWidth);
+	const itemWidth = containerWidth - containerPadding * 2;
 	const trackItemOffset = itemWidth + GAP;
 
 	// make sure `items` is an array (caller might pass objects or undefined)
@@ -44,6 +45,23 @@ export default function Carousel({
 	const [isResetting, setIsResetting] = useState(false);
 
 	const containerRef = useRef(null);
+
+	useEffect(() => {
+		const el = containerRef.current;
+		if (!el) return;
+		const update = () => setContainerWidth(el.clientWidth || baseWidth);
+		update();
+		let ro = null;
+		if (typeof ResizeObserver !== "undefined") {
+			ro = new ResizeObserver(update);
+			ro.observe(el);
+		}
+		window.addEventListener("resize", update);
+		return () => {
+			if (ro) ro.disconnect();
+			window.removeEventListener("resize", update);
+		};
+	}, [baseWidth]);
 	useEffect(() => {
 		if (pauseOnHover && containerRef.current) {
 			const container = containerRef.current;
@@ -137,8 +155,9 @@ export default function Carousel({
 					: "rounded-[24px] border border-emerald-700"
 			}`}
 			style={{
-				width: `${baseWidth}px`,
-				...(round && { height: `${baseWidth}px` }),
+				width: "100%",
+				maxWidth: `${baseWidth}px`,
+				...(round && { height: `${containerWidth}px` }),
 			}}>
 			<motion.div
 				className="flex"

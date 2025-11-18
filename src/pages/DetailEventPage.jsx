@@ -9,7 +9,7 @@ import { useModalStore } from "@/stores/useAppStore";
 import { AsyncImage } from "loadable-image";
 import { Fade } from "transitions-kit";
 import { getImageUrl } from "@/utils";
-import { formatTime } from "@/utils/dateFormatter";
+import { formatTime, formatDate } from "@/utils/dateFormatter";
 /**
  * Halaman detail event (full page) yang menggantikan modal.
  */
@@ -24,14 +24,10 @@ export default function DetailEventPage() {
 	} = useEventById(eventId);
 	const { openJoinModal } = useModalStore();
 
-	const formatDate = (dateString) => {
-		const date = new Date(dateString);
-		return date.toLocaleDateString("id-ID", {
-			weekday: "long",
-			day: "numeric",
-			month: "long",
-			year: "numeric",
-		});
+	const formatDateRange = (startDateStr, endDateStr) => {
+		if (!startDateStr || !endDateStr) return "-";
+		if (startDateStr === endDateStr) return formatDate(startDateStr);
+		return `${formatDate(startDateStr)} - ${formatDate(endDateStr)}`;
 	};
 
 	const getStatusBadge = (status) => {
@@ -119,37 +115,47 @@ export default function DetailEventPage() {
 									{event.judul}
 								</h1>
 
-								<div className="flex flex-col lg:flex-row lg:items-center gap-3 text-sm text-gray-600 mt-3">
-									<span className="flex items-center gap-2">
-										<Calendar size={16} className="text-emerald-600" />
-
-										<span className="ml-1">
-											{formatDate(event.tanggal_mulai)}
-										</span>
-									</span>
-
-									<span className="flex items-center gap-2">
-										<Clock size={16} className="text-blue-600" />
-										<span className="ml-1">
-											{formatTime(event.waktu_mulai)} -{" "}
-											{formatTime(event.waktu_selesai, "WIB")}
-										</span>
-									</span>
-								</div>
-
-								<div className="mt-2 text-sm">
-									<div className="flex flex-col sm:flex-row sm:items-center gap-2">
-										<div className="flex items-center gap-2">
-											<CalendarX size={16} className="text-red-600" />
-											<span className="text-gray-600 font-medium">
-												Batas pendaftaran:
-											</span>
+								<div className="mt-4 grid grid-cols-1 sm:grid-cols-1 gap-3">
+									{/* Tanggal Pelaksanaan */}
+									<div className="flex items-start gap-3">
+										<Calendar size={18} className="text-emerald-600 mt-1" />
+										<div>
+											<div className="text-gray-600 font-medium text-sm">
+												Tanggal Pelaksanaan
+											</div>
+											<div className="text-gray-600 text-sm">
+												{formatDateRange(
+													event.tanggal_mulai,
+													event.tanggal_selesai
+												)}
+											</div>
 										</div>
+									</div>
 
-										<div className="ml-0 sm:ml-1">
-											<span className="text-gray-600 break-words">
+									{/* Waktu Pelaksanaan */}
+									<div className="flex items-start gap-3 sm:col-span-2">
+										<Clock size={18} className="text-blue-600 mt-1" />
+										<div>
+											<div className="text-gray-600 font-medium text-sm">
+												Waktu Pelaksanaan
+											</div>
+											<div className="text-gray-600 text-sm">
+												{formatTime(event.waktu_mulai)} -{" "}
+												{formatTime(event.waktu_selesai, "WIB")}
+											</div>
+										</div>
+									</div>
+
+									{/* Batas Pendaftaran */}
+									<div className="flex items-start gap-3 sm:col-span-2">
+										<CalendarX size={18} className="text-red-600 mt-1" />
+										<div>
+											<div className="text-gray-600 font-medium text-sm">
+												Batas pendaftaran
+											</div>
+											<div className="text-gray-600 text-sm">
 												{formatDate(event.batas_pendaftaran)}
-											</span>
+											</div>
 										</div>
 									</div>
 								</div>

@@ -26,7 +26,8 @@ import {
 } from "@chakra-ui/react";
 import DynamicButton, { LinkButton } from "@/components/ui/Button";
 import { Link } from "react-router-dom";
-import { formatDate, formatTime, getImageUrl, parseApiError } from "@/utils";
+import { getImageUrl, parseApiError } from "@/utils";
+import { formatDate, formatTime } from "@/utils/dateFormatter";
 import FetchLoader from "@/components/ui/FetchLoader";
 import Badge from "@/components/ui/Badge";
 
