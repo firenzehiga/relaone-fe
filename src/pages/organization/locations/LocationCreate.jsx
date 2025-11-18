@@ -1,14 +1,16 @@
-import { useAuthStore } from "@/_hooks/useAuth";
-import { useOrgCreateLocationMutation } from "@/_hooks/useLocations";
-import DynamicButton from "@/components/ui/Button";
-import { parseApiError, parseGoogleMapsUrl } from "@/utils";
-import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import Button from "@/components/ui/Button";
+
+// Hooks
 // import { useOrgOrganizations } from "@/_hooks/useOrganizations";
-import Skeleton from "@/components/ui/Skeleton";
+import { useOrgCreateLocationMutation } from "@/_hooks/useLocations";
+import { useAuthStore } from "@/_hooks/useAuth";
+
+// Helpers
+import { parseGoogleMapsUrl } from "@/utils";
+
+// UI Components
+import Button from "@/components/ui/Button";
 
 export default function OrganizationLocationCreate() {
 	const navigate = useNavigate();
@@ -79,12 +81,10 @@ export default function OrganizationLocationCreate() {
 		<div className="w-full mx-auto p-4 sm:p-6 max-w-6xl min-h-[calc(100vh-4rem)]">
 			<div className="bg-white shadow-lg rounded-lg p-4 sm:p-6">
 				<header className="mb-6 sm:mb-8">
-					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
-						Buat Lokasi Baru
-					</h1>
+					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Buat Lokasi Baru</h1>
 					<p className="text-xs sm:text-sm text-gray-500 mt-1">
-						Isi detail lokasi. Anda bisa menempelkan link Google Maps dan
-						menekan "Parse" untuk mengisi koordinat otomatis.
+						Isi detail lokasi. Anda bisa menempelkan link Google Maps dan menekan "Parse" untuk
+						mengisi koordinat otomatis.
 					</p>
 				</header>
 
@@ -92,8 +92,7 @@ export default function OrganizationLocationCreate() {
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 						<div>
 							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
-								Nama Lokasi (bebas, hanya untuk pendataan){" "}
-								<span className="text-red-500">*</span>
+								Nama Lokasi (bebas, hanya untuk pendataan) <span className="text-red-500">*</span>
 							</label>
 							<input
 								name="nama"
@@ -252,20 +251,18 @@ export default function OrganizationLocationCreate() {
 							Masukkan link Google Maps
 						</label>
 						<p className="text-xs text-gray-500 mt-1">
-							Cara cepat: buka Google Maps, cari lokasi, lalu salin URL dari
-							address bar (bukan short link dari dialog Share). URL yang ideal
-							berisi salah satu dari pola berikut:{" "}
+							Cara cepat: buka Google Maps, cari lokasi, lalu salin URL dari address bar (bukan
+							short link dari dialog Share). URL yang ideal berisi salah satu dari pola berikut:{" "}
 							<code className="text-xs">@lat,lng,ZZz</code>,
-							<code className="text-xs">/place/...</code>, atau parameter query
-							seperti <code className="text-xs">q=lat,lng</code>.
+							<code className="text-xs">/place/...</code>, atau parameter query seperti{" "}
+							<code className="text-xs">q=lat,lng</code>.
 						</p>
 						<p className="text-xs text-gray-500 mt-2">
-							Yang akan otomatis terisi setelah Parse: <strong>latitude</strong>
-							,<strong> longitude</strong>, <strong>zoom</strong> (jika
-							tersedia), dan <strong>alamat lengkap</strong> (jika dapat
-							diekstrak). Field lain seperti <em>kota</em>, <em>provinsi</em>,{" "}
-							<em>negara</em>, atau <em>place_id</em> dapat diisi manual jika
-							diperlukan.
+							Yang akan otomatis terisi setelah Parse: <strong>latitude</strong>,
+							<strong> longitude</strong>, <strong>zoom</strong> (jika tersedia), dan{" "}
+							<strong>alamat lengkap</strong> (jika dapat diekstrak). Field lain seperti{" "}
+							<em>kota</em>, <em>provinsi</em>, <em>negara</em>, atau <em>place_id</em> dapat diisi
+							manual jika diperlukan.
 						</p>
 						<div className="flex flex-col sm:flex-row gap-2 mt-2">
 							<input
@@ -282,19 +279,15 @@ export default function OrganizationLocationCreate() {
 							</button>
 						</div>
 						{gmapUrl &&
-							(gmapUrl.includes("maps.app.goo.gl") ||
-								gmapUrl.includes("goo.gl/maps")) && (
+							(gmapUrl.includes("maps.app.goo.gl") || gmapUrl.includes("goo.gl/maps")) && (
 								<p className="text-sm text-yellow-600 mt-2">
-									Terlihat seperti link pendek Google Maps (maps.app.goo.gl /
-									goo.gl/maps). Untuk hasil terbaik, buka halaman Google Maps di
-									tab browser dan salin URL dari address bar lalu tempelkan di
-									sini sebelum menekan Parse.
+									Terlihat seperti link pendek Google Maps (maps.app.goo.gl / goo.gl/maps). Untuk
+									hasil terbaik, buka halaman Google Maps di tab browser dan salin URL dari address
+									bar lalu tempelkan di sini sebelum menekan Parse.
 								</p>
 							)}
 						{parseError && (
-							<p className="text-sm text-red-600 mt-2 whitespace-pre-wrap">
-								{parseError}
-							</p>
+							<p className="text-sm text-red-600 mt-2 whitespace-pre-wrap">{parseError}</p>
 						)}
 					</div>
 

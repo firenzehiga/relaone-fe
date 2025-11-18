@@ -1,14 +1,10 @@
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+
+// UI Libraries
 import DataTable from "react-data-table-component";
-import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
-import {
-	useOrgDeleteEventMutation,
-	useOrgEvents,
-	useOrgStartEventMutation,
-	useOrgCompleteEventMutation,
-	useOrgCancelEventMutation,
-} from "@/_hooks/useEvents";
+import Swal from "sweetalert2";
 import {
 	ChevronDown,
 	Plus,
@@ -22,20 +18,25 @@ import {
 	CheckCircle,
 	XCircle,
 } from "lucide-react";
-import {
-	Menu,
-	MenuButton,
-	MenuList,
-	MenuItem,
-	Portal,
-	IconButton,
-} from "@chakra-ui/react";
-import { LinkButton } from "@/components/ui/Button";
-import { Link } from "react-router-dom";
-import { getImageUrl, parseApiError } from "@/utils";
-import FetchLoader from "@/components/ui/FetchLoader";
-import { formatDate, formatTime } from "@/utils/dateFormatter";
+import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
+
+// Hooks / Stores
 import { useAuthStore } from "@/_hooks/useAuth";
+import {
+	useOrgDeleteEventMutation,
+	useOrgEvents,
+	useOrgStartEventMutation,
+	useOrgCompleteEventMutation,
+	useOrgCancelEventMutation,
+} from "@/_hooks/useEvents";
+
+// Helpers
+import { formatDate, formatTime } from "@/utils/dateFormatter";
+import { getImageUrl, parseApiError } from "@/utils";
+
+// UI Components
+import FetchLoader from "@/components/ui/FetchLoader";
+import { LinkButton } from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 
 export default function OrganizationEvent() {
@@ -66,12 +67,8 @@ export default function OrganizationEvent() {
 			today.setHours(0, 0, 0, 0);
 
 			filtered = filtered.filter((eventItem) => {
-				const startDate = new Date(
-					`${eventItem.tanggal_mulai}T${eventItem.waktu_mulai}`
-				);
-				const endDate = new Date(
-					`${eventItem.tanggal_selesai}T${eventItem.waktu_selesai}`
-				);
+				const startDate = new Date(`${eventItem.tanggal_mulai}T${eventItem.waktu_mulai}`);
+				const endDate = new Date(`${eventItem.tanggal_selesai}T${eventItem.waktu_selesai}`);
 
 				if (statusFilter === "upcoming") {
 					return startDate > today;
@@ -93,11 +90,7 @@ export default function OrganizationEvent() {
 				const title = String(eventItem.judul || "").toLowerCase();
 				const description = String(eventItem.deskripsi || "").toLowerCase();
 				const location = String(eventItem.lokasi || "").toLowerCase();
-				return (
-					title.includes(query) ||
-					description.includes(query) ||
-					location.includes(query)
-				);
+				return title.includes(query) || description.includes(query) || location.includes(query);
 			});
 		}
 
@@ -323,9 +316,7 @@ export default function OrganizationEvent() {
 									<MenuItem
 										onClick={() => handleStart(row)}
 										disabled={startEventMutation.isLoading}
-										icon={
-											<Play className="text-emerald-500 hover:text-emerald-600" />
-										}>
+										icon={<Play className="text-emerald-500 hover:text-emerald-600" />}>
 										Mulai Kegiatan
 									</MenuItem>
 								)}
@@ -333,9 +324,7 @@ export default function OrganizationEvent() {
 									<MenuItem
 										onClick={() => handleComplete(row)}
 										disabled={completeEventMutation.isLoading}
-										icon={
-											<CheckCircle className="text-emerald-500 hover:text-emerald-600" />
-										}>
+										icon={<CheckCircle className="text-emerald-500 hover:text-emerald-600" />}>
 										Selesaikan
 									</MenuItem>
 								)}
@@ -343,17 +332,12 @@ export default function OrganizationEvent() {
 									<MenuItem
 										onClick={() => handleCancel(row)}
 										disabled={cancelEventMutation.isLoading}
-										icon={
-											<XCircle className="text-red-500 hover:text-red-600" />
-										}>
+										icon={<XCircle className="text-red-500 hover:text-red-600" />}>
 										Batalkan
 									</MenuItem>
 								)}
 								<Link to={`/organization/events/edit/${row.id}`}>
-									<MenuItem
-										icon={
-											<EditIcon className="text-yellow-500 hover:text-yellow-600" />
-										}>
+									<MenuItem icon={<EditIcon className="text-yellow-500 hover:text-yellow-600" />}>
 										Edit
 									</MenuItem>
 								</Link>
@@ -377,12 +361,8 @@ export default function OrganizationEvent() {
 			<div className="flex flex-col items-center justify-center min-h-[520px] text-gray-600">
 				<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 				<h3 className="text-lg font-semibold mb-2">Error</h3>
-				<p className="text-gray-500 mb-4 text-center">
-					Gagal mengambil data event.
-				</p>
-				<p className="text-red-500 mb-4 text-center font-semibold">
-					{eventsError.message}
-				</p>
+				<p className="text-gray-500 mb-4 text-center">Gagal mengambil data event.</p>
+				<p className="text-red-500 mb-4 text-center font-semibold">{eventsError.message}</p>
 			</div>
 		);
 	}
@@ -451,39 +431,29 @@ export default function OrganizationEvent() {
 											<div className="space-y-3">
 												<div className="text-sm text-gray-700">
 													<span className="font-semibold">Judul:</span>
-													<span className="ml-2 text-gray-900">
-														{data.judul || "-"}
-													</span>
+													<span className="ml-2 text-gray-900">{data.judul || "-"}</span>
 												</div>
 												<div className="text-sm text-gray-700">
 													<span className="font-semibold">Lokasi:</span>
-													<span className="ml-2 text-gray-900">
-														{data.location?.nama || "-"}
-													</span>
+													<span className="ml-2 text-gray-900">{data.location?.nama || "-"}</span>
 												</div>
 												<div className="text-sm text-gray-700">
 													<span className="font-semibold">Alamat:</span>
-													<span className="ml-2 text-gray-900">
-														{data.location?.alamat || "-"}
-													</span>
+													<span className="ml-2 text-gray-900">{data.location?.alamat || "-"}</span>
 												</div>
 											</div>
 
 											{/* Right column */}
 											<div className="space-y-3">
 												<div className="flex items-start">
-													<div className="text-sm text-gray-700 font-semibold">
-														Tanggal:
-													</div>
+													<div className="text-sm text-gray-700 font-semibold">Tanggal:</div>
 													<div className="text-sm text-gray-900 ml-2">
 														{formatDate(data.tanggal_mulai) || "-"} -{" "}
 														{formatDate(data.tanggal_selesai) || "-"} WIB
 													</div>
 												</div>
 												<div className="flex items-start">
-													<div className="text-sm text-gray-700 font-semibold">
-														Waktu:
-													</div>
+													<div className="text-sm text-gray-700 font-semibold">Waktu:</div>
 													<div className="text-sm ml-2">
 														{formatTime(data.waktu_mulai) || "-"} -{" "}
 														{formatTime(data.waktu_selesai) || "-"}
@@ -494,16 +464,13 @@ export default function OrganizationEvent() {
 														Jumlah Perserta:
 													</div>
 													<div className="text-sm ml-2">
-														{data.peserta_saat_ini || 0} /{" "}
-														{data.maks_peserta || 0} Peserta
+														{data.peserta_saat_ini || 0} / {data.maks_peserta || 0} Peserta
 													</div>
 												</div>
 											</div>
 										</div>
 										<div className="mt-4">
-											<div className="text-sm font-semibold text-gray-700 mb-1">
-												Deskripsi:
-											</div>
+											<div className="text-sm font-semibold text-gray-700 mb-1">Deskripsi:</div>
 											<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
 												{data.deskripsi || "-"}
 											</div>

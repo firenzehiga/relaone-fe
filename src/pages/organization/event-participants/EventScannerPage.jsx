@@ -1,15 +1,23 @@
 import { useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
+
+// UI Libraries
 import { ArrowLeft, QrCode as QrCodeIcon } from "lucide-react";
-import QrScanner from "@/components/organization/QrScanner";
-import AttendanceStats from "@/components/organization/AttendanceStats";
-import RecentCheckIns from "@/components/organization/RecentCheckIns";
+
+// Hooks
 import {
 	useOrgParticipants,
 	useOrgRecentCheckIns,
 	useOrgAttendanceStats,
 } from "@/_hooks/useParticipants";
+
+// Helpers
 import { formatTime } from "@/utils/dateFormatter";
+
+// UI Components
+import AttendanceStats from "@/components/organization/AttendanceStats";
+import RecentCheckIns from "@/components/organization/RecentCheckIns";
+import QrScanner from "@/components/organization/QrScanner";
 import Skeleton from "@/components/ui/Skeleton";
 
 /**
@@ -34,8 +42,7 @@ export default function EventScannerPage() {
 	} = useOrgRecentCheckIns(eventId);
 
 	// Get participants untuk event info saja
-	const { data: participants = [], isLoading: isLoadingParticipants } =
-		useOrgParticipants();
+	const { data: participants = [], isLoading: isLoadingParticipants } = useOrgParticipants();
 
 	// Extract stats dari response API
 	const stats = statsResponse?.statistics || {
@@ -55,21 +62,16 @@ export default function EventScannerPage() {
 			return statsResponse.event;
 		}
 		// Fallback dari participants
-		const eventParticipant = participants.find(
-			(p) => p.event?.id === parseInt(eventId)
-		);
+		const eventParticipant = participants.find((p) => p.event?.id === parseInt(eventId));
 		return eventParticipant?.event || null;
 	}, [statsResponse, participants, eventId]);
 
 	const eventStatus = useMemo(() => {
-		if (!eventInfo?.tanggal_mulai || !eventInfo?.tanggal_selesai)
-			return "unknown";
+		if (!eventInfo?.tanggal_mulai || !eventInfo?.tanggal_selesai) return "unknown";
 
 		const today = new Date();
 
-		const startDate = new Date(
-			`${eventInfo.tanggal_mulai}T${eventInfo.waktu_mulai}`
-		);
+		const startDate = new Date(`${eventInfo.tanggal_mulai}T${eventInfo.waktu_mulai}`);
 
 		const endDate = new Date(eventInfo.tanggal_selesai);
 		endDate.setHours(23, 59, 59, 999); // artinya sampai akhir hari
@@ -176,10 +178,7 @@ export default function EventScannerPage() {
 								{eventStatus === "completed" ? (
 									<>⚠️ Event sudah selesai. Scanner tidak dapat digunakan.</>
 								) : (
-									<>
-										⚠️ Event belum dimulai. Scanner akan aktif saat event
-										berlangsung.
-									</>
+									<>⚠️ Event belum dimulai. Scanner akan aktif saat event berlangsung.</>
 								)}
 							</div>
 						)}
@@ -202,9 +201,7 @@ export default function EventScannerPage() {
 								<div className="text-center">
 									<QrCodeIcon
 										className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 ${
-											eventStatus === "completed"
-												? "text-gray-300"
-												: "text-yellow-300"
+											eventStatus === "completed" ? "text-gray-300" : "text-yellow-300"
 										}`}
 									/>
 									<h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-2">
@@ -219,23 +216,17 @@ export default function EventScannerPage() {
 										<div className="text-xs sm:text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
 											<p className="font-medium mb-1">Jadwal Event:</p>
 											<p className="text-xs sm:text-sm">
-												{new Date(eventInfo.tanggal_mulai).toLocaleDateString(
-													"id-ID",
-													{
-														day: "numeric",
-														month: "long",
-														year: "numeric",
-													}
-												)}{" "}
+												{new Date(eventInfo.tanggal_mulai).toLocaleDateString("id-ID", {
+													day: "numeric",
+													month: "long",
+													year: "numeric",
+												})}{" "}
 												-{" "}
-												{new Date(eventInfo.tanggal_selesai).toLocaleDateString(
-													"id-ID",
-													{
-														day: "numeric",
-														month: "long",
-														year: "numeric",
-													}
-												)}
+												{new Date(eventInfo.tanggal_selesai).toLocaleDateString("id-ID", {
+													day: "numeric",
+													month: "long",
+													year: "numeric",
+												})}
 											</p>
 
 											<p className="font-medium mt-2 mb-1">Waktu Event:</p>
@@ -263,14 +254,8 @@ export default function EventScannerPage() {
 					</h3>
 					<ul className="text-xs sm:text-sm text-blue-800 space-y-1 list-disc list-inside">
 						<li>Pastikan pencahayaan cukup untuk hasil scan yang optimal</li>
-						<li>
-							Minta volunteer menunjukkan QR Code dengan jelas di layar HP atau
-							print-out
-						</li>
-						<li>
-							Statistik dan daftar check-in akan otomatis refresh secara
-							realtime
-						</li>
+						<li>Minta volunteer menunjukkan QR Code dengan jelas di layar HP atau print-out</li>
+						<li>Statistik dan daftar check-in akan otomatis refresh secara realtime</li>
 						<li>Volunteer hanya bisa check-in jika status sudah "Confirmed"</li>
 						<li>Setiap volunteer hanya bisa check-in satu kali per event</li>
 					</ul>

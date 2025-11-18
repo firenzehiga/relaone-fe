@@ -1,25 +1,19 @@
 import { Link } from "react-router-dom";
+
+// UI Libraries
 import { motion } from "framer-motion";
-import {
-	User,
-	Mail,
-	Phone,
-	MapPin,
-	Calendar,
-	Edit3,
-	Shield,
-	Building2,
-	Globe,
-} from "lucide-react";
-import Card from "@/components/ui/Card";
-import Button from "@/components/ui/Button";
+import { User, Mail, Phone, MapPin, Calendar, Edit3, Shield, Building2, Globe } from "lucide-react";
+
+// Hooks
 import { useUserProfile } from "@/_hooks/useUsers";
-import {
-	getImageUrl,
-	getOrganizationEventBadge,
-	getOrganizationVerificationBadge,
-} from "@/utils";
+
+// Helpers
+import { getImageUrl, getOrganizationEventBadge, getOrganizationVerificationBadge } from "@/utils";
+
+// UI Components
 import Skeleton from "@/components/ui/Skeleton";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
 
 /**
  * Halaman Profile Organization
@@ -40,12 +34,8 @@ export default function OrganizationProfilePage() {
 					<div className="text-red-500 mb-4">
 						<Shield className="w-16 h-16 mx-auto mb-4" />
 					</div>
-					<h2 className="text-xl font-bold text-gray-900 mb-2">
-						Gagal Memuat Profile
-					</h2>
-					<p className="text-gray-600 mb-4">
-						Terjadi kesalahan saat memuat data profile
-					</p>
+					<h2 className="text-xl font-bold text-gray-900 mb-2">Gagal Memuat Profile</h2>
+					<p className="text-gray-600 mb-4">Terjadi kesalahan saat memuat data profile</p>
 					<Button onClick={() => refetch()} variant="success">
 						Coba Lagi
 					</Button>
@@ -107,12 +97,8 @@ export default function OrganizationProfilePage() {
 				animate="visible">
 				{/* Header Section - Compact */}
 				<motion.div variants={itemVariants} className="text-center mb-6">
-					<h1 className="text-2xl font-bold text-gray-900 mb-1">
-						Profile Organisasi
-					</h1>
-					<p className="text-gray-600 text-sm">
-						Kelola informasi profile organisasi Anda
-					</p>
+					<h1 className="text-2xl font-bold text-gray-900 mb-1">Profile Organisasi</h1>
+					<p className="text-gray-600 text-sm">Kelola informasi profile organisasi Anda</p>
 				</motion.div>
 
 				<div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
@@ -123,9 +109,7 @@ export default function OrganizationProfilePage() {
 							<div className="relative mb-4">
 								{profile?.role_data?.logo ? (
 									<img
-										src={getImageUrl(
-											`organizations/${profile?.role_data?.logo}`
-										)}
+										src={getImageUrl(`organizations/${profile?.role_data?.logo}`)}
 										alt="Organization Logo"
 										className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-lg"
 									/>
@@ -137,9 +121,7 @@ export default function OrganizationProfilePage() {
 
 								{/* Event Badge - Top Right */}
 								{(() => {
-									const badge = getOrganizationEventBadge(
-										profile?.analytics?.events_created_count
-									);
+									const badge = getOrganizationEventBadge(profile?.analytics?.events_created_count);
 									const BadgeIcon = badge.icon;
 									return (
 										<div className="absolute -top-2 -right-2">
@@ -151,9 +133,7 @@ export default function OrganizationProfilePage() {
 												<div className="absolute bottom-full right-0 mb-2 w-36 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
 													<div className="bg-gray-900 text-white text-xs rounded-lg py-2 px-3 shadow-lg">
 														<div className="font-semibold">{badge.title}</div>
-														<div className="text-gray-300">
-															{badge.subtitle}
-														</div>
+														<div className="text-gray-300">{badge.subtitle}</div>
 														{/* Arrow */}
 														<div className="absolute top-full right-3 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
 													</div>
@@ -178,12 +158,8 @@ export default function OrganizationProfilePage() {
 												{/* Tooltip */}
 												<div className="absolute bottom-full left-0 mb-2 w-36 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
 													<div className="bg-gray-900 text-white text-xs rounded-lg py-2 px-3 shadow-lg">
-														<div className="font-semibold">
-															{verificationBadge.title}
-														</div>
-														<div className="text-gray-300">
-															{verificationBadge.description}
-														</div>
+														<div className="font-semibold">{verificationBadge.title}</div>
+														<div className="text-gray-300">{verificationBadge.description}</div>
 														{/* Arrow */}
 														<div className="absolute top-full left-3 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
 													</div>
@@ -206,9 +182,7 @@ export default function OrganizationProfilePage() {
 
 							{/* Basic Info - Compact */}
 							<h2 className="text-lg font-bold text-gray-900 mb-1">
-								{profile?.role_data?.nama ||
-									profile?.nama ||
-									"Nama tidak tersedia"}
+								{profile?.role_data?.nama || profile?.nama || "Nama tidak tersedia"}
 							</h2>
 							<p className="text-gray-600 mb-3 text-sm">
 								{profile?.email || "Email tidak tersedia"}
@@ -232,9 +206,7 @@ export default function OrganizationProfilePage() {
 							<div className="mb-8">
 								<div className="flex items-center mb-6">
 									<User className="w-5 h-5 text-blue-500 mr-2" />
-									<h3 className="text-lg font-bold text-gray-900">
-										Informasi Pengguna
-									</h3>
+									<h3 className="text-lg font-bold text-gray-900">Informasi Pengguna</h3>
 								</div>
 
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -258,9 +230,7 @@ export default function OrganizationProfilePage() {
 										</div>
 
 										<div>
-											<label className="text-xs font-medium text-gray-500 block mb-1">
-												Email
-											</label>
+											<label className="text-xs font-medium text-gray-500 block mb-1">Email</label>
 											<div className="flex items-center">
 												<Mail className="w-3 h-3 text-gray-400 mr-2" />
 												<p className="text-gray-900 text-sm">
@@ -285,9 +255,7 @@ export default function OrganizationProfilePage() {
 									{/* Right Column - Additional Personal Info */}
 									<div className="space-y-4">
 										<div>
-											<label className="text-xs font-medium text-gray-500 block mb-1">
-												Alamat
-											</label>
+											<label className="text-xs font-medium text-gray-500 block mb-1">Alamat</label>
 											<div className="flex items-start">
 												<MapPin className="w-3 h-3 text-gray-400 mr-2 mt-0.5" />
 												<p className="text-gray-900 text-sm">
@@ -302,9 +270,7 @@ export default function OrganizationProfilePage() {
 											</label>
 											<div className="flex items-center">
 												<Calendar className="w-3 h-3 text-gray-400 mr-2" />
-												<p className="text-gray-900 text-sm">
-													{formatDate(profile?.created_at)}
-												</p>
+												<p className="text-gray-900 text-sm">{formatDate(profile?.created_at)}</p>
 											</div>
 										</div>
 
@@ -328,9 +294,7 @@ export default function OrganizationProfilePage() {
 							<div>
 								<div className="flex items-center mb-6">
 									<Building2 className="w-5 h-5 text-purple-500 mr-2" />
-									<h3 className="text-lg font-bold text-gray-900">
-										Informasi Organisasi
-									</h3>
+									<h3 className="text-lg font-bold text-gray-900">Informasi Organisasi</h3>
 								</div>
 
 								<div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -349,8 +313,7 @@ export default function OrganizationProfilePage() {
 												Deskripsi Organisasi
 											</label>
 											<p className="text-gray-900 text-sm leading-relaxed">
-												{profile?.role_data?.deskripsi ||
-													"Belum ada deskripsi organisasi"}
+												{profile?.role_data?.deskripsi || "Belum ada deskripsi organisasi"}
 											</p>
 										</div>
 
@@ -398,14 +361,9 @@ export default function OrganizationProfilePage() {
 															</div>
 															<div>
 																<p className="text-gray-900 font-semibold text-sm">
-																	{profile?.analytics?.events_created_count ||
-																		0}{" "}
-																	Event
+																	{profile?.analytics?.events_created_count || 0} Event
 																</p>
-																<p
-																	className={`text-xs font-medium ${
-																		badge.color.split(" ")[1]
-																	}`}>
+																<p className={`text-xs font-medium ${badge.color.split(" ")[1]}`}>
 																	{badge.title}
 																</p>
 															</div>
@@ -420,10 +378,9 @@ export default function OrganizationProfilePage() {
 												Status Verifikasi
 											</label>
 											{(() => {
-												const verificationBadge =
-													getOrganizationVerificationBadge(
-														profile?.role_data?.status_verifikasi
-													);
+												const verificationBadge = getOrganizationVerificationBadge(
+													profile?.role_data?.status_verifikasi
+												);
 												return (
 													<span
 														className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${verificationBadge.color}`}>

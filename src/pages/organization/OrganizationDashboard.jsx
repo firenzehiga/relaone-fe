@@ -1,9 +1,11 @@
 import { useState } from "react";
+
+// Hooks / Stores
+import OrganizationAnalytics from "@/components/organization/OrganizationAnalytics";
+import OrganizationPending from "@/components/fallback/OrganizationPending";
 import { useOrgAnalytics } from "@/_hooks/useUsers";
 import { useOrgEvents } from "@/_hooks/useEvents";
-import OrganizationAnalytics from "@/components/organization/OrganizationAnalytics";
 import { useAuthStore } from "@/_hooks/useAuth";
-import OrganizationPending from "@/components/fallback/OrganizationPending";
 
 export default function OrganizationDashboard() {
 	const [selectedEventId, setSelectedEventId] = useState("");
@@ -13,11 +15,7 @@ export default function OrganizationDashboard() {
 
 	// pass event_id param when selected (empty -> no filter)
 	const params = selectedEventId ? { event_id: selectedEventId } : {};
-	const {
-		data: analyticsData,
-		isLoading: analyticsLoading,
-		error,
-	} = useOrgAnalytics(params);
+	const { data: analyticsData, isLoading: analyticsLoading, error } = useOrgAnalytics(params);
 
 	if (user.organization.status_verifikasi === "pending") {
 		return <OrganizationPending />;
@@ -27,9 +25,7 @@ export default function OrganizationDashboard() {
 			<div className="max-w-7xl mx-auto">
 				{/* Event selector */}
 				<div className="mb-6 flex items-center justify-end">
-					<label className="mr-3 text-sm font-medium text-gray-700">
-						Filter Event:
-					</label>
+					<label className="mr-3 text-sm font-medium text-gray-700">Filter Event:</label>
 					<select
 						value={selectedEventId}
 						onChange={(e) => setSelectedEventId(e.target.value)}
