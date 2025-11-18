@@ -1,15 +1,19 @@
-import { Calendar, MapPin, Users, Clock, X, CalendarX } from "lucide-react";
-import Skeleton from "@/components/ui/Skeleton";
-import DynamicButton from "@/components/ui/Button";
-import Badge from "@/components/ui/Badge";
-import Avatar from "@/components/ui/Avatar";
-import { useEventById } from "@/_hooks/useEvents";
 import { useParams, useNavigate } from "react-router-dom";
-import { useModalStore } from "@/stores/useAppStore";
+
+import { Calendar, MapPin, Users, Clock, CalendarX } from "lucide-react";
 import { AsyncImage } from "loadable-image";
 import { Fade } from "transitions-kit";
+
+import { useEventById } from "@/_hooks/useEvents";
+import { useModalStore } from "@/stores/useAppStore";
+
 import { getImageUrl } from "@/utils";
 import { formatTime, formatDate } from "@/utils/dateFormatter";
+
+import DynamicButton from "@/components/ui/Button";
+import Skeleton from "@/components/ui/Skeleton";
+import Avatar from "@/components/ui/Avatar";
+import Badge from "@/components/ui/Badge";
 /**
  * Halaman detail event (full page) yang menggantikan modal.
  */

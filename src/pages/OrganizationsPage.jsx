@@ -1,10 +1,7 @@
-import { useOrganizations } from "@/_hooks/useOrganizations";
 import { useState } from "react";
-import DynamicButton from "@/components/ui/Button";
-import Card from "@/components/ui/Card";
-import Badge from "@/components/ui/Badge";
-import Skeleton from "@/components/ui/Skeleton";
-import { getImageUrl } from "@/utils";
+
+// UI Libraries
+import { motion } from "framer-motion";
 import { AsyncImage } from "loadable-image";
 import { Fade } from "transitions-kit";
 import {
@@ -17,7 +14,18 @@ import {
 	CheckCircle,
 	Search,
 } from "lucide-react";
-import { motion } from "framer-motion";
+
+// Hooks
+import { useOrganizations } from "@/_hooks/useOrganizations";
+
+// Helpers
+import { getImageUrl } from "@/utils";
+
+// UI Components
+import DynamicButton from "@/components/ui/Button";
+import Skeleton from "@/components/ui/Skeleton";
+import Badge from "@/components/ui/Badge";
+import Card from "@/components/ui/Card";
 
 export default function OrganizationsPage() {
 	const {

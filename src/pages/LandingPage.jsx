@@ -1,28 +1,26 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+// UI Libraries
 import { AnimatePresence, motion } from "framer-motion";
-import {
-	ArrowRight,
-	GraduationCap,
-	Calendar,
-	Users,
-	Heart,
-	Search,
-	Leaf,
-	BookOpen,
-	Stethoscope,
-} from "lucide-react";
+import { ArrowRight, Heart, Search, Users } from "lucide-react";
 import * as Lucide from "lucide-react";
+
+// Hooks / stores
+import { useEvents } from "@/_hooks/useEvents";
+import { useCategory } from "@/_hooks/useCategories";
+import { useModalStore } from "@/stores/useAppStore";
+
+// UI Components
 import DynamicButton from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
-import EventCard from "@/components/EventCard";
-import Skeleton from "@/components/ui/Skeleton";
-import { useEvents } from "@/_hooks/useEvents";
-import { useModalStore } from "@/stores/useAppStore";
-import Hero from "@/components/Hero";
-import { useCategory } from "@/_hooks/useCategories";
-import VideoShowcase from "@/components/VideoShowcase";
 import CountUp from "@/components/ui/CountUp";
+import Skeleton from "@/components/ui/Skeleton";
+
+// Feature components / pages
+import Hero from "@/components/Hero";
+import VideoShowcase from "@/components/VideoShowcase";
+import EventCard from "@/components/EventCard";
 
 export default function LandingPage() {
 	const navigate = useNavigate();
@@ -47,11 +45,11 @@ export default function LandingPage() {
 		setTimeout(() => {
 			setStats({
 				totalEvents: 47,
-				totalVolunteers: 1240,
+				totalVolunteers: 1250,
 				totalOrganizations: 18,
 			});
 		}, 500);
-	}, []);
+	}, [setStats]);
 
 	const features = [
 		{

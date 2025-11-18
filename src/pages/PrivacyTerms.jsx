@@ -1,11 +1,12 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+
 import ReactMarkdown from "react-markdown";
 import { Shield, FileText, Eye, AlertCircle, ArrowLeft } from "lucide-react";
 
 import privacyPolicyMd from "@/assets/policies/privacy-policy.md?raw";
 import termsConditionsMd from "@/assets/policies/terms-of-service.md?raw";
 
-import { Link } from "react-router-dom";
 /* ------------------------------------------------------------
  *  SHARED MARKDOWN COMPONENTS (EMERALD THEME)
  * ------------------------------------------------------------ */

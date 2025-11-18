@@ -1,18 +1,23 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+
+// UI Libraries
 import { motion } from "framer-motion";
-import { Search, Filter, Calendar, MapPin, Map } from "lucide-react";
-import DynamicButton from "@/components/ui/Button";
-import Badge from "@/components/ui/Badge";
-import EventCard from "@/components/EventCard";
-import Skeleton from "@/components/ui/Skeleton";
+import { Search, Filter, Calendar, MapPin } from "lucide-react";
+
+// Hooks / stores
 import { useEvents } from "@/_hooks/useEvents";
 import { useCategory } from "@/_hooks/useCategories";
 import { useModalStore } from "@/stores/useAppStore";
-import { getImageUrl } from "@/utils";
+
+// Helpers
 import { toInputDate } from "@/utils/dateFormatter";
-import { AsyncImage } from "loadable-image";
-import { Fade } from "transitions-kit";
+
+// UI Components
+import DynamicButton from "@/components/ui/Button";
+import Skeleton from "@/components/ui/Skeleton";
+import EventCard from "@/components/EventCard";
+import Badge from "@/components/ui/Badge";
 
 /**
  * Halaman Events untuk menampilkan daftar event volunteer

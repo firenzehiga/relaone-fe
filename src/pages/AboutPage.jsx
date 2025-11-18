@@ -1,10 +1,10 @@
-import { useFeedbacks } from "@/_hooks/useFeedbacks";
-import DynamicButton from "@/components/ui/Button";
-import Carousel from "@/components/ui/Carousel";
-import Avatar from "@/components/ui/Avatar";
-import RatingStars from "@/components/ui/RatingStars";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { useFeedbacks } from "@/_hooks/useFeedbacks";
+
+import DynamicButton from "@/components/ui/Button";
+import Carousel from "@/components/ui/Carousel";
 
 export default function AboutPage() {
 	const { data: feedbacks = [], isLoading: feedbacksLoading } = useFeedbacks();
