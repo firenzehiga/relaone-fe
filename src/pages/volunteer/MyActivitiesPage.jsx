@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+// UI Libraries
 import { motion } from "framer-motion";
 import {
 	ArrowLeft,
@@ -9,11 +11,15 @@ import {
 	Clock,
 	Sparkles,
 } from "lucide-react";
+
+// Hooks
 import { useVolunteerHistory } from "@/_hooks/useParticipants";
-import Card from "@/components/ui/Card";
+
+// UI Components
+import ActivityCard from "@/components/volunteer/ActivityCard";
 import DynamicButton from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
-import ActivityCard from "@/components/volunteer/ActivityCard";
+import Card from "@/components/ui/Card";
 
 export default function MyActivitiesPage() {
 	const navigate = useNavigate();

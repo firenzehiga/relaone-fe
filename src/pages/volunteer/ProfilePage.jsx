@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+
+// UI Libraries
 import { motion } from "framer-motion";
 import {
 	User,
@@ -12,11 +14,17 @@ import {
 	Star,
 	Code,
 } from "lucide-react";
-import Card from "@/components/ui/Card";
-import Button from "@/components/ui/Button";
+
+// Hooks
 import { useUserProfile } from "@/_hooks/useUsers";
+
+// Helpers
 import { getImageUrl, getVolunteerEventBadge, parseSkillsArray } from "@/utils";
+
+// UI elements
 import Skeleton from "@/components/ui/Skeleton";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
 
 /**
  * Halaman Profile Volunteer

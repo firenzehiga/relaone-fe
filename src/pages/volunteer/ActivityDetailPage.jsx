@@ -1,4 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
+
+// UI Libraries
+import { AsyncImage } from "loadable-image";
+import { Fade } from "transitions-kit";
 import { motion } from "framer-motion";
 import {
 	ArrowLeft,
@@ -16,17 +20,21 @@ import {
 	Ban,
 	Flame,
 } from "lucide-react";
+
+// Hooks / stores
 import { userVolunteerHistoryById } from "@/_hooks/useParticipants";
-import Card from "@/components/ui/Card";
-import Badge from "@/components/ui/Badge";
-import DynamicButton from "@/components/ui/Button";
-import Skeleton from "@/components/ui/Skeleton";
+import { useModalStore } from "@/stores/useAppStore";
+
+// Helpers
 import { getImageUrl } from "@/utils";
 import { formatDate, formatTime } from "@/utils/dateFormatter";
+
+// UI Components
 import QrCodeDisplay from "@/components/volunteer/QrCodeDisplay";
-import { AsyncImage } from "loadable-image";
-import { Fade } from "transitions-kit";
-import { useModalStore } from "@/stores/useAppStore";
+import DynamicButton from "@/components/ui/Button";
+import Skeleton from "@/components/ui/Skeleton";
+import Badge from "@/components/ui/Badge";
+import Card from "@/components/ui/Card";
 
 export default function ActivityDetailPage() {
 	const { id } = useParams();

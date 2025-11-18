@@ -1,15 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUpdateUserMutation, useUserProfile } from "@/_hooks/useUsers";
-import {
-	getImageUrl,
-	parseSkillsArray,
-	addSkill,
-	updateSkill,
-	removeSkill,
-} from "@/utils";
-import { toInputDate } from "@/utils/dateFormatter";
-import { useAuthStore } from "@/_hooks/useAuth";
+
+// UI Libraries
 import { motion } from "framer-motion";
 import {
 	User,
@@ -20,10 +12,24 @@ import {
 	ArrowLeft,
 	FileText,
 	Award,
-	Target,
-	Briefcase,
 	UserCircle2,
 } from "lucide-react";
+
+// Hooks
+import { useUpdateUserMutation, useUserProfile } from "@/_hooks/useUsers";
+import { useAuthStore } from "@/_hooks/useAuth";
+
+// Helpers
+import { toInputDate } from "@/utils/dateFormatter";
+import {
+	getImageUrl,
+	parseSkillsArray,
+	addSkill,
+	updateSkill,
+	removeSkill,
+} from "@/utils";
+
+// UI elements
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import toast from "react-hot-toast";

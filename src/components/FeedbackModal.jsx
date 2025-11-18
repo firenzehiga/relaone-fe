@@ -153,6 +153,7 @@ export default function FeedbackModal() {
 							size="xl"
 							rating={formData.rating}
 							interactive={true}
+							showNumber={false}
 							onRatingChange={handleRatingChange}
 						/>
 					</div>

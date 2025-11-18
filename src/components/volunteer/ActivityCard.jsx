@@ -224,9 +224,9 @@ export default function ActivityCard({ data, onClick }) {
 						{/* Show feedback button jika participant telah hadir dan belum dikirim feedback & tampilkan button "sudah kirim feedback untuk menandakan jika sudah kirim feedback" */}
 						{data.status === "attended" &&
 							(() => {
-								const endDate = data.event?.tanggal_selesai
-									? new Date(data.event.tanggal_selesai)
-									: null;
+								const endDate = new Date(
+									`${data.event.tanggal_selesai}T${data.event.waktu_selesai}`
+								);
 								const now = new Date();
 								if (endDate && now > endDate) {
 									if (hasFeedback) {
