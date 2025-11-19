@@ -34,7 +34,7 @@ export default function AdminEventCreate() {
 		category_id: "",
 		organization_id: "",
 		location_id: "",
-		user_id: user.id,
+		created_by_user_id: user.id,
 	});
 
 	const { isLoading } = useAuthStore();
@@ -75,10 +75,9 @@ export default function AdminEventCreate() {
 			const maxSize = 2 * 1024 * 1024; // 2MB
 
 			if (!allowed.includes(file.type)) {
-				toast.error(
-					"File harus berupa gambar JPEG/PNG/JPG (webp tidak diperbolehkan).",
-					{ position: "top-center" }
-				);
+				toast.error("File harus berupa gambar JPEG/PNG/JPG (webp tidak diperbolehkan).", {
+					position: "top-center",
+				});
 				return;
 			}
 			if (file.size > maxSize) {
@@ -198,9 +197,7 @@ export default function AdminEventCreate() {
 	if (locationsError || organizationsError || categoriesError) {
 		return (
 			<div>
-				{locationsError?.message ||
-					organizationsError?.message ||
-					categoriesError?.message}
+				{locationsError?.message || organizationsError?.message || categoriesError?.message}
 			</div>
 		);
 	}
@@ -209,20 +206,14 @@ export default function AdminEventCreate() {
 		<div className="w-full mx-auto p-4 sm:p-6 max-w-7xl min-h-[calc(100vh-4rem)]">
 			<div className="bg-white shadow-xl rounded-lg p-4 sm:p-6">
 				<header className="mb-6 sm:mb-8">
-					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2">
-						Buat Event Baru
-					</h1>
+					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2">Buat Event Baru</h1>
 					<p className="text-xs sm:text-sm text-gray-500 mt-1">
 						Isi nama, deskripsi dan tambahkan gambar untuk event.
 					</p>
 				</header>
 
 				<form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
-					{error && (
-						<div className="text-sm text-red-600 bg-red-50 p-2 rounded">
-							{error}
-						</div>
-					)}
+					{error && <div className="text-sm text-red-600 bg-red-50 p-2 rounded">{error}</div>}
 
 					<Tabs variant="enclosed" colorScheme="green" isFitted>
 						<TabList className="flex-wrap">
@@ -237,9 +228,7 @@ export default function AdminEventCreate() {
 							</Tab>
 						</TabList>
 
-						<TabPanels
-							className="mt-4 sm:mt-6 w-full"
-							style={{ minHeight: "420px" }}>
+						<TabPanels className="mt-4 sm:mt-6 w-full" style={{ minHeight: "420px" }}>
 							<TabPanel>
 								{/* Judul & Deskripsi */}
 								<div className="mb-4">
@@ -321,10 +310,7 @@ export default function AdminEventCreate() {
 									<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 										Gambar Event <span className="text-red-500">*</span>
 									</label>
-									<div
-										className="mt-2"
-										onDrop={handleDrop}
-										onDragOver={handleDragOver}>
+									<div className="mt-2" onDrop={handleDrop} onDragOver={handleDragOver}>
 										<div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
 											{/* Image Preview */}
 											<div className="relative mx-auto sm:mx-0">
@@ -516,8 +502,7 @@ export default function AdminEventCreate() {
 											Persyaratan
 										</label>
 										<div className="mt-2 space-y-2">
-											{formData.persyaratan &&
-											formData.persyaratan.length > 0 ? (
+											{formData.persyaratan && formData.persyaratan.length > 0 ? (
 												formData.persyaratan.map((p, idx) => (
 													<div
 														key={idx}
@@ -526,9 +511,7 @@ export default function AdminEventCreate() {
 															type="text"
 															className="flex-1 rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 															value={p}
-															onChange={(e) =>
-																updatePersyaratan(idx, e.target.value)
-															}
+															onChange={(e) => updatePersyaratan(idx, e.target.value)}
 														/>
 														<button
 															type="button"
@@ -584,9 +567,7 @@ export default function AdminEventCreate() {
 															type="text"
 															className="flex-1 rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 															value={m}
-															onChange={(e) =>
-																updateManfaat(idx, e.target.value)
-															}
+															onChange={(e) => updateManfaat(idx, e.target.value)}
 														/>
 														<button
 															type="button"

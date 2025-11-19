@@ -52,9 +52,7 @@ export default function ActivityDetailPage() {
 					<div className="mx-auto w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-6">
 						<AlertCircle className="text-red-600" size={48} />
 					</div>
-					<h2 className="text-2xl font-bold text-gray-900 mb-3">
-						Aktivitas Tidak Ditemukan
-					</h2>
+					<h2 className="text-2xl font-bold text-gray-900 mb-3">Aktivitas Tidak Ditemukan</h2>
 					<p className="text-gray-600 text-lg mb-6">
 						Maaf, aktivitas yang Anda cari tidak dapat ditemukan
 					</p>
@@ -79,8 +77,7 @@ export default function ActivityDetailPage() {
 				label: "Dikonfirmasi",
 				variant: "info",
 				icon: "✓",
-				description:
-					"Pendaftaran Anda telah dikonfirmasi. Siap-siap ikut event!",
+				description: "Pendaftaran Anda telah dikonfirmasi. Siap-siap ikut event!",
 			},
 			attended: {
 				label: "Hadir",
@@ -167,9 +164,7 @@ export default function ActivityDetailPage() {
 							Detail Aktivitas
 						</h1>
 					</div>
-					<p className="text-lg text-gray-600 ml-12">
-						Informasi lengkap partisipasi event Anda
-					</p>
+					<p className="text-lg text-gray-600 ml-12">Informasi lengkap partisipasi event Anda</p>
 				</div>
 				{/* Status Cards */}
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -195,17 +190,13 @@ export default function ActivityDetailPage() {
 									/>
 								</div>
 								<div className="flex-1">
-									<p className="text-sm text-gray-600 mb-2 font-medium">
-										Status Partisipasi
-									</p>
+									<p className="text-sm text-gray-600 mb-2 font-medium">Status Partisipasi</p>
 									<Badge variant={statusConfig.variant} className="text-sm">
 										{statusConfig.label}
 									</Badge>
 								</div>
 							</div>
-							<p className="text-sm text-gray-600 leading-relaxed">
-								{statusConfig.description}
-							</p>
+							<p className="text-sm text-gray-600 leading-relaxed">{statusConfig.description}</p>
 						</Card>
 					</motion.div>
 
@@ -217,15 +208,10 @@ export default function ActivityDetailPage() {
 						<Card className="p-6 bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-shadow">
 							<div className="flex items-center gap-4 mb-3">
 								<div className={`p-3 rounded-xl ${timelineConfig.bg}`}>
-									<timelineConfig.Icon
-										size={28}
-										className={timelineConfig.color}
-									/>
+									<timelineConfig.Icon size={28} className={timelineConfig.color} />
 								</div>
 								<div className="flex-1">
-									<p className="text-sm text-gray-600 mb-2 font-medium">
-										Status Event
-									</p>
+									<p className="text-sm text-gray-600 mb-2 font-medium">Status Event</p>
 									<span
 										className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold ${timelineConfig.bg} ${timelineConfig.color}`}>
 										{timelineConfig.label}
@@ -234,8 +220,7 @@ export default function ActivityDetailPage() {
 							</div>
 							<p className="text-sm text-gray-600 leading-relaxed">
 								{data.timeline_status === "upcoming" && "Event belum dimulai"}
-								{data.timeline_status === "ongoing" &&
-									"Event sedang berlangsung"}
+								{data.timeline_status === "ongoing" && "Event sedang berlangsung"}
 								{data.timeline_status === "finished" && "Event telah selesai"}
 							</p>
 						</Card>
@@ -262,13 +247,9 @@ export default function ActivityDetailPage() {
 							<div className="absolute bottom-0 left-0 right-0 p-6 text-white">
 								<div className="flex items-center gap-2 mb-2">
 									{data.event?.category && (
-										<Badge color={data.event.category.warna}>
-											{data.event.category.nama}
-										</Badge>
+										<Badge color={data.event.category.warna}>{data.event.category.nama}</Badge>
 									)}
-									<Badge variant={statusConfig.variant}>
-										{statusConfig.label}
-									</Badge>
+									<Badge variant={statusConfig.variant}>{statusConfig.label}</Badge>
 								</div>
 							</div>
 						</div>
@@ -312,9 +293,7 @@ export default function ActivityDetailPage() {
 											<AsyncImage
 												loading="lazy"
 												transition={Fade}
-												src={getImageUrl(
-													`organizations/${data.event.organization.logo}`
-												)}
+												src={getImageUrl(`organizations/${data.event.organization.logo}`)}
 												alt={data.event.organization.nama}
 												className="w-16 h-16 rounded-full object-cover border-2 border-white shadow"
 											/>
@@ -332,9 +311,7 @@ export default function ActivityDetailPage() {
 													<div className="flex items-center gap-1 text-yellow-500 mt-1">
 														<span>⭐</span>
 														<span className="text-sm font-semibold">
-															{parseFloat(
-																data.event.organization.rating
-															).toFixed(1)}
+															{parseFloat(data.event.organization.rating).toFixed(1)}
 														</span>
 													</div>
 												)}
@@ -354,9 +331,7 @@ export default function ActivityDetailPage() {
 										<p className="font-bold text-gray-900 mb-2 text-base">
 											{data.event.location.nama}
 										</p>
-										<p className="text-sm text-gray-600 mb-1">
-											{data.event.location.alamat}
-										</p>
+										<p className="text-sm text-gray-600 mb-1">{data.event.location.alamat}</p>
 										<p className="text-sm text-gray-600">
 											{data.event.location.kota}, {data.event.location.provinsi}
 										</p>
@@ -372,17 +347,10 @@ export default function ActivityDetailPage() {
 								</h3>
 								<div className="space-y-3">
 									<div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-										<Clock
-											size={18}
-											className="text-gray-500 mt-0.5 flex-shrink-0"
-										/>
+										<Clock size={18} className="text-gray-500 mt-0.5 flex-shrink-0" />
 										<div>
-											<p className="font-semibold text-gray-900 text-sm">
-												Tanggal Mulai
-											</p>
-											<p className="text-gray-700">
-												{formatDate(data.event?.tanggal_mulai)}
-											</p>
+											<p className="font-semibold text-gray-900 text-sm">Tanggal Mulai</p>
+											<p className="text-gray-700">{formatDate(data.event?.tanggal_mulai)}</p>
 											{data.event?.waktu_mulai && (
 												<p className="text-sm text-gray-600">
 													{formatTime(data.event.waktu_mulai)} WIB
@@ -391,17 +359,10 @@ export default function ActivityDetailPage() {
 										</div>
 									</div>
 									<div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-										<Clock
-											size={18}
-											className="text-gray-500 mt-0.5 flex-shrink-0"
-										/>
+										<Clock size={18} className="text-gray-500 mt-0.5 flex-shrink-0" />
 										<div>
-											<p className="font-semibold text-gray-900 text-sm">
-												Tanggal Selesai
-											</p>
-											<p className="text-gray-700">
-												{formatDate(data.event?.tanggal_selesai)}
-											</p>
+											<p className="font-semibold text-gray-900 text-sm">Tanggal Selesai</p>
+											<p className="text-gray-700">{formatDate(data.event?.tanggal_selesai)}</p>
 											{data.event?.waktu_selesai && (
 												<p className="text-sm text-gray-600">
 													{formatTime(data.event.waktu_selesai)} WIB
@@ -424,9 +385,7 @@ export default function ActivityDetailPage() {
 											<User size={16} className="text-gray-500 flex-shrink-0" />
 											<div>
 												<p className="text-sm text-gray-600">Nama</p>
-												<p className="font-semibold text-gray-900">
-													{data.event.creator.nama}
-												</p>
+												<p className="font-semibold text-gray-900">{data.event.creator.nama}</p>
 											</div>
 										</div>
 										<div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
@@ -440,15 +399,10 @@ export default function ActivityDetailPage() {
 										</div>
 										{data.event?.telepon_kontak && (
 											<div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-												<Phone
-													size={16}
-													className="text-gray-500 flex-shrink-0"
-												/>
+												<Phone size={16} className="text-gray-500 flex-shrink-0" />
 												<div>
 													<p className="text-sm text-gray-600">Telepon</p>
-													<p className="font-semibold text-gray-900">
-														{data.event.telepon_kontak}
-													</p>
+													<p className="font-semibold text-gray-900">{data.event.telepon_kontak}</p>
 												</div>
 											</div>
 										)}
@@ -482,9 +436,7 @@ export default function ActivityDetailPage() {
 										)}
 									</div>
 									<div className="flex-1 pb-6">
-										<p className="font-bold text-gray-900 text-base mb-1">
-											Pendaftaran
-										</p>
+										<p className="font-bold text-gray-900 text-base mb-1">Pendaftaran</p>
 										<p className="text-sm text-emerald-600 font-semibold mb-2">
 											{formatDate(data.tanggal_daftar)}
 										</p>
@@ -507,9 +459,7 @@ export default function ActivityDetailPage() {
 										)}
 									</div>
 									<div className="flex-1 pb-6">
-										<p className="font-bold text-gray-900 text-base mb-1">
-											Dikonfirmasi
-										</p>
+										<p className="font-bold text-gray-900 text-base mb-1">Dikonfirmasi</p>
 										<p className="text-sm text-emerald-600 font-semibold mb-2">
 											{formatDate(data.tanggal_konfirmasi)}
 										</p>
@@ -529,9 +479,7 @@ export default function ActivityDetailPage() {
 										</div>
 									</div>
 									<div className="flex-1">
-										<p className="font-bold text-gray-900 text-base mb-1">
-											Hadir
-										</p>
+										<p className="font-bold text-gray-900 text-base mb-1">Hadir</p>
 										<p className="text-sm text-emerald-600 font-semibold mb-2">
 											{formatDate(data.tanggal_hadir)}
 										</p>
@@ -572,17 +520,10 @@ export default function ActivityDetailPage() {
 						transition={{ delay: 0.7 }}>
 						<Card className="p-6 bg-amber-50 border-2 border-amber-200 shadow-lg mb-8">
 							<div className="flex gap-4">
-								<AlertCircle
-									size={24}
-									className="text-amber-600 flex-shrink-0 mt-1"
-								/>
+								<AlertCircle size={24} className="text-amber-600 flex-shrink-0 mt-1" />
 								<div className="flex-1">
-									<h3 className="font-bold text-gray-900 mb-2 text-base">
-										Catatan
-									</h3>
-									<p className="text-gray-700 leading-relaxed">
-										{data.catatan}
-									</p>
+									<h3 className="font-bold text-gray-900 mb-2 text-base">Catatan</h3>
+									<p className="text-gray-700 leading-relaxed">{data.catatan}</p>
 								</div>
 							</div>
 						</Card>

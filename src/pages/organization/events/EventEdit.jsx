@@ -18,6 +18,7 @@ import { toInputTime, toInputDate } from "@/utils/dateFormatter";
 // UI Components
 import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
+import { useOrgLocations } from "@/_hooks/useLocations";
 
 export default function OrganizationEventEdit() {
 	const { id } = useParams();
