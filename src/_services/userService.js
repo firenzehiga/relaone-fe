@@ -119,6 +119,23 @@ export const adminGetDashboardAnalytics = async (params = {}) => {
 	return response.data.data || response.data;
 };
 
+/** Update rating organisasi beserta eventnya secara massal dengan opsional kirim data id organisasi
+
+ * @async
+ * @function adminUpdateOrganizationRatings
+ * @endpoint GET /admin/dashboard/analytics
+ * @returns {Promise<any>} Data analytics untuk dashboard.
+ */
+export const adminUpdateOrganizationRatings = async (data = {}) => {
+	try {
+		const response = await api.post("/admin/organizations/update-ratings", data);
+		return response.data;
+	} catch (error) {
+		console.log("Error updating organization ratings:", error);
+		throw error;
+	}
+};
+
 // ORGANIZATIONS SERVICES
 
 /** Mengambil data analytics untuk dashboard.

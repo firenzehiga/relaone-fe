@@ -35,8 +35,8 @@ export default function DynamicButton({
 			"bg-white hover:bg-gray-50 text-gray-900 border border-gray-200 shadow-md hover:shadow-lg focus:ring-gray-300",
 		outline:
 			"border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-700 hover:text-gray-900 focus:ring-gray-300 shadow-sm hover:shadow-md bg-white",
-		ghost:
-			"hover:bg-emerald-50 text-emerald-600 hover:text-emerald-700 focus:ring-emerald-500",
+		ghost: "hover:bg-emerald-50 text-emerald-600 hover:text-emerald-700 focus:ring-emerald-500",
+		teal: "bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white shadow-lg hover:shadow-xl focus:ring-teal-500",
 		success:
 			"bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl focus:ring-emerald-500",
 		danger:
@@ -58,10 +58,7 @@ export default function DynamicButton({
 			disabled={disabled || loading}
 			{...props}>
 			{loading && (
-				<svg
-					className="animate-spin -ml-1 mr-2 h-4 w-4"
-					fill="none"
-					viewBox="0 0 24 24">
+				<svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
 					<circle
 						className="opacity-25"
 						cx="12"
@@ -99,8 +96,7 @@ export function LinkButton({
 			"bg-white hover:bg-gray-50 text-gray-900 border border-gray-200 shadow-md hover:shadow-lg focus:ring-gray-300",
 		outline:
 			"border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-700 hover:text-gray-900 focus:ring-gray-300 shadow-sm hover:shadow-md bg-white",
-		ghost:
-			"hover:bg-emerald-50 text-emerald-600 hover:text-emerald-700 focus:ring-emerald-500",
+		ghost: "hover:bg-emerald-50 text-emerald-600 hover:text-emerald-700 focus:ring-emerald-500",
 		success:
 			"bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl focus:ring-emerald-500",
 		danger:
@@ -119,10 +115,7 @@ export function LinkButton({
 			disabled={disabled || loading}
 			{...props}>
 			{loading && (
-				<svg
-					className="animate-spin -ml-1 mr-2 h-4 w-4"
-					fill="none"
-					viewBox="0 0 24 24">
+				<svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
 					<circle
 						className="opacity-25"
 						cx="12"

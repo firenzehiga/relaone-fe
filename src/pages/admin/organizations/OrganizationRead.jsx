@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { use, useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import {
 	ChevronDown,
@@ -10,15 +10,8 @@ import {
 	EllipsisVerticalIcon,
 	AlertCircle,
 } from "lucide-react";
-import {
-	Menu,
-	MenuButton,
-	MenuList,
-	MenuItem,
-	Portal,
-	IconButton,
-} from "@chakra-ui/react";
-import { LinkButton } from "@/components/ui/Button";
+import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
+import DynamicButton, { LinkButton } from "@/components/ui/Button";
 import Swal from "sweetalert2";
 import { showToast } from "@/components/ui/Toast";
 import {
@@ -32,6 +25,9 @@ import FetchLoader from "@/components/ui/FetchLoader";
 import toast from "react-hot-toast";
 import { AsyncImage } from "loadable-image";
 import { Fade } from "transitions-kit";
+import RatingStars from "@/components/ui/RatingStars";
+import { useAdminUpdateOrganizationRatingsMutation } from "@/_hooks/useUsers";
+import { useAuthStore } from "@/_hooks/useAuth";
 
 export default function AdminOrganization() {
 	const {
@@ -42,7 +38,8 @@ export default function AdminOrganization() {
 	} = useAdminOrganizations();
 
 	const deleteOrganizationMutation = useAdminDeleteOrganizationMutation();
-
+	const updateOrganizationRatingsMutation = useAdminUpdateOrganizationRatingsMutation();
+	const { isLoading } = useAuthStore();
 	// Local state for search/filter
 	const [searchOrganization, setSearchOrganization] = useState("");
 
@@ -53,11 +50,7 @@ export default function AdminOrganization() {
 			const namaOrg = String(organizationItem.nama || "").toLowerCase();
 			const namaUser = String(organizationItem?.user?.nama || "").toLowerCase();
 			const deskripsi = String(organizationItem.deskripsi || "").toLowerCase();
-			return (
-				namaOrg.includes(query) ||
-				namaUser.includes(query) ||
-				deskripsi.includes(query)
-			);
+			return namaOrg.includes(query) || namaUser.includes(query) || deskripsi.includes(query);
 		});
 	}, [organizations, searchOrganization]);
 
@@ -105,6 +98,32 @@ export default function AdminOrganization() {
 		});
 	};
 
+	// Fungsi untuk menangani pembaruan rating organisasi
+	const handleUpdateRatings = (id) => {
+		Swal.fire({
+			title: "Lanjutkan pembaruan rating organisasi?",
+			text: "Aksi ini untuk memperbarui rating organisasi beserta eventnya secara massal.",
+			showCancelButton: true,
+			confirmButtonText: "Ya, lanjutkan!",
+			cancelButtonText: "Batal",
+			customClass: {
+				popup: "bg-white rounded-xl shadow-xl p-5 max-w-md w-full",
+				title: "text-lg font-semibold text-gray-900",
+				content: "text-sm text-gray-600 dark:text-gray-300 mt-1",
+				actions: "flex gap-3 justify-center mt-4",
+				confirmButton:
+					"px-4 py-2 focus:outline-none rounded-md bg-emerald-500 hover:bg-emerald-600 text-white",
+				cancelButton:
+					"px-4 py-2 rounded-md border border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700",
+			},
+			backdrop: true,
+		}).then((result) => {
+			if (result.isConfirmed) {
+				updateOrganizationRatingsMutation.mutate(); // Panggil fungsi updateOrganizationRatingsMutation tanpa ID
+			}
+		});
+	};
+
 	const columns = [
 		{
 			name: "No",
@@ -144,11 +163,7 @@ export default function AdminOrganization() {
 			selector: (row) =>
 				row.website ? (
 					<a
-						href={
-							row.website.startsWith("http")
-								? row.website
-								: `https://${row.website}`
-						}
+						href={row.website.startsWith("http") ? row.website : `https://${row.website}`}
 						target="_blank"
 						rel="noopener noreferrer"
 						className="text-blue-600 hover:underline">
@@ -189,10 +204,7 @@ export default function AdminOrganization() {
 					<Portal>
 						<MenuList className="font-semibold">
 							<Link to={`/admin/organizations/edit/${row.id}`}>
-								<MenuItem
-									icon={
-										<EditIcon className="text-yellow-500 hover:text-yellow-600" />
-									}>
+								<MenuItem icon={<EditIcon className="text-yellow-500 hover:text-yellow-600" />}>
 									Edit
 								</MenuItem>
 							</Link>
@@ -215,12 +227,8 @@ export default function AdminOrganization() {
 			<div className="flex flex-col items-center justify-center min-h-[520px] text-gray-600">
 				<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 				<h3 className="text-lg font-semibold mb-2">Error</h3>
-				<p className="text-gray-500 mb-4 text-center">
-					Gagal mengambil data organisasi.
-				</p>
-				<p className="text-red-500 mb-4 text-center font-semibold">
-					{organizationsError.message}
-				</p>
+				<p className="text-gray-500 mb-4 text-center">Gagal mengambil data organisasi.</p>
+				<p className="text-red-500 mb-4 text-center font-semibold">{organizationsError.message}</p>
 			</div>
 		);
 	}
@@ -233,20 +241,25 @@ export default function AdminOrganization() {
 						<h2 className="text-lg font-semibold">
 							{" "}
 							{organizationsRefetching ? (
-								<FetchLoader
-									variant="inline"
-									text="Mengambil Data Terbaru..."
-								/>
+								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
 							) : (
 								"Daftar Organisasi"
 							)}
 						</h2>
-						<LinkButton
-							to="/admin/organizations/create"
-							variant="success"
-							size="sm">
-							<Plus className="w-4 h-4 mr-2" /> Tambah Organisasi
-						</LinkButton>
+						<div className="flex gap-2 md:gap-4 w-full md:w-auto sm:flex-row flex-col">
+							<DynamicButton
+								type="button"
+								variant="teal"
+								onClick={handleUpdateRatings}
+								disabled={isLoading}
+								loading={isLoading}
+								className="flex-1 ">
+								Perbarui Rating
+							</DynamicButton>
+							<LinkButton to="/admin/organizations/create" variant="success" size="sm">
+								<Plus className="w-4 h-4 mr-2" /> Tambah Organisasi
+							</LinkButton>
+						</div>
 					</div>
 
 					{organizationsLoading ? (
@@ -256,7 +269,7 @@ export default function AdminOrganization() {
 						</div>
 					) : (
 						<>
-							<div className="w-80 mb-4">
+							<div className="w-80 ">
 								<input
 									type="text"
 									placeholder="Cari organisasi, perwakilan, atau deskripsi..."
@@ -284,33 +297,32 @@ export default function AdminOrganization() {
 											{/* Left column */}
 											<div className="space-y-3">
 												<div className="text-sm text-gray-700">
-													<span className="font-semibold">
-														Nama Penanggung Jawab:
-													</span>
-													<span className="ml-2 text-gray-900">
-														{data.user?.nama || "-"}
-													</span>
+													<span className="font-semibold">Nama Penanggung Jawab:</span>
+													<span className="ml-2 text-gray-900">{data.user?.nama || "-"}</span>
 												</div>
 												<div className="text-sm text-gray-700">
 													<span className="font-semibold">No Telp:</span>
-													<span className="ml-2 text-gray-900">
-														{data.telepon || "-"}
-													</span>
+													<span className="ml-2 text-gray-900">{data.telepon || "-"}</span>
+												</div>
+												<div className="text-sm text-gray-700">
+													<span className="font-semibold">Rating:</span>
+													<RatingStars
+														rating={data.rating}
+														maxRating={5}
+														size="sm"
+														interactive={false}
+													/>{" "}
 												</div>
 												<div className="text-sm text-gray-700">
 													<span className="font-semibold">Email:</span>
-													<span className="ml-2 text-gray-900">
-														{data.email || "-"}
-													</span>
+													<span className="ml-2 text-gray-900">{data.email || "-"}</span>
 												</div>
 											</div>
 
 											{/* Right column */}
 											<div className="space-y-3">
 												<div>
-													<div className="text-sm font-semibold text-gray-700 mb-1">
-														Alamat:
-													</div>
+													<div className="text-sm font-semibold text-gray-700 mb-1">Alamat:</div>
 													<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
 														{data.alamat || "-"}
 													</div>

@@ -193,6 +193,65 @@ export const useAdminAnalytics = () => {
 	});
 };
 
+/** Update rating organisasi beserta eventnya secara massal dengan opsional kirim data id organisasi *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["adminUsers"]
+ * @optimisticUpdate Cache ["adminUsers"] langsung difilter
+ */
+/**
+ * Update organisasi (admin).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @param {Object} variables - Parameter update
+ * @param {string|number} variables.organizationId - ID organisasi
+ * @param {Object} variables.payload - Data organisasi baru
+ * @invalidates ["organizations"]
+ */
+export const useAdminUpdateOrganizationRatingsMutation = () => {
+	const queryClient = useQueryClient();
+	const { setLoading, setError } = useAuthStore(); // tambahkan setError
+
+	return useMutation({
+		mutationKey: ["admin", "updateRatings"],
+		// gunakan userService (bukan organizationService) dan kirim payload sesuai backend
+		mutationFn: ({ organizationId } = {}) =>
+			userService.adminUpdateOrganizationRatings(
+				organizationId ? { organization_id: organizationId } : {}
+			),
+		onMutate: () => {
+			setLoading(true);
+		},
+		onSuccess: (response) => {
+			queryClient.invalidateQueries(["adminOrganizations"]);
+			queryClient.invalidateQueries(["adminEvents"]);
+
+			setLoading(false);
+			const msg = parseApiError(response);
+
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Update organization failed";
+			setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali logic yang Anda buat.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Update organization error:", error);
+		},
+	});
+};
 // === ORGANIZATIONS HOOKS ===
 /**
  * Hook untuk mengambil data semua analytics dashboard (khusus organisasi)
