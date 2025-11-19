@@ -1,8 +1,7 @@
 import axios from "axios";
 
 // Base API URL - menggunakan Laravel backend yang sudah ada
-const BASE_URL =
-	import.meta.env.VITE_API_BASE_URL || "https://peladen.my.id/api";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://peladen.my.id/api";
 
 /**
  * Instance axios yang sudah dikonfigurasi untuk API calls
@@ -50,12 +49,9 @@ api.interceptors.response.use(
 		if (error.response?.status === 401) {
 			localStorage.removeItem("authToken");
 			// Only redirect if not already on auth pages
-			if (
-				!window.location.pathname.includes("/login") &&
-				!window.location.pathname.includes("/register")
-			) {
+			try {
 				window.location.href = "/login";
-			}
+			} catch (e) {}
 		}
 
 		return Promise.reject(error);

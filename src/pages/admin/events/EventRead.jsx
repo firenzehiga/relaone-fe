@@ -2,10 +2,7 @@ import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
-import {
-	useAdminDeleteEventMutation,
-	useAdminEvents,
-} from "@/_hooks/useEvents";
+import { useAdminDeleteEventMutation, useAdminEvents } from "@/_hooks/useEvents";
 import {
 	ChevronDown,
 	Plus,
@@ -16,14 +13,7 @@ import {
 	EllipsisVerticalIcon,
 	AlertCircle,
 } from "lucide-react";
-import {
-	Menu,
-	MenuButton,
-	MenuList,
-	MenuItem,
-	Portal,
-	IconButton,
-} from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
 import DynamicButton, { LinkButton } from "@/components/ui/Button";
 import { Link } from "react-router-dom";
 import { getImageUrl, parseApiError } from "@/utils";
@@ -57,9 +47,7 @@ export default function AdminEvent() {
 				});
 			}
 		});
-		return Array.from(orgsMap.values()).sort((a, b) =>
-			a.nama.localeCompare(b.nama)
-		);
+		return Array.from(orgsMap.values()).sort((a, b) => a.nama.localeCompare(b.nama));
 	}, [events]);
 
 	const filteredEvents = useMemo(() => {
@@ -71,12 +59,8 @@ export default function AdminEvent() {
 			today.setHours(0, 0, 0, 0);
 
 			filtered = filtered.filter((eventItem) => {
-				const startDate = new Date(
-					`${eventItem.tanggal_mulai}T${eventItem.waktu_mulai}`
-				);
-				const endDate = new Date(
-					`${eventItem.tanggal_selesai}T${eventItem.waktu_selesai}`
-				);
+				const startDate = new Date(`${eventItem.tanggal_mulai}T${eventItem.waktu_mulai}`);
+				const endDate = new Date(`${eventItem.tanggal_selesai}T${eventItem.waktu_selesai}`);
 
 				if (statusFilter === "upcoming") {
 					return startDate > today;
@@ -103,11 +87,7 @@ export default function AdminEvent() {
 				const title = String(eventItem.judul || "").toLowerCase();
 				const description = String(eventItem.deskripsi || "").toLowerCase();
 				const location = String(eventItem.lokasi || "").toLowerCase();
-				return (
-					title.includes(query) ||
-					description.includes(query) ||
-					location.includes(query)
-				);
+				return title.includes(query) || description.includes(query) || location.includes(query);
 			});
 		}
 
@@ -233,10 +213,7 @@ export default function AdminEvent() {
 					<Portal>
 						<MenuList className="font-semibold">
 							<Link to={`/admin/events/edit/${row.id}`}>
-								<MenuItem
-									icon={
-										<EditIcon className="text-yellow-500 hover:text-yellow-600" />
-									}>
+								<MenuItem icon={<EditIcon className="text-yellow-500 hover:text-yellow-600" />}>
 									Edit
 								</MenuItem>
 							</Link>
@@ -259,12 +236,8 @@ export default function AdminEvent() {
 			<div className="flex flex-col items-center justify-center min-h-[520px] text-gray-600">
 				<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 				<h3 className="text-lg font-semibold mb-2">Error</h3>
-				<p className="text-gray-500 mb-4 text-center">
-					Gagal mengambil data event.
-				</p>
-				<p className="text-red-500 mb-4 text-center font-semibold">
-					{eventsError.message}
-				</p>
+				<p className="text-gray-500 mb-4 text-center">Gagal mengambil data event.</p>
+				<p className="text-red-500 mb-4 text-center font-semibold">{eventsError.message}</p>
 			</div>
 		);
 	}
@@ -273,18 +246,15 @@ export default function AdminEvent() {
 		<div className="py-8 page-transition min-h-screen">
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="bg-white rounded-lg shadow p-6">
-					<div className="flex justify-between items-center mb-4">
+					<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
 						<h2 className="text-lg font-semibold">
 							{eventsRefetching ? (
-								<FetchLoader
-									variant="inline"
-									text="Mengambil Data Terbaru..."
-								/>
+								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
 							) : (
 								"Daftar Event/Kegiatan"
 							)}
 						</h2>
-						<LinkButton variant="success" to="/admin/events/create">
+						<LinkButton variant="success" to="/admin/events/create" className="w-full md:w-auto">
 							<Plus className="w-4 h-4 mr-2" /> Tambah Event
 						</LinkButton>
 					</div>
@@ -358,33 +328,25 @@ export default function AdminEvent() {
 												</div>
 												<div className="text-sm text-gray-700">
 													<span className="font-semibold">Lokasi:</span>
-													<span className="ml-2 text-gray-900">
-														{data.location?.nama || "-"}
-													</span>
+													<span className="ml-2 text-gray-900">{data.location?.nama || "-"}</span>
 												</div>
 												<div className="text-sm text-gray-700">
 													<span className="font-semibold">Alamat:</span>
-													<span className="ml-2 text-gray-900">
-														{data.location?.alamat || "-"}
-													</span>
+													<span className="ml-2 text-gray-900">{data.location?.alamat || "-"}</span>
 												</div>
 											</div>
 
 											{/* Right column */}
 											<div className="space-y-3">
 												<div className="flex items-start">
-													<div className="text-sm text-gray-700 font-semibold">
-														Tanggal:
-													</div>
+													<div className="text-sm text-gray-700 font-semibold">Tanggal:</div>
 													<div className="text-sm text-gray-900 ml-2">
 														{formatDate(data.tanggal_mulai) || "-"} -{" "}
 														{formatDate(data.tanggal_selesai) || "-"}
 													</div>
 												</div>
 												<div className="flex items-start">
-													<div className="text-sm text-gray-700 font-semibold">
-														Waktu:
-													</div>
+													<div className="text-sm text-gray-700 font-semibold">Waktu:</div>
 													<div className="text-sm ml-2">
 														{formatTime(data.waktu_mulai) || "-"} -{" "}
 														{formatTime(data.waktu_selesai) || "-"} WIB
@@ -395,16 +357,13 @@ export default function AdminEvent() {
 														Jumlah Perserta:
 													</div>
 													<div className="text-sm ml-2">
-														{data.peserta_saat_ini || 0} /{" "}
-														{data.maks_peserta || 0} Peserta
+														{data.peserta_saat_ini || 0} / {data.maks_peserta || 0} Peserta
 													</div>
 												</div>
 											</div>
 										</div>
 										<div className="mt-4">
-											<div className="text-sm font-semibold text-gray-700 mb-1">
-												Deskripsi:
-											</div>
+											<div className="text-sm font-semibold text-gray-700 mb-1">Deskripsi:</div>
 											<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
 												{data.deskripsi || "-"}
 											</div>
@@ -415,9 +374,7 @@ export default function AdminEvent() {
 									<div className="flex flex-col items-center justify-center h-64 text-gray-600">
 										<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 										<h3 className="text-lg font-semibold mb-2">
-											{searchEvent
-												? "No Matching Events Found"
-												: "No Events Available"}
+											{searchEvent ? "No Matching Events Found" : "No Events Available"}
 										</h3>
 										<p className="text-gray-500 mb-4 text-center">
 											{searchEvent

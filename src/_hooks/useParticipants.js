@@ -183,7 +183,7 @@ export const useVolunteerGenerateQrCodeMutation = () => {
 			showToast({
 				type: "error",
 				tipIcon: "💡",
-				tipText: "Periksa kembali logic yang Anda buat.",
+				tipText: "Periksa kembali atau Coba lagi.",
 				message: msg,
 				duration: 3000,
 				position: "top-center",
@@ -227,9 +227,7 @@ export const userVolunteerHistoryById = (id) => {
 	return useQuery({
 		queryKey: ["volunteerHistory", id],
 		queryFn: async () => {
-			const response = await eventParticipantService.volunteerGetHistoryById(
-				id
-			);
+			const response = await eventParticipantService.volunteerGetHistoryById(id);
 			return response;
 		},
 		enabled,
@@ -273,9 +271,7 @@ export const useAdminParticipantById = (id) => {
 	return useQuery({
 		queryKey: ["adminParticipants", id],
 		queryFn: async () => {
-			const response = await eventParticipantService.adminGetParticipantById(
-				id
-			);
+			const response = await eventParticipantService.adminGetParticipantById(id);
 			return response;
 		},
 		enabled,
@@ -322,7 +318,7 @@ export const useAdminCreateParticipantMutation = () => {
 			showToast({
 				type: "error",
 				tipIcon: "💡",
-				tipText: "Periksa kembali logic yang Anda buat.",
+				tipText: "Periksa kembali atau Coba lagi.",
 				message: msg,
 				duration: 3000,
 				position: "top-center",
@@ -348,8 +344,7 @@ export const useAdminUpdateParticipantMutation = () => {
 
 	return useMutation({
 		mutationKey: ["adminParticipants", "update"],
-		mutationFn: ({ id, data }) =>
-			eventParticipantService.adminUpdateParticipant(id, data),
+		mutationFn: ({ id, data }) => eventParticipantService.adminUpdateParticipant(id, data),
 		onMutate: () => {
 			setLoading(true);
 			clearError();
@@ -375,7 +370,7 @@ export const useAdminUpdateParticipantMutation = () => {
 			showToast({
 				type: "error",
 				tipIcon: "💡",
-				tipText: "Periksa kembali logic yang Anda buat.",
+				tipText: "Periksa kembali atau Coba lagi.",
 				message: msg,
 				duration: 3000,
 				position: "top-center",
@@ -465,7 +460,7 @@ export const useOrgConfirmParticipantMutation = () => {
 			showToast({
 				type: "error",
 				tipIcon: "💡",
-				tipText: "Periksa kembali logic yang Anda buat.",
+				tipText: "Periksa kembali atau Coba lagi.",
 				message: msg,
 				duration: 3000,
 				position: "top-center",
@@ -512,7 +507,7 @@ export const useOrgRejectParticipantMutation = () => {
 			showToast({
 				type: "error",
 				tipIcon: "💡",
-				tipText: "Periksa kembali logic yang Anda buat.",
+				tipText: "Periksa kembali atau Coba lagi.",
 				message: msg,
 				duration: 3000,
 				position: "top-center",
@@ -534,9 +529,7 @@ export const useOrgAttendanceStats = (eventId) => {
 	return useQuery({
 		queryKey: ["orgAttendanceStats", eventId],
 		queryFn: async () => {
-			const response = await eventParticipantService.orgGetAttendanceStats(
-				eventId
-			);
+			const response = await eventParticipantService.orgGetAttendanceStats(eventId);
 			return response;
 		},
 		enabled,
@@ -558,9 +551,7 @@ export const useOrgRecentCheckIns = (eventId) => {
 	return useQuery({
 		queryKey: ["orgRecentCheckIns", eventId],
 		queryFn: async () => {
-			const response = await eventParticipantService.orgGetRecentCheckIns(
-				eventId
-			);
+			const response = await eventParticipantService.orgGetRecentCheckIns(eventId);
 			return response;
 		},
 		enabled,

@@ -60,8 +60,8 @@ export const getUserRegistrations = async () => {
  * @endpoint GET /admin/users
  * @returns {Promise<any>} Data semua users.
  */
-export const adminGetUsers = async (params = {}) => {
-	const response = await api.get("/admin/users", { params });
+export const adminGetUsers = async () => {
+	const response = await api.get("/admin/users");
 	return response.data.data || response.data;
 };
 
@@ -72,7 +72,7 @@ export const adminGetUsers = async (params = {}) => {
  * @endpoint GET /admin/users
  * @returns {Promise<any>} Data semua users.
  */
-export const adminGetOrganizationUsers = async (params = {}) => {
+export const adminGetOrganizationUsers = async () => {
 	const response = await api.get("/admin/organization-users");
 	return response.data.data || response.data;
 };
@@ -84,7 +84,7 @@ export const adminGetOrganizationUsers = async (params = {}) => {
  * @endpoint GET /admin/users
  * @returns {Promise<any>} Data semua users.
  */
-export const adminGetVolunteerUsers = async (params = {}) => {
+export const adminGetVolunteerUsers = async () => {
 	const response = await api.get("/admin/volunteer-users");
 	return response.data.data || response.data;
 };

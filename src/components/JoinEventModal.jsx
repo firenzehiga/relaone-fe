@@ -24,11 +24,7 @@ export default function JoinEventModal() {
 	const location = useLocation();
 	const { isAuthenticated, user } = useAuthStore();
 	// read modal state + selected event directly from store
-	const {
-		isJoinModalOpen,
-		closeJoinModal,
-		selectedEventDetail: event,
-	} = useModalStore();
+	const { isJoinModalOpen, closeJoinModal, selectedEventDetail: event } = useModalStore();
 	const [agreed, setAgreed] = useState(false);
 	const [success, setSuccess] = useState(false);
 
@@ -40,11 +36,9 @@ export default function JoinEventModal() {
 	const { data: freshEvent } = useEventById(event?.id);
 
 	// pakai freshEvent jika sudah ada, fallback ke store event
-	const participantsFromEvent =
-		freshEvent?.participants ?? event?.participants ?? [];
+	const participantsFromEvent = freshEvent?.participants ?? event?.participants ?? [];
 	const alreadyRegistered =
-		!!user?.id &&
-		participantsFromEvent.some((p) => Number(p.user_id) === Number(user.id));
+		!!user?.id && participantsFromEvent.some((p) => Number(p.user_id) === Number(user.id));
 
 	const [formData, setFormData] = useState({
 		catatan: "",
@@ -114,11 +108,7 @@ export default function JoinEventModal() {
 	if (!event) return null;
 
 	return (
-		<Modal
-			isOpen={isJoinModalOpen}
-			onClose={handleClose}
-			title="Daftar Event Volunteer"
-			size="xl">
+		<Modal isOpen={isJoinModalOpen} onClose={handleClose} title="Daftar Event Volunteer" size="xl">
 			{success ? (
 				<motion.div
 					initial={{ opacity: 0, scale: 0.8 }}
@@ -127,14 +117,10 @@ export default function JoinEventModal() {
 					<div className="mx-auto w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mb-6 shadow-lg">
 						<Check className="text-white" size={36} />
 					</div>
-					<h3 className="text-2xl font-bold text-gray-900 mb-3">
-						Pendaftaran Berhasil! 🎉
-					</h3>
+					<h3 className="text-2xl font-bold text-gray-900 mb-3">Pendaftaran Berhasil! 🎉</h3>
 					<p className="text-gray-600 text-lg leading-relaxed">
 						Anda telah berhasil mendaftar untuk event <br />
-						<span className="font-semibold text-blue-600">
-							"{event.judul || event.title}"
-						</span>
+						<span className="font-semibold text-blue-600">"{event.judul || event.title}"</span>
 					</p>
 					<div className="mt-6 p-4 bg-blue-50 rounded-lg">
 						<p className="text-sm text-blue-800">
@@ -148,58 +134,34 @@ export default function JoinEventModal() {
 					<div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-100">
 						<div className="flex items-start gap-4">
 							<AsyncImage
-								src={
-									getImageUrl(`events/${event.gambar}`) ||
-									"https://placehold.co/400"
-								}
+								src={getImageUrl(`events/${event.gambar}`) || "https://placehold.co/400"}
 								alt={event.judul}
 								className="w-24 h-24 object-cover rounded-lg shadow-md flex-shrink-0"
 							/>
 							<div className="flex-1 min-w-0">
-								<h3 className="font-bold text-gray-900 text-xl mb-2 line-clamp-2">
-									{event.judul}
-								</h3>
+								<h3 className="font-bold text-gray-900 text-xl mb-2 line-clamp-2">{event.judul}</h3>
 								<div className="space-y-2">
 									<div className="flex items-center text-gray-700 text-sm">
-										<Calendar
-											size={16}
-											className="mr-2 text-emerald-600 flex-shrink-0"
-										/>
+										<Calendar size={16} className="mr-2 text-emerald-600 flex-shrink-0" />
+										<span className="font-medium">{formatDate(event.tanggal_mulai)}</span>
+									</div>
+									<div className="flex items-center text-gray-700 text-sm">
+										<Clock size={16} className="mr-2 text-blue-600 flex-shrink-0" />
 										<span className="font-medium">
-											{formatDate(event.tanggal_mulai)}
+											{formatTime(event.waktu_mulai)} - {formatTime(event.waktu_selesai, "WIB")}
 										</span>
 									</div>
 									<div className="flex items-center text-gray-700 text-sm">
-										<Clock
-											size={16}
-											className="mr-2 text-blue-600 flex-shrink-0"
-										/>
-										<span className="font-medium">
-											{formatTime(event.waktu_mulai)} -{" "}
-											{formatTime(event.waktu_selesai, "WIB")}
-										</span>
+										<MapPin size={16} className="mr-2 text-purple-600 flex-shrink-0" />
+										<span className="font-medium line-clamp-1">{event.location?.nama}</span>
 									</div>
 									<div className="flex items-center text-gray-700 text-sm">
-										<MapPin
-											size={16}
-											className="mr-2 text-purple-600 flex-shrink-0"
-										/>
-										<span className="font-medium line-clamp-1">
-											{event.location?.nama}
-										</span>
-									</div>
-									<div className="flex items-center text-gray-700 text-sm">
-										<Users
-											size={16}
-											className="mr-2 text-orange-500 flex-shrink-0"
-										/>
+										<Users size={16} className="mr-2 text-orange-500 flex-shrink-0" />
 										<span className="font-medium">
-											{event.peserta_saat_ini || 0} / {event.maks_peserta}{" "}
-											peserta
+											{event.peserta_saat_ini || 0} / {event.maks_peserta} peserta
 										</span>
 										<Badge variant="success" className="ml-2">
-											{event.maks_peserta - (event.peserta_saat_ini || 0)} slot
-											tersisa
+											{event.maks_peserta - (event.peserta_saat_ini || 0)} slot tersisa
 										</Badge>
 									</div>
 								</div>
@@ -227,18 +189,14 @@ export default function JoinEventModal() {
 													))}
 												</ul>
 											) : (
-												<div className="whitespace-pre-line">
-													{event.persyaratan}
-												</div>
+												<div className="whitespace-pre-line">{event.persyaratan}</div>
 											)}
 										</div>
 									</div>
 								)}
 								{event.manfaat && (
 									<div className="bg-green-50 border border-green-200 rounded-xl p-5">
-										<h4 className="font-bold text-green-800 mb-3 flex items-center">
-											📋 Manfaat
-										</h4>
+										<h4 className="font-bold text-green-800 mb-3 flex items-center">📋 Manfaat</h4>
 										<div className="text-green-700 text-sm leading-relaxed">
 											{Array.isArray(event.manfaat) ? (
 												<ul className="space-y-2">
@@ -250,9 +208,7 @@ export default function JoinEventModal() {
 													))}
 												</ul>
 											) : (
-												<div className="whitespace-pre-line">
-													{event.manfaat}
-												</div>
+												<div className="whitespace-pre-line">{event.manfaat}</div>
 											)}
 										</div>
 									</div>
@@ -262,9 +218,7 @@ export default function JoinEventModal() {
 
 						{/* Notes */}
 						<div>
-							<label className="block text-gray-900 font-semibold mb-3">
-								Catatan & Motivasi
-							</label>
+							<label className="block text-gray-900 font-semibold mb-3">Catatan & Motivasi</label>
 							<textarea
 								name="catatan"
 								value={formData.catatan}
@@ -285,18 +239,12 @@ export default function JoinEventModal() {
 									onChange={(e) => setAgreed(e.target.checked)}
 									className="mt-1 w-5 h-5 text-emerald-600 bg-white border-gray-300 rounded focus:ring-emerald-500 focus:ring-2"
 								/>
-								<label
-									htmlFor="agreement"
-									className="text-sm text-gray-700 leading-relaxed">
+								<label htmlFor="agreement" className="text-sm text-gray-700 leading-relaxed">
 									<span className="font-semibold">Saya setuju untuk:</span>
 									<ul className="mt-2 space-y-1 text-gray-600">
-										<li>
-											• Mengikuti event ini dan memahami semua persyaratan
-										</li>
+										<li>• Mengikuti event ini dan memahami semua persyaratan</li>
 										<li>• Berkomitmen hadir tepat waktu sesuai jadwal</li>
-										<li>
-											• Mengikuti seluruh rangkaian kegiatan hingga selesai
-										</li>
+										<li>• Mengikuti seluruh rangkaian kegiatan hingga selesai</li>
 										<li>• Mematuhi protokol dan aturan yang berlaku</li>
 									</ul>
 								</label>
@@ -316,11 +264,7 @@ export default function JoinEventModal() {
 							<DynamicButton
 								type="submit"
 								variant={alreadyRegistered ? "outline" : "success"}
-								disabled={
-									alreadyRegistered ||
-									!agreed ||
-									(isLoading && !alreadyRegistered)
-								}
+								disabled={alreadyRegistered || !agreed || (isLoading && !alreadyRegistered)}
 								loading={isLoading && !alreadyRegistered}
 								className="flex-1 order-1 sm:order-2">
 								{alreadyRegistered

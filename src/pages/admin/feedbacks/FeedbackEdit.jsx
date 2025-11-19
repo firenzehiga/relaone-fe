@@ -29,8 +29,7 @@ export default function AdminFeedbackEdit() {
 	const [formData, setFormData] = useState({ komentar: "", rating: 0 });
 	const { isLoading } = useAuthStore();
 
-	const { data: showFeedback, isLoading: showFeedbackLoading } =
-		useAdminFeedbackById(id);
+	const { data: showFeedback, isLoading: showFeedbackLoading } = useAdminFeedbackById(id);
 	useEffect(() => {
 		if (!showFeedback) return;
 		setFormData((prev) => {
@@ -68,21 +67,14 @@ export default function AdminFeedbackEdit() {
 	};
 
 	if (showFeedbackLoading) return <Skeleton.FormSkeleton title="Loading..." />;
-	if (feedbacksError)
-		return <div className="text-red-600">Error: {feedbacksError.message}</div>;
+	if (feedbacksError) return <div className="text-red-600">Error: {feedbacksError.message}</div>;
 	if (!showFeedback) return <NotFound />;
 	return (
-		<div className="max-w-6xl mx-auto p-6">
-			<div
-				className="bg-white shadow-lg rounded-lg p-6"
-				style={{ minHeight: 475, width: 900 }}>
+		<div className="w-full mx-auto p-4 sm:p-6 max-w-6xl min-h-[calc(100vh-4rem)]">
+			<div className="bg-white shadow-xl rounded-lg p-4 sm:p-6">
 				<header className="mb-6">
-					<h1 className="text-2xl font-semibold text-gray-900">
-						Edit Feedback
-					</h1>
-					<p className="text-sm text-gray-500 mt-1">
-						Ubah komentar dan rating feedback.
-					</p>
+					<h1 className="text-2xl font-semibold text-gray-900">Edit Feedback</h1>
+					<p className="text-sm text-gray-500 mt-1">Ubah komentar dan rating feedback.</p>
 				</header>
 
 				<form onSubmit={handleSubmit} className="space-y-6">
@@ -102,9 +94,7 @@ export default function AdminFeedbackEdit() {
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-gray-700">
-							Komentar
-						</label>
+						<label className="block text-sm font-medium text-gray-700">Komentar</label>
 						<textarea
 							name="komentar"
 							value={formData.komentar}
@@ -124,11 +114,7 @@ export default function AdminFeedbackEdit() {
 							onClick={() => navigate("/admin/feedbacks")}>
 							Batal
 						</Button>
-						<Button
-							type="submit"
-							variant="success"
-							loading={isLoading}
-							disabled={isLoading}>
+						<Button type="submit" variant="success" loading={isLoading} disabled={isLoading}>
 							{isLoading ? "Menyimpan..." : "Simpan Feedback"}
 						</Button>
 					</div>

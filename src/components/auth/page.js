@@ -21,13 +21,7 @@ export const pageAllowed = {
 		"/organization/feedbacks",
 		"/organization/profile",
 	],
-	volunteer: [
-		"/home",
-		"/events",
-		"/organizations",
-		"/profile",
-		"/profile/edit",
-	],
+	volunteer: ["/", "/events", "/organizations", "/profile", "/profile/edit"],
 };
 
 // Helper function untuk mengecek apakah path diizinkan untuk role tertentu
@@ -37,8 +31,7 @@ export function isPathAllowedForRole(role, path) {
 	const allowed = pageAllowed[role] || [];
 	if (allowed.length === 0) return false;
 
-	const normalized =
-		path.endsWith("/") && path !== "/" ? path.slice(0, -1) : path;
+	const normalized = path.endsWith("/") && path !== "/" ? path.slice(0, -1) : path;
 
 	return allowed.some((p) => {
 		if (p === normalized) return true;

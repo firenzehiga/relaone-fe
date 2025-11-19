@@ -1,7 +1,4 @@
-import {
-	useAdminDeleteLocationMutation,
-	useAdminLocations,
-} from "@/_hooks/useLocations";
+import { useAdminDeleteLocationMutation, useAdminLocations } from "@/_hooks/useLocations";
 import { LinkButton } from "@/components/ui/Button";
 import Swal from "sweetalert2";
 import { showToast } from "@/components/ui/Toast";
@@ -15,14 +12,7 @@ import {
 	EllipsisVerticalIcon,
 	AlertCircle,
 } from "lucide-react";
-import {
-	Menu,
-	MenuButton,
-	MenuList,
-	MenuItem,
-	Portal,
-	IconButton,
-} from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import { getGoogleMapsUrl, parseApiError } from "@/utils";
@@ -51,11 +41,7 @@ export default function AdminLocation() {
 			const lokasi = String(locationItem.nama || "").toLowerCase();
 			const kota = String(locationItem.kota || "").toLowerCase();
 			const provinsi = String(locationItem.provinsi || "").toLowerCase();
-			return (
-				lokasi.includes(query) ||
-				kota.includes(query) ||
-				provinsi.includes(query)
-			);
+			return lokasi.includes(query) || kota.includes(query) || provinsi.includes(query);
 		});
 	}, [locations, searchLocation]);
 
@@ -159,10 +145,7 @@ export default function AdminLocation() {
 					<Portal>
 						<MenuList className="font-semibold">
 							<Link to={`/admin/locations/edit/${row.id}`}>
-								<MenuItem
-									icon={
-										<EditIcon className="text-yellow-500 hover:text-yellow-600" />
-									}>
+								<MenuItem icon={<EditIcon className="text-yellow-500 hover:text-yellow-600" />}>
 									Edit
 								</MenuItem>
 							</Link>
@@ -185,12 +168,8 @@ export default function AdminLocation() {
 			<div className="flex flex-col items-center justify-center min-h-[520px] text-gray-600">
 				<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 				<h3 className="text-lg font-semibold mb-2">Error</h3>
-				<p className="text-gray-500 mb-4 text-center">
-					Gagal mengambil data lokasi.
-				</p>
-				<p className="text-red-500 mb-4 text-center font-semibold">
-					{locationsError.message}
-				</p>
+				<p className="text-gray-500 mb-4 text-center">Gagal mengambil data lokasi.</p>
+				<p className="text-red-500 mb-4 text-center font-semibold">{locationsError.message}</p>
 			</div>
 		);
 	}
@@ -199,14 +178,11 @@ export default function AdminLocation() {
 		<div className="py-8 page-transition min-h-screen">
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="bg-white rounded-lg shadow p-6">
-					<div className="flex justify-between items-center mb-4">
+					<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
 						<h2 className="text-lg font-semibold">
 							{" "}
 							{locationsRefetching ? (
-								<FetchLoader
-									variant="inline"
-									text="Mengambil Data Terbaru..."
-								/>
+								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
 							) : (
 								"Daftar Lokasi"
 							)}
@@ -214,7 +190,8 @@ export default function AdminLocation() {
 						<LinkButton
 							to="/admin/locations/create"
 							variant="success"
-							size="sm">
+							size="sm"
+							className="w-full md:w-auto">
 							<Plus className="w-4 h-4 mr-2" /> Tambah Lokasi
 						</LinkButton>
 					</div>
@@ -264,8 +241,8 @@ export default function AdminLocation() {
 												<p className="text-sm text-gray-600">
 													<strong>Provinsi:</strong> {data.provinsi || "-"}
 												</p>
-												</div>
-												<div>
+											</div>
+											<div>
 												<p className="text-sm text-gray-600">
 													<strong>Koordinat Peta:</strong>
 												</p>
@@ -273,26 +250,25 @@ export default function AdminLocation() {
 													<strong>Lat:</strong> {data.latitude ?? 0} <br />
 													<strong>Long:</strong> {data.longitude ?? 0}
 												</p>
-						
+
 												<div className="mt-3">
 													<a
-													href={getGoogleMapsUrl({ location: data })}
-													target="_blank"
-													rel="noreferrer"
-													className="text-sm text-blue-600 hover:underline"
-													>
-													Buka di Google Maps
+														href={getGoogleMapsUrl({ location: data })}
+														target="_blank"
+														rel="noreferrer"
+														className="text-sm text-blue-600 hover:underline">
+														Buka di Google Maps
 													</a>
 												</div>
 											</div>
 											{data.alamat_lengkap && (
 												<div className="md:col-span-2">
-												<p className="text-sm text-gray-600 mb-1">
-													<strong>Alamat Lengkap:</strong>{" "}
-												</p>
-												<p className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
-													{data.alamat_lengkap || "-"}
-												</p>
+													<p className="text-sm text-gray-600 mb-1">
+														<strong>Alamat Lengkap:</strong>{" "}
+													</p>
+													<p className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
+														{data.alamat_lengkap || "-"}
+													</p>
 												</div>
 											)}
 										</div>
@@ -302,9 +278,7 @@ export default function AdminLocation() {
 									<div className="flex flex-col items-center justify-center h-64 text-gray-600">
 										<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 										<h3 className="text-lg font-semibold mb-2">
-											{searchLocation
-												? "No Matching Locations Found"
-												: "No Locations Available"}
+											{searchLocation ? "No Matching Locations Found" : "No Locations Available"}
 										</h3>
 										<p className="text-gray-500 mb-4 text-center">
 											{searchLocation

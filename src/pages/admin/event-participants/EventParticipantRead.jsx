@@ -1,7 +1,4 @@
-import {
-	useAdminDeleteParticipantMutation,
-	useAdminParticipants,
-} from "@/_hooks/useParticipants";
+import { useAdminDeleteParticipantMutation, useAdminParticipants } from "@/_hooks/useParticipants";
 import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
 import { LinkButton } from "@/components/ui/Button";
@@ -18,14 +15,7 @@ import {
 	Calendar,
 	Users,
 } from "lucide-react";
-import {
-	Menu,
-	MenuButton,
-	MenuList,
-	MenuItem,
-	Portal,
-	IconButton,
-} from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom";
@@ -63,9 +53,7 @@ export default function AdminEventParticipant() {
 				eventsMap.get(p.event.id).count++;
 			}
 		});
-		return Array.from(eventsMap.values()).sort((a, b) =>
-			a.judul.localeCompare(b.judul)
-		);
+		return Array.from(eventsMap.values()).sort((a, b) => a.judul.localeCompare(b.judul));
 	}, [participants]);
 
 	const filteredParticipants = useMemo(() => {
@@ -73,9 +61,7 @@ export default function AdminEventParticipant() {
 
 		// Filter by selected event
 		if (selectedEventId !== "all") {
-			filtered = filtered.filter(
-				(p) => p.event?.id === parseInt(selectedEventId)
-			);
+			filtered = filtered.filter((p) => p.event?.id === parseInt(selectedEventId));
 		}
 
 		// Filter by search query
@@ -85,11 +71,7 @@ export default function AdminEventParticipant() {
 				const peserta = String(participantItem.user?.nama || "").toLowerCase();
 				const event = String(participantItem.event?.judul || "").toLowerCase();
 				const status = String(participantItem.status || "").toLowerCase();
-				return (
-					peserta.includes(query) ||
-					event.includes(query) ||
-					status.includes(query)
-				);
+				return peserta.includes(query) || event.includes(query) || status.includes(query);
 			});
 		}
 
@@ -191,13 +173,8 @@ export default function AdminEventParticipant() {
 					/>
 					<Portal>
 						<MenuList className="font-semibold">
-							<Link
-								to={`/admin/event-participants/edit/${row.id}`}
-								className="w-full">
-								<MenuItem
-									icon={
-										<EditIcon className="text-yellow-500 hover:text-yellow-600" />
-									}>
+							<Link to={`/admin/event-participants/edit/${row.id}`} className="w-full">
+								<MenuItem icon={<EditIcon className="text-yellow-500 hover:text-yellow-600" />}>
 									Edit
 								</MenuItem>
 							</Link>
@@ -220,12 +197,8 @@ export default function AdminEventParticipant() {
 			<div className="flex flex-col items-center justify-center min-h-[520px] text-gray-600">
 				<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 				<h3 className="text-lg font-semibold mb-2">Error</h3>
-				<p className="text-gray-500 mb-4 text-center">
-					Gagal mengambil data participant.
-				</p>
-				<p className="text-red-500 mb-4 text-center font-semibold">
-					{participantsError.message}
-				</p>
+				<p className="text-gray-500 mb-4 text-center">Gagal mengambil data participant.</p>
+				<p className="text-red-500 mb-4 text-center font-semibold">{participantsError.message}</p>
 			</div>
 		);
 	}
@@ -234,14 +207,11 @@ export default function AdminEventParticipant() {
 		<div className="py-8 page-transition min-h-screen">
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="bg-white rounded-lg shadow p-6">
-					<div className="flex justify-between items-center mb-4">
+					<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
 						<h2 className="text-lg font-semibold">
 							{" "}
 							{participantsRefetching ? (
-								<FetchLoader
-									variant="inline"
-									text="Mengambil Data Terbaru..."
-								/>
+								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
 							) : (
 								"Daftar Participant"
 							)}
@@ -249,7 +219,8 @@ export default function AdminEventParticipant() {
 						<LinkButton
 							to="/admin/event-participants/create"
 							variant="success"
-							size="sm">
+							size="sm"
+							className="w-full md:w-auto">
 							<Plus className="w-4 h-4 mr-2" /> Tambah Event Participant
 						</LinkButton>
 					</div>
@@ -266,12 +237,8 @@ export default function AdminEventParticipant() {
 								<div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
 									<div className="flex items-center justify-between">
 										<div>
-											<p className="text-sm text-blue-600 font-medium">
-												Total Events
-											</p>
-											<p className="text-2xl font-bold text-blue-900">
-												{eventsList.length}
-											</p>
+											<p className="text-sm text-blue-600 font-medium">Total Events</p>
+											<p className="text-2xl font-bold text-blue-900">{eventsList.length}</p>
 										</div>
 										<Calendar className="w-10 h-10 text-blue-500 opacity-70" />
 									</div>
@@ -279,12 +246,8 @@ export default function AdminEventParticipant() {
 								<div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg p-4 border border-emerald-200">
 									<div className="flex items-center justify-between">
 										<div>
-											<p className="text-sm text-emerald-600 font-medium">
-												Total Participants
-											</p>
-											<p className="text-2xl font-bold text-emerald-900">
-												{participants.length}
-											</p>
+											<p className="text-sm text-emerald-600 font-medium">Total Participants</p>
+											<p className="text-2xl font-bold text-emerald-900">{participants.length}</p>
 										</div>
 										<Users className="w-10 h-10 text-emerald-500 opacity-70" />
 									</div>
@@ -292,9 +255,7 @@ export default function AdminEventParticipant() {
 								<div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
 									<div className="flex items-center justify-between">
 										<div>
-											<p className="text-sm text-purple-600 font-medium">
-												Filtered Results
-											</p>
+											<p className="text-sm text-purple-600 font-medium">Filtered Results</p>
 											<p className="text-2xl font-bold text-purple-900">
 												{filteredParticipants.length}
 											</p>
@@ -314,9 +275,7 @@ export default function AdminEventParticipant() {
 										value={selectedEventId}
 										onChange={(e) => setSelectedEventId(e.target.value)}
 										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
-										<option value="all">
-											Semua Event ({participants.length})
-										</option>
+										<option value="all">Semua Event ({participants.length})</option>
 										{eventsList.map((event) => (
 											<option key={event.id} value={event.id}>
 												{event.judul} ({event.count})
@@ -352,13 +311,10 @@ export default function AdminEventParticipant() {
 								<div className="mb-4 flex flex-wrap gap-2">
 									<span className="text-sm text-gray-600">Filter aktif:</span>
 									{selectedEventId !== "all" && (
-										<Badge
-											variant="primary"
-											className="flex items-center gap-1">
+										<Badge variant="primary" className="flex items-center gap-1">
 											Event:{" "}
-											{eventsList.find(
-												(e) => e.id === parseInt(selectedEventId)
-											)?.judul || "Unknown"}
+											{eventsList.find((e) => e.id === parseInt(selectedEventId))?.judul ||
+												"Unknown"}
 											<button
 												onClick={() => setSelectedEventId("all")}
 												className="ml-1 hover:text-white">
@@ -367,9 +323,7 @@ export default function AdminEventParticipant() {
 										</Badge>
 									)}
 									{searchParticipant && (
-										<Badge
-											variant="secondary"
-											className="flex items-center gap-1">
+										<Badge variant="secondary" className="flex items-center gap-1">
 											Search: {searchParticipant}
 											<button
 												onClick={() => setSearchParticipant("")}
@@ -408,14 +362,10 @@ export default function AdminEventParticipant() {
 											<div className="space-y-3">
 												<div className="text-sm text-gray-700">
 													<span className="font-semibold">Nama peserta:</span>
-													<span className="ml-2 text-gray-900">
-														{data.user?.nama || "-"}
-													</span>
+													<span className="ml-2 text-gray-900">{data.user?.nama || "-"}</span>
 												</div>
 												<div className="flex items-start">
-													<div className="text-sm text-gray-700 font-semibold">
-														Tanggal:
-													</div>
+													<div className="text-sm text-gray-700 font-semibold">Tanggal:</div>
 													<div className="text-sm text-gray-900 ml-2">
 														{formatDate(data.event?.tanggal_mulai) || "-"} -{" "}
 														{formatDate(data.event?.tanggal_selesai) || "-"}
@@ -423,9 +373,7 @@ export default function AdminEventParticipant() {
 												</div>
 
 												<div>
-													<div className="text-sm font-semibold text-gray-700 mb-1">
-														Catatan
-													</div>
+													<div className="text-sm font-semibold text-gray-700 mb-1">Catatan</div>
 													<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
 														{data.catatan || "-"}
 													</div>
@@ -435,9 +383,7 @@ export default function AdminEventParticipant() {
 											{/* Right column */}
 											<div className="space-y-3">
 												<div className="flex items-start">
-													<div className="text-sm text-gray-700 font-semibold">
-														Tanggal Daftar:
-													</div>
+													<div className="text-sm text-gray-700 font-semibold">Tanggal Daftar:</div>
 													<div className="text-sm text-gray-900 ml-2">
 														{formatDate(data.tanggal_daftar) || "-"}
 													</div>
@@ -453,9 +399,7 @@ export default function AdminEventParticipant() {
 																{formatDate(data.tanggal_konfirmasi)}
 															</span>
 														) : (
-															<Badge variant="default">
-																Belum Dikonfirmasi
-															</Badge>
+															<Badge variant="default">Belum Dikonfirmasi</Badge>
 														)}
 													</div>
 												</div>

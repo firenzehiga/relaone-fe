@@ -12,18 +12,8 @@ import {
 } from "lucide-react";
 import { LinkButton } from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
-import {
-	Menu,
-	MenuButton,
-	MenuList,
-	MenuItem,
-	Portal,
-	IconButton,
-} from "@chakra-ui/react";
-import {
-	useAdminCategory,
-	useAdminDeleteCategory,
-} from "@/_hooks/useCategories";
+import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
+import { useAdminCategory, useAdminDeleteCategory } from "@/_hooks/useCategories";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
@@ -121,7 +111,6 @@ export default function AdminCategory() {
 			name: "Deskripsi",
 			selector: (row) => row.deskripsi || "-",
 			sortable: true,
-			wrap: true,
 		},
 		{
 			name: "Status",
@@ -150,10 +139,7 @@ export default function AdminCategory() {
 					<Portal>
 						<MenuList className="font-semibold">
 							<Link to={`/admin/categories/edit/${row.id}`}>
-								<MenuItem
-									icon={
-										<EditIcon className="text-yellow-500 hover:text-yellow-600" />
-									}>
+								<MenuItem icon={<EditIcon className="text-yellow-500 hover:text-yellow-600" />}>
 									Edit
 								</MenuItem>
 							</Link>
@@ -176,12 +162,8 @@ export default function AdminCategory() {
 			<div className="flex flex-col items-center justify-center min-h-[520px] text-gray-600">
 				<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 				<h3 className="text-lg font-semibold mb-2">Error</h3>
-				<p className="text-gray-500 mb-4 text-center">
-					Gagal mengambil data kategori.
-				</p>
-				<p className="text-red-500 mb-4 text-center font-semibold">
-					{categoriesError.message}
-				</p>
+				<p className="text-gray-500 mb-4 text-center">Gagal mengambil data kategori.</p>
+				<p className="text-red-500 mb-4 text-center font-semibold">{categoriesError.message}</p>
 			</div>
 		);
 	}
@@ -190,13 +172,10 @@ export default function AdminCategory() {
 		<div className="py-8 page-transition min-h-screen">
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="bg-white rounded-lg shadow p-4 sm:p-6">
-					<div className="flex justify-between items-center mb-4">
+					<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
 						<h2 className="text-base md:text-lg font-semibold">
 							{categoriesRefetching ? (
-								<FetchLoader
-									variant="inline"
-									text="Mengambil Data Terbaru..."
-								/>
+								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
 							) : (
 								"Daftar Kategori"
 							)}{" "}
@@ -204,7 +183,8 @@ export default function AdminCategory() {
 						<LinkButton
 							to="/admin/categories/create"
 							variant="success"
-							size="sm">
+							size="sm"
+							className="w-full md:w-auto">
 							<Plus className="w-4 h-4 mr-2" /> Tambah Kategori
 						</LinkButton>
 					</div>
@@ -239,9 +219,7 @@ export default function AdminCategory() {
 									<div className="flex flex-col items-center justify-center h-64 text-gray-600">
 										<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 										<h3 className="text-lg font-semibold mb-2">
-											{searchCategory
-												? "No Matching Categories Found"
-												: "No Categories Available"}
+											{searchCategory ? "No Matching Categories Found" : "No Categories Available"}
 										</h3>
 										<p className="text-gray-500 mb-4 text-center">
 											{searchCategory

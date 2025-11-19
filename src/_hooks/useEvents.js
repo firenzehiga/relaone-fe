@@ -35,10 +35,9 @@ export const useEvents = (params = {}) => {
  * @param {Object} options - Additional query options
  * @returns {UseQueryResult<Object>} Data detail event
  */
-export const useEventById = (id, options = {}) => {
+export const useEventById = (id) => {
 	const currentRole = useUserRole();
-	const enabled =
-		currentRole !== "admin" && currentRole !== "organization" && !!id; // supaya kalo admin login, ga fetch events
+	const enabled = currentRole !== "admin" && currentRole !== "organization" && !!id; // supaya kalo admin login, ga fetch events
 
 	return useQuery({
 		queryKey: ["detailEvent", id],
@@ -52,7 +51,6 @@ export const useEventById = (id, options = {}) => {
 		retry: 1,
 		refetchOnWindowFocus: false, // Default tidak refetch saat focus
 		refetchOnMount: true,
-		...options, // Override dengan options yang diberikan
 	});
 };
 
@@ -137,7 +135,7 @@ export const useAdminCreateEventMutation = () => {
 			showToast({
 				type: "error",
 				tipIcon: "💡",
-				tipText: "Periksa kembali logic yang Anda buat.",
+				tipText: "Periksa kembali atau Coba lagi.",
 				message: msg,
 				duration: 3000,
 				position: "top-center",
@@ -191,7 +189,7 @@ export const useAdminUpdateEventMutation = () => {
 			showToast({
 				type: "error",
 				tipIcon: "💡",
-				tipText: "Periksa kembali logic yang Anda buat.",
+				tipText: "Periksa kembali atau Coba lagi.",
 				message: msg,
 				duration: 3000,
 				position: "top-center",
@@ -303,7 +301,7 @@ export const useOrgCreateEventMutation = () => {
 			showToast({
 				type: "error",
 				tipIcon: "💡",
-				tipText: "Periksa kembali logic yang Anda buat.",
+				tipText: "Periksa kembali atau Coba lagi.",
 				message: msg,
 				duration: 3000,
 				position: "top-center",
@@ -357,7 +355,7 @@ export const useOrgUpdateEventMutation = () => {
 			showToast({
 				type: "error",
 				tipIcon: "💡",
-				tipText: "Periksa kembali logic yang Anda buat.",
+				tipText: "Periksa kembali atau Coba lagi.",
 				message: msg,
 				duration: 3000,
 				position: "top-center",
@@ -419,7 +417,7 @@ export const useOrgStartEventMutation = () => {
 			const data = error?.response?.data ?? {};
 			const { starts_at: startsAt, now, app_timezone: appTz } = data;
 
-			let tipText = "Periksa kembali logic yang Anda buat.";
+			let tipText = "Periksa kembali atau Coba lagi.";
 			if (startsAt) {
 				tipText = `Event seharusnya dimulai pada: ${startsAt}`;
 				if (now) tipText += `\nSekarang: ${now}`;

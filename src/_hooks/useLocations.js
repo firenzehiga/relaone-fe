@@ -87,7 +87,7 @@ export const useAdminCreateLocationMutation = () => {
 			showToast({
 				type: "error",
 				tipIcon: "💡",
-				tipText: "Periksa kembali logic yang Anda buat.",
+				tipText: "Periksa kembali atau Coba lagi.",
 				message: msg,
 				duration: 3000,
 				position: "top-center",
@@ -138,7 +138,7 @@ export const useAdminUpdateLocationMutation = () => {
 			showToast({
 				type: "error",
 				tipIcon: "💡",
-				tipText: "Periksa kembali logic yang Anda buat.",
+				tipText: "Periksa kembali atau Coba lagi.",
 				message: msg,
 				duration: 3000,
 				position: "top-center",
@@ -251,7 +251,7 @@ export const useOrgCreateLocationMutation = () => {
 			showToast({
 				type: "error",
 				tipIcon: "💡",
-				tipText: "Periksa kembali logic yang Anda buat.",
+				tipText: "Periksa kembali atau Coba lagi.",
 				message: msg,
 				duration: 3000,
 				position: "top-center",
@@ -302,7 +302,7 @@ export const useOrgUpdateLocationMutation = () => {
 			showToast({
 				type: "error",
 				tipIcon: "💡",
-				tipText: "Periksa kembali logic yang Anda buat.",
+				tipText: "Periksa kembali atau Coba lagi.",
 				message: msg,
 				duration: 3000,
 				position: "top-center",

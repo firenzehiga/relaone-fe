@@ -127,7 +127,7 @@ export const useAdminCreateOrganizationMutation = () => {
 			showToast({
 				type: "error",
 				tipIcon: "💡",
-				tipText: "Periksa kembali logic yang Anda buat.",
+				tipText: "Periksa kembali atau Coba lagi.",
 				message: msg,
 				duration: 3000,
 				position: "top-center",
@@ -154,8 +154,7 @@ export const useAdminUpdateOrganizationMutation = () => {
 
 	return useMutation({
 		mutationKey: ["adminOrganizations", "update"],
-		mutationFn: ({ id, data }) =>
-			organizationService.adminUpdateOrganization(id, data),
+		mutationFn: ({ id, data }) => organizationService.adminUpdateOrganization(id, data),
 		onMutate: () => {
 			setLoading(true);
 			clearError();
@@ -180,7 +179,7 @@ export const useAdminUpdateOrganizationMutation = () => {
 			showToast({
 				type: "error",
 				tipIcon: "💡",
-				tipText: "Periksa kembali logic yang Anda buat.",
+				tipText: "Periksa kembali atau Coba lagi.",
 				message: msg,
 				duration: 3000,
 				position: "top-center",

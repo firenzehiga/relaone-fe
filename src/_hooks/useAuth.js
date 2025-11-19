@@ -6,6 +6,7 @@ import * as authService from "@/_services/authService";
 import * as userService from "@/_services/userService";
 import { showToast, toastSuccess } from "@/components/ui/Toast";
 import { parseApiError } from "@/utils";
+import { useJwt } from "react-jwt";
 
 /**
  * Baca user yang tersimpan di localStorage (jika ada) saat file dimuat.
@@ -173,8 +174,7 @@ const useAuthStore = create((set, get) => ({
 }));
 
 // usage: const userRole = useUserRole();
-export const useUserRole = () =>
-	useAuthStore((state) => state.user?.role ?? "guest");
+export const useUserRole = () => useAuthStore((state) => state.user?.role ?? "guest");
 
 export const useLogin = () => {
 	const navigate = useNavigate();
@@ -305,8 +305,7 @@ export const useForgotPassword = () => {
 			showToast({
 				type: "success",
 				title: "Email Terkirim!",
-				message:
-					data.message || "Cek email Anda untuk instruksi reset password.",
+				message: data.message || "Cek email Anda untuk instruksi reset password.",
 				duration: 4000,
 				position: "top-center",
 			});
@@ -338,8 +337,7 @@ export const useResetPassword = () => {
 			showToast({
 				type: "success",
 				title: "Password Reset Berhasil!",
-				message:
-					"Password Anda telah berhasil direset. Silakan login dengan password baru.",
+				message: "Password Anda telah berhasil direset. Silakan login dengan password baru.",
 				duration: 4000,
 				position: "top-center",
 			});
@@ -350,8 +348,7 @@ export const useResetPassword = () => {
 		onError: (error) => {
 			setLoading(false);
 			// Handle Laravel validation errors
-			const errorMessage =
-				error.errors || error.message || "Password reset failed";
+			const errorMessage = error.errors || error.message || "Password reset failed";
 			setError(errorMessage);
 			toast.error(errorMessage, { duration: 2000 });
 		},
@@ -400,9 +397,35 @@ export const useLogout = () => {
 			queryClient.clear();
 
 			// Ensure we land on home (and not intercepted by guard)
-			setTimeout(() => navigate("/home", { replace: true }), 0);
+			setTimeout(() => navigate("/", { replace: true }), 0);
 		},
 	});
+};
+
+export const useDecodeToken = (token) => {
+	const { decodeToken, isExpired } = useJwt(token);
+
+	try {
+		if (isExpired) {
+			return {
+				success: false,
+				message: "Token expired",
+				data: null,
+			};
+		}
+
+		return {
+			success: true,
+			message: "Token valid",
+			data: decodeToken,
+		};
+	} catch (error) {
+		return {
+			success: false,
+			message: error.message,
+			data: null,
+		};
+	}
 };
 
 export { useAuthStore };

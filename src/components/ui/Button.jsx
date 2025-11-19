@@ -30,13 +30,15 @@ export default function DynamicButton({
 
 	const variants = {
 		primary:
-			"bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl focus:ring-blue-500",
+			"bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl focus:ring-blue-500",
 		secondary:
 			"bg-white hover:bg-gray-50 text-gray-900 border border-gray-200 shadow-md hover:shadow-lg focus:ring-gray-300",
 		outline:
 			"border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-700 hover:text-gray-900 focus:ring-gray-300 shadow-sm hover:shadow-md bg-white",
 		ghost: "hover:bg-emerald-50 text-emerald-600 hover:text-emerald-700 focus:ring-emerald-500",
 		teal: "bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white shadow-lg hover:shadow-xl focus:ring-teal-500",
+		warning:
+			"bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg hover:shadow-xl focus:ring-amber-500",
 		success:
 			"bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl focus:ring-emerald-500",
 		danger:
@@ -91,12 +93,15 @@ export function LinkButton({
 		"inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95";
 	const variants = {
 		primary:
-			"bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl focus:ring-blue-500",
+			"bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl focus:ring-blue-500",
 		secondary:
 			"bg-white hover:bg-gray-50 text-gray-900 border border-gray-200 shadow-md hover:shadow-lg focus:ring-gray-300",
 		outline:
 			"border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-700 hover:text-gray-900 focus:ring-gray-300 shadow-sm hover:shadow-md bg-white",
 		ghost: "hover:bg-emerald-50 text-emerald-600 hover:text-emerald-700 focus:ring-emerald-500",
+		teal: "bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white shadow-lg hover:shadow-xl focus:ring-teal-500",
+		warning:
+			"bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg hover:shadow-xl focus:ring-amber-500",
 		success:
 			"bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl focus:ring-emerald-500",
 		danger:

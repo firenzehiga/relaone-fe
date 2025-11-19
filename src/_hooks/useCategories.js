@@ -99,7 +99,7 @@ export const useAdminCreateCategoryMutation = () => {
 			showToast({
 				type: "error",
 				tipIcon: "💡",
-				tipText: "Periksa kembali logic yang Anda buat.",
+				tipText: "Periksa kembali atau Coba lagi.",
 				message: msg,
 				duration: 3000,
 				position: "top-center",
@@ -150,7 +150,7 @@ export const useAdminUpdateCategoryMutation = () => {
 			showToast({
 				type: "error",
 				tipIcon: "💡",
-				tipText: "Periksa kembali logic yang Anda buat.",
+				tipText: "Periksa kembali atau Coba lagi.",
 				message: msg,
 				duration: 3000,
 				position: "top-center",

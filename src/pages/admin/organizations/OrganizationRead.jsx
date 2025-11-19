@@ -9,6 +9,7 @@ import {
 	EditIcon,
 	EllipsisVerticalIcon,
 	AlertCircle,
+	Star,
 } from "lucide-react";
 import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
 import DynamicButton, { LinkButton } from "@/components/ui/Button";
@@ -237,8 +238,8 @@ export default function AdminOrganization() {
 		<div className="py-8 page-transition min-h-screen">
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="bg-white rounded-lg shadow p-6">
-					<div className="flex justify-between items-center mb-4">
-						<h2 className="text-lg font-semibold">
+					<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
+						<h2 className="text-base md:text-lg font-semibold">
 							{" "}
 							{organizationsRefetching ? (
 								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
@@ -249,14 +250,18 @@ export default function AdminOrganization() {
 						<div className="flex gap-2 md:gap-4 w-full md:w-auto sm:flex-row flex-col">
 							<DynamicButton
 								type="button"
-								variant="teal"
+								variant="warning"
 								onClick={handleUpdateRatings}
 								disabled={isLoading}
 								loading={isLoading}
-								className="flex-1 ">
-								Perbarui Rating
+								className="w-full md:w-auto">
+								<Star className="w-4 h-4 mr-2" /> Perbarui Rating
 							</DynamicButton>
-							<LinkButton to="/admin/organizations/create" variant="success" size="sm">
+							<LinkButton
+								to="/admin/organizations/create"
+								variant="success"
+								size="sm"
+								className="w-full md:w-auto">
 								<Plus className="w-4 h-4 mr-2" /> Tambah Organisasi
 							</LinkButton>
 						</div>
