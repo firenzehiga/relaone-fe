@@ -4,9 +4,8 @@ import { create } from "zustand";
 import toast from "react-hot-toast";
 import * as authService from "@/_services/authService";
 import * as userService from "@/_services/userService";
-import { showToast, toastSuccess } from "@/components/ui/Toast";
+import { showToast } from "@/components/ui/Toast";
 import { parseApiError } from "@/utils";
-import { useJwt } from "react-jwt";
 
 /**
  * Baca user yang tersimpan di localStorage (jika ada) saat file dimuat.
@@ -400,32 +399,6 @@ export const useLogout = () => {
 			setTimeout(() => navigate("/", { replace: true }), 0);
 		},
 	});
-};
-
-export const useDecodeToken = (token) => {
-	const { decodeToken, isExpired } = useJwt(token);
-
-	try {
-		if (isExpired) {
-			return {
-				success: false,
-				message: "Token expired",
-				data: null,
-			};
-		}
-
-		return {
-			success: true,
-			message: "Token valid",
-			data: decodeToken,
-		};
-	} catch (error) {
-		return {
-			success: false,
-			message: error.message,
-			data: null,
-		};
-	}
 };
 
 export { useAuthStore };

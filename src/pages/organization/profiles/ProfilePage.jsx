@@ -14,6 +14,7 @@ import { getImageUrl, getOrganizationEventBadge, getOrganizationVerificationBadg
 import Skeleton from "@/components/ui/Skeleton";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
+import { formatDate } from "@/utils/dateFormatter";
 
 /**
  * Halaman Profile Organization
@@ -59,33 +60,6 @@ export default function OrganizationProfilePage() {
 	const itemVariants = {
 		hidden: { opacity: 0, y: 20 },
 		visible: { opacity: 1, y: 0 },
-	};
-
-	const formatDate = (dateString) => {
-		if (!dateString) return "Tidak tersedia";
-		return new Date(dateString).toLocaleDateString("id-ID", {
-			year: "numeric",
-			month: "long",
-			day: "numeric",
-		});
-	};
-
-	const getRoleDisplayName = (role) => {
-		const roleMap = {
-			volunteer: "Volunteer",
-			organization: "Organisasi",
-			admin: "Administrator",
-		};
-		return roleMap[role] || role;
-	};
-
-	const getRoleBadgeColor = (role) => {
-		const colorMap = {
-			volunteer: "bg-green-100 text-green-800 border-green-200",
-			organization: "bg-blue-100 text-blue-800 border-blue-200",
-			admin: "bg-purple-100 text-purple-800 border-purple-200",
-		};
-		return colorMap[role] || "bg-gray-100 text-gray-800 border-gray-200";
 	};
 
 	return (
@@ -171,11 +145,8 @@ export default function OrganizationProfilePage() {
 
 								{/* Role Badge - Bottom */}
 								<div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2">
-									<span
-										className={`px-2 py-1 rounded-full text-xs font-medium border ${getRoleBadgeColor(
-											profile?.role
-										)}`}>
-										{getRoleDisplayName(profile?.role)}
+									<span className="px-2 py-1 rounded-full text-xs font-medium border bg-green-100 text-green-800 border-green-200">
+										Organisasi
 									</span>
 								</div>
 							</div>

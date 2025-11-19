@@ -371,9 +371,12 @@ export default function OrganizationEvent() {
 		<div className="py-8 bg-emerald-100 page-transition min-h-screen">
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="bg-white rounded-xl shadow p-6">
-					<div className="flex justify-between items-center mb-4">
+					<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
 						<h2 className="text-lg font-semibold">Daftar Event/Kegiatan</h2>
-						<LinkButton variant="success" to="/organization/events/create">
+						<LinkButton
+							variant="success"
+							to="/organization/events/create"
+							className="w-full md:w-auto">
 							<Plus className="w-4 h-4 mr-2" /> Tambah Event
 						</LinkButton>
 					</div>

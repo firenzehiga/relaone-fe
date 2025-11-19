@@ -17,6 +17,7 @@ import Button from "@/components/ui/Button";
 import { useUserProfile } from "@/_hooks/useUsers";
 import { getImageUrl, parseSkillsArray } from "@/utils";
 import Skeleton from "@/components/ui/Skeleton";
+import { formatDate } from "@/utils/dateFormatter";
 
 /**
  * Halaman Profile Volunteer
@@ -37,12 +38,8 @@ export default function AdminProfilePage() {
 					<div className="text-red-500 mb-4">
 						<Shield className="w-16 h-16 mx-auto mb-4" />
 					</div>
-					<h2 className="text-xl font-bold text-gray-900 mb-2">
-						Gagal Memuat Profile
-					</h2>
-					<p className="text-gray-600 mb-4">
-						Terjadi kesalahan saat memuat data profile
-					</p>
+					<h2 className="text-xl font-bold text-gray-900 mb-2">Gagal Memuat Profile</h2>
+					<p className="text-gray-600 mb-4">Terjadi kesalahan saat memuat data profile</p>
 					<Button onClick={() => refetch()} variant="success">
 						Coba Lagi
 					</Button>
@@ -68,33 +65,6 @@ export default function AdminProfilePage() {
 		visible: { opacity: 1, y: 0 },
 	};
 
-	const formatDate = (dateString) => {
-		if (!dateString) return "Tidak tersedia";
-		return new Date(dateString).toLocaleDateString("id-ID", {
-			year: "numeric",
-			month: "long",
-			day: "numeric",
-		});
-	};
-
-	const getRoleDisplayName = (role) => {
-		const roleMap = {
-			volunteer: "Volunteer",
-			organization: "Organisasi",
-			admin: "Administrator",
-		};
-		return roleMap[role] || role;
-	};
-
-	const getRoleBadgeColor = (role) => {
-		const colorMap = {
-			volunteer: "bg-green-100 text-green-800 border-green-200",
-			organization: "bg-blue-100 text-blue-800 border-blue-200",
-			admin: "bg-purple-100 text-purple-800 border-purple-200",
-		};
-		return colorMap[role] || "bg-gray-100 text-gray-800 border-gray-200";
-	};
-
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-4 px-4">
 			<motion.div
@@ -104,12 +74,8 @@ export default function AdminProfilePage() {
 				animate="visible">
 				{/* Header Section - Compact */}
 				<motion.div variants={itemVariants} className="text-center mb-6">
-					<h1 className="text-2xl font-bold text-gray-900 mb-1">
-						Profile Saya
-					</h1>
-					<p className="text-gray-600 text-sm">
-						Kelola informasi profile Anda sebagai volunteer
-					</p>
+					<h1 className="text-2xl font-bold text-gray-900 mb-1">Profile Saya</h1>
+					<p className="text-gray-600 text-sm">Kelola informasi profile Anda sebagai volunteer</p>
 				</motion.div>
 
 				<div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
@@ -130,11 +96,8 @@ export default function AdminProfilePage() {
 									</div>
 								)}
 								<div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2">
-									<span
-										className={`px-2 py-1 rounded-full text-xs font-medium border ${getRoleBadgeColor(
-											profile?.role
-										)}`}>
-										{getRoleDisplayName(profile?.role)}
+									<span className="px-2 py-1 rounded-full text-xs font-medium border bg-orange-100 text-orange-800 border-orange-200">
+										Administrator
 									</span>
 								</div>
 							</div>
@@ -165,9 +128,7 @@ export default function AdminProfilePage() {
 							<div className="mb-8">
 								<div className="flex items-center mb-6">
 									<User className="w-5 h-5 text-blue-500 mr-2" />
-									<h3 className="text-lg font-bold text-gray-900">
-										Informasi Personal
-									</h3>
+									<h3 className="text-lg font-bold text-gray-900">Informasi Personal</h3>
 								</div>
 
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -183,9 +144,7 @@ export default function AdminProfilePage() {
 										</div>
 
 										<div>
-											<label className="text-xs font-medium text-gray-500 block mb-1">
-												Email
-											</label>
+											<label className="text-xs font-medium text-gray-500 block mb-1">Email</label>
 											<div className="flex items-center">
 												<Mail className="w-3 h-3 text-gray-400 mr-2" />
 												<p className="text-gray-900 text-sm">
@@ -210,9 +169,7 @@ export default function AdminProfilePage() {
 									{/* Right Column - Additional Personal Info */}
 									<div className="space-y-4">
 										<div>
-											<label className="text-xs font-medium text-gray-500 block mb-1">
-												Alamat
-											</label>
+											<label className="text-xs font-medium text-gray-500 block mb-1">Alamat</label>
 											<div className="flex items-start">
 												<MapPin className="w-3 h-3 text-gray-400 mr-2 mt-0.5" />
 												<p className="text-gray-900 text-sm">
@@ -227,9 +184,7 @@ export default function AdminProfilePage() {
 											</label>
 											<div className="flex items-center">
 												<Calendar className="w-3 h-3 text-gray-400 mr-2" />
-												<p className="text-gray-900 text-sm">
-													{formatDate(profile?.created_at)}
-												</p>
+												<p className="text-gray-900 text-sm">{formatDate(profile?.created_at)}</p>
 											</div>
 										</div>
 
@@ -253,16 +208,12 @@ export default function AdminProfilePage() {
 							<div>
 								<div className="flex items-center mb-6">
 									<Award className="w-5 h-5 text-purple-500 mr-2" />
-									<h3 className="text-lg font-bold text-gray-900">
-										Informasi Tambahan
-									</h3>
+									<h3 className="text-lg font-bold text-gray-900">Informasi Tambahan</h3>
 								</div>
 
 								<div className="space-y-4">
 									<div>
-										<label className="text-xs font-medium text-gray-500 block mb-1">
-											Bio
-										</label>
+										<label className="text-xs font-medium text-gray-500 block mb-1">Bio</label>
 										<p className="text-gray-900 text-sm leading-relaxed">
 											{profile?.bio || "Belum ada bio yang ditambahkan"}
 										</p>
@@ -276,22 +227,19 @@ export default function AdminProfilePage() {
 										{parseSkillsArray(profile?.keahlian)?.length > 0 ? (
 											<div className="space-y-3">
 												<div className="flex flex-wrap gap-2">
-													{parseSkillsArray(profile?.keahlian).map(
-														(skill, index) => (
-															<span
-																key={index}
-																className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border border-blue-200 hover:from-blue-100 hover:to-indigo-100 transition-colors">
-																<Star className="w-3 h-3 mr-1.5 text-blue-500" />
-																{skill}
-															</span>
-														)
-													)}
+													{parseSkillsArray(profile?.keahlian).map((skill, index) => (
+														<span
+															key={index}
+															className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border border-blue-200 hover:from-blue-100 hover:to-indigo-100 transition-colors">
+															<Star className="w-3 h-3 mr-1.5 text-blue-500" />
+															{skill}
+														</span>
+													))}
 												</div>
 												<div className="flex items-center text-xs text-gray-500">
 													<Code className="w-3 h-3 mr-1" />
 													<span>
-														{parseSkillsArray(profile?.keahlian).length}{" "}
-														keahlian terdaftar
+														{parseSkillsArray(profile?.keahlian).length} keahlian terdaftar
 													</span>
 												</div>
 											</div>

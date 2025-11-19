@@ -185,9 +185,13 @@ export default function OrganizationLocation() {
 		<div className="py-8 bg-emerald-100 page-transition min-h-screen">
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="bg-white rounded-lg shadow p-6">
-					<div className="flex justify-between items-center mb-4">
+					<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
 						<h2 className="text-lg font-semibold">Daftar Lokasi</h2>
-						<LinkButton to="/organization/locations/create" variant="success" size="sm">
+						<LinkButton
+							to="/organization/locations/create"
+							variant="success"
+							size="sm"
+							className="w-full md:w-auto">
 							<Plus className="w-4 h-4 mr-2" /> Tambah Lokasi
 						</LinkButton>
 					</div>
