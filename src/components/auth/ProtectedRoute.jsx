@@ -10,11 +10,7 @@ import { useAuthStore } from "@/_hooks/useAuth";
  * @param {string} props.redirectTo - Path untuk redirect jika tidak authenticated (default: "/login")
  * @returns {React.ReactNode} Children component atau Navigate ke login page
  */
-export default function ProtectedRoute({
-	children,
-	allowedRoles = [],
-	redirectTo = "/login",
-}) {
+export default function ProtectedRoute({ children, allowedRoles = [], redirectTo = "/login" }) {
 	const { isAuthenticated, user } = useAuthStore();
 	const location = useLocation();
 
@@ -77,38 +73,28 @@ export function AdminRoute({ children }) {
  * Component untuk melindungi route organization saja
  */
 export function OrganizationRoute({ children }) {
-	return (
-		<ProtectedRoute allowedRoles={["organization"]}>{children}</ProtectedRoute>
-	);
+	return <ProtectedRoute allowedRoles={["organization"]}>{children}</ProtectedRoute>;
 }
 
 /**
  * Component untuk melindungi route volunteer saja
  */
 export function VolunteerRoute({ children }) {
-	return (
-		<ProtectedRoute allowedRoles={["volunteer"]}>{children}</ProtectedRoute>
-	);
+	return <ProtectedRoute allowedRoles={["volunteer"]}>{children}</ProtectedRoute>;
 }
 
 /**
  * Component untuk melindungi route volunteer saja
  */
 export function PublicRoute({ children }) {
-	return (
-		<ProtectedRoute allowedRoles={["volunteer", ""]}>{children}</ProtectedRoute>
-	);
+	return <ProtectedRoute allowedRoles={["volunteer", ""]}>{children}</ProtectedRoute>;
 }
 
 /**
  * Component untuk route yang bisa diakses admin dan organization
  */
 export function AdminOrganizationRoute({ children }) {
-	return (
-		<ProtectedRoute allowedRoles={["admin", "organization"]}>
-			{children}
-		</ProtectedRoute>
-	);
+	return <ProtectedRoute allowedRoles={["admin", "organization"]}>{children}</ProtectedRoute>;
 }
 
 /**
