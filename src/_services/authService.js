@@ -117,12 +117,7 @@ export const forgotPassword = async (email) => {
 /**
  * Reset password dengan token
  */
-export const resetPassword = async (
-	token,
-	email,
-	newPassword,
-	confirmPassword
-) => {
+export const resetPassword = async (token, email, newPassword, confirmPassword) => {
 	try {
 		const response = await api.post("/reset-password", {
 			token,
@@ -135,6 +130,32 @@ export const resetPassword = async (
 			return response.data;
 		} else {
 			throw new Error(response.data.message || "Password reset failed");
+		}
+	} catch (error) {
+		// Jika ada response dari server, lempar data (mengandung message & errors)
+		if (error.response?.data) {
+			throw error.response.data;
+		}
+		// Jika tidak ada response (network/CORS), lempar error asli
+		throw error;
+	}
+};
+
+/**
+ * Change password user
+ */
+export const changePassword = async (currentPassword, newPassword) => {
+	try {
+		const response = await api.post("/change-password", {
+			current_password: currentPassword,
+			new_password: newPassword,
+			new_password_confirmation: newPassword,
+		});
+
+		if (response.data.success) {
+			return response.data;
+		} else {
+			throw new Error(response.data.message || "Failed to send reset email");
 		}
 	} catch (error) {
 		// Jika ada response dari server, lempar data (mengandung message & errors)

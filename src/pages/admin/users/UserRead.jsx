@@ -31,11 +31,7 @@ export default function AdminUser() {
 			const nama = String(userItem.nama || "").toLowerCase();
 			const email = String(userItem.email || "").toLowerCase();
 			const jenisKelamin = String(userItem.jenis_kelamin || "").toLowerCase();
-			return (
-				nama.includes(query) ||
-				email.includes(query) ||
-				jenisKelamin.includes(query)
-			);
+			return nama.includes(query) || email.includes(query) || jenisKelamin.includes(query);
 		});
 	}, [users, searchUser]);
 
@@ -69,9 +65,7 @@ export default function AdminUser() {
 			backdrop: true,
 			preConfirm: (value) => {
 				if (value !== confirmText) {
-					Swal.showValidationMessage(
-						`Anda harus mengetik "${confirmText}" untuk melanjutkan.`
-					);
+					Swal.showValidationMessage(`Anda harus mengetik "${confirmText}" untuk melanjutkan.`);
 				}
 				return value;
 			},
@@ -174,15 +168,13 @@ export default function AdminUser() {
 
 	if (usersError) {
 		return (
-			<div className="flex flex-col items-center justify-center min-h-[520px] text-gray-600">
-				<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
-				<h3 className="text-lg font-semibold mb-2">Error</h3>
-				<p className="text-gray-500 mb-4 text-center">
-					Gagal mengambil data pengguna.
-				</p>
-				<p className="text-red-500 mb-4 text-center font-semibold">
-					{usersError.message}
-				</p>
+			<div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+				<div className="flex flex-col items-center justify-center  text-gray-600">
+					<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+					<h3 className="text-lg font-semibold mb-2">Error</h3>
+					<p className="text-gray-500 mb-4 text-center">Gagal mengambil data pengguna.</p>
+					<p className="text-red-500 mb-4 text-center font-semibold">{usersError.message}</p>
+				</div>
 			</div>
 		);
 	}
@@ -194,10 +186,7 @@ export default function AdminUser() {
 					<div className="flex justify-between items-center mb-4">
 						<h2 className="text-base md:text-lg font-semibold">
 							{usersRefetching ? (
-								<FetchLoader
-									variant="inline"
-									text="Mengambil Data Terbaru..."
-								/>
+								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
 							) : (
 								"Daftar User"
 							)}
@@ -238,18 +227,12 @@ export default function AdminUser() {
 											{/* Left column */}
 											<div className="space-y-3">
 												<div className="flex items-start">
-													<div className="text-sm text-gray-700 font-semibold">
-														Jenis Kelamin:
-													</div>
+													<div className="text-sm text-gray-700 font-semibold">Jenis Kelamin:</div>
 													<div className="text-sm ml-2">
 														{data.jenis_kelamin === "laki-laki" ? (
-															<p className="text-sm text-gray-800 mt-1">
-																Laki-laki
-															</p>
+															<p className="text-sm text-gray-800 mt-1">Laki-laki</p>
 														) : data.jenis_kelamin === "perempuan" ? (
-															<p className="text-sm text-gray-800 mt-1">
-																Perempuan
-															</p>
+															<p className="text-sm text-gray-800 mt-1">Perempuan</p>
 														) : (
 															<p className="text-sm text-gray-800 mt-1">-</p>
 														)}
@@ -267,15 +250,11 @@ export default function AdminUser() {
 											<div className="space-y-3">
 												<div className="text-sm text-gray-700">
 													<span className="font-semibold">No Telepon:</span>
-													<span className="ml-2 text-gray-900">
-														{data.telepon || "-"}
-													</span>
+													<span className="ml-2 text-gray-900">{data.telepon || "-"}</span>
 												</div>
 												<div className="text-sm text-gray-700">
 													<span className="font-semibold">Alamat:</span>
-													<span className="ml-2 text-gray-900">
-														{data?.alamat || "-"}
-													</span>
+													<span className="ml-2 text-gray-900">{data?.alamat || "-"}</span>
 												</div>
 											</div>
 										</div>
@@ -285,9 +264,7 @@ export default function AdminUser() {
 									<div className="flex flex-col items-center justify-center h-64 text-gray-600">
 										<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 										<h3 className="text-lg font-semibold mb-2">
-											{searchUser
-												? "No Matching Users Found"
-												: "No Users Available"}
+											{searchUser ? "No Matching Users Found" : "No Users Available"}
 										</h3>
 										<p className="text-gray-500 mb-4 text-center">
 											{searchUser

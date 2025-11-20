@@ -388,15 +388,65 @@ export const useLogout = () => {
 			// Even if logout fails on server, clear local data
 			clearAuth();
 			setLoading(false);
-			const errorMessage = error.message || "Logout failed";
-			setError(errorMessage);
-			toast.error(errorMessage, { duration: 2000 });
+			const msg = parseApiError(error) || "Logout failed";
+			setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali atau Coba lagi.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Logout error:", error);
 
 			// Clear all cached data
 			queryClient.clear();
 
 			// Ensure we land on home (and not intercepted by guard)
 			setTimeout(() => navigate("/", { replace: true }), 0);
+		},
+	});
+};
+
+export const useChangePassword = () => {
+	const navigate = useNavigate();
+	const { setLoading, setError, clearError } = useAuthStore();
+
+	return useMutation({
+		mutationKey: ["changePassword"],
+		mutationFn: ({ currentPassword, newPassword }) =>
+			authService.changePassword(currentPassword, newPassword),
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: (data) => {
+			setLoading(false);
+			showToast({
+				type: "success",
+				title: "Password Change Berhasil!",
+				message: "Password Anda telah berhasil diubah.",
+				duration: 4000,
+				position: "top-center",
+			});
+
+			// Navigate to previous page
+			navigate(-1);
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Change password failed";
+			setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali atau Coba lagi.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Change password error:", error);
 		},
 	});
 };

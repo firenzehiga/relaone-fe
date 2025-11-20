@@ -1,7 +1,4 @@
-import {
-	useAdminDeleteFeedbackMutation,
-	useAdminFeedbacks,
-} from "@/_hooks/useFeedbacks";
+import { useAdminDeleteFeedbackMutation, useAdminFeedbacks } from "@/_hooks/useFeedbacks";
 import {
 	ChevronDown,
 	Plus,
@@ -12,14 +9,7 @@ import {
 	EllipsisVerticalIcon,
 	AlertCircle,
 } from "lucide-react";
-import {
-	Menu,
-	MenuButton,
-	MenuList,
-	MenuItem,
-	Portal,
-	IconButton,
-} from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
 import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
 import { useMemo, useState } from "react";
@@ -27,6 +17,7 @@ import DataTable from "react-data-table-component";
 import RatingStars from "@/components/ui/RatingStars";
 import { Link } from "react-router-dom";
 import FetchLoader from "@/components/ui/FetchLoader";
+import Card from "@/components/ui/Card";
 
 export default function AdminFeedback() {
 	const {
@@ -53,9 +44,7 @@ export default function AdminFeedback() {
 				});
 			}
 		});
-		return Array.from(eventMap.values()).sort((a, b) =>
-			a.judul.localeCompare(b.judul)
-		);
+		return Array.from(eventMap.values()).sort((a, b) => a.judul.localeCompare(b.judul));
 	}, [feedbacks]);
 
 	const filteredFeedbacks = useMemo(() => {
@@ -63,9 +52,7 @@ export default function AdminFeedback() {
 
 		// Filter by event
 		if (eventFilter !== "all") {
-			filtered = filtered.filter(
-				(feedback) => feedback.event?.id === parseInt(eventFilter)
-			);
+			filtered = filtered.filter((feedback) => feedback.event?.id === parseInt(eventFilter));
 		}
 
 		// Filter by rating
@@ -130,8 +117,7 @@ export default function AdminFeedback() {
 					},
 					onError: (err) => {
 						// ambil pesan backend kalau ada, fallback ke err.message
-						const msg =
-							err?.response?.data?.message || "Gagal menghapus feedback.";
+						const msg = err?.response?.data?.message || "Gagal menghapus feedback.";
 						toast.error(msg, { position: "top-center" });
 					},
 				}); // Panggil fungsi deleteMutation dengan ID event
@@ -163,14 +149,7 @@ export default function AdminFeedback() {
 			name: "Rating",
 			cell: (row) => {
 				const rating = Math.max(0, Math.min(5, Number(row.rating) || 0));
-				return (
-					<RatingStars
-						rating={rating}
-						maxRating={5}
-						size="sm"
-						interactive={false}
-					/>
-				);
+				return <RatingStars rating={rating} maxRating={5} size="sm" interactive={false} />;
 			},
 			sortable: false,
 			width: "220px",
@@ -188,10 +167,7 @@ export default function AdminFeedback() {
 					<Portal>
 						<MenuList className="font-semibold">
 							<Link to={`/admin/feedbacks/edit/${row.id}`}>
-								<MenuItem
-									icon={
-										<EditIcon className="text-yellow-500 hover:text-yellow-600" />
-									}>
+								<MenuItem icon={<EditIcon className="text-yellow-500 hover:text-yellow-600" />}>
 									Edit
 								</MenuItem>
 							</Link>
@@ -211,15 +187,13 @@ export default function AdminFeedback() {
 
 	if (feedbacksError) {
 		return (
-			<div className="flex flex-col items-center justify-center min-h-[520px] text-gray-600">
-				<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
-				<h3 className="text-lg font-semibold mb-2">Error</h3>
-				<p className="text-gray-500 mb-4 text-center">
-					Gagal mengambil data feedback.
-				</p>
-				<p className="text-red-500 mb-4 text-center font-semibold">
-					{feedbacksError.message}
-				</p>
+			<div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+				<div className="flex flex-col items-center justify-center  text-gray-600">
+					<AlertCircle className="w-12 h-12 text-red-400 mb-4" />
+					<h3 className="text-lg font-semibold mb-2">Error</h3>
+					<p className="text-gray-500 mb-4 text-center">Gagal mengambil data feedback.</p>
+					<p className="text-red-500 mb-4 text-center font-semibold">{feedbacksError.message}</p>
+				</div>
 			</div>
 		);
 	}
@@ -232,10 +206,7 @@ export default function AdminFeedback() {
 						<h2 className="text-lg font-semibold">
 							{" "}
 							{feedbacksRefetching ? (
-								<FetchLoader
-									variant="inline"
-									text="Mengambil Data Terbaru..."
-								/>
+								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
 							) : (
 								"Daftar Feedback"
 							)}
@@ -311,9 +282,7 @@ export default function AdminFeedback() {
 									<div className="flex flex-col items-center justify-center h-64 text-gray-600">
 										<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 										<h3 className="text-lg font-semibold mb-2">
-											{searchFeedback
-												? "No Matching Feedback Found"
-												: "No Feedback Available"}
+											{searchFeedback ? "No Matching Feedback Found" : "No Feedback Available"}
 										</h3>
 										<p className="text-gray-500 mb-4 text-center">
 											{searchFeedback

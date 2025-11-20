@@ -126,11 +126,14 @@ export default function OrganizationFeedback() {
 
 	if (feedbacksError) {
 		return (
-			<div className="flex flex-col items-center justify-center min-h-[520px] text-gray-600">
+			<div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+								<div className="flex flex-col items-center justify-center  text-gray-600">
+
 				<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 				<h3 className="text-lg font-semibold mb-2">Error</h3>
 				<p className="text-gray-500 mb-4 text-center">Gagal mengambil data feedback.</p>
 				<p className="text-red-500 mb-4 text-center font-semibold">{feedbacksError.message}</p>
+			</div>
 			</div>
 		);
 	}

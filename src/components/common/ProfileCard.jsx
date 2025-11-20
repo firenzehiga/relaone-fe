@@ -109,6 +109,13 @@ export default function ProfileCard({ profile, role = "volunteer" }) {
 							Edit Profile
 						</Button>
 					</Link>
+
+					{/* Organization - outline smaller button for change password */}
+					<Link to="/change-password">
+						<Button variant="outline" className="w-full mt-2" size="sm">
+							Ganti Password
+						</Button>
+					</Link>
 				</Card>
 			) : role === "admin" ? (
 				<Card className="text-center h-fit">
@@ -143,6 +150,13 @@ export default function ProfileCard({ profile, role = "volunteer" }) {
 						<Button variant="success" className="w-full" size="sm">
 							<Edit3 className="w-3 h-3 mr-2" />
 							Edit Profile
+						</Button>
+					</Link>
+
+					{/* Admin - ghost button */}
+					<Link to="/change-password">
+						<Button variant="ghost" className="w-full mt-2" size="sm">
+							Ganti Password
 						</Button>
 					</Link>
 				</Card>
@@ -192,6 +206,13 @@ export default function ProfileCard({ profile, role = "volunteer" }) {
 						<Button variant="success" className="w-full" size="sm">
 							<Edit3 className="w-3 h-3 mr-2" />
 							Edit Profile
+						</Button>
+					</Link>
+
+					{/* Volunteer - secondary button full width */}
+					<Link to="/change-password">
+						<Button variant="secondary" className="w-full mt-2" size="sm">
+							Ganti Password
 						</Button>
 					</Link>
 				</Card>

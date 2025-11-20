@@ -138,25 +138,21 @@ export default function RegisterPage() {
 							animate={{ y: 0, opacity: 1 }}
 							transition={{ delay: 0.2, duration: 0.5 }}
 							className="mb-8">
-							<h2 className="text-3xl font-bold text-gray-900">
-								Create Account
-							</h2>
+							<h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
 						</motion.div>
 
 						{/* Register Form */}
 						<motion.form
-							initial={{ y: 20, opacity: 0 }}
-							animate={{ y: 0, opacity: 1 }}
-							transition={{ delay: 0.4, duration: 0.5 }}
+							// initial={{ y: 20, opacity: 0 }}
+							// animate={{ y: 0, opacity: 1 }}
+							// transition={{ delay: 0.4, duration: 0.5 }}
 							onSubmit={handleSubmit}
 							className="space-y-6">
 							{/* Use grid for main fields to reduce vertical length on larger screens */}
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 								{/* Full Name */}
 								<div className="md:col-span-2">
-									<label
-										htmlFor="nama"
-										className="block text-sm font-medium text-gray-700 mb-1">
+									<label htmlFor="nama" className="block text-sm font-medium text-gray-700 mb-1">
 										Full Name <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
@@ -177,9 +173,7 @@ export default function RegisterPage() {
 
 								{/* Email */}
 								<div>
-									<label
-										htmlFor="email"
-										className="block text-sm font-medium text-gray-700 mb-1">
+									<label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
 										Email Address <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
@@ -199,9 +193,7 @@ export default function RegisterPage() {
 								</div>
 								{/* Phone */}
 								<div>
-									<label
-										htmlFor="telepon"
-										className="block text-sm font-medium text-gray-700 mb-1">
+									<label htmlFor="telepon" className="block text-sm font-medium text-gray-700 mb-1">
 										Phone Number <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
@@ -263,9 +255,7 @@ export default function RegisterPage() {
 								</div>
 								{/* Address (span full) */}
 								<div className="md:col-span-2">
-									<label
-										htmlFor="alamat"
-										className="block text-sm font-medium text-gray-700 mb-1">
+									<label htmlFor="alamat" className="block text-sm font-medium text-gray-700 mb-1">
 										Address <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
@@ -308,9 +298,7 @@ export default function RegisterPage() {
 													<div className="flex items-center gap-3">
 														<div className="flex items-center gap-3">
 															<UserSearch className="w-7 h-7 text-sky-500" />
-															<div className="w-full text-lg font-semibold">
-																Relawan
-															</div>
+															<div className="w-full text-lg font-semibold">Relawan</div>
 														</div>
 													</div>
 												</label>
@@ -333,9 +321,7 @@ export default function RegisterPage() {
 													className="inline-flex items-center justify-between w-3/4 p-2 text-gray-500 bg-white border-2 border-gray-200 rounded-full cursor-pointer peer-checked:border-sky-500 hover:text-gray-600 peer-checked:text-gray-600 hover:bg-gray-50">
 													<div className="flex items-center gap-3">
 														<HouseHeart className="w-7 h-7 text-sky-500" />
-														<div className="w-full text-lg font-semibold">
-															Organisasi
-														</div>
+														<div className="w-full text-lg font-semibold">Organisasi</div>
 													</div>
 												</label>
 											</div>
@@ -369,11 +355,7 @@ export default function RegisterPage() {
 											onClick={() => setShowPassword(!showPassword)}
 											disabled={isLoading}
 											className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed">
-											{showPassword ? (
-												<EyeOff className="w-5 h-5" />
-											) : (
-												<Eye className="w-5 h-5" />
-											)}
+											{showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
 										</button>
 									</div>
 								</div>
@@ -400,9 +382,7 @@ export default function RegisterPage() {
 										/>
 										<button
 											type="button"
-											onClick={() =>
-												setShowConfirmPassword(!showConfirmPassword)
-											}
+											onClick={() => setShowConfirmPassword(!showConfirmPassword)}
 											disabled={isLoading}
 											className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed">
 											{showConfirmPassword ? (
@@ -414,9 +394,7 @@ export default function RegisterPage() {
 									</div>
 									{formData.password_confirmation &&
 										formData.password !== formData.password_confirmation && (
-											<p className="mt-1 text-sm text-red-600">
-												Passwords do not match
-											</p>
+											<p className="mt-1 text-sm text-red-600">Passwords do not match</p>
 										)}
 								</div>
 							</div>
@@ -434,8 +412,7 @@ export default function RegisterPage() {
 														<label
 															htmlFor="organization_nama"
 															className="block text-sm font-medium text-gray-700 mb-1">
-															Organization Name{" "}
-															<span className="text-red-500">*</span>
+															Organization Name <span className="text-red-500">*</span>
 														</label>
 														<input
 															type="text"
@@ -458,8 +435,7 @@ export default function RegisterPage() {
 														<label
 															htmlFor="organization_deskripsi"
 															className="block text-sm font-medium text-gray-700 mb-1">
-															Organization Description{" "}
-															<span className="text-red-500">*</span>
+															Organization Description <span className="text-red-500">*</span>
 														</label>
 														<textarea
 															id="organization_deskripsi"
@@ -484,19 +460,14 @@ export default function RegisterPage() {
 								<div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded">
 									{apiErrors.general && (
 										<p>
-											{apiErrors.general.join
-												? apiErrors.general.join(", ")
-												: apiErrors.general}
+											{apiErrors.general.join ? apiErrors.general.join(", ") : apiErrors.general}
 										</p>
 									)}
 									{Object.keys(apiErrors)
 										.filter((k) => k !== "general")
 										.map((k) => (
 											<p key={k} className="text-sm">
-												{k}:{" "}
-												{apiErrors[k].join
-													? apiErrors[k].join(" ")
-													: apiErrors[k]}
+												{k}: {apiErrors[k].join ? apiErrors[k].join(" ") : apiErrors[k]}
 											</p>
 										))}
 								</div>
@@ -514,9 +485,7 @@ export default function RegisterPage() {
 									className="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:cursor-not-allowed"
 									required
 								/>
-								<label
-									htmlFor="agreeToTerms"
-									className="ml-2 text-sm text-gray-600">
+								<label htmlFor="agreeToTerms" className="ml-2 text-sm text-gray-600">
 									I agree to the{" "}
 									<Link
 										to="/terms-of-service"
@@ -566,9 +535,7 @@ export default function RegisterPage() {
 							transition={{ delay: 0.6, duration: 0.5 }}
 							className="text-center text-gray-600 mt-8">
 							Already have an account?{" "}
-							<Link
-								to="/login"
-								className="text-blue-600 hover:text-blue-800 font-medium">
+							<Link to="/login" className="text-blue-600 hover:text-blue-800 font-medium">
 								Sign in
 							</Link>
 						</motion.p>
@@ -579,8 +546,7 @@ export default function RegisterPage() {
 							animate={{ y: 0, opacity: 1 }}
 							transition={{ delay: 0.8, duration: 0.5 }}
 							className="text-center text-gray-500 text-sm mt-4 flex items-center justify-center">
-							Made with <Heart className="w-4 h-4 mx-1 text-red-500" /> for
-							volunteers
+							Made with <Heart className="w-4 h-4 mx-1 text-red-500" /> for volunteers
 						</motion.p>
 					</div>
 				</div>

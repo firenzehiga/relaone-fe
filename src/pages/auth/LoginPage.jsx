@@ -64,23 +64,19 @@ export default function LoginPage() {
 							exit={{ opacity: 0 }}
 							className="mb-8">
 							<h2 className="text-3xl font-bold text-gray-900 mb-2">Sign In</h2>
-							<p className="text-gray-600">
-								Enter your credentials to continue
-							</p>
+							<p className="text-gray-600">Enter your credentials to continue</p>
 						</motion.div>
 
 						{/* Login Form */}
 						<motion.form
-							initial={{ y: 10, opacity: 0 }}
-							animate={{ y: 0, opacity: 1 }}
-							transition={{ delay: 0.4, duration: 0.5 }}
+							// initial={{ y: 10, opacity: 0 }}
+							// animate={{ y: 0, opacity: 1 }}
+							// transition={{ delay: 0.4, duration: 0.5 }}
 							onSubmit={handleSubmit}
 							className="space-y-6">
 							{/* Email Field */}
 							<div>
-								<label
-									htmlFor="email"
-									className="block text-sm font-medium text-gray-700 mb-1">
+								<label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
 									Email Address
 								</label>
 								<div className="relative">
@@ -101,9 +97,7 @@ export default function LoginPage() {
 
 							{/* Password Field */}
 							<div>
-								<label
-									htmlFor="password"
-									className="block text-sm font-medium text-gray-700 mb-1">
+								<label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
 									Password
 								</label>
 								<div className="relative">
@@ -124,11 +118,7 @@ export default function LoginPage() {
 										onClick={() => setShowPassword(!showPassword)}
 										disabled={isLoading}
 										className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed">
-										{showPassword ? (
-											<EyeOff className="w-5 h-5" />
-										) : (
-											<Eye className="w-5 h-5" />
-										)}
+										{showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
 									</button>
 								</div>
 							</div>
@@ -148,9 +138,7 @@ export default function LoginPage() {
 										Remember me
 									</span>
 								</label> */}
-								<Link
-									to="/forgot-password"
-									className="text-sm text-blue-600 hover:text-blue-800">
+								<Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-800">
 									Forgot password?
 								</Link>
 							</div>
@@ -179,9 +167,7 @@ export default function LoginPage() {
 							transition={{ delay: 0.6, duration: 0.5 }}
 							className="text-center text-gray-600 mt-8">
 							Don't have an account?{" "}
-							<Link
-								to="/register"
-								className="text-blue-600 hover:text-blue-800 font-medium">
+							<Link to="/register" className="text-blue-600 hover:text-blue-800 font-medium">
 								Sign up
 							</Link>
 						</motion.p>
@@ -192,8 +178,7 @@ export default function LoginPage() {
 							animate={{ y: 0, opacity: 1 }}
 							transition={{ delay: 0.8, duration: 0.5 }}
 							className="text-center text-gray-500 text-sm mt-4 flex items-center justify-center">
-							Made with <Heart className="w-4 h-4 mx-1 text-red-500" /> for
-							volunteers
+							Made with <Heart className="w-4 h-4 mx-1 text-red-500" /> for volunteers
 						</motion.p>
 					</div>
 				</div>
