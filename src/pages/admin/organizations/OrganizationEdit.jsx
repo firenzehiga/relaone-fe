@@ -10,7 +10,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Skeleton from "@/components/ui/Skeleton";
 import Button from "@/components/ui/Button";
-import { useAdminOrganizationUsers } from "@/_hooks/useUsers";
+// contact selection removed — no longer using useAdminOrganizationUsers
 import { getImageUrl } from "@/utils";
 
 export default function AdminOrganizationEdit() {
@@ -30,13 +30,12 @@ export default function AdminOrganizationEdit() {
 	const { isLoading } = useAuthStore();
 	const [imagePreview, setImagePreview] = useState(null);
 
-	const { data: showOrganization, isLoading: showOrganizationLoading } =
-		useAdminOrganizationById(id);
 	const {
-		data: organizationUsers = [],
-		isLoading: organizationUsersLoading,
-		error: organizationUsersError,
-	} = useAdminOrganizationUsers();
+		data: showOrganization,
+		isLoading: showOrganizationLoading,
+		error,
+	} = useAdminOrganizationById(id);
+	// organizationUsers removed — admin will edit email/telepon directly
 
 	const updateOrganizationMutation = useAdminUpdateOrganizationMutation();
 
@@ -54,7 +53,6 @@ export default function AdminOrganizationEdit() {
 				website: showOrganization.website,
 				logo: showOrganization.logo,
 				status_verifikasi: showOrganization.status_verifikasi,
-				user_id: showOrganization.user_id,
 			};
 		});
 
@@ -87,10 +85,9 @@ export default function AdminOrganizationEdit() {
 			const maxSize = 2 * 1024 * 1024; // 2MB
 
 			if (!allowed.includes(file.type)) {
-				toast.error(
-					"File harus berupa gambar JPEG/PNG/JPG (selain itu tidak diperbolehkan).",
-					{ position: "top-center" }
-				);
+				toast.error("File harus berupa gambar JPEG/PNG/JPG (selain itu tidak diperbolehkan).", {
+					position: "top-center",
+				});
 				return;
 			}
 			if (file.size > maxSize) {
@@ -101,17 +98,6 @@ export default function AdminOrganizationEdit() {
 			}
 			// store actual File object (no object URL preview)
 			setFormData((s) => ({ ...s, [name]: file }));
-		} else if (name === "user_id") {
-			// jika user dipilih sebagai kontak, autofill telepon dan email tapi tetap bisa diedit
-			const selected = organizationUsers.find(
-				(user) => String(user.id) === String(value)
-			);
-			setFormData((s) => ({
-				...s,
-				user_id: value,
-				telepon: selected?.telepon || "",
-				email: selected?.email || "",
-			}));
 		} else {
 			setFormData((s) => ({ ...s, [name]: value }));
 		}
@@ -136,23 +122,17 @@ export default function AdminOrganizationEdit() {
 		updateOrganizationMutation.mutateAsync({ id, data: payload });
 	};
 
-	if (showOrganizationLoading || organizationUsersLoading) {
+	if (showOrganizationLoading) {
 		return <Skeleton.FormSkeleton title="Loading..." />;
 	}
-
-	if (organizationUsersError) {
-		return <div>Error: {organizationUsersError?.message}</div>;
+	if (error) {
+		return <div>Error: {error?.message}</div>;
 	}
-
 	return (
 		<div className="max-w-6xl mx-auto p-6">
-			<div
-				className="bg-white shadow-sm rounded-lg p-6"
-				style={{ minHeight: 420, width: 900 }}>
+			<div className="bg-white shadow-sm rounded-lg p-6" style={{ minHeight: 420, width: 900 }}>
 				<header className="mb-6">
-					<h1 className="text-2xl font-semibold text-gray-900">
-						Edit Organisasi
-					</h1>
+					<h1 className="text-2xl font-semibold text-gray-900">Edit Organisasi</h1>
 					<p className="text-sm text-gray-500 mt-1">
 						Isi detail organisasi dan tambahkan website serta logo.
 					</p>
@@ -192,70 +172,30 @@ export default function AdminOrganizationEdit() {
 							</div>
 						</div>
 					</div>
+
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Kontak
-							</label>
-							<select
-								name="user_id"
-								value={formData.user_id}
-								required
-								onChange={handleChange}
-								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-								<option value="">Pilih kontak (nama / telepon)</option>
-								{organizationUsers.map((user) => (
-									<option key={user.id} value={user.id}>
-										{(user.nama || user.name || user.email) +
-											" — " +
-											(user.telepon || user.email)}
-									</option>
-								))}
-							</select>
-						</div>
-						<div>
-							<label className="block text-sm font-medium text-gray-700">
-								Status Akun
-							</label>
-							<select
-								name="status_verifikasi"
-								value={formData.status_verifikasi}
-								required
-								onChange={handleChange}
-								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-								<option value="">Pilih status</option>
-								<option value="pending">Pending</option>
-								<option value="verified">Disetujui</option>
-								<option value="rejected">Ditolak</option>
-							</select>
-						</div>
-					</div>
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-						<div>
-							<label className="block text-sm font-medium text-gray-700">
-								Telepon
+								Email Organisasi<span className="text-red-500">*</span>
 							</label>
 							<input
-								name="telepon"
-								value={formData.telepon}
+								name="email"
+								value={formData.email}
 								onChange={handleChange}
-								placeholder="pilih kontak untuk mengisi otomatis"
-								disabled
+								placeholder="contoh@organisasi.id"
 								required
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 							/>
 						</div>
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Email <span className="text-red-500">*</span>
+								Telepon Organisasi <span className="text-red-500">*</span>
 							</label>
 							<input
-								name="email"
-								value={formData.email}
+								name="telepon"
+								value={formData.telepon}
 								onChange={handleChange}
-								placeholder="pilih kontak untuk mengisi otomatis"
-								disabled
-								required
+								placeholder="0812xxxx"
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 							/>
 						</div>
@@ -276,9 +216,7 @@ export default function AdminOrganizationEdit() {
 							/>
 						</div>
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
-								Deskripsi
-							</label>
+							<label className="block text-sm font-medium text-gray-700">Deskripsi</label>
 							<textarea
 								name="deskripsi"
 								value={formData.deskripsi}
@@ -290,7 +228,22 @@ export default function AdminOrganizationEdit() {
 							/>
 						</div>
 					</div>
-
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<div>
+							<label className="block text-sm font-medium text-gray-700">Status Akun</label>
+							<select
+								name="status_verifikasi"
+								value={formData.status_verifikasi}
+								required
+								onChange={handleChange}
+								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+								<option value="">Pilih status</option>
+								<option value="pending">Pending</option>
+								<option value="verified">Disetujui</option>
+								<option value="rejected">Ditolak</option>
+							</select>
+						</div>
+					</div>
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
 						<div className="col-span-1">
 							<label className="block text-sm font-medium text-gray-700">
@@ -332,9 +285,7 @@ export default function AdminOrganizationEdit() {
 											</label>
 										</div>
 
-										<p className="text-xs text-gray-500">
-											Format: JPEG, JPG, PNG. Maksimal 2MB.
-										</p>
+										<p className="text-xs text-gray-500">Format: JPEG, JPG, PNG. Maksimal 2MB.</p>
 
 										{formData.logo && (
 											<p className="text-xs text-gray-700">
@@ -361,11 +312,7 @@ export default function AdminOrganizationEdit() {
 							}}>
 							Batal
 						</Button>
-						<Button
-							type="submit"
-							variant="success"
-							loading={isLoading}
-							disabled={isLoading}>
+						<Button type="submit" variant="success" loading={isLoading} disabled={isLoading}>
 							{isLoading ? "Menyimpan..." : "Simpan Organisasi"}
 						</Button>
 					</div>

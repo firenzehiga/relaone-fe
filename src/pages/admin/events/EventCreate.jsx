@@ -178,6 +178,12 @@ export default function AdminEventCreate() {
 		e.preventDefault();
 		setError("");
 
+		// ensure gambar is present (support drag-drop which sets formData.gambar)
+		if (!(formData.gambar instanceof File)) {
+			setError("Gambar event wajib diunggah.");
+			return;
+		}
+
 		const payload = new FormData();
 		for (const key in formData) {
 			if (Array.isArray(formData[key])) {
@@ -337,7 +343,6 @@ export default function AdminEventCreate() {
 														accept="image/jpeg,image/jpg,image/png"
 														onChange={handleChange}
 														className="hidden"
-														required
 													/>
 													<label
 														htmlFor="gambar"

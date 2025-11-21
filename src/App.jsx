@@ -115,6 +115,7 @@ const OrganizationLocationCreate = lazy(() =>
 const OrganizationLocationEdit = lazy(() => import("@/pages/organization/locations/LocationEdit"));
 
 import { ScrollToTop } from "@/components/common/ScrollToTop";
+import FloatingHelp from "@/components/common/FloatingHelp";
 /**
  * Komponen utama aplikasi volunteer platform
  * Mengatur routing dengan layout yang menggunakan Outlet
@@ -301,6 +302,9 @@ function App() {
 			<JoinEventModal />
 			<CancelJoinModal />
 			<FeedbackModal />
+
+			{/* Floating help button */}
+			<FloatingHelp whatsapp={"6285894310722"} email={"firenzehiga@gmail.com"} />
 		</>
 	);
 }

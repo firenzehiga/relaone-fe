@@ -8,6 +8,7 @@ import { useOrgLocationById, useOrgUpdateLocationMutation } from "@/_hooks/useLo
 
 // UI Components
 import Button from "@/components/ui/Button";
+import Skeleton from "@/components/ui/Skeleton";
 
 export default function OrganizationLocationEdit() {
 	const { id } = useParams();
@@ -31,7 +32,11 @@ export default function OrganizationLocationEdit() {
 	const [parseError, setParseError] = useState("");
 
 	const updateLocationMutation = useOrgUpdateLocationMutation();
-	const { data: showLocation, isLoading: showLocationLoading } = useOrgLocationById(id);
+	const {
+		data: showLocation,
+		isLoading: showLocationLoading,
+		error: locationsError,
+	} = useOrgLocationById(id);
 
 	useEffect(() => {
 		if (!showLocation) return;
@@ -40,17 +45,17 @@ export default function OrganizationLocationEdit() {
 		setFormData((prev) => {
 			if (prev.nama) return prev; // sudah diisi user, jangan timpa
 			return {
-				nama: showLocation.nama,
-				alamat: showLocation.alamat,
-				latitude: showLocation.latitude,
-				longitude: showLocation.longitude,
-				place_id: showLocation.place_id,
-				alamat_lengkap: showLocation.alamat_lengkap,
-				kota: showLocation.kota,
-				provinsi: showLocation.provinsi,
-				negara: showLocation.negara,
-				zoom_level: showLocation.zoom_level,
-				tipe: showLocation.tipe,
+				nama: showLocation.nama || "",
+				alamat: showLocation.alamat || "",
+				latitude: showLocation.latitude || "",
+				longitude: showLocation.longitude || "",
+				place_id: showLocation.place_id || "",
+				alamat_lengkap: showLocation.alamat_lengkap || "",
+				kota: showLocation.kota || "",
+				provinsi: showLocation.provinsi || "",
+				negara: showLocation.negara || "",
+				zoom_level: showLocation.zoom_level || 15,
+				tipe: showLocation.tipe || "",
 			};
 		});
 	}, [showLocation]);
@@ -188,10 +193,22 @@ export default function OrganizationLocationEdit() {
 		});
 	};
 
-	//   if (showLocationLoading || organizationsLoading) {
-	//     return <Skeleton.FormSkeleton title="Loading..." />;
-	//   }
+	if (showLocationLoading) {
+		return <Skeleton.FormSkeleton title="Loading..." />;
+	}
 
+	if (locationsError) {
+		return (
+			<div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+				<div className="flex flex-col items-center justify-center  text-gray-600">
+					<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+					<h3 className="text-lg font-semibold mb-2">Error</h3>
+					<p className="text-gray-500 mb-4 text-center">Gagal mengambil data lokasi.</p>
+					<p className="text-red-500 mb-4 text-center font-semibold">{locationsError.message}</p>
+				</div>
+			</div>
+		);
+	}
 	return (
 		<div className="w-full mx-auto p-4 sm:p-6 max-w-6xl min-h-[calc(100vh-4rem)]">
 			<div className="bg-white shadow-lg rounded-lg p-4 sm:p-6">

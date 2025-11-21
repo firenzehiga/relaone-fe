@@ -107,6 +107,25 @@ export const adminDeleteUser = async (id) => {
 	}
 };
 
+/** ubah status user
+ *
+ * @async
+ * @function adminChangeStatusUser
+ * @endpoint PUT /admin/users/{id}/status
+ * @param {string|number} id - ID user
+ * @param {Object} data - Payload, e.g. { status: 'inactive' }
+ * @returns {Promise<any>} Response dari server.
+ */
+export const adminChangeStatusUser = async (id, data = {}) => {
+	try {
+		const response = await api.put(`/admin/users/${id}/status`, data);
+		return response.data;
+	} catch (error) {
+		console.log("Error changing status user:", error);
+		throw error;
+	}
+};
+
 /** Mengambil data analytics untuk dashboard.
 
  * @async

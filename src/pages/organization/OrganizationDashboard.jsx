@@ -17,8 +17,8 @@ export default function OrganizationDashboard() {
 	const params = selectedEventId ? { event_id: selectedEventId } : {};
 	const { data: analyticsData, isLoading: analyticsLoading, error } = useOrgAnalytics(params);
 
-	if (user.organization.status_verifikasi === "pending") {
-		return <OrganizationPending />;
+	if (user.organization.status_verifikasi !== "verified") {
+		return <OrganizationPending status_verifikasi={user.organization.status_verifikasi} />;
 	}
 	return (
 		<div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">

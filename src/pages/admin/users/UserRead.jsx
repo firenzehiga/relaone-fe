@@ -1,13 +1,25 @@
 import { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
-import { ChevronDown, Loader2, Trash, AlertCircle } from "lucide-react";
+import {
+	ChevronDown,
+	Loader2,
+	Trash,
+	AlertCircle,
+	EditIcon,
+	EllipsisVerticalIcon,
+} from "lucide-react";
 import Badge from "@/components/ui/Badge";
-import { useAdminDeleteUserMutation, useAdminUsers } from "@/_hooks/useUsers";
+import {
+	useAdminDeleteUserMutation,
+	useAdminUsers,
+	useAdminChangeStatusUserMutation,
+} from "@/_hooks/useUsers";
 import FetchLoader from "@/components/ui/FetchLoader";
 import { getImageUrl } from "@/utils";
 import { formatDate } from "@/utils/dateFormatter";
 import Swal from "sweetalert2";
 import { useAuthStore } from "@/_hooks/useAuth";
+import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
 
 export default function AdminUser() {
 	const {
@@ -76,6 +88,63 @@ export default function AdminUser() {
 		});
 	};
 
+	// Fungsi untuk ubah status user dengan konfirmasi mirip delete
+	const changeStatusMutation = useAdminChangeStatusUserMutation();
+	const handleChangeStatus = (id, currentStatus) => {
+		if (!id) return;
+		const confirmText = "UBAH STATUS";
+		Swal.fire({
+			title: "Ubah Status User?",
+			html:
+				`<div class="text-left space-y-3">` +
+				`<p class="text-sm text-gray-600">Pilih status yang diinginkan untuk user ini.</p>` +
+				`<div><select id="swal-status" class="border border-gray-300 rounded-md px-3 py-2 text-sm w-full bg-white">` +
+				`<option value="active" ${currentStatus === "active" ? "selected" : ""}>Active</option>` +
+				`<option value="inactive" ${
+					currentStatus === "inactive" ? "selected" : ""
+				}>Inactive</option>` +
+				`<option value="suspend" ${
+					currentStatus === "suspend" ? "selected" : ""
+				}>Suspend</option>` +
+				`</select></div>` +
+				`<div class="text-xs text-gray-500">Ketik <strong>${confirmText}</strong> untuk konfirmasi perubahan status.</div>` +
+				`<input id="swal-confirm" class="border border-gray-300 rounded-md px-3 py-2 text-sm w-full mt-2" placeholder="${confirmText}">` +
+				`</div>`,
+			icon: "question",
+			showCancelButton: true,
+			confirmButtonText: "Ubah",
+			cancelButtonText: "Batal",
+			customClass: {
+				popup: "bg-white rounded-xl shadow-xl p-5 max-w-md w-full",
+				title: "text-lg font-semibold text-gray-900",
+				content: "text-sm text-gray-600 dark:text-gray-300 mt-1",
+				actions: "flex gap-3 justify-center mt-4",
+				confirmButton:
+					"px-4 py-2 focus:outline-none rounded-md bg-emerald-600 hover:bg-emerald-700 text-white",
+				cancelButton:
+					"px-4 py-2 rounded-md border border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700",
+			},
+			backdrop: true,
+			preConfirm: () => {
+				const statusEl = document.getElementById("swal-status");
+				const confirmEl = document.getElementById("swal-confirm");
+				const status = statusEl?.value;
+				const typed = confirmEl?.value?.trim();
+				if (!status) {
+					Swal.showValidationMessage("Pilih status terlebih dahulu.");
+				}
+				if (typed !== confirmText) {
+					Swal.showValidationMessage(`Anda harus mengetik \"${confirmText}\" untuk konfirmasi.`);
+				}
+				return { status };
+			},
+		}).then((result) => {
+			if (result.isConfirmed && result.value?.status) {
+				changeStatusMutation.mutate({ id, status: result.value.status });
+			}
+		});
+	};
+
 	const columns = [
 		{
 			name: "No",
@@ -138,8 +207,12 @@ export default function AdminUser() {
 				<>
 					{row.status === "active" ? (
 						<Badge variant={"success"}>Active</Badge>
-					) : (
+					) : row.status === "inactive" ? (
 						<Badge variant={"danger"}>Inactive</Badge>
+					) : row.status === "suspend" ? (
+						<Badge variant={"orange"}>Suspend</Badge>
+					) : (
+						<Badge variant={"secondary"}>{row.status}</Badge>
 					)}
 				</>
 			),
@@ -153,13 +226,29 @@ export default function AdminUser() {
 					return <Loader2 className="animate-spin h-5 w-5 text-emerald-600" />;
 				}
 				return (
-					<div className="flex items-center space-x-2">
-						<button
-							onClick={() => handleDelete(row.id)}
-							className="text-sm text-red-500 hover:underline">
-							<Trash className="w-4 h-4 mr-2 hover:text-red-600" />
-						</button>
-					</div>
+					<Menu>
+						<MenuButton
+							as={IconButton}
+							aria-label="Options"
+							icon={<EllipsisVerticalIcon />}
+							variant="ghost"
+						/>
+						<Portal>
+							<MenuList className="font-semibold">
+								<MenuItem
+									onClick={() => handleChangeStatus(row.id, row.status)}
+									icon={<EditIcon className="text-amber-500 hover:text-amber-600" />}>
+									Ubah Status
+								</MenuItem>
+								<MenuItem
+									onClick={() => handleDelete(row.id)}
+									disabled={deleteUserMutation.isLoading}
+									icon={<Trash className="text-red-500 hover:text-red-600" />}>
+									Hapus
+								</MenuItem>
+							</MenuList>
+						</Portal>
+					</Menu>
 				);
 			},
 			width: "140px",

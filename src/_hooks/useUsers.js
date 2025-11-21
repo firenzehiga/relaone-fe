@@ -166,7 +166,39 @@ export const useAdminDeleteUserMutation = () => {
 		},
 		onError: (error) => {
 			setLoading(false);
-			const msg = parseApiError(error) || "Gagal memulai event.";
+			const msg = parseApiError(error) || "Gagal menghapus user.";
+			showToast({ type: "error", message: msg });
+		},
+	});
+};
+
+/**
+ * ubah status user (admin).
+ *
+ * @returns {UseMutationResult} Mutation hook
+ * @invalidates ["adminUsers"]
+ * @optimisticUpdate Cache ["adminUsers"] langsung difilter
+ */
+export const useAdminChangeStatusUserMutation = () => {
+	const queryClient = useQueryClient();
+
+	const { setLoading } = useAuthStore();
+
+	return useMutation({
+		mutationFn: ({ id, status }) => userService.adminChangeStatusUser(id, { status }),
+		onMutate: () => setLoading(true),
+		onSuccess: (response) => {
+			queryClient.invalidateQueries(["adminUsers"]);
+			setLoading(false);
+			showToast({
+				type: "success",
+				title: "Berhasil",
+				message: response?.message || "Status user berhasil diubah.",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Gagal mengubah status user.";
 			showToast({ type: "error", message: msg });
 		},
 	});

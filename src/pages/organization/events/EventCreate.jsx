@@ -330,7 +330,6 @@ export default function OrganizationEventCreate() {
 														accept="image/jpeg,image/jpg,image/png"
 														onChange={handleChange}
 														className="hidden"
-														required
 													/>
 													<label
 														htmlFor="gambar"

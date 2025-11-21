@@ -80,7 +80,7 @@ export default function Header() {
 	if (isAuthenticated && user?.role === "organization") {
 		// mengecek status verifikasi organisasi dari authUser di local storage
 		const orgStatus = user?.organization?.status_verifikasi;
-		if (orgStatus === "pending") {
+		if (orgStatus !== "verified") {
 			navItems = [
 				{
 					name: "Dashboard",
@@ -113,11 +113,7 @@ export default function Header() {
 					{/* Logo */}
 					<Link to="/" className="flex items-center space-x-2 group">
 						<div className="p-1 group-hover:scale-110 transition-transform duration-300">
-							<img
-								src="/images/logo_fe.png"
-								alt="RelaOne Logo"
-								className="w-10 h-10"
-							/>
+							<img src="/images/logo_fe.png" alt="RelaOne Logo" className="w-10 h-10" />
 						</div>
 						<span className="text-xl font-bold bg-black bg-clip-text text-transparent">
 							Rela
@@ -162,11 +158,7 @@ export default function Header() {
 									onClick={() => setUserMenuOpen(!userMenuOpen)}
 									className="flex items-center space-x-2 p-2 rounded-xl hover:bg-emerald-50 transition-colors">
 									<Avatar
-										src={
-											user?.foto_profil
-												? getImageUrl(`foto_profil/${user?.foto_profil}`)
-												: null
-										}
+										src={user?.foto_profil ? getImageUrl(`foto_profil/${user?.foto_profil}`) : null}
 										fallback={user?.nama}
 										size="sm"
 									/>
@@ -219,10 +211,7 @@ export default function Header() {
 							</div>
 						) : (
 							<div className="hidden lg:flex items-center space-x-2">
-								<DynamicButton
-									variant="success"
-									size="sm"
-									onClick={() => navigate("/login")}>
+								<DynamicButton variant="success" size="sm" onClick={() => navigate("/login")}>
 									<LogIn size={16} className="mr-1" />
 									Masuk
 								</DynamicButton>
@@ -273,9 +262,7 @@ export default function Header() {
 													onClick={() => setMobileMenuOpen(false)}>
 													<item.icon
 														size={20}
-														className={
-															active ? "text-emerald-600" : "text-gray-500"
-														}
+														className={active ? "text-emerald-600" : "text-gray-500"}
 													/>
 													<span className="font-medium">{item.name}</span>
 												</Link>

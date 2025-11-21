@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect } from "react";
-import { useAdminOrganizationUsers } from "@/_hooks/useUsers";
 import { useAdminCreateOrganizationMutation } from "@/_hooks/useOrganizations";
 import { useAuthStore } from "@/_hooks/useAuth";
 import { UserCircle2Icon, Building2 } from "lucide-react";
@@ -20,17 +19,14 @@ export default function AdminOrganizationCreate() {
 		website: "",
 		logo: null,
 		status_verifikasi: "pending",
-		user_id: "",
+		// user fields for new account (backend expects user_nama,user_email,user_password when no user_id)
+		user_nama: "", // User's name
+		user_email: "", // User's email
+		user_password: "", // User's password
 	});
 	const { isLoading } = useAuthStore();
 
 	const [previewUrl, setPreviewUrl] = useState(null);
-
-	const {
-		data: organizationUsers = [],
-		isLoading: organizationUsersLoading,
-		error: organizationUsersError,
-	} = useAdminOrganizationUsers();
 
 	const createOrganizationMutation = useAdminCreateOrganizationMutation();
 
@@ -62,17 +58,6 @@ export default function AdminOrganizationCreate() {
 			if (previewUrl) URL.revokeObjectURL(previewUrl);
 			setFormData((s) => ({ ...s, [name]: file }));
 			setPreviewUrl(URL.createObjectURL(file));
-		} else if (name === "user_id") {
-			// jika user dipilih sebagai kontak, autofill telepon dan email tapi tetap bisa diedit
-			const selected = organizationUsers.find(
-				(user) => String(user.id) === String(value)
-			);
-			setFormData((s) => ({
-				...s,
-				user_id: value,
-				telepon: selected?.telepon || "",
-				email: selected?.email || "",
-			}));
 		} else {
 			setFormData((s) => ({ ...s, [name]: value }));
 		}
@@ -92,23 +77,11 @@ export default function AdminOrganizationCreate() {
 		createOrganizationMutation.mutateAsync(payload);
 	};
 
-	if (organizationUsersLoading) {
-		return <Skeleton.FormSkeleton title="Loading..." />;
-	}
-
-	if (organizationUsersError) {
-		return <div>Error: {organizationUsersError?.message}</div>;
-	}
-
 	return (
 		<div className="max-w-6xl mx-auto p-6">
-			<div
-				className="bg-white shadow-sm rounded-lg p-6"
-				style={{ minHeight: 420, width: 900 }}>
+			<div className="bg-white shadow-sm rounded-lg p-6" style={{ minHeight: 420, width: 900 }}>
 				<header className="mb-6">
-					<h1 className="text-2xl font-semibold text-gray-900">
-						Buat Organisasi Baru
-					</h1>
+					<h1 className="text-2xl font-semibold text-gray-900">Buat Organisasi Baru</h1>
 					<p className="text-sm text-gray-500 mt-1">
 						Isi detail organisasi dan tambahkan website serta logo.
 					</p>
@@ -151,67 +124,26 @@ export default function AdminOrganizationCreate() {
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Kontak
-							</label>
-							<select
-								name="user_id"
-								value={formData.user_id}
-								required
-								onChange={handleChange}
-								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-								<option value="">Pilih kontak (nama / telepon)</option>
-								{organizationUsers.map((user) => (
-									<option key={user.id} value={user.id}>
-										{(user.nama || user.name || user.email) +
-											" — " +
-											(user.telepon || user.email)}
-									</option>
-								))}
-							</select>
-						</div>
-						<div>
-							<label className="block text-sm font-medium text-gray-700">
-								Status Akun
-							</label>
-							<select
-								name="status_verifikasi"
-								value={formData.status_verifikasi}
-								required
-								onChange={handleChange}
-								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-								<option value="">Pilih status</option>
-								<option value="pending">Pending</option>
-								<option value="verified">Disetujui</option>
-								<option value="rejected">Ditolak</option>
-							</select>
-						</div>
-					</div>
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-						<div>
-							<label className="block text-sm font-medium text-gray-700">
-								Telepon
+								Email Organisasi <span className="text-red-500">*</span>
 							</label>
 							<input
-								name="telepon"
-								value={formData.telepon}
+								name="email"
+								value={formData.email}
 								onChange={handleChange}
-								placeholder="pilih kontak untuk mengisi otomatis"
-								disabled
+								placeholder="contoh@organisasi.id"
 								required
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 							/>
 						</div>
 						<div>
 							<label className="block text-sm font-medium text-gray-700">
-								Email <span className="text-red-500">*</span>
+								Telepon Organisasi <span className="text-red-500">*</span>
 							</label>
 							<input
-								name="email"
-								value={formData.email}
+								name="telepon"
+								value={formData.telepon}
 								onChange={handleChange}
-								placeholder="pilih kontak untuk mengisi otomatis"
-								disabled
-								required
+								placeholder="0812xxxx"
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 							/>
 						</div>
@@ -232,9 +164,7 @@ export default function AdminOrganizationCreate() {
 							/>
 						</div>
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
-								Deskripsi
-							</label>
+							<label className="block text-sm font-medium text-gray-700">Deskripsi</label>
 							<textarea
 								name="deskripsi"
 								value={formData.deskripsi}
@@ -288,15 +218,9 @@ export default function AdminOrganizationCreate() {
 											</label>
 										</div>
 
-										<p className="text-xs text-gray-500">
-											Format: JPEG, JPG, PNG. Maksimal 2MB.
-										</p>
+										<p className="text-xs text-gray-500">Format: JPEG, JPG, PNG. Maksimal 2MB.</p>
 
-										{formData.logo && (
-											<p className="text-xs text-gray-700">
-												{formData.logo.name}
-											</p>
-										)}
+										{formData.logo && <p className="text-xs text-gray-700">{formData.logo.name}</p>}
 									</div>
 								</div>
 							</div>
@@ -306,6 +230,57 @@ export default function AdminOrganizationCreate() {
 					</div>
 
 					<div className="flex items-center justify-end gap-3">
+						{/* User account section: created automatically when admin doesn't provide existing user */}
+						<div className="w-full border rounded-md bg-gray-50 p-4 mb-4">
+							<h3 className="font-semibold mb-2">
+								Akun Pengelola Organisasi (akan dibuat otomatis)
+							</h3>
+							<p className="text-sm text-gray-600 mb-3">
+								Isi data akun pengelola yang akan dikaitkan ke organisasi.
+							</p>
+							<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+								<div>
+									<label className="block text-sm font-medium">
+										Nama Pengguna <span className="text-red-500">*</span>
+									</label>
+									<input
+										name="user_nama"
+										value={formData.user_nama}
+										onChange={handleChange}
+										required
+										className="mt-1 block w-full rounded-md border px-3 py-2"
+									/>
+								</div>
+
+								<div>
+									<label className="block text-sm font-medium">
+										Email Pengguna <span className="text-red-500">*</span>
+									</label>
+									<input
+										name="user_email"
+										type="email"
+										value={formData.user_email}
+										onChange={handleChange}
+										required
+										className="mt-1 block w-full rounded-md border px-3 py-2"
+									/>
+								</div>
+
+								<div>
+									<label className="block text-sm font-medium">
+										Password Akun <span className="text-red-500">*</span>
+									</label>
+									<input
+										name="user_password"
+										type="password"
+										value={formData.user_password}
+										onChange={handleChange}
+										required
+										className="mt-1 block w-full rounded-md border px-3 py-2"
+									/>
+								</div>
+							</div>
+						</div>
 						<Button
 							type="button"
 							variant="secondary"
@@ -314,11 +289,7 @@ export default function AdminOrganizationCreate() {
 							}}>
 							Batal
 						</Button>
-						<Button
-							type="submit"
-							variant="success"
-							loading={isLoading}
-							disabled={isLoading}>
+						<Button type="submit" variant="success" loading={isLoading} disabled={isLoading}>
 							{isLoading ? "Membuat..." : "Buat Organisasi"}
 						</Button>
 					</div>

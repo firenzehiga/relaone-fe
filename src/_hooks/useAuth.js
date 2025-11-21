@@ -220,9 +220,16 @@ export const useLogin = () => {
 		},
 		onError: (error) => {
 			setLoading(false);
-			const errorMessage = error.message || "Login failed";
-			setError(errorMessage);
-			toast.error(errorMessage, { duration: 2000 });
+			const msg = parseApiError(error) || "Login failed";
+			setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali atau Coba hubungi bantuan.",
+				message: msg,
+				duration: 4000,
+				position: "top-center",
+			});
 		},
 	});
 };

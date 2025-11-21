@@ -401,6 +401,7 @@ export default function AdminEventEdit() {
 														accept="image/jpeg,image/jpg,image/png"
 														onChange={handleChange}
 														className="hidden"
+													
 													/>
 													<label
 														htmlFor="gambar"

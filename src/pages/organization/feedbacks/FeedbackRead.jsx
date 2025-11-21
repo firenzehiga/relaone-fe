@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 // UI Libraries
 import DataTable from "react-data-table-component";
 import { EllipsisVerticalIcon, AlertCircle, ChevronDown, Loader2, Eye } from "lucide-react";
-import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
 
 // Hooks
 import { useOrgFeedbacks } from "@/_hooks/useFeedbacks";
@@ -99,41 +98,17 @@ export default function OrganizationFeedback() {
 			sortable: false,
 			width: "220px",
 		},
-		{
-			name: "Aksi",
-			cell: (row) => (
-				<Menu>
-					<MenuButton
-						as={IconButton}
-						aria-label="Options"
-						icon={<EllipsisVerticalIcon />}
-						variant="ghost"
-					/>
-					<Portal>
-						<MenuList className="font-semibold">
-							<Link to={`/admin/events/edit/${row.id}`}>
-								<MenuItem icon={<Eye className="text-blue-500 hover:text-blue-600" />}>
-									Lihat
-								</MenuItem>
-							</Link>
-						</MenuList>
-					</Portal>
-				</Menu>
-			),
-			width: "140px",
-		},
 	];
 
 	if (feedbacksError) {
 		return (
 			<div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-								<div className="flex flex-col items-center justify-center  text-gray-600">
-
-				<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
-				<h3 className="text-lg font-semibold mb-2">Error</h3>
-				<p className="text-gray-500 mb-4 text-center">Gagal mengambil data feedback.</p>
-				<p className="text-red-500 mb-4 text-center font-semibold">{feedbacksError.message}</p>
-			</div>
+				<div className="flex flex-col items-center justify-center  text-gray-600">
+					<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+					<h3 className="text-lg font-semibold mb-2">Error</h3>
+					<p className="text-gray-500 mb-4 text-center">Gagal mengambil data feedback.</p>
+					<p className="text-red-500 mb-4 text-center font-semibold">{feedbacksError.message}</p>
+				</div>
 			</div>
 		);
 	}
