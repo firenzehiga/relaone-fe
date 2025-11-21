@@ -306,12 +306,12 @@ export default function AdminOrganization() {
 											{/* Left column */}
 											<div className="space-y-3">
 												<div className="text-sm text-gray-700">
-													<span className="font-semibold">Nama Penanggung Jawab:</span>
-													<span className="ml-2 text-gray-900">{data.user?.nama || "-"}</span>
+													<span className="font-semibold ">Telepon Organisasi:</span>
+													<span className="ml-2 text-gray-900 ">{data.telepon || "-"}</span>
 												</div>
 												<div className="text-sm text-gray-700">
-													<span className="font-semibold">No Telp:</span>
-													<span className="ml-2 text-gray-900">{data.telepon || "-"}</span>
+													<span className="font-semibold">Email Organisasi:</span>
+													<span className="ml-2 text-gray-900">{data.email || "-"}</span>
 												</div>
 												<div className="text-sm text-gray-700">
 													<span className="font-semibold">Rating:</span>
@@ -322,9 +322,32 @@ export default function AdminOrganization() {
 														interactive={false}
 													/>{" "}
 												</div>
+											</div>
+											<div className="space-y-3">
 												<div className="text-sm text-gray-700">
-													<span className="font-semibold">Email:</span>
-													<span className="ml-2 text-gray-900">{data.email || "-"}</span>
+													<span className="font-semibold">Nama Pengelola:</span>
+													<span className="ml-2 text-gray-900 bg-emerald-100">
+														{data.user?.nama || "-"}
+													</span>
+												</div>
+
+												<div className="text-sm text-gray-700">
+													<span className="font-semibold">Email Pengelola:</span>
+													<span className="ml-2 text-gray-900 bg-emerald-100">
+														{data.user?.email || "-"}
+													</span>
+												</div>
+												<div className="text-sm text-gray-700">
+													<span className="font-semibold">Status Akun Pengelola:</span>
+													<span className="ml-2 text-gray-900 bg-emerald-100">
+														{data.user?.status === "active" ? (
+															<Badge variant={"success"}>Aktif</Badge>
+														) : data.user?.status === "inactive" ? (
+															<Badge variant={"warning"}>Inactive</Badge>
+														) : (
+															<Badge variant={"danger"}>Suspended</Badge>
+														)}
+													</span>
 												</div>
 											</div>
 
