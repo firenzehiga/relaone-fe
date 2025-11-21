@@ -45,14 +45,14 @@ export default function AdminOrganizationEdit() {
 			// if user already started typing title, don't overwrite
 			if (prev.nama) return prev;
 			return {
-				nama: showOrganization.nama,
-				deskripsi: showOrganization.deskripsi,
-				alamat: showOrganization.alamat,
-				telepon: showOrganization.telepon,
-				email: showOrganization.email,
-				website: showOrganization.website,
-				logo: showOrganization.logo,
-				status_verifikasi: showOrganization.status_verifikasi,
+				nama: showOrganization.nama || "",
+				deskripsi: showOrganization.deskripsi || "",
+				alamat: showOrganization.alamat || "",
+				telepon: showOrganization.telepon || "",
+				email: showOrganization.email || "",
+				website: showOrganization.website || "",
+				logo: showOrganization.logo || "",
+				status_verifikasi: showOrganization.status_verifikasi || "",
 			};
 		});
 
@@ -129,11 +129,11 @@ export default function AdminOrganizationEdit() {
 		return <div>Error: {error?.message}</div>;
 	}
 	return (
-		<div className="max-w-6xl mx-auto p-6">
-			<div className="bg-white shadow-sm rounded-lg p-6" style={{ minHeight: 420, width: 900 }}>
-				<header className="mb-6">
-					<h1 className="text-2xl font-semibold text-gray-900">Edit Organisasi</h1>
-					<p className="text-sm text-gray-500 mt-1">
+		<div className="w-full mx-auto p-4 sm:p-6 max-w-6xl min-h-[calc(100vh-4rem)]">
+			<div className="bg-white shadow-xl rounded-lg p-4 sm:p-6">
+				<header className="mb-6 sm:mb-8">
+					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Edit Organisasi</h1>
+					<p className="text-xs sm:text-sm text-gray-500 mt-1">
 						Isi detail organisasi dan tambahkan website serta logo.
 					</p>
 				</header>
@@ -141,7 +141,7 @@ export default function AdminOrganizationEdit() {
 				<form onSubmit={handleSubmit} className="space-y-6">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Nama Organisasi <span className="text-red-500">*</span>
 							</label>
 							<input
@@ -155,7 +155,7 @@ export default function AdminOrganizationEdit() {
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Website / Company Profile
 							</label>
 							<div className="mt-1">
@@ -175,7 +175,7 @@ export default function AdminOrganizationEdit() {
 
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Email Organisasi<span className="text-red-500">*</span>
 							</label>
 							<input
@@ -188,7 +188,7 @@ export default function AdminOrganizationEdit() {
 							/>
 						</div>
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Telepon Organisasi <span className="text-red-500">*</span>
 							</label>
 							<input
@@ -202,7 +202,7 @@ export default function AdminOrganizationEdit() {
 					</div>
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Alamat <span className="text-red-500">*</span>
 							</label>
 							<textarea
@@ -216,7 +216,9 @@ export default function AdminOrganizationEdit() {
 							/>
 						</div>
 						<div>
-							<label className="block text-sm font-medium text-gray-700">Deskripsi</label>
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+								Deskripsi
+							</label>
 							<textarea
 								name="deskripsi"
 								value={formData.deskripsi}
@@ -230,7 +232,9 @@ export default function AdminOrganizationEdit() {
 					</div>
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-sm font-medium text-gray-700">Status Akun</label>
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+								Status Akun
+							</label>
 							<select
 								name="status_verifikasi"
 								value={formData.status_verifikasi}
@@ -246,7 +250,7 @@ export default function AdminOrganizationEdit() {
 					</div>
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
 						<div className="col-span-1">
-							<label className="block text-sm font-medium text-gray-700">
+							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Logo <span className="text-red-500">*</span>
 							</label>
 							<div className="mt-2">

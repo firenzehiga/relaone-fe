@@ -123,26 +123,26 @@ export default function AdminEventEdit() {
 			// if user already started typing title, don't overwrite
 			if (prev.judul) return prev;
 			return {
-				judul: showEvent.judul,
-				deskripsi: showEvent.deskripsi,
-				deskripsi_singkat: showEvent.deskripsi_singkat,
-				tanggal_mulai: toInputDate(showEvent.tanggal_mulai),
+				judul: showEvent.judul || "",
+				deskripsi: showEvent.deskripsi || "",
+				deskripsi_singkat: showEvent.deskripsi_singkat || "",
+				tanggal_mulai: toInputDate(showEvent.tanggal_mulai) || "",
 				tanggal_selesai: toInputDate(showEvent.tanggal_selesai),
-				waktu_mulai: toInputTime(showEvent.waktu_mulai), // ubah dari "HH:mm:ss" ke "HH:mm"
-				waktu_selesai: toInputTime(showEvent.waktu_selesai),
-				maks_peserta: showEvent.maks_peserta,
-				gambar: showEvent.gambar,
-				status: showEvent.status,
+				waktu_mulai: toInputTime(showEvent.waktu_mulai) || "", // ubah dari "HH:mm:ss" ke "HH:mm"
+				waktu_selesai: toInputTime(showEvent.waktu_selesai) || "",
+				maks_peserta: showEvent.maks_peserta || "",
+				gambar: showEvent.gambar || null,
+				status: showEvent.status || "",
 				persyaratan: parseArray(showEvent.persyaratan) || [],
 				manfaat: parseArray(showEvent.manfaat) || [],
-				nama_kontak: showEvent.nama_kontak,
-				telepon_kontak: showEvent.telepon_kontak,
-				email_kontak: showEvent.email_kontak,
-				batas_pendaftaran: toInputDate(showEvent.batas_pendaftaran),
-				category_id: showEvent.category_id,
-				organization_id: showEvent.organization_id,
-				location_id: showEvent.location_id,
-				created_by_user_id: showEvent.created_by_user_id || user.id,
+				nama_kontak: showEvent.nama_kontak || "",
+				telepon_kontak: showEvent.telepon_kontak || "",
+				email_kontak: showEvent.email_kontak || "",
+				batas_pendaftaran: toInputDate(showEvent.batas_pendaftaran) || "",
+				category_id: showEvent.category_id || "",
+				organization_id: showEvent.organization_id || "",
+				location_id: showEvent.location_id || "",
+				created_by_user_id: showEvent.created_by_user_id || user.id || "",
 			};
 		});
 
@@ -401,7 +401,6 @@ export default function AdminEventEdit() {
 														accept="image/jpeg,image/jpg,image/png"
 														onChange={handleChange}
 														className="hidden"
-													
 													/>
 													<label
 														htmlFor="gambar"

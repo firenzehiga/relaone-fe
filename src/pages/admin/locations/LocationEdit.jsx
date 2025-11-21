@@ -194,12 +194,12 @@ export default function AdminLocationEdit() {
 		setFormData((s) => {
 			return {
 				...s,
-				latitude: result.latitude || s.latitude,
-				longitude: result.longitude || s.longitude,
-				zoom_level: result.zoom_level || s.zoom_level,
-				alamat: result.place,
+				latitude: result.latitude || s.latitude || "",
+				longitude: result.longitude || s.longitude || "",
+				zoom_level: result.zoom_level || s.zoom_level || "",
+				alamat: result.place || "",
 				// auto-fill nama hanya jika belum ada (user tetap bisa edit)
-				nama: result.place,
+				nama: result.place || "",
 			};
 		});
 	};

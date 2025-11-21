@@ -54,8 +54,6 @@ const AdminProfilePage = lazy(() => import("@/pages/admin/profiles/ProfilePage")
 const AdminEditProfilePage = lazy(() => import("@/pages/admin/profiles/EditProfilePage"));
 
 const AdminUser = lazy(() => import("@/pages/admin/users/UserRead"));
-const AdminUserCreate = lazy(() => import("@/pages/admin/users/UserCreate"));
-const AdminUserEdit = lazy(() => import("@/pages/admin/users/UserEdit"));
 
 const AdminOrganization = lazy(() => import("@/pages/admin/organizations/OrganizationRead"));
 const AdminOrganizationCreate = lazy(() =>
@@ -201,8 +199,6 @@ function App() {
 
 						<Route path="users">
 							<Route index element={<AdminUser />} />
-							<Route path="create" element={<AdminUserCreate />} />
-							<Route path="edit/:id" element={<AdminUserEdit />} />
 						</Route>
 
 						<Route path="organizations">
@@ -304,7 +300,7 @@ function App() {
 			<FeedbackModal />
 
 			{/* Floating help button */}
-			<FloatingHelp whatsapp={"6285894310722"} email={"firenzehiga@gmail.com"} />
+			<FloatingHelp whatsapp={"6285894310722"} email={"relaonevolunteer@gmail.com"} />
 		</>
 	);
 }

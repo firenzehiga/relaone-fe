@@ -1,4 +1,3 @@
-import React from "react";
 import { HelpCircle, Phone, Mail } from "lucide-react";
 
 /**
