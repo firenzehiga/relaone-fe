@@ -339,7 +339,7 @@ export default function AdminOrganization() {
 												</div>
 												<div className="text-sm text-gray-700">
 													<span className="font-semibold">Status Akun Pengelola:</span>
-													<span className="ml-2 text-gray-900 bg-emerald-100">
+													<span className="ml-2 text-gray-900">
 														{data.user?.status === "active" ? (
 															<Badge variant={"success"}>Aktif</Badge>
 														) : data.user?.status === "inactive" ? (
