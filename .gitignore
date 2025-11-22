@@ -25,5 +25,4 @@ dist-ssr
 
 # Environment variables
 .env
-STORE_GUIDE.md
-TIMEOUT_TROUBLESHOOTING.md
+LAZY.md
