@@ -67,9 +67,7 @@ function QrScanner({ eventId }) {
 					scannerRef.current = html5QrCode;
 				} catch (error) {
 					console.error("❌ Failed to initialize scanner:", error);
-					alert(
-						"Gagal mengakses kamera. Pastikan Anda sudah memberikan izin akses kamera."
-					);
+					alert("Gagal mengakses kamera. Pastikan Anda sudah memberikan izin akses kamera.");
 					if (mounted) setScanning(false);
 				}
 			};
@@ -108,6 +106,12 @@ function QrScanner({ eventId }) {
 		setResult({ message: "Memproses QR Code..." });
 		setResultType("warning");
 		playSound("processing");
+
+		// TUNGGU SEBENTAR supaya UI "Memproses..." terasa sebelum lanjut
+		await new Promise((res) => setTimeout(res, 4000));
+
+		// Jika selama delay proses dibatalkan (mis. user stop), hentikan
+		if (!isProcessing.current) return;
 
 		// Hentikan scanner sementara (kami masih menampilkan UI proses saat menunggu berhenti)
 		if (scannerRef.current) {
@@ -213,7 +217,7 @@ function QrScanner({ eventId }) {
 			try {
 				const res = await tempScanner.scanFile(file, true);
 				const decoded = Array.isArray(res) ? res[0] : res;
-				await tempScanner.clear();
+				tempScanner.clear();
 				if (tempEl && tempEl.parentNode) tempEl.parentNode.removeChild(tempEl);
 				isProcessing.current = false; // allow handleScan to set flag
 				handleScan(decoded);
@@ -221,7 +225,7 @@ function QrScanner({ eventId }) {
 			} catch (err) {
 				// cleanup then rethrow to outer catcher
 				try {
-					await tempScanner.clear();
+					tempScanner.clear();
 				} catch (e) {}
 				if (tempEl && tempEl.parentNode) tempEl.parentNode.removeChild(tempEl);
 				throw err;
@@ -356,8 +360,8 @@ function QrScanner({ eventId }) {
 						atau seret gambar QR ke area kamera untuk memindai dari file
 					</p>
 					<p className="text-center text-xs text-gray-500 mt-1">
-						Pastikan QR Code terlihat jelas dalam kotak hijau. Area scanning
-						sudah diperbesar untuk pembacaan lebih mudah.
+						Pastikan QR Code terlihat jelas dalam kotak hijau. Area scanning sudah diperbesar untuk
+						pembacaan lebih mudah.
 					</p>
 				</div>
 			)}{" "}
@@ -418,8 +422,7 @@ function QrScanner({ eventId }) {
 							{result.details && (
 								<div className="mt-2 text-xs sm:text-sm text-gray-700 bg-white rounded p-2">
 									<p>
-										Status:{" "}
-										<span className="font-medium">{result.details}</span>
+										Status: <span className="font-medium">{result.details}</span>
 									</p>
 								</div>
 							)}
@@ -431,9 +434,7 @@ function QrScanner({ eventId }) {
 			{!scanning && !result && (
 				<div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 text-center">
 					<Camera className="w-10 h-10 sm:w-12 sm:h-12 text-blue-500 mx-auto mb-2" />
-					<p className="text-blue-800 font-medium text-sm sm:text-base">
-						Scanner belum aktif
-					</p>
+					<p className="text-blue-800 font-medium text-sm sm:text-base">Scanner belum aktif</p>
 					<p className="text-blue-600 text-xs sm:text-sm mt-1">
 						Klik "Mulai Scan" untuk memulai check-in volunteer
 					</p>
