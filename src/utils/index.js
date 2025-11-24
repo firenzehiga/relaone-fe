@@ -29,7 +29,7 @@ export const cn = (...classes) => {
  */
 export const getImageUrl = (path) => {
 	const baseUrl =
-		import.meta.env.VITE_IMG_STORAGE_URL || "https://be-yuliadi.karyakreasi.id/storage/";
+		import.meta.env.VITE_IMG_STORAGE_URL || "https://peladen.my.id/storage/";
 	if (!path) return "";
 	return `${baseUrl}${path}`;
 };
@@ -55,7 +55,12 @@ export const parseApiError = (err) => {
 		)
 			.filter(Boolean)
 			.join(" ");
-	return flatten(data.message) || flatten(data.errors) || flatten(data) || JSON.stringify(data);
+	return (
+		flatten(data.message) ||
+		flatten(data.errors) ||
+		flatten(data) ||
+		JSON.stringify(data)
+	);
 };
 
 // GOOGLE MAPS UTILITIES
@@ -72,7 +77,9 @@ export const getGoogleMapsUrl = (event = {}, { preferAddress = true } = {}) => {
 		event.address ||
 		(typeof event.location === "string" ? event.location : "");
 	if (preferAddress && address) {
-		return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+		return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+			address
+		)}`;
 	}
 
 	// fallback to coordinates if present
@@ -83,7 +90,9 @@ export const getGoogleMapsUrl = (event = {}, { preferAddress = true } = {}) => {
 	}
 
 	// final fallback to any address string (could be empty)
-	return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+	return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+		address
+	)}`;
 };
 /**
  * Generate URL Google Maps untuk mendapatkan petunjuk arah ke lokasi event
@@ -98,7 +107,9 @@ export const getDirectionsUrl = (event = {}, { preferAddress = true } = {}) => {
 		event.address ||
 		(typeof event.location === "string" ? event.location : "");
 	if (preferAddress && address) {
-		return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
+		return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+			address
+		)}`;
 	}
 
 	// fallback to coordinates if present
@@ -109,7 +120,9 @@ export const getDirectionsUrl = (event = {}, { preferAddress = true } = {}) => {
 	}
 
 	// final fallback to any address string (could be empty)
-	return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
+	return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+		address
+	)}`;
 };
 
 /**
