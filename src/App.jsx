@@ -19,14 +19,9 @@ import LandingPage from "@/pages/LandingPage";
 import EventsPage from "@/pages/EventsPage";
 import OrganizationsPage from "@/pages/OrganizationsPage";
 import AboutPage from "@/pages/AboutPage";
-const { PrivacyPolicyPage, TermsOfServicePage } = {
-	PrivacyPolicyPage: lazy(() =>
-		import("./pages/PrivacyTerms").then((m) => ({ default: m.PrivacyPolicyPage }))
-	),
-	TermsOfServicePage: lazy(() =>
-		import("./pages/PrivacyTerms").then((m) => ({ default: m.TermsOfServicePage }))
-	),
-};
+import { PrivacyPolicyPage } from "@/pages/PrivacyTerms";
+import { TermsOfServicePage } from "@/pages/PrivacyTerms";
+
 // Volunteer
 import DetailEventPage from "@/pages/DetailEventPage";
 import ProfilePage from "@/pages/volunteer/ProfilePage";
