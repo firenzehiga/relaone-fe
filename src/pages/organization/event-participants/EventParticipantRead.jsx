@@ -227,7 +227,7 @@ export default function OrganizationEventParticipant() {
 	// Fungsi update no show participants
 	const handleUpdateNoShow = () => {
 		if (selectedEventId === "all") {
-			toast.error("Pilih event terlebih dahulu untuk update status no show", {
+			toast.error("Pilih event terlebih dahulu untuk update status tidak hadir", {
 				position: "top-center",
 			});
 			return;
@@ -427,7 +427,7 @@ export default function OrganizationEventParticipant() {
 									disabled={updateNoShowMutation.isPending}
 									className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md text-sm font-medium transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
 									<UserX className="w-4 h-4" />
-									{updateNoShowMutation.isPending ? "Updating..." : "Update No Show"}
+									{updateNoShowMutation.isPending ? "Updating..." : "Update Status"}
 								</button>
 							)}
 
@@ -480,7 +480,7 @@ export default function OrganizationEventParticipant() {
 										</Badge>
 									) : (
 										<Badge variant="success" className="text-sm">
-											🟢 Event Aktif
+											🟢 Event Aktif/Berjalan
 										</Badge>
 									)}
 								</div>
@@ -506,7 +506,7 @@ export default function OrganizationEventParticipant() {
 											� <strong>Scanner QR:</strong> Scan QR volunteer untuk check-in realtime
 										</div>
 										<div>
-											⏰ <strong>Update No Show:</strong> Ubah status participant yang tidak hadir
+											⏰ <strong>Update Status:</strong> Ubah status participant yang tidak hadir
 											setelah event selesai
 										</div>
 									</div>
