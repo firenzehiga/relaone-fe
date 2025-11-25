@@ -50,8 +50,7 @@ export const toInputTime = (v) => {
 	if (typeof v !== "string") return String(v);
 	// jika format "HH:MM:SS" atau "HH:MM", ambil dua bagian pertama
 	const parts = v.split(":");
-	if (parts.length >= 2)
-		return `${parts[0].padStart(2, "0")}:${parts[1].padStart(2, "0")}`;
+	if (parts.length >= 2) return `${parts[0].padStart(2, "0")}:${parts[1].padStart(2, "0")}`;
 	return v.slice(0, 5);
 };
 
@@ -222,8 +221,7 @@ export const getRelativeTime = (dateString) => {
 // Helper untuk dapetin hari ini dalam format "YYYY-MM-DD"
 export const getTodayDate = () => {
 	const today = new Date();
-	return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
-		2,
-		"0"
-	)}-${String(today.getDate()).padStart(2, "0")}`;
+	return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(
+		today.getDate()
+	).padStart(2, "0")}`;
 };

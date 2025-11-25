@@ -78,9 +78,7 @@ export default function ActivityCard({ data, onClick }) {
 					{/* Category Badge on Image */}
 					{data.event?.category && (
 						<div className="absolute top-3 right-3">
-							<Badge color={data.event.category.warna}>
-								{data.event.category.nama}
-							</Badge>
+							<Badge color={data.event.category.warna}>{data.event.category.nama}</Badge>
 						</div>
 					)}
 				</div>
@@ -101,13 +99,8 @@ export default function ActivityCard({ data, onClick }) {
 						{/* Organization */}
 						{data.event?.organization && (
 							<div className="flex items-center text-gray-700 text-sm">
-								<Building2
-									size={16}
-									className="mr-3 text-emerald-600 flex-shrink-0"
-								/>
-								<span className="font-semibold">
-									{data.event.organization.nama}
-								</span>
+								<Building2 size={16} className="mr-3 text-emerald-600 flex-shrink-0" />
+								<span className="font-semibold">{data.event.organization.nama}</span>
 								{data.event.organization.rating &&
 									parseFloat(data.event.organization.rating) > 0 && (
 										<span className="flex items-center gap-1 text-yellow-500 ml-2">
@@ -123,10 +116,7 @@ export default function ActivityCard({ data, onClick }) {
 						{/* Location */}
 						{data.event?.location && (
 							<div className="flex items-center text-gray-700 text-sm">
-								<MapPin
-									size={16}
-									className="mr-3 text-emerald-600 flex-shrink-0"
-								/>
+								<MapPin size={16} className="mr-3 text-emerald-600 flex-shrink-0" />
 								<span>
 									{data.event.location.kota}, {data.event.location.provinsi}
 								</span>
@@ -136,18 +126,13 @@ export default function ActivityCard({ data, onClick }) {
 						{/* Event Date & Time */}
 						{data.event?.tanggal_mulai && (
 							<div className="flex items-center text-gray-700 text-sm">
-								<Calendar
-									size={16}
-									className="mr-3 text-emerald-600 flex-shrink-0"
-								/>
+								<Calendar size={16} className="mr-3 text-emerald-600 flex-shrink-0" />
 								<div>
-									<span className="font-semibold">
-										{formatDate(data.event.tanggal_mulai)}
-									</span>
+									<span className="font-semibold">{formatDate(data.event.tanggal_mulai)}</span>
 									{data.event?.waktu_mulai && (
 										<span className="text-gray-600 ml-2">
 											• {formatTime(data.event.waktu_mulai)} -{" "}
-											{formatTime(data.event.waktu_selesai)}
+											{formatTime(data.event.waktu_selesai, "WIB")}
 										</span>
 									)}
 								</div>
@@ -156,16 +141,16 @@ export default function ActivityCard({ data, onClick }) {
 
 						{/* Registration Date */}
 						{data.tanggal_daftar && (
-							<div className="flex items-center text-gray-600 text-xs">
-								<Clock size={14} className="mr-2 text-gray-400 flex-shrink-0" />
+							<div className="flex items-center text-yellow-600 text-xs">
+								<Clock size={14} className="mr-2 text-yellow-400 flex-shrink-0" />
 								<span>Terdaftar: {formatDate(data.tanggal_daftar)}</span>
 							</div>
 						)}
 
 						{/* Confirmation Date */}
 						{data.tanggal_konfirmasi && data.status === "confirmed" && (
-							<div className="flex items-center text-green-600 text-xs">
-								<CheckCircle size={14} className="mr-2 flex-shrink-0" />
+							<div className="flex items-center text-blue-600 text-xs">
+								<CheckCircle size={14} className="mr-2 text-blue-400 flex-shrink-0" />
 								<span>Dikonfirmasi: {formatDate(data.tanggal_konfirmasi)}</span>
 							</div>
 						)}
@@ -183,13 +168,8 @@ export default function ActivityCard({ data, onClick }) {
 					{data.catatan && (
 						<div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm mb-4">
 							<div className="flex gap-2">
-								<AlertCircle
-									size={16}
-									className="text-amber-600 flex-shrink-0 mt-0.5"
-								/>
-								<p className="text-amber-800 flex-1 text-xs leading-relaxed">
-									{data.catatan}
-								</p>
+								<AlertCircle size={16} className="text-amber-600 flex-shrink-0 mt-0.5" />
+								<p className="text-amber-800 flex-1 text-xs leading-relaxed">{data.catatan}</p>
 							</div>
 						</div>
 					)}
@@ -246,8 +226,7 @@ export default function ActivityCard({ data, onClick }) {
 												size="sm"
 												onClick={(e) => {
 													e.stopPropagation();
-													const { openFeedbackModal } =
-														useModalStore.getState();
+													const { openFeedbackModal } = useModalStore.getState();
 													openFeedbackModal(data);
 												}}>
 												Kirim Feedback
