@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import { Scan, CheckCircle, XCircle, AlertCircle, Camera } from "lucide-react";
 import { useOrgScanQrMutation } from "../../_hooks/useParticipants";
+import Avatar from "../ui/Avatar";
+import { getImageUrl } from "@/utils";
 
 /**
  * Component QR Scanner untuk organization check-in volunteer
@@ -398,10 +400,10 @@ function QrScanner({ eventId }) {
 
 							{result.volunteer && (
 								<div className="flex items-center gap-2 sm:gap-3 bg-white rounded-lg p-2 sm:p-3 mt-2">
-									<img
-										src={result.volunteer.foto || "/images/logo_be.png"}
-										alt={result.volunteer.nama}
-										className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-gray-200 flex-shrink-0"
+									<Avatar
+										src={getImageUrl(`foto_profil/${result.volunteer?.foto}`)}
+										fallback={result.volunteer?.nama}
+										size="md"
 									/>
 									<div className="flex-1 min-w-0">
 										<p className="font-medium text-gray-800 text-sm sm:text-base truncate">
