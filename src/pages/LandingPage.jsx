@@ -67,13 +67,11 @@ export default function LandingPage() {
 		{
 			icon: Heart,
 			title: "Berbagi Kebaikan",
-			description:
-				"Kontribusi nyata untuk masyarakat dan rasakan kepuasan membantu sesama.",
+			description: "Kontribusi nyata untuk masyarakat dan rasakan kepuasan membantu sesama.",
 		},
 	];
 
-	const featuredEvents =
-		events?.filter((event) => event.status === "published").slice(0, 3) || [];
+	const featuredEvents = events?.filter((event) => event.status === "published").slice(0, 3) || [];
 
 	/**
 	 * Handler untuk membuka modal pendaftaran event
@@ -99,9 +97,9 @@ export default function LandingPage() {
 					<div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 						<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 							{[
-								{ label: "Event Aktif", value: stats.totalEvents, suffix: "+" },
+								{ label: "Kegiatan Dibuat ", value: stats.totalEvents, suffix: "+" },
 								{
-									label: "Volunteer Terdaftar",
+									label: "Relawan Terdaftar",
 									value: stats.totalVolunteers,
 									suffix: "+",
 								},
@@ -128,9 +126,7 @@ export default function LandingPage() {
 										/>
 										<span className="ml-1 inline">{stat.suffix}</span>
 									</div>
-									<div className="text-emerald-100 font-medium">
-										{stat.label}
-									</div>
+									<div className="text-emerald-100 font-medium">{stat.label}</div>
 								</motion.div>
 							))}
 						</div>
@@ -146,8 +142,8 @@ export default function LandingPage() {
 								<span className="text-emerald-600">O</span>ne?
 							</h2>
 							<p className="text-xl text-gray-600 max-w-3xl mx-auto">
-								Platform terpercaya untuk menghubungkan volunteer dengan
-								kegiatan sosial yang bermakna
+								Platform terpercaya untuk menghubungkan volunteer dengan kegiatan sosial yang
+								bermakna
 							</p>
 						</div>
 
@@ -164,12 +160,8 @@ export default function LandingPage() {
 										<div className="mx-auto w-16 h-16 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
 											<feature.icon className="text-white" size={28} />
 										</div>
-										<h3 className="text-xl font-bold text-gray-900 mb-4">
-											{feature.title}
-										</h3>
-										<p className="text-gray-600 leading-relaxed">
-											{feature.description}
-										</p>
+										<h3 className="text-xl font-bold text-gray-900 mb-4">{feature.title}</h3>
+										<p className="text-gray-600 leading-relaxed">{feature.description}</p>
 									</Card>
 								</motion.div>
 							))}
@@ -209,13 +201,9 @@ export default function LandingPage() {
 											<div
 												className={`mx-auto w-16 h-16  rounded-full flex items-center justify-center mb-6`}
 												style={{ backgroundColor: `${category.warna}20` }}>
-												{Icon ? (
-													<Icon style={{ color: category.warna }} size={32} />
-												) : null}
+												{Icon ? <Icon style={{ color: category.warna }} size={32} /> : null}
 											</div>
-											<h3 className="text-xl font-semibold text-gray-500 mb-2">
-												{category.nama}
-											</h3>
+											<h3 className="text-xl font-semibold text-gray-500 mb-2">{category.nama}</h3>
 											<p className="text-gray-400">{category.deskripsi}</p>
 										</Card>
 									</motion.div>
@@ -230,16 +218,12 @@ export default function LandingPage() {
 					<div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 						<div className="flex items-center justify-between mb-12">
 							<div>
-								<h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-									Event Terbaru
-								</h2>
+								<h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Event Terbaru</h2>
 								<p className="text-xl text-gray-600">
 									Kegiatan sosial yang sedang dibuka untuk pendaftaran
 								</p>
 							</div>
-							<DynamicButton
-								variant="outline"
-								onClick={() => navigate("/events")}>
+							<DynamicButton variant="outline" onClick={() => navigate("/events")}>
 								Lihat Semua
 								<ArrowRight size={16} className="ml-2" />
 							</DynamicButton>
@@ -280,8 +264,8 @@ export default function LandingPage() {
 								Siap Memulai Perjalanan Volunteer Anda?
 							</h2>
 							<p className="text-xl text-emerald-100 mb-8 leading-relaxed">
-								Bergabunglah dengan ribuan volunteer lainnya dan mari
-								bersama-sama membuat perubahan positif untuk masyarakat.
+								Bergabunglah dengan ribuan volunteer lainnya dan mari bersama-sama membuat perubahan
+								positif untuk masyarakat.
 							</p>
 							<div className="flex flex-col sm:flex-row gap-4 justify-center">
 								<DynamicButton

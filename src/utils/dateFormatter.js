@@ -108,18 +108,27 @@ export const formatDate = (tgl) => {
 /**
  * Mengformat tanggal + waktu menjadi "D Bulan YYYY, HH:mm"
  *
- * Contoh: "1 Januari 2024, 07:30"
+ * Contoh: "1 Januari 2024, 07:30" atau "1 Januari 2024, 07:30 WIB"
  *
- * @async
  * @function formatDateTime
  * @param {Date|number|string} tgl - Tanggal/waktu input.
+ * @param {boolean|string} [withZone=false] - Jika true => "WIB", jika string => gunakan string sebagai suffix.
  * @returns {string} Hasil format atau "-" jika tidak valid.
  */
-export const formatDateTime = (tgl) => {
+export const formatDateTime = (tgl, withZone = false) => {
 	if (!tgl && tgl !== 0) return "-";
 
 	const d = toDayjs(tgl);
-	return d.isValid() ? d.locale("id").format("D MMMM YYYY, HH:mm") : "-";
+	if (!d.isValid()) return "-";
+
+	const base = d.locale("id").format("D MMMM YYYY, HH:mm");
+
+	if (withZone) {
+		const suffix = typeof withZone === "string" ? withZone : "WIB";
+		return `${base} ${suffix}`;
+	}
+
+	return base;
 };
 
 /**

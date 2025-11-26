@@ -33,7 +33,7 @@ import {
 } from "@/_hooks/useParticipants";
 
 // Helpers
-import { formatDate } from "@/utils/dateFormatter";
+import { formatDate, formatDateTime } from "@/utils/dateFormatter";
 
 // UI Components
 import FetchLoader from "@/components/ui/FetchLoader";
@@ -282,7 +282,7 @@ export default function OrganizationEventParticipant() {
 			selector: (row) => row.user?.nama || "-",
 			sortable: true,
 			wrap: true,
-			width: "150px",
+			width: "180px",
 		},
 		{
 			name: "Event yang diikuti",
@@ -294,12 +294,6 @@ export default function OrganizationEventParticipant() {
 		{
 			name: "Tanggal Daftar",
 			selector: (row) => formatDate(row.tanggal_daftar) || "-",
-			sortable: true,
-			width: "170px",
-		},
-		{
-			name: "Tanggal Hadir",
-			selector: (row) => formatDate(row.tanggal_hadir) || "-",
 			sortable: true,
 			width: "170px",
 		},
@@ -317,8 +311,10 @@ export default function OrganizationEventParticipant() {
 						<Badge variant={"success"}>Hadir</Badge>
 					) : row.status === "no_show" ? (
 						<Badge variant={"danger"}>Tidak Hadir</Badge>
-					) : (
+					) : row.status === "rejected" ? (
 						<Badge variant={"danger"}>Ditolak</Badge>
+					) : (
+						<Badge variant={"secondary"}>{row.status || "-"}</Badge>
 					)}
 				</>
 			),
@@ -388,7 +384,7 @@ export default function OrganizationEventParticipant() {
 					</Menu>
 				);
 			},
-			width: "140px",
+			width: "120px",
 		},
 	];
 
@@ -689,6 +685,20 @@ export default function OrganizationEventParticipant() {
 															</span>
 														) : (
 															<Badge variant="default">Belum Dikonfirmasi</Badge>
+														)}
+													</div>
+												</div>
+												<div className="flex items-start">
+													<div className="text-sm text-gray-700 font-semibold">
+														Waktu Kehadiran:
+													</div>
+													<div className="text-sm ml-2">
+														{data.tanggal_hadir ? (
+															<span className="text-gray-900">
+																{formatDateTime(data.tanggal_hadir, "WIB")}{" "}
+															</span>
+														) : (
+															<span className="text-gray-500 italic">Belum Check-In</span>
 														)}
 													</div>
 												</div>

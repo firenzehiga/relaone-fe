@@ -162,6 +162,14 @@ export default function ActivityCard({ data, onClick }) {
 								<span>Hadir: {formatDate(data.tanggal_hadir)}</span>
 							</div>
 						)}
+
+						{/* No Show */}
+						{data.status === "no_show" && (
+							<div className="flex items-center text-red-600 text-xs">
+								<AlertCircle size={14} className="mr-2 flex-shrink-0" />
+								<span>Anda Tidak Hadir / Tidak scan QR kehadiran</span>
+							</div>
+						)}
 					</div>
 
 					{/* Notes */}
@@ -175,11 +183,11 @@ export default function ActivityCard({ data, onClick }) {
 					)}
 
 					{/* Action Buttons */}
-					<div className="flex gap-3 mt-4">
+					<div className="flex flex-col sm:flex-row gap-3 mt-4">
 						<DynamicButton
 							variant="success"
 							size="sm"
-							className="flex-1 sm:flex-none"
+							className="w-full sm:w-auto"
 							onClick={(e) => {
 								e.stopPropagation();
 								onClick?.();
@@ -191,6 +199,7 @@ export default function ActivityCard({ data, onClick }) {
 							<DynamicButton
 								variant="danger"
 								size="sm"
+								className="w-full sm:w-auto"
 								onClick={(e) => {
 									e.stopPropagation();
 									const { openCancelModal } = useModalStore.getState();
@@ -215,7 +224,7 @@ export default function ActivityCard({ data, onClick }) {
 												variant="outline"
 												size="sm"
 												disabled
-												className="cursor-not-allowed">
+												className="cursor-not-allowed w-full sm:w-auto">
 												Sudah Kasih Feedback
 											</DynamicButton>
 										);
@@ -224,6 +233,7 @@ export default function ActivityCard({ data, onClick }) {
 											<DynamicButton
 												variant="primary"
 												size="sm"
+												className="w-full sm:w-auto"
 												onClick={(e) => {
 													e.stopPropagation();
 													const { openFeedbackModal } = useModalStore.getState();

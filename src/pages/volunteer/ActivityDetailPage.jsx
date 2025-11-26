@@ -19,6 +19,9 @@ import {
 	Navigation,
 	Ban,
 	Flame,
+	UserCheck,
+	ClipboardCheck,
+	ExternalLink,
 } from "lucide-react";
 
 // Hooks / stores
@@ -26,7 +29,7 @@ import { userVolunteerHistoryById } from "@/_hooks/useParticipants";
 import { useModalStore } from "@/stores/useAppStore";
 
 // Helpers
-import { getImageUrl } from "@/utils";
+import { getDirectionsUrl, getGoogleMapsUrl, getImageUrl } from "@/utils";
 import { formatDate, formatTime } from "@/utils/dateFormatter";
 
 // UI Components
@@ -124,8 +127,8 @@ export default function ActivityDetailPage() {
 			finished: {
 				label: "Selesai",
 				Icon: CheckCircle,
-				color: "text-blue-600",
-				bg: "bg-blue-100",
+				color: "text-green-600",
+				bg: "bg-green-100",
 			},
 		};
 		return configs[timeline] || configs.upcoming;
@@ -134,8 +137,8 @@ export default function ActivityDetailPage() {
 	const getStatusIcon = (status) => {
 		const icons = {
 			registered: Clock,
-			confirmed: CheckCircle,
-			attended: CheckCircle,
+			confirmed: ClipboardCheck,
+			attended: UserCheck,
 			rejected: XCircle,
 			no_show: AlertCircle,
 			cancelled: Ban,
@@ -164,7 +167,9 @@ export default function ActivityDetailPage() {
 							Detail Aktivitas
 						</h1>
 					</div>
-					<p className="text-lg text-gray-600 ml-12">Informasi lengkap partisipasi event Anda</p>
+					<p className="text-lg text-gray-600 ml-0 sm:ml-12">
+						Informasi lengkap partisipasi event Anda
+					</p>
 				</div>
 				{/* Status Cards */}
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -175,7 +180,16 @@ export default function ActivityDetailPage() {
 						transition={{ delay: 0.1 }}>
 						<Card className="p-6 bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-shadow">
 							<div className="flex items-center gap-4 mb-3">
-								<div className={`p-3 rounded-xl ${timelineConfig.bg}`}>
+								<div
+									className={`p-3 rounded-xl ${
+										statusConfig.variant === "success"
+											? "bg-green-100"
+											: statusConfig.variant === "danger"
+											? "bg-red-100"
+											: statusConfig.variant === "warning"
+											? "bg-amber-100"
+											: "bg-blue-100"
+									}`}>
 									<StatusIcon
 										size={28}
 										className={
@@ -336,6 +350,24 @@ export default function ActivityDetailPage() {
 											{data.event.location.kota}, {data.event.location.provinsi}
 										</p>
 									</div>
+									<div className="mt-4 flex flex-wrap items-center gap-2">
+										<DynamicButton
+											variant="outline"
+											size="xs"
+											onClick={() => window.open(getGoogleMapsUrl(data.event), "_blank")}
+											className="flex items-center justify-center gap-2 text-xs px-3 py-1 w-full sm:w-auto">
+											<ExternalLink size={12} />
+											Lihat di Maps
+										</DynamicButton>
+										<DynamicButton
+											variant="success"
+											size="xs"
+											onClick={() => window.open(getDirectionsUrl(data.event), "_blank")}
+											className="flex items-center justify-center gap-2 text-xs px-3 py-1 w-full sm:w-auto">
+											<Navigation size={12} />
+											Petunjuk Arah
+										</DynamicButton>
+									</div>
 								</div>
 							)}
 
@@ -353,7 +385,8 @@ export default function ActivityDetailPage() {
 											<p className="text-gray-700">{formatDate(data.event?.tanggal_mulai)}</p>
 											{data.event?.waktu_mulai && (
 												<p className="text-sm text-gray-600">
-													{formatTime(data.event.waktu_mulai)} WIB
+													{formatTime(data.event.waktu_mulai)} -{" "}
+													{formatTime(data.event.waktu_selesai)} WIB
 												</p>
 											)}
 										</div>
@@ -365,6 +398,7 @@ export default function ActivityDetailPage() {
 											<p className="text-gray-700">{formatDate(data.event?.tanggal_selesai)}</p>
 											{data.event?.waktu_selesai && (
 												<p className="text-sm text-gray-600">
+													{formatTime(data.event.waktu_mulai)} -{" "}
 													{formatTime(data.event.waktu_selesai)} WIB
 												</p>
 											)}
@@ -428,11 +462,13 @@ export default function ActivityDetailPage() {
 							{data.tanggal_daftar && (
 								<div className="flex gap-4">
 									<div className="flex flex-col items-center">
-										<div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-											<Clock size={24} className="text-blue-600" />
+										<div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
+											<Clock size={24} className="text-yellow-600" />
 										</div>
-										{(data.tanggal_konfirmasi || data.tanggal_hadir) && (
-											<div className="flex-1 w-1 bg-gradient-to-b from-blue-300 to-green-300 mt-2"></div>
+										{(data.tanggal_konfirmasi ||
+											data.tanggal_hadir ||
+											data.status === "no_show") && (
+											<div className="flex-1 w-1 bg-gradient-to-b from-yellow-300 to-blue-300 mt-2"></div>
 										)}
 									</div>
 									<div className="flex-1 pb-6">
@@ -451,11 +487,14 @@ export default function ActivityDetailPage() {
 							{data.tanggal_konfirmasi && (
 								<div className="flex gap-4">
 									<div className="flex flex-col items-center">
-										<div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-											<CheckCircle size={24} className="text-green-600" />
+										<div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+											<ClipboardCheck size={24} className="text-blue-600" />
 										</div>
-										{data.tanggal_hadir && (
-											<div className="flex-1 w-1 bg-gradient-to-b from-green-300 to-green-500 mt-2"></div>
+										{(data.tanggal_hadir || data.status === "no_show") && (
+											<div
+												className={`flex-1 w-1 bg-gradient-to-b from-blue-300 ${
+													data.status === "no_show" ? " to-red-300" : " to-green-300"
+												} mt-2`}></div>
 										)}
 									</div>
 									<div className="flex-1 pb-6">
@@ -471,7 +510,7 @@ export default function ActivityDetailPage() {
 							)}
 
 							{/* Attendance */}
-							{data.tanggal_hadir && (
+							{data.tanggal_hadir && data.status !== "no_show" && (
 								<div className="flex gap-4">
 									<div className="flex flex-col items-center">
 										<div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
@@ -485,6 +524,27 @@ export default function ActivityDetailPage() {
 										</p>
 										<p className="text-sm text-gray-600 leading-relaxed">
 											Anda telah check-in di event ini
+										</p>
+									</div>
+								</div>
+							)}
+
+							{/* No Show */}
+							{(data.status === "no_show" || !data.tanggal_hadir) && (
+								<div className="flex gap-4">
+									<div className="flex flex-col items-center">
+										<div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+											<AlertCircle size={24} className="text-red-600" />
+										</div>
+									</div>
+									<div className="flex-1">
+										<p className="font-bold text-gray-900 text-base mb-1">No Show</p>
+										<p className="text-sm text-red-600 font-semibold mb-2">
+											Anda tidak check-in di event ini!
+										</p>
+										<p className="text-sm text-gray-600 leading-relaxed">
+											Jika anda hadir di event ini namun tidak melakukan scan QR kehadiran, silahkan
+											hubungi organizer
 										</p>
 									</div>
 								</div>

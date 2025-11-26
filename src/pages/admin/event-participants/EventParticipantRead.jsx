@@ -21,7 +21,7 @@ import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom";
 import FetchLoader from "@/components/ui/FetchLoader";
 import { parseApiError } from "@/utils";
-import { formatDate } from "@/utils/dateFormatter";
+import { formatDate, formatDateTime, formatTime } from "@/utils/dateFormatter";
 import Badge from "@/components/ui/Badge";
 
 export default function AdminEventParticipant() {
@@ -136,6 +136,13 @@ export default function AdminEventParticipant() {
 			wrap: true,
 		},
 		{
+			name: "Organisasi Penyelenggara",
+			selector: (row) => row.event?.organization?.nama || "-",
+			sortable: false,
+			width: "200px",
+			wrap: true,
+		},
+		{
 			name: "Tanggal Daftar",
 			selector: (row) => formatDate(row.tanggal_daftar) || "-",
 			sortable: true,
@@ -153,13 +160,15 @@ export default function AdminEventParticipant() {
 						<Badge variant={"success"}>Hadir</Badge>
 					) : row.status === "no_show" ? (
 						<Badge variant={"danger"}>Tidak Hadir</Badge>
+					) : row.status === "rejected" ? (
+						<Badge variant={"danger"}>Ditolak</Badge>
 					) : (
-						<Badge variant={"danger"}>{row.status || "-"}</Badge>
+						<Badge variant={"secondary"}>{row.status || "-"}</Badge>
 					)}
 				</>
 			),
 			sortable: true,
-			width: "150px",
+			width: "140px",
 		},
 		{
 			name: "Aksi",
@@ -188,7 +197,7 @@ export default function AdminEventParticipant() {
 					</Portal>
 				</Menu>
 			),
-			width: "140px",
+			width: "100px",
 		},
 	];
 
@@ -367,10 +376,21 @@ export default function AdminEventParticipant() {
 													<span className="ml-2 text-gray-900">{data.user?.nama || "-"}</span>
 												</div>
 												<div className="flex items-start">
-													<div className="text-sm text-gray-700 font-semibold">Tanggal:</div>
+													<div className="text-sm text-gray-700 font-semibold">
+														Tanggal Pelaksanaan:
+													</div>
 													<div className="text-sm text-gray-900 ml-2">
 														{formatDate(data.event?.tanggal_mulai) || "-"} -{" "}
 														{formatDate(data.event?.tanggal_selesai) || "-"}
+													</div>
+												</div>
+												<div className="flex items-start">
+													<div className="text-sm text-gray-700 font-semibold">
+														Waktu Pelaksanaan:
+													</div>
+													<div className="text-sm text-gray-900 ml-2">
+														{formatTime(data.event?.waktu_mulai) || "-"} -{" "}
+														{formatTime(data.event?.waktu_selesai, "WIB") || "-"}
 													</div>
 												</div>
 
@@ -402,6 +422,20 @@ export default function AdminEventParticipant() {
 															</span>
 														) : (
 															<Badge variant="default">Belum Dikonfirmasi</Badge>
+														)}
+													</div>
+												</div>
+												<div className="flex items-start">
+													<div className="text-sm text-gray-700 font-semibold">
+														Waktu Kehadiran:
+													</div>
+													<div className="text-sm ml-2">
+														{data.tanggal_hadir ? (
+															<span className="text-gray-900">
+																{formatDateTime(data.tanggal_hadir, "WIB")}{" "}
+															</span>
+														) : (
+															<span className="text-gray-500 italic">Belum Check-In</span>
 														)}
 													</div>
 												</div>

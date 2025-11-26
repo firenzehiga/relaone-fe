@@ -135,7 +135,7 @@ export default function EventsPage() {
 		setSearchParams({});
 	};
 
-	// Whether any user-applied filter is active (used to show Clear Filter button and empty-state behavior)
+	// Apakah ada filter yang yg lagi aktif (digunakan untuk menampilkan tombol Hapus Filter dan perilaku empty-state)
 	const hasActiveFilters = Boolean(
 		filters.search || filters.category || filters.tanggal_mulai || filters.city
 	);
@@ -151,41 +151,11 @@ export default function EventsPage() {
 		openJoinModal(evt);
 	};
 
-	/**
-	 * Handler untuk menampilkan detail event di modal
-	 *
-	 * @param {string|number} eventId - ID event yang akan ditampilkan detailnya
-	 */
-	const handleViewEventDetail = (eventId) => {
-		navigate(`/events/details/${eventId}`);
-	};
-
-	// Get unique cities for filter
+	// Dapetin list kota unik dari semua events untuk opsi filter kota
 	const availableCities = [
 		...new Set(events?.map((event) => event.location?.kota).filter(Boolean)),
 	];
 
-	// Helpers to determine registration availability per event
-	const slotsRemainingFor = (event) =>
-		event.maks_peserta - (event.peserta_saat_ini || 0);
-
-	const isRegistrationClosedFor = (event) => {
-		const slots = slotsRemainingFor(event);
-		const start = event.tanggal_mulai ? new Date(event.tanggal_mulai) : null;
-		const now = new Date();
-		// closed when cancelled, no slots, or the event date has arrived/passed
-		return (
-			event.status === "cancelled" || slots <= 0 || (start && now >= start)
-		);
-	};
-
-	const registrationLabelFor = (event) => {
-		if (event.status === "cancelled") return "Dibatalkan";
-		if (slotsRemainingFor(event) <= 0) return "Penuh";
-		const start = event.tanggal_mulai ? new Date(event.tanggal_mulai) : null;
-		if (start && new Date() >= start) return "Pendaftaran Ditutup";
-		return "Daftar";
-	};
 
 	// Error state handling
 	if (eventsError || categoriesError) {
