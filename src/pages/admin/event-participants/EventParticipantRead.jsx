@@ -135,18 +135,12 @@ export default function AdminEventParticipant() {
 			sortable: false,
 			wrap: true,
 		},
-		{
-			name: "Organisasi Penyelenggara",
-			selector: (row) => row.event?.organization?.nama || "-",
-			sortable: false,
-			width: "200px",
-			wrap: true,
-		},
+
 		{
 			name: "Tanggal Daftar",
 			selector: (row) => formatDate(row.tanggal_daftar) || "-",
 			sortable: true,
-			width: "170px",
+			width: "190px",
 		},
 		{
 			name: "Status",
@@ -374,6 +368,12 @@ export default function AdminEventParticipant() {
 												<div className="text-sm text-gray-700">
 													<span className="font-semibold">Nama peserta:</span>
 													<span className="ml-2 text-gray-900">{data.user?.nama || "-"}</span>
+												</div>
+												<div className="text-sm text-gray-700">
+													<span className="font-semibold">Organisasi Penyelenggara:</span>
+													<span className="ml-2 text-gray-900 bg-emerald-100">
+														{data.event?.organization?.nama || "-"}
+													</span>
 												</div>
 												<div className="flex items-start">
 													<div className="text-sm text-gray-700 font-semibold">
