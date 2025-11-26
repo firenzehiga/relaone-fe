@@ -134,7 +134,7 @@ export default function EventScannerPage() {
 								</div>
 								<div className="flex-1 min-w-0">
 									<h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
-										Scanner Check-in Event
+										Scanner Check-in/Absensi Event
 									</h1>
 									<p
 										className={`text-xs sm:text-sm mt-1 truncate ${

@@ -467,7 +467,8 @@ export default function ActivityDetailPage() {
 										</div>
 										{(data.tanggal_konfirmasi ||
 											data.tanggal_hadir ||
-											data.status === "no_show") && (
+											data.status === "no_show" ||
+											data.timeline_status === "finished") && (
 											<div className="flex-1 w-1 bg-gradient-to-b from-yellow-300 to-blue-300 mt-2"></div>
 										)}
 									</div>
@@ -490,7 +491,9 @@ export default function ActivityDetailPage() {
 										<div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
 											<ClipboardCheck size={24} className="text-blue-600" />
 										</div>
-										{(data.tanggal_hadir || data.status === "no_show") && (
+										{(data.tanggal_hadir ||
+											data.status === "no_show" ||
+											data.timeline_status === "finished") && (
 											<div
 												className={`flex-1 w-1 bg-gradient-to-b from-blue-300 ${
 													data.status === "no_show" ? " to-red-300" : " to-green-300"
@@ -530,7 +533,8 @@ export default function ActivityDetailPage() {
 							)}
 
 							{/* No Show */}
-							{(data.status === "no_show" || !data.tanggal_hadir) && (
+							{(data.status === "no_show" ||
+								(!data.tanggal_hadir && data.timeline_status === "finished")) && (
 								<div className="flex gap-4">
 									<div className="flex flex-col items-center">
 										<div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
@@ -543,8 +547,9 @@ export default function ActivityDetailPage() {
 											Anda tidak check-in di event ini!
 										</p>
 										<p className="text-sm text-gray-600 leading-relaxed">
-											Jika anda hadir di event ini namun tidak melakukan scan QR kehadiran, silahkan
-											hubungi organizer
+											{data.status === "no_show" || data.timeline_status === "finished"
+												? "Jika anda hadir di event ini namun tidak melakukan scan QR kehadiran, silahkan hubungi organizer"
+												: "Status kehadiran belum tersedia. Informasi akan diperbarui setelah event selesai."}
 										</p>
 									</div>
 								</div>
