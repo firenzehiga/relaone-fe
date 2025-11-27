@@ -6,7 +6,7 @@ import {
 	useAdminParticipantById,
 	useAdminUpdateParticipantMutation,
 } from "@/_hooks/useParticipants";
-import { toInputDate } from "@/utils/dateFormatter";
+import { toInputDate, toInputDatetime } from "@/utils/dateFormatter";
 import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
 import { useAuthStore } from "@/_hooks/useAuth";
@@ -17,10 +17,8 @@ export default function AdminEventParticipantEdit() {
 	const isDirty = useRef(false);
 
 	const { data: events = [], isLoading: eventsLoading } = useAdminEvents();
-	const { data: volunteers = [], isLoading: volunteersLoading } =
-		useAdminVolunteerUsers();
-	const { data: showParticipant, isLoading: showLoading } =
-		useAdminParticipantById(id);
+	const { data: volunteers = [], isLoading: volunteersLoading } = useAdminVolunteerUsers();
+	const { data: showParticipant, isLoading: showLoading } = useAdminParticipantById(id);
 	const updateMutation = useAdminUpdateParticipantMutation();
 
 	const [formData, setFormData] = useState({
@@ -45,7 +43,7 @@ export default function AdminEventParticipantEdit() {
 				status: showParticipant.status || "registered",
 				tanggal_daftar: toInputDate(showParticipant.tanggal_daftar),
 				tanggal_konfirmasi: toInputDate(showParticipant.tanggal_konfirmasi),
-				tanggal_hadir: toInputDate(showParticipant.tanggal_hadir),
+				tanggal_hadir: toInputDatetime(showParticipant.tanggal_hadir),
 				catatan: showParticipant.catatan || "",
 			};
 		});
@@ -56,11 +54,7 @@ export default function AdminEventParticipantEdit() {
 		isDirty.current = true;
 		setFormData((s) => {
 			if (name === "tanggal_konfirmasi") {
-				const newStatus = value
-					? "confirmed"
-					: s.status === "confirmed"
-					? "registered"
-					: s.status;
+				const newStatus = value ? "confirmed" : s.status === "confirmed" ? "registered" : s.status;
 				return { ...s, tanggal_konfirmasi: value, status: newStatus };
 			}
 			return { ...s, [name]: value };
@@ -73,8 +67,17 @@ export default function AdminEventParticipantEdit() {
 		const payload = new FormData();
 		payload.append("_method", "PUT");
 
-		for (const key in formData) {
-			payload.append(key, formData[key]);
+		// prepare payload data and normalize tanggal_hadir to include seconds
+		const payloadData = { ...formData };
+		if (payloadData.tanggal_hadir) {
+			// if value is from datetime-local it will contain 'T' (YYYY-MM-DDTHH:mm)
+			if (String(payloadData.tanggal_hadir).includes("T")) {
+				payloadData.tanggal_hadir = payloadData.tanggal_hadir.replace("T", " ") + ":00";
+			}
+		}
+
+		for (const key in payloadData) {
+			payload.append(key, payloadData[key]);
 		}
 
 		updateMutation.mutateAsync({ id, data: payload });
@@ -89,12 +92,8 @@ export default function AdminEventParticipantEdit() {
 		<div className="w-full mx-auto p-4 sm:p-6 max-w-6xl min-h-[calc(100vh-4rem)]">
 			<div className="bg-white shadow-xl rounded-lg p-4 sm:p-6">
 				<header className="mb-6 sm:mb-8">
-					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
-						Edit Participant
-					</h1>
-					<p className="text-xs sm:text-sm text-gray-500 mt-1">
-						Ubah data participant.
-					</p>
+					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Edit Participant</h1>
+					<p className="text-xs sm:text-sm text-gray-500 mt-1">Ubah data participant.</p>
 				</header>
 
 				<form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
@@ -174,7 +173,7 @@ export default function AdminEventParticipantEdit() {
 									Tanggal Hadir
 								</label>
 								<input
-									type="date"
+									type="datetime-local"
 									name="tanggal_hadir"
 									value={formData.tanggal_hadir}
 									onChange={handleChange}

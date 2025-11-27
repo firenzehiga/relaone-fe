@@ -41,6 +41,17 @@ export const toInputDate = (input) => {
 };
 
 /**
+ * Mengembalikan nilai yang cocok dipakai untuk <input type="datetime-local" />
+ * Format output: 'YYYY-MM-DDTHH:mm' (tanpa detik)
+ * Menerima Date, timestamp, atau string (ISO / 'YYYY-MM-DD HH:mm:ss').
+ */
+export const toInputDatetime = (input) => {
+	const d = toDayjs(input);
+	if (!d || !d.isValid()) return "";
+	return d.format("YYYY-MM-DDTHH:mm");
+};
+
+/**
  * Mengembalikan waktu dalam format 'HH:mm' untuk dipakai di form
  * sebagai nilai untuk <input type="time" />.
  * Menerima string dalam format 'HH:mm:ss' atau 'HH:mm'.
