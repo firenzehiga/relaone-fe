@@ -36,10 +36,7 @@ export default function EventCard({ event, onJoin, className, showOrganizer = fa
 
 		return statusConfig[status] || statusConfig.published;
 	};
-
-	// Note: category color will now come from `event.category?.warna` (hex)
-	// and be passed directly to the `Badge` component as a `color` prop.
-
+	
 	const statusBadge = getStatusBadge(event.status);
 	const slotsRemaining = event.maks_peserta - (event.peserta_saat_ini || 0);
 
@@ -47,9 +44,11 @@ export default function EventCard({ event, onJoin, className, showOrganizer = fa
 	const isFull = slotsRemaining <= 0;
 	const eventStart = new Date(event.tanggal_mulai);
 	const eventEnd = new Date(`${event.tanggal_selesai}T${event.waktu_selesai}`); // gabungan tanggal & waktu mulai contoh Tue Nov 18 2025 20:28:00 GMT+0700 (Western Indonesia Time)event.tanggal_selesai);
+	const registrationEnd = new Date(event.batas_pendaftaran);
+	registrationEnd.setHours(23, 59, 59, 999); // set ke akhir hari batas pendaftaran
 
 	const now = new Date();
-	const isRegistrationClosed = now >= new Date(event.batas_pendaftaran);
+	const isRegistrationClosed = now >= registrationEnd;
 	const isStarted = now >= eventStart || event.status === "ongoing";
 	const isFinished = now >= eventEnd || event.status === "completed";
 
