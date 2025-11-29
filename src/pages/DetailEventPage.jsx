@@ -67,9 +67,11 @@ export default function DetailEventPage() {
 	const isFull = slotsRemaining <= 0;
 	const eventStart = new Date(event.tanggal_mulai);
 	const eventEnd = new Date(`${event.tanggal_selesai}T${event.waktu_selesai}`); // gabungan tanggal & waktu mulai contoh Tue Nov 18 2025 20:28:00 GMT+0700 (Western Indonesia Time)event.tanggal_selesai);
+	const registrationEnd = new Date(event.batas_pendaftaran);
+	registrationEnd.setHours(23, 59, 59, 999); // set ke akhir hari batas pendaftaran
 
 	const now = new Date();
-	const isRegistrationClosed = now >= new Date(event.batas_pendaftaran);
+	const isRegistrationClosed = now >= registrationEnd;
 	const isStarted = now >= eventStart || event.status === "ongoing";
 	const isFinished = now >= eventEnd || event.status === "completed";
 
@@ -203,7 +205,7 @@ export default function DetailEventPage() {
 							</div>
 						</div>
 
-						{(event.persyaratan.length > 0 || event.manfaat.length > 0) && (
+						{(event.persyaratan || event.manfaat) && (
 							<div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
 								{event.persyaratan && (
 									<div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
