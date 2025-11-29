@@ -222,10 +222,11 @@ export const useLogin = () => {
 			setLoading(false);
 			const msg = parseApiError(error) || "Login failed";
 			setError(msg);
+			toast.dismiss();
 			showToast({
 				type: "error",
 				tipIcon: "💡",
-				tipText: "Periksa kembali atau Coba hubungi bantuan.",
+				tipText: "Pastikan Email dan Password Anda benar.",
 				message: msg,
 				duration: 4000,
 				position: "top-center",

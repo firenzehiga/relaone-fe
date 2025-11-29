@@ -35,10 +35,11 @@ import RegisterPage from "@/pages/auth/RegisterPage";
 import ForgotPasswordPage from "@/pages/auth/ForgotPassword";
 import ResetPasswordPage from "@/pages/auth/ResetPassword";
 import ChangePasswordPage from "@/pages/auth/ChangePasswordPage";
+
 // Modals
-import JoinEventModal from "@/components/JoinEventModal";
-import CancelJoinModal from "@/components/CancelJoinModal";
-import FeedbackModal from "@/components/FeedbackModal";
+import JoinEventModal from "@/components/volunteer/JoinEventModal";
+import CancelJoinModal from "@/components/volunteer/CancelJoinModal";
+import FeedbackModal from "@/components/volunteer/FeedbackModal";
 const NotFound = lazy(() => import("@/components/fallback/NotFound"));
 
 // Admin Pages

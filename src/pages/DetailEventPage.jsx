@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 
-import { Calendar, MapPin, Users, Clock, CalendarX } from "lucide-react";
+import { Calendar, MapPin, Users, Clock, CalendarX, Gift, NotepadText } from "lucide-react";
 import { AsyncImage } from "loadable-image";
 import { Fade } from "transitions-kit";
 
@@ -205,11 +205,13 @@ export default function DetailEventPage() {
 							</div>
 						</div>
 
-						{(event.persyaratan || event.manfaat) && (
+						{(event.persyaratan.length > 0 || event.manfaat.length > 0) && (
 							<div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
 								{event.persyaratan && (
 									<div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-										<h4 className="font-semibold text-amber-800 mb-3">📋 Persyaratan</h4>
+										<h4 className="font-semibold text-amber-800 mb-3 flex items-center">
+											<NotepadText className="w-5 h-5 mr-2" /> Persyaratan Persyaratan
+										</h4>
 										{Array.isArray(event.persyaratan) ? (
 											<ul className="space-y-2">
 												{event.persyaratan.map((req, i) => (
@@ -226,7 +228,9 @@ export default function DetailEventPage() {
 
 								{event.manfaat && (
 									<div className="bg-green-50 border border-green-200 rounded-lg p-4">
-										<h4 className="font-semibold text-green-800 mb-3">🎁 Manfaat</h4>
+										<h4 className="font-semibold text-green-800 mb-3 flex items-center">
+											<Gift className="w-5 h-5 mr-2" /> Manfaat
+										</h4>
 										{Array.isArray(event.manfaat) ? (
 											<ul className="space-y-2">
 												{event.manfaat.map((benefit, i) => (

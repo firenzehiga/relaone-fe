@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Check, Calendar, MapPin, Users, Clock } from "lucide-react";
+import { Check, Calendar, MapPin, Users, Clock, NotepadText, Gift } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import DynamicButton from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
@@ -170,13 +170,13 @@ export default function JoinEventModal() {
 					</div>
 
 					<form onSubmit={handleSubmit} className="space-y-6">
-						{(event.persyaratan || event.manfaat) && (
+						{(event.persyaratan.length > 0 || event.manfaat.length > 0) && (
 							<div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
 								{/* Requirements */}
 								{event.persyaratan && (
 									<div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
 										<h4 className="font-bold text-amber-800 mb-3 flex items-center">
-											📋 Persyaratan
+											<NotepadText className="w-5 h-5 mr-2" /> Persyaratan
 										</h4>
 										<div className="text-amber-700 text-sm leading-relaxed">
 											{Array.isArray(event.persyaratan) ? (
@@ -196,7 +196,9 @@ export default function JoinEventModal() {
 								)}
 								{event.manfaat && (
 									<div className="bg-green-50 border border-green-200 rounded-xl p-5">
-										<h4 className="font-bold text-green-800 mb-3 flex items-center">📋 Manfaat</h4>
+										<h4 className="font-bold text-green-800 mb-3 flex items-center">
+											<Gift className="w-5 h-5 mr-2" /> Manfaat
+										</h4>
 										<div className="text-green-700 text-sm leading-relaxed">
 											{Array.isArray(event.manfaat) ? (
 												<ul className="space-y-2">

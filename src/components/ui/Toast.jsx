@@ -1,11 +1,5 @@
 import { toast } from "react-hot-toast";
-import {
-	CheckCircle,
-	XCircle,
-	AlertTriangle,
-	Info,
-	Lightbulb,
-} from "lucide-react";
+import { CheckCircle, XCircle, AlertTriangle, Info, Lightbulb } from "lucide-react";
 
 /**
  * Custom Toast Component untuk notifikasi yang lebih fleksibel
@@ -129,9 +123,7 @@ const Toast = ({
 							) : (
 								finalTipIcon
 							)}
-							<span className={`text-xs ${config.tipTextColor}`}>
-								{tipText}
-							</span>
+							<span className={`text-xs ${config.tipTextColor}`}>{tipText}</span>
 						</div>
 					</div>
 				)}
@@ -149,8 +141,7 @@ const Toast = ({
 			padding: "14px",
 			borderRadius: "16px",
 			minWidth: "250px",
-			boxShadow:
-				"0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+			boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
 		},
 	});
 };
