@@ -29,14 +29,14 @@ export default function EventCard({ event, onJoin, className, showOrganizer = fa
 			draft: { variant: "warning", text: "Draft" },
 			published: { variant: "success", text: "Terbuka" },
 			ongoing: { variant: "warning", text: "Sedang Berlangsung" },
-			completed: { variant: "primary", text: "Sudah Selesai" },
+			completed: { variant: "primary", text: "Selesai" },
 			cancelled: { variant: "danger", text: "Dibatalkan" },
 			full: { variant: "secondary", text: "Penuh" },
 		};
 
 		return statusConfig[status] || statusConfig.published;
 	};
-	
+
 	const statusBadge = getStatusBadge(event.status);
 	const slotsRemaining = event.maks_peserta - (event.peserta_saat_ini || 0);
 

@@ -37,10 +37,12 @@ export function LoginIllustration() {
 								{/* Mouth */}
 								<div className="absolute top-14 left-1/2 transform -translate-x-1/2 w-6 h-2 border-b-2 border-white rounded-full"></div>
 								{/* Whiskers */}
-								<div className="absolute top-11 left-2 w-6 h-0.5 bg-white rounded"></div>
-								<div className="absolute top-13 left-2 w-6 h-0.5 bg-white rounded"></div>
-								<div className="absolute top-11 right-2 w-6 h-0.5 bg-white rounded"></div>
-								<div className="absolute top-13 right-2 w-6 h-0.5 bg-white rounded"></div>
+								<div className="absolute top-16 left-2 w-6 h-0.5 bg-white rounded rotate-6"></div>
+								<div className="absolute top-20 left-2 w-6 h-0.5 bg-white rounded"></div>
+								<div className="absolute top-24 left-2 w-6 h-0.5 bg-white rounded"></div>
+								<div className="absolute top-16 right-2 w-6 h-0.5 bg-white rounded -rotate-6"></div>
+								<div className="absolute top-20 right-2 w-6 h-0.5 bg-white rounded"></div>
+								<div className="absolute top-24 right-2 w-6 h-0.5 bg-white rounded"></div>
 							</div>
 							{/* Arms */}
 							<div className="absolute -bottom-2 -left-4 w-8 h-12 bg-orange-400 rounded-full transform rotate-12"></div>
@@ -68,8 +70,7 @@ export function LoginIllustration() {
 					animate={{ y: 0, opacity: 1 }}
 					transition={{ delay: 0.9, duration: 0.5 }}
 					className="text-lg opacity-80">
-					Bergabung ke komunitas relawan sekarang dan mulai berkontribusi untuk
-					mengubah dunia!
+					Bergabung ke komunitas relawan sekarang dan mulai berkontribusi untuk mengubah dunia!
 				</motion.p>
 			</div>
 
