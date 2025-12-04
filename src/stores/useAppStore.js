@@ -99,9 +99,7 @@ export const useEventStore = create((set, get) => ({
 
 		// Filter by category
 		if (filters.category) {
-			filtered = filtered.filter(
-				(event) => event.category_id === parseInt(filters.category)
-			);
+			filtered = filtered.filter((event) => event.category_id === parseInt(filters.category));
 		}
 
 		// Filter by search (title & description)
@@ -187,6 +185,11 @@ export const useModalStore = create((set) => ({
 			selectedFeedbackParticipant: null,
 		}),
 
+	// ACTIONS - Onboarding Modal
+	isOnboardingModalOpen: false,
+	openOnboardingModal: () => set({ isOnboardingModalOpen: true }),
+	closeOnboardingModal: () => set({ isOnboardingModalOpen: false }),
+
 	// ACTIONS - Detail Modal
 	// ACTIONS - Close All
 	closeAllModals: () =>
@@ -197,5 +200,10 @@ export const useModalStore = create((set) => ({
 			// cancel modal
 			isCancelModalOpen: false,
 			selectedCancelParticipant: null,
+			// feedback modal
+			isFeedbackModalOpen: false,
+			selectedFeedbackParticipant: null,
+			// onboarding modal
+			isOnboardingModalOpen: false,
 		}),
 }));

@@ -12,6 +12,7 @@ import { useEventById } from "@/_hooks/useEvents";
 import { useModalStore } from "@/stores/useAppStore";
 import { AsyncImage } from "loadable-image";
 import { formatDate, formatTime } from "@/utils/dateFormatter";
+import { showToast } from "../ui/Toast";
 
 /**
  * Modal untuk join event volunteer
@@ -62,6 +63,13 @@ export default function JoinEventModal() {
 
 		if (!isAuthenticated) {
 			closeJoinModal();
+			showToast({
+				type: "warning",
+				title: "Anda belum login",
+				message: "Silakan login atau daftar akun terlebih dahulu untuk mendaftar event",
+				duration: 3000,
+				position: "top-right",
+			});
 			navigate("/login", { state: { from: location }, replace: true });
 			return;
 		}

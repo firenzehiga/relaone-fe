@@ -3,6 +3,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { useUserRole } from "@/_hooks/useAuth";
 import AdminFooter from "@/components/layout/admin/AdminFooter";
+
 export default function MainLayout() {
 	const currentRole = useUserRole();
 

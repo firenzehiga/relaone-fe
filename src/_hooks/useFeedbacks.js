@@ -70,13 +70,13 @@ export const useVolunteerSendFeedbackMutation = () => {
 			// setLoading will be called manually in the component if needed
 
 			// Show success toast
-			showToast({
-				type: "success",
-				title: "Terima kasih!",
-				message: "Feedback berhasil dikirim",
-				duration: 3000,
-				position: "top-center",
-			});
+			// showToast({
+			// 	type: "success",
+			// 	title: "Terima kasih!",
+			// 	message: "Feedback berhasil dikirim",
+			// 	duration: 3000,
+			// 	position: "top-right",
+			// });
 		},
 		onError: (error) => {
 			setLoading(false);

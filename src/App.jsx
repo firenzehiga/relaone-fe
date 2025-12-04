@@ -19,33 +19,42 @@ import LandingPage from "@/pages/LandingPage";
 import EventsPage from "@/pages/EventsPage";
 import OrganizationsPage from "@/pages/OrganizationsPage";
 import AboutPage from "@/pages/AboutPage";
-import { PrivacyPolicyPage } from "@/pages/PrivacyTerms";
-import { TermsOfServicePage } from "@/pages/PrivacyTerms";
-
+const { PrivacyPolicyPage, TermsOfServicePage } = {
+	PrivacyPolicyPage: lazy(() =>
+		import("./pages/PrivacyTerms").then((m) => ({ default: m.PrivacyPolicyPage }))
+	),
+	TermsOfServicePage: lazy(() =>
+		import("./pages/PrivacyTerms").then((m) => ({ default: m.TermsOfServicePage }))
+	),
+};
 // Volunteer
 import DetailEventPage from "@/pages/DetailEventPage";
-import ProfilePage from "@/pages/volunteer/ProfilePage";
-import EditProfilePage from "@/pages/volunteer/EditProfilePage";
+const ProfilePage = lazy(() => import("@/pages/volunteer/ProfilePage"));
+const EditProfilePage = lazy(() => import("@/pages/volunteer/EditProfilePage"));
 import MyActivitiesPage from "@/pages/volunteer/MyActivitiesPage";
 import ActivityDetailPage from "@/pages/volunteer/ActivityDetailPage";
 
 // Auth Pages
 import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
-import ForgotPasswordPage from "@/pages/auth/ForgotPassword";
-import ResetPasswordPage from "@/pages/auth/ResetPassword";
-import ChangePasswordPage from "@/pages/auth/ChangePasswordPage";
+const ForgotPasswordPage = lazy(() => import("@/pages/auth/ForgotPassword"));
+const ResetPasswordPage = lazy(() => import("@/pages/auth/ResetPassword"));
+const ChangePasswordPage = lazy(() => import("@/pages/auth/ChangePasswordPage"));
 
 // Modals
 import JoinEventModal from "@/components/volunteer/JoinEventModal";
 import CancelJoinModal from "@/components/volunteer/CancelJoinModal";
 import FeedbackModal from "@/components/volunteer/FeedbackModal";
-const NotFound = lazy(() => import("@/components/fallback/NotFound"));
+import OnboardingModal from "@/components/volunteer/OnboardingModal";
+
+// Fallback Components
+import SuspenseFallback from "@/components/fallback/SuspenseFallback";
+import NotFound from "@/components/fallback/NotFound";
 
 // Admin Pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminProfilePage from "@/pages/admin/profiles/ProfilePage";
-import AdminEditProfilePage from "@/pages/admin/profiles/EditProfilePage";
+const AdminEditProfilePage = lazy(() => import("@/pages/admin/profiles/EditProfilePage"));
 
 import AdminUser from "@/pages/admin/users/UserRead";
 
@@ -75,7 +84,9 @@ import AdminFeedbackEdit from "@/pages/admin/feedbacks/FeedbackEdit";
 // Organization Pages
 import OrganizationsDashboard from "@/pages/organization/OrganizationDashboard";
 import OrganizationProfilePage from "@/pages/organization/profiles/ProfilePage";
-import OrganizationEditProfilePage from "@/pages/organization/profiles/EditProfilePage";
+const OrganizationEditProfilePage = lazy(() =>
+	import("@/pages/organization/profiles/EditProfilePage")
+);
 
 import OrganizationEvent from "@/pages/organization/events/EventRead";
 import OrganizationEventCreate from "@/pages/organization/events/EventCreate";
@@ -103,177 +114,179 @@ function App() {
 	return (
 		<>
 			<ScrollToTop />
-			<Routes>
-				{/* PUBLIC ROUTES (bareng volunteer nanti) */}
-				<Route
-					element={
-						<PublicRoute>
-							<MainLayout />
-						</PublicRoute>
-					}>
-					<Route path="/" element={<LandingPage />} />
-					<Route path="events">
-						<Route index element={<EventsPage />} />
-						<Route path="details/:eventId" element={<DetailEventPage />} />
+			<Suspense fallback={<SuspenseFallback />}>
+				<Routes>
+					{/* PUBLIC ROUTES (bareng volunteer nanti) */}
+					<Route
+						element={
+							<PublicRoute>
+								<MainLayout />
+							</PublicRoute>
+						}>
+						<Route path="/" element={<LandingPage />} />
+						<Route path="events">
+							<Route index element={<EventsPage />} />
+							<Route path="details/:eventId" element={<DetailEventPage />} />
+						</Route>
+						<Route path="organizations" element={<OrganizationsPage />} />
+						<Route path="about-us" element={<AboutPage />} />
 					</Route>
-					<Route path="organizations" element={<OrganizationsPage />} />
-					<Route path="about-us" element={<AboutPage />} />
-				</Route>
-				<Route path="privacy-policy" element={<PrivacyPolicyPage />} />
-				<Route path="terms-of-service" element={<TermsOfServicePage />} />
-				<Route
-					path="volunteer"
-					element={
-						<VolunteerRoute>
-							<MainLayout />
-						</VolunteerRoute>
-					}>
-					<Route path="profile">
-						<Route index element={<ProfilePage />} />
-						<Route path="edit" element={<EditProfilePage />} />
-					</Route>
-					<Route path="my-activities">
-						<Route index element={<MyActivitiesPage />} />
-						<Route path=":id" element={<ActivityDetailPage />} />
-					</Route>
-				</Route>
-
-				<Route
-					path="forgot-password"
-					element={
-						<GuestRoute>
-							<ForgotPasswordPage />
-						</GuestRoute>
-					}
-				/>
-				<Route
-					path="reset-password"
-					element={
-						<GuestRoute>
-							<ResetPasswordPage />
-						</GuestRoute>
-					}
-				/>
-
-				{/* ADMIN ROUTES */}
-				<Route
-					path="admin"
-					element={
-						<AdminRoute>
-							<AdminLayout />
-						</AdminRoute>
-					}>
-					<Route path="dashboard" element={<AdminDashboard />} />
-					<Route path="profile">
-						<Route index element={<AdminProfilePage />} />
-						<Route path="edit" element={<AdminEditProfilePage />} />
-					</Route>
-					<Route path="events">
-						<Route index element={<AdminEvent />} />
-						<Route path="create" element={<AdminEventCreate />} />
-						<Route path="edit/:id" element={<AdminEventEdit />} />
+					<Route path="privacy-policy" element={<PrivacyPolicyPage />} />
+					<Route path="terms-of-service" element={<TermsOfServicePage />} />
+					<Route
+						path="volunteer"
+						element={
+							<VolunteerRoute>
+								<MainLayout />
+							</VolunteerRoute>
+						}>
+						<Route path="profile">
+							<Route index element={<ProfilePage />} />
+							<Route path="edit" element={<EditProfilePage />} />
+						</Route>
+						<Route path="my-activities">
+							<Route index element={<MyActivitiesPage />} />
+							<Route path=":id" element={<ActivityDetailPage />} />
+						</Route>
 					</Route>
 
-					<Route path="users">
-						<Route index element={<AdminUser />} />
+					<Route
+						path="forgot-password"
+						element={
+							<GuestRoute>
+								<ForgotPasswordPage />
+							</GuestRoute>
+						}
+					/>
+					<Route
+						path="reset-password"
+						element={
+							<GuestRoute>
+								<ResetPasswordPage />
+							</GuestRoute>
+						}
+					/>
+
+					{/* ADMIN ROUTES */}
+					<Route
+						path="admin"
+						element={
+							<AdminRoute>
+								<AdminLayout />
+							</AdminRoute>
+						}>
+						<Route path="dashboard" element={<AdminDashboard />} />
+						<Route path="profile">
+							<Route index element={<AdminProfilePage />} />
+							<Route path="edit" element={<AdminEditProfilePage />} />
+						</Route>
+						<Route path="events">
+							<Route index element={<AdminEvent />} />
+							<Route path="create" element={<AdminEventCreate />} />
+							<Route path="edit/:id" element={<AdminEventEdit />} />
+						</Route>
+
+						<Route path="users">
+							<Route index element={<AdminUser />} />
+						</Route>
+
+						<Route path="organizations">
+							<Route index element={<AdminOrganization />} />
+							<Route path="create" element={<AdminOrganizationCreate />} />
+							<Route path="edit/:id" element={<AdminOrganizationEdit />} />
+						</Route>
+
+						<Route path="event-participants">
+							<Route index element={<AdminEventParticipant />} />
+							<Route path="create" element={<AdminEventParticipantCreate />} />
+							<Route path="edit/:id" element={<AdminEventParticipantEdit />} />
+						</Route>
+						<Route path="locations">
+							<Route index element={<AdminLocation />} />
+							<Route path="create" element={<AdminLocationCreate />} />
+							<Route path="edit/:id" element={<AdminLocationEdit />} />
+						</Route>
+						<Route path="categories">
+							<Route index element={<AdminCategory />} />
+							<Route path="create" element={<AdminCategoryCreate />} />
+							<Route path="edit/:id" element={<AdminCategoryEdit />} />
+						</Route>
+						<Route path="feedbacks">
+							<Route index element={<AdminFeedback />} />
+							<Route path="edit/:id" element={<AdminFeedbackEdit />} />
+						</Route>
 					</Route>
 
-					<Route path="organizations">
-						<Route index element={<AdminOrganization />} />
-						<Route path="create" element={<AdminOrganizationCreate />} />
-						<Route path="edit/:id" element={<AdminOrganizationEdit />} />
+					{/* ORGANIZATION ROUTES */}
+					<Route
+						path="organization"
+						element={
+							<OrganizationRoute>
+								<MainLayout />
+							</OrganizationRoute>
+						}>
+						<Route path="dashboard" element={<OrganizationsDashboard />} />
+						<Route path="profile">
+							<Route index element={<OrganizationProfilePage />} />
+							<Route path="edit" element={<OrganizationEditProfilePage />} />
+						</Route>
+						<Route path="event-participants">
+							<Route index element={<OrganizationEventParticipant />} />
+							<Route path="scanner/:eventId" element={<EventScannerPage />} />
+						</Route>
+
+						<Route path="events">
+							<Route index element={<OrganizationEvent />} />
+							<Route path="create" element={<OrganizationEventCreate />} />
+							<Route path="edit/:id" element={<OrganizationEventEdit />} />
+						</Route>
+
+						<Route path="feedbacks">
+							<Route index element={<OrganizationFeedback />} />
+						</Route>
+
+						<Route path="locations">
+							<Route index element={<OrganizationLocation />} />
+							<Route path="create" element={<OrganizationLocationCreate />} />
+							<Route path="edit/:id" element={<OrganizationLocationEdit />} />
+						</Route>
 					</Route>
 
-					<Route path="event-participants">
-						<Route index element={<AdminEventParticipant />} />
-						<Route path="create" element={<AdminEventParticipantCreate />} />
-						<Route path="edit/:id" element={<AdminEventParticipantEdit />} />
+					{/* AUTH ROUTES */}
+					<Route
+						path="/login"
+						element={
+							<GuestRoute>
+								<LoginPage />
+							</GuestRoute>
+						}
+					/>
+					{/* Change Password - shared protected page for all authenticated roles */}
+					<Route
+						element={
+							<ProtectedRoute allowedRoles={["admin", "organization", "volunteer"]}>
+								<MainLayout />
+							</ProtectedRoute>
+						}>
+						<Route path="change-password" element={<ChangePasswordPage />} />
 					</Route>
-					<Route path="locations">
-						<Route index element={<AdminLocation />} />
-						<Route path="create" element={<AdminLocationCreate />} />
-						<Route path="edit/:id" element={<AdminLocationEdit />} />
-					</Route>
-					<Route path="categories">
-						<Route index element={<AdminCategory />} />
-						<Route path="create" element={<AdminCategoryCreate />} />
-						<Route path="edit/:id" element={<AdminCategoryEdit />} />
-					</Route>
-					<Route path="feedbacks">
-						<Route index element={<AdminFeedback />} />
-						<Route path="edit/:id" element={<AdminFeedbackEdit />} />
-					</Route>
-				</Route>
-
-				{/* ORGANIZATION ROUTES */}
-				<Route
-					path="organization"
-					element={
-						<OrganizationRoute>
-							<MainLayout />
-						</OrganizationRoute>
-					}>
-					<Route path="dashboard" element={<OrganizationsDashboard />} />
-					<Route path="profile">
-						<Route index element={<OrganizationProfilePage />} />
-						<Route path="edit" element={<OrganizationEditProfilePage />} />
-					</Route>
-					<Route path="event-participants">
-						<Route index element={<OrganizationEventParticipant />} />
-						<Route path="scanner/:eventId" element={<EventScannerPage />} />
-					</Route>
-
-					<Route path="events">
-						<Route index element={<OrganizationEvent />} />
-						<Route path="create" element={<OrganizationEventCreate />} />
-						<Route path="edit/:id" element={<OrganizationEventEdit />} />
-					</Route>
-
-					<Route path="feedbacks">
-						<Route index element={<OrganizationFeedback />} />
-					</Route>
-
-					<Route path="locations">
-						<Route index element={<OrganizationLocation />} />
-						<Route path="create" element={<OrganizationLocationCreate />} />
-						<Route path="edit/:id" element={<OrganizationLocationEdit />} />
-					</Route>
-				</Route>
-
-				{/* AUTH ROUTES */}
-				<Route
-					path="/login"
-					element={
-						<GuestRoute>
-							<LoginPage />
-						</GuestRoute>
-					}
-				/>
-				{/* Change Password - shared protected page for all authenticated roles */}
-				<Route
-					element={
-						<ProtectedRoute allowedRoles={["admin", "organization", "volunteer"]}>
-							<MainLayout />
-						</ProtectedRoute>
-					}>
-					<Route path="change-password" element={<ChangePasswordPage />} />
-				</Route>
-				<Route
-					path="/register"
-					element={
-						<GuestRoute>
-							<RegisterPage />
-						</GuestRoute>
-					}
-				/>
-				{/* Fallback Route */}
-				<Route path="*" element={<NotFound />} />
-			</Routes>
-
+					<Route
+						path="/register"
+						element={
+							<GuestRoute>
+								<RegisterPage />
+							</GuestRoute>
+						}
+					/>
+					{/* Fallback Route */}
+					<Route path="*" element={<NotFound />} />
+				</Routes>
+			</Suspense>
 			{/* Global Modals */}
 			<JoinEventModal />
 			<CancelJoinModal />
 			<FeedbackModal />
+			<OnboardingModal />
 
 			{/* Floating help button */}
 			<FloatingHelp whatsapp={"6285894310722"} email={"relaonevolunteer@gmail.com"} />

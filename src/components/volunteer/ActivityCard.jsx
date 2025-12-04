@@ -225,7 +225,7 @@ export default function ActivityCard({ data, onClick }) {
 												size="sm"
 												disabled
 												className="cursor-not-allowed w-full sm:w-auto">
-												Sudah Kasih Feedback
+												Feedback diberikan
 											</DynamicButton>
 										);
 									} else {

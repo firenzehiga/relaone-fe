@@ -1,16 +1,14 @@
-import {
-	Heart,
-	Mail,
-	Phone,
-	MapPin,
-	Facebook,
-	Instagram,
-	Twitter,
-} from "lucide-react";
+import { Heart, Mail, Phone, MapPin, Facebook, Instagram, Twitter } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useModalStore } from "@/stores/useAppStore";
 
 export default function Footer() {
 	const currentYear = new Date().getFullYear();
+	const { openOnboardingModal, closeOnboardingModal } = useModalStore();
+
+	const handleOpenOnboarding = () => {
+		openOnboardingModal();
+	};
 
 	return (
 		<footer className="w-full bg-gradient-to-br from-emerald-200 via-white to-emerald-200 border-t border-gray-200">
@@ -25,14 +23,15 @@ export default function Footer() {
 							<span className="text-gray-900">ne</span>
 						</a>
 						<p className="py-8 text-gray-500 lg:max-w-xs text-center lg:text-left">
-							Platform yang menghubungkan para volunteer dengan organisasi untuk
-							berbagai kegiatan sosial yang bermanfaat bagi masyarakat.
+							Platform yang menghubungkan para volunteer dengan organisasi untuk berbagai kegiatan
+							sosial yang bermanfaat bagi masyarakat.
 						</p>
-						<Link
-							to="/contact"
+						<a
+							href="https://wa.me/085894310722"
+							target="_blank"
 							className="py-2.5 px-5 block w-fit bg-emerald-600 rounded-full shadow-sm text-white mx-auto transition-all duration-500 hover:bg-emerald-700 lg:mx-0 font-semibold">
 							Contact us
-						</Link>
+						</a>
 					</div>
 
 					<div className="lg:mx-auto text-left ">
@@ -44,23 +43,17 @@ export default function Footer() {
 								</Link>
 							</li>
 							<li className="mb-6">
-								<Link
-									to="/events"
-									className="text-gray-600 hover:text-gray-900">
+								<Link to="/events" className="text-gray-600 hover:text-gray-900">
 									Event
 								</Link>
 							</li>
 							<li className="mb-6">
-								<Link
-									to="/organizations"
-									className="text-gray-600 hover:text-gray-900">
+								<Link to="/organizations" className="text-gray-600 hover:text-gray-900">
 									Organizations
 								</Link>
 							</li>
 							<li>
-								<Link
-									to="/about-us"
-									className="text-gray-600 hover:text-gray-900">
+								<Link to="/about-us" className="text-gray-600 hover:text-gray-900">
 									About Us
 								</Link>
 							</li>
@@ -71,18 +64,27 @@ export default function Footer() {
 						<h4 className="text-lg text-gray-900 font-medium mb-7">Legal</h4>
 						<ul className=" transition-all duration-500">
 							<li className="mb-6">
-								<Link
-									to="/terms-of-service"
-									className="text-gray-600 hover:text-gray-900">
+								<Link to="/terms-of-service" className="text-gray-600 hover:text-gray-900">
 									Terms &amp; Conditions
 								</Link>
 							</li>
 							<li>
-								<Link
-									to="/privacy-policy"
-									className="text-gray-600 hover:text-gray-900">
+								<Link to="/privacy-policy" className="text-gray-600 hover:text-gray-900">
 									Privacy Policy
 								</Link>
+							</li>
+						</ul>
+					</div>
+
+					<div className="lg:mx-auto text-left ">
+						<h4 className="text-lg text-gray-900 font-medium mb-7">Panduan</h4>
+						<ul className=" transition-all duration-500">
+							<li className="mb-6">
+								<button
+									onClick={handleOpenOnboarding}
+									className="text-gray-600 hover:text-gray-900 text-left">
+									Panduan Pendaftaran
+								</button>
 							</li>
 						</ul>
 					</div>
@@ -129,27 +131,7 @@ export default function Footer() {
 						<div className="flex mt-4 space-x-4 sm:justify-center lg:mt-0 ">
 							<a
 								href="#"
-								className="w-8 h-8 rounded-full transition-all duration-500 flex justify-center items-center bg-[#33CCFF] hover:bg-gray-900"
-								aria-label="Star">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="20"
-									height="20"
-									viewBox="0 0 20 20"
-									fill="none">
-									<g id="Social Media">
-										<path
-											id="Vector"
-											d="M11.3214 8.93666L16.4919 3.05566H15.2667L10.7772 8.16205L7.1914 3.05566H3.05566L8.47803 10.7774L3.05566 16.9446H4.28097L9.022 11.552L12.8088 16.9446H16.9446L11.3211 8.93666H11.3214ZM9.64322 10.8455L9.09382 10.0765L4.72246 3.95821H6.60445L10.1322 8.8959L10.6816 9.66481L15.2672 16.083H13.3852L9.64322 10.8458V10.8455Z"
-											fill="white"
-										/>
-									</g>
-								</svg>
-							</a>
-
-							<a
-								href="#"
-								className="relative w-8 h-8 rounded-full transition-all duration-500 flex justify-center items-center bg-[linear-gradient(45deg,#FEE411_6.9%,#FEDB16_10.98%,#FEC125_17.77%,#FE983D_26.42%,#FE5F5E_36.5%,#FE2181_46.24%,#9000DC_85.57%)] hover:bg-gray-900">
+								className="relative w-8 h-8 rounded-full transition-all duration-500 flex justify-center items-center bg-[linear-gradient(45deg,#FEE411_6.9%,#FEDB16_10.98%,#FEC125_17.77%,#FE983D_26.42%,#FE5F5E_36.5%,#FE2181_46.24%,#9000DC_85.57%)]">
 								<svg
 									className="w-[1.25rem] h-[1.125rem] text-white"
 									viewBox="0 0 16 16"
@@ -164,7 +146,7 @@ export default function Footer() {
 
 							<a
 								href="#"
-								className="relative w-8 h-8 rounded-full transition-all duration-500 flex justify-center items-center bg-[#337FFF] hover:bg-gray-900">
+								className="relative w-8 h-8 rounded-full transition-all duration-500 flex justify-center items-center bg-[#337FFF]">
 								<svg
 									className="w-[1rem] h-[1rem] text-white"
 									viewBox="0 0 8 14"
@@ -179,7 +161,7 @@ export default function Footer() {
 
 							<a
 								href="#"
-								className="relative w-8 h-8 rounded-full transition-all duration-500 flex justify-center items-center bg-[#FF0000] hover:bg-gray-900">
+								className="relative w-8 h-8 rounded-full transition-all duration-500 flex justify-center items-center bg-[#FF0000]">
 								<svg
 									className="w-[1.25rem] h-[0.875rem] text-white"
 									viewBox="0 0 16 12"

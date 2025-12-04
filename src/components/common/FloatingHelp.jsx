@@ -1,4 +1,4 @@
-import { HelpCircle, Mail } from "lucide-react";
+import { Mail, BookOpen } from "lucide-react";
 
 /**
  * FloatingHelp
@@ -9,6 +9,8 @@ import { HelpCircle, Mail } from "lucide-react";
 export default function FloatingHelp({
 	whatsapp = "085894310722",
 	email = "relaonevolunteer@gmail.com",
+	onGuideClick,
+	showGuide = false,
 }) {
 	const waHref = `https://wa.me/${whatsapp}`;
 	const mailHref = `mailto:${email}`;
@@ -16,7 +18,7 @@ export default function FloatingHelp({
 	return (
 		<div className="fixed bottom-6 left-6 z-50">
 			{/* group wrapper to control hover */}
-			<div className="group relative flex items-end">
+			<div className="group relative">
 				{/* Main floating button (left side) */}
 				<button
 					aria-label="Bantuan"
@@ -40,15 +42,26 @@ export default function FloatingHelp({
 				</button>
 
 				{/* Hidden action buttons, appear on hover (to the right of the button) */}
-				<div className="flex flex-col items-start mb-3 ml-3 space-y-3 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200">
+				<div className="absolute left-full bottom-0 ml-3 flex flex-col space-y-2.5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+					{showGuide && onGuideClick && (
+						<button
+							onClick={onGuideClick}
+							className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded-lg shadow-lg text-xs whitespace-nowrap">
+							<span className="p-1.5 bg-white bg-opacity-10 rounded-full">
+								<BookOpen className="w-3.5 h-3.5" />
+							</span>
+							<span>Panduan Volunteer</span>
+						</button>
+					)}
+
 					<a
 						href={waHref}
 						target="_blank"
 						rel="noreferrer"
-						className="flex items-center space-x-3 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg shadow-lg text-sm">
-						<span className="p-2 bg-white bg-opacity-10 rounded-full">
+						className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-2.5 py-1.5 rounded-lg shadow-lg text-xs whitespace-nowrap">
+						<span className="p-1.5 bg-white bg-opacity-10 rounded-full">
 							<svg
-								class="w-6 h-6 text-gray-800 dark:text-white"
+								class="w-5 h-5 text-gray-800 dark:text-white"
 								aria-hidden="true"
 								xmlns="http://www.w3.org/2000/svg"
 								width="24"
@@ -72,9 +85,9 @@ export default function FloatingHelp({
 
 					<a
 						href={mailHref}
-						className="flex items-center space-x-3 bg-red-800 hover:bg-red-900 text-white px-3 py-2 rounded-lg shadow-lg text-sm">
-						<span className="p-2 bg-white bg-opacity-10 rounded-full">
-							<Mail className="w-4 h-4" />
+						className="flex items-center space-x-2 bg-red-800 hover:bg-red-900 text-white px-2.5 py-1.5 rounded-lg shadow-lg text-xs whitespace-nowrap">
+						<span className="p-1.5 bg-white bg-opacity-10 rounded-full">
+							<Mail className="w-3.5 h-3.5" />
 						</span>
 						<span>Kirim Email</span>
 					</a>
