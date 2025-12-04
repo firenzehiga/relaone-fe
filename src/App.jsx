@@ -53,7 +53,7 @@ import NotFound from "@/components/fallback/NotFound";
 
 // Admin Pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
-import AdminProfilePage from "@/pages/admin/profiles/ProfilePage";
+const AdminProfilePage = lazy(() => import("@/pages/admin/profiles/ProfilePage"));
 const AdminEditProfilePage = lazy(() => import("@/pages/admin/profiles/EditProfilePage"));
 
 import AdminUser from "@/pages/admin/users/UserRead";
@@ -83,7 +83,7 @@ import AdminFeedbackEdit from "@/pages/admin/feedbacks/FeedbackEdit";
 
 // Organization Pages
 import OrganizationsDashboard from "@/pages/organization/OrganizationDashboard";
-import OrganizationProfilePage from "@/pages/organization/profiles/ProfilePage";
+const OrganizationProfilePage = lazy(() => import("@/pages/organization/profiles/ProfilePage"));
 const OrganizationEditProfilePage = lazy(() =>
 	import("@/pages/organization/profiles/EditProfilePage")
 );
