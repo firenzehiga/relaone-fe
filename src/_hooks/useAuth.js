@@ -197,7 +197,7 @@ export const useLogin = () => {
 				title: "Login Successful",
 				message: `Welcome back, ${data.data.user.nama}!`,
 				duration: 2000,
-				position: "top-center",
+				position: "top-right",
 			});
 
 			// Invalidate and refetch user profile
@@ -257,7 +257,7 @@ export const useRegister = () => {
 					title: `Selamat datang di RelaOne, ${data.data.user.nama}!`,
 					message: `${data.message}, akun Anda sedang dalam proses verifikasi oleh admin.`,
 					duration: 3000,
-					position: "top-center",
+					position: "top-right",
 				});
 			} else {
 				// Show success toast
@@ -383,17 +383,17 @@ export const useLogout = () => {
 				title: "Logout Successful",
 				message: `You have been logged out successfully`,
 				duration: 2000,
-				position: "top-center",
+				position: "top-right",
 			});
 
 			// Clear all cached data
 			queryClient.clear();
 
-			// Navigate to home AFTER auth state cleared to avoid ProtectedRoute race
-			setTimeout(() => navigate("/", { replace: true }), 0);
+			// Navigate ke home page
+			navigate("/login");
 		},
 		onError: (error) => {
-			// Even if logout fails on server, clear local data
+			// walau logout gagal, kita tetap clear auth di client
 			clearAuth();
 			setLoading(false);
 			const msg = parseApiError(error) || "Logout failed";

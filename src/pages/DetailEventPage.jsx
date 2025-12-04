@@ -6,6 +6,7 @@ import { Fade } from "transitions-kit";
 
 import { useEventById } from "@/_hooks/useEvents";
 import { useModalStore } from "@/stores/useAppStore";
+import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
 
 import { getImageUrl } from "@/utils";
 import { formatTime, formatDate } from "@/utils/dateFormatter";
@@ -18,6 +19,8 @@ import Badge from "@/components/ui/Badge";
  * Halaman detail event (full page) yang menggantikan modal.
  */
 export default function DetailEventPage() {
+	useDocumentTitle("Detail Event Page");
+
 	const { eventId } = useParams();
 	const navigate = useNavigate();
 	const { data: event = null, isLoading, isFetching, error } = useEventById(eventId);

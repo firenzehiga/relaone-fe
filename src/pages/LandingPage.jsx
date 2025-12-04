@@ -10,6 +10,7 @@ import * as Lucide from "lucide-react";
 import { useEvents } from "@/_hooks/useEvents";
 import { useCategory } from "@/_hooks/useCategories";
 import { useModalStore } from "@/stores/useAppStore";
+import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
 
 // UI Components
 import DynamicButton from "@/components/ui/Button";
@@ -23,6 +24,8 @@ import VideoShowcase from "@/components/VideoShowcase";
 import EventCard from "@/components/EventCard";
 
 export default function LandingPage() {
+	useDocumentTitle("Home Page");
+
 	const navigate = useNavigate();
 	const { data: events = [], isLoading: eventsLoading } = useEvents();
 

@@ -2,18 +2,20 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useFeedbacks } from "@/_hooks/useFeedbacks";
+import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
 
 import DynamicButton from "@/components/ui/Button";
 import Carousel from "@/components/ui/Carousel";
 
 export default function AboutPage() {
+	useDocumentTitle("About Page");
+
 	const { data: feedbacks = [], isLoading: feedbacksLoading } = useFeedbacks();
 	const navigate = useNavigate();
 
 	const featuredFeedbacks =
-		feedbacks
-			?.filter((feedback) => feedback.rating === 4 || feedback.rating === 5)
-			.slice(0, 3) || [];
+		feedbacks?.filter((feedback) => feedback.rating === 4 || feedback.rating === 5).slice(0, 3) ||
+		[];
 
 	const [current, setCurrent] = useState(0);
 
@@ -32,9 +34,7 @@ export default function AboutPage() {
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Header */}
 				<div className="mb-8 text-center">
-					<h1 className="text-4xl lg:text-5xl font-bold text-emerald-600 mb-4">
-						Tentang RelaOne
-					</h1>
+					<h1 className="text-4xl lg:text-5xl font-bold text-emerald-600 mb-4">Tentang RelaOne</h1>
 					<p className="text-xl text-gray-600 max-w-2xl mx-auto">
 						Menghubungkan orang dengan kegiatan sosial yang bermakna
 					</p>
@@ -70,29 +70,23 @@ export default function AboutPage() {
 							</h2>
 
 							<p className="text-gray-600 leading-relaxed text-justify mb-4">
-								RelaOne Volunteer adalah platform yang dirancang untuk
-								mempermudah organisasi dan relawan berkolaborasi pada kegiatan
-								sosial. Dengan sistem terpusat, organisasi dapat mempublikasikan
-								event dan mengelola peserta, sementara relawan dapat menemukan
+								RelaOne Volunteer adalah platform yang dirancang untuk mempermudah organisasi dan
+								relawan berkolaborasi pada kegiatan sosial. Dengan sistem terpusat, organisasi dapat
+								mempublikasikan event dan mengelola peserta, sementara relawan dapat menemukan
 								kegiatan yang sesuai dan mendaftar dengan mudah.
 							</p>
 
 							<p className="text-gray-600 leading-relaxed text-justify mb-4">
-								Kami berfokus pada aksesibilitas, transparansi, dan efisiensi
-								agar partisipasi sosial menjadi lebih mudah dan berdampak.
-								Setiap kontribusi, sekecil apa pun, dapat membawa perubahan bagi
-								komunitas.
+								Kami berfokus pada aksesibilitas, transparansi, dan efisiensi agar partisipasi
+								sosial menjadi lebih mudah dan berdampak. Setiap kontribusi, sekecil apa pun, dapat
+								membawa perubahan bagi komunitas.
 							</p>
 
 							<div className="mt-6 flex flex-wrap gap-3">
-								<DynamicButton
-									variant="success"
-									onClick={() => navigate("/events")}>
+								<DynamicButton variant="success" onClick={() => navigate("/events")}>
 									Jelajahi Event
 								</DynamicButton>
-								<DynamicButton
-									variant="outline"
-									onClick={() => navigate("/organizations")}>
+								<DynamicButton variant="outline" onClick={() => navigate("/organizations")}>
 									Lihat Organisasi
 								</DynamicButton>
 							</div>
@@ -110,24 +104,14 @@ export default function AboutPage() {
 								<div className="flex flex-col justify-center">
 									<h3 className="text-3xl font-bold text-gray-900 mb-4">
 										{`Pengalaman Mereka Mengikuti Event Di Rela`}
-										<span className="text-3xl font-bold text-emerald-600">
-											O
-										</span>
+										<span className="text-3xl font-bold text-emerald-600">O</span>
 										ne
 									</h3>
 									<p className="text-gray-700 mb-4">{`Cerita nyata dari relawan yang telah mengikuti event di RelaOne.`}</p>
 									<ul className="list-disc pl-5 space-y-2 text-gray-600">
-										<li>
-											RelaOne membantu relawan menemukan event yang sesuai
-											passion mereka.
-										</li>
-										<li>
-											Organisasi lebih mudah mengelola peserta dan komunikasi
-											acara.
-										</li>
-										<li>
-											Setiap partisipasi memberikan dampak nyata bagi komunitas.
-										</li>
+										<li>RelaOne membantu relawan menemukan event yang sesuai passion mereka.</li>
+										<li>Organisasi lebih mudah mengelola peserta dan komunikasi acara.</li>
+										<li>Setiap partisipasi memberikan dampak nyata bagi komunitas.</li>
 									</ul>
 								</div>
 

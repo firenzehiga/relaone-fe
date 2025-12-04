@@ -1,6 +1,5 @@
 import * as userService from "@/_services/userService";
 import { useAuthStore, useUserRole } from "@/_hooks/useAuth";
-import toast from "react-hot-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { parseApiError } from "@/utils";
@@ -62,7 +61,13 @@ export const useUpdateUserMutation = () => {
 
 			setLoading(false);
 
-			toast.success(response.message, { duration: 2000 });
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: response.message,
+				duration: 2000,
+				position: "top-right",
+			});
 		},
 		onError: (error) => {
 			setLoading(false);

@@ -7,6 +7,7 @@ import { ArrowLeft, Calendar, CheckCircle, XCircle, Clock, Sparkles } from "luci
 
 // Hooks
 import { useVolunteerHistory } from "@/_hooks/useParticipants";
+import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
 
 // UI Components
 import ActivityCard from "@/components/volunteer/ActivityCard";
@@ -15,6 +16,8 @@ import Skeleton from "@/components/ui/Skeleton";
 import Card from "@/components/ui/Card";
 
 export default function MyActivitiesPage() {
+	useDocumentTitle("Activities Page");
+
 	const navigate = useNavigate();
 	const [activeTab, setActiveTab] = useState("all");
 	const { data, isLoading, error } = useVolunteerHistory();

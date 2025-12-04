@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { Shield, FileText, Eye, AlertCircle, ArrowLeft } from "lucide-react";
 
+import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
 import privacyPolicyMd from "@/assets/policies/privacy-policy.md?raw";
 import termsConditionsMd from "@/assets/policies/terms-of-service.md?raw";
 
@@ -29,13 +30,9 @@ const markdownComponents = {
 			{...props}
 		/>
 	),
-	p: ({ ...props }) => (
-		<p className="text-gray-700 mb-4 leading-relaxed text-base" {...props} />
-	),
+	p: ({ ...props }) => <p className="text-gray-700 mb-4 leading-relaxed text-base" {...props} />,
 
-	ul: ({ ...props }) => (
-		<ul className="ml-6 mb-6 space-y-3 bg-gray-50 p-4 rounded-lg" {...props} />
-	),
+	ul: ({ ...props }) => <ul className="ml-6 mb-6 space-y-3 bg-gray-50 p-4 rounded-lg" {...props} />,
 
 	li: ({ ...props }) => (
 		<li className="text-gray-700 relative flex items-start">
@@ -45,17 +42,11 @@ const markdownComponents = {
 	),
 
 	strong: ({ ...props }) => (
-		<strong
-			className="font-semibold text-gray-900 bg-emerald-100 px-1 rounded"
-			{...props}
-		/>
+		<strong className="font-semibold text-gray-900 bg-emerald-100 px-1 rounded" {...props} />
 	),
 
 	ol: ({ ...props }) => (
-		<ol
-			className="ml-6 mb-6 space-y-3 list-decimal bg-gray-50 p-4 rounded-lg"
-			{...props}
-		/>
+		<ol className="ml-6 mb-6 space-y-3 list-decimal bg-gray-50 p-4 rounded-lg" {...props} />
 	),
 };
 
@@ -63,15 +54,15 @@ const markdownComponents = {
  *  PRIVACY POLICY PAGE
  * ------------------------------------------------------------ */
 export function PrivacyPolicyPage({ onNavigate }) {
+	useDocumentTitle("Privacy Policy");
+
 	return (
 		<div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
 			{/* Header */}
 			<div className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-sm">
 				<div className="max-w-6xl mx-auto px-4 py-8">
 					<div className="flex items-center gap-4">
-						<Link
-							to="/"
-							className="p-2 hover:bg-white/20 rounded-full transition-colors">
+						<Link to="/" className="p-2 hover:bg-white/20 rounded-full transition-colors">
 							<ArrowLeft className="w-6 h-6" />
 						</Link>
 
@@ -94,9 +85,7 @@ export function PrivacyPolicyPage({ onNavigate }) {
 			<div className="max-w-6xl mx-auto px-4 py-8">
 				<div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
 					<div className="p-8">
-						<ReactMarkdown components={markdownComponents}>
-							{privacyPolicyMd}
-						</ReactMarkdown>
+						<ReactMarkdown components={markdownComponents}>{privacyPolicyMd}</ReactMarkdown>
 					</div>
 
 					{/* Footer */}
@@ -111,15 +100,15 @@ export function PrivacyPolicyPage({ onNavigate }) {
  *  TERMS OF SERVICE PAGE
  * ------------------------------------------------------------ */
 export function TermsOfServicePage({ onNavigate }) {
+	useDocumentTitle("Terms of Service");
+
 	return (
 		<div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
 			{/* Header */}
 			<div className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-sm">
 				<div className="max-w-6xl mx-auto px-4 py-8">
 					<div className="flex items-center gap-4">
-						<Link
-							to="/"
-							className="p-2 hover:bg-white/20 rounded-full transition-colors">
+						<Link to="/" className="p-2 hover:bg-white/20 rounded-full transition-colors">
 							<ArrowLeft className="w-6 h-6" />
 						</Link>
 
@@ -142,9 +131,7 @@ export function TermsOfServicePage({ onNavigate }) {
 			<div className="max-w-6xl mx-auto px-4 py-8">
 				<div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
 					<div className="p-8">
-						<ReactMarkdown components={markdownComponents}>
-							{termsConditionsMd}
-						</ReactMarkdown>
+						<ReactMarkdown components={markdownComponents}>{termsConditionsMd}</ReactMarkdown>
 					</div>
 
 					{/* Footer */}
@@ -179,9 +166,7 @@ export default function PolicyTermsPage({ onNavigate }) {
 							</div>
 							<div>
 								<h1 className="text-3xl font-bold">
-									{activeTab === "privacy"
-										? "Kebijakan Privasi"
-										: "Syarat & Ketentuan"}
+									{activeTab === "privacy" ? "Kebijakan Privasi" : "Syarat & Ketentuan"}
 								</h1>
 								<p className="text-emerald-100 text-base font-medium">
 									RelaOne – Volunteer Activity Platform

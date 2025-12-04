@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, ArrowLeft, Heart, CheckCircle, RotateCcw } from "lucide-react";
-import DynamicButton from "@/components/ui/Button";
-import { useForgotPassword, useAuthStore } from "@/_hooks/useAuth";
 import { showToast } from "@/components/ui/Toast";
+import { Mail, ArrowLeft, Heart, CheckCircle, RotateCcw } from "lucide-react";
 
+import { useForgotPassword, useAuthStore } from "@/_hooks/useAuth";
+import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+
+import DynamicButton from "@/components/ui/Button";
 // Forgot Password Illustration Component
 function ForgotPasswordIllustration() {
 	return (
@@ -111,6 +113,8 @@ function ForgotPasswordIllustration() {
 }
 
 export default function ForgotPasswordPage() {
+	useDocumentTitle("Forgot Password");
+
 	const [formData, setFormData] = useState({
 		email: "",
 	});
@@ -183,18 +187,12 @@ export default function ForgotPasswordPage() {
 									<CheckCircle className="w-10 h-10 text-green-600" />
 								</div>
 
-								<h2 className="text-3xl font-bold text-gray-900 mb-4">
-									Email Terkirim!
-								</h2>
-								<p className="text-gray-600 mb-2">
-									Kami telah mengirimkan link reset password ke:
-								</p>
-								<p className="text-blue-600 font-medium mb-6">
-									{formData.email}
-								</p>
+								<h2 className="text-3xl font-bold text-gray-900 mb-4">Email Terkirim!</h2>
+								<p className="text-gray-600 mb-2">Kami telah mengirimkan link reset password ke:</p>
+								<p className="text-blue-600 font-medium mb-6">{formData.email}</p>
 								<p className="text-sm text-gray-500 mb-8">
-									Silakan cek email Anda dan ikuti petunjuk untuk reset
-									password. Jika tidak ada di inbox, coba cek folder spam.
+									Silakan cek email Anda dan ikuti petunjuk untuk reset password. Jika tidak ada di
+									inbox, coba cek folder spam.
 								</p>
 
 								<DynamicButton
@@ -213,9 +211,7 @@ export default function ForgotPasswordPage() {
 									animate={{ y: 0, opacity: 1 }}
 									transition={{ delay: 0.2, duration: 0.5 }}
 									className="mb-8">
-									<h2 className="text-3xl font-bold text-gray-900 mb-2">
-										Reset Password
-									</h2>
+									<h2 className="text-3xl font-bold text-gray-900 mb-2">Reset Password</h2>
 									<p className="text-gray-600">
 										Masukkan email Anda untuk menerima link reset password
 									</p>
@@ -230,9 +226,7 @@ export default function ForgotPasswordPage() {
 									className="space-y-6">
 									{/* Email Field */}
 									<div>
-										<label
-											htmlFor="email"
-											className="block text-sm font-medium text-gray-700 mb-1">
+										<label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
 											Email Address
 										</label>
 										<div className="relative">
@@ -278,9 +272,7 @@ export default function ForgotPasswordPage() {
 									transition={{ delay: 0.6, duration: 0.5 }}
 									className="text-center text-gray-600 mt-8">
 									Sudah ingat password?{" "}
-									<Link
-										to="/login"
-										className="text-blue-600 hover:text-blue-800 font-medium">
+									<Link to="/login" className="text-blue-600 hover:text-blue-800 font-medium">
 										Sign in
 									</Link>
 								</motion.p>
@@ -293,8 +285,7 @@ export default function ForgotPasswordPage() {
 							animate={{ y: 0, opacity: 1 }}
 							transition={{ delay: 0.8, duration: 0.5 }}
 							className="text-center text-gray-500 text-sm mt-8 flex items-center justify-center">
-							Made with <Heart className="w-4 h-4 mx-1 text-red-500" /> for
-							volunteers
+							Made with <Heart className="w-4 h-4 mx-1 text-red-500" /> for volunteers
 						</motion.p>
 					</div>
 				</div>

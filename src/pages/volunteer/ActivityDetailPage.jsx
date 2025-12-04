@@ -27,6 +27,7 @@ import {
 // Hooks / stores
 import { userVolunteerHistoryById } from "@/_hooks/useParticipants";
 import { useModalStore } from "@/stores/useAppStore";
+import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
 
 // Helpers
 import { getDirectionsUrl, getGoogleMapsUrl, getImageUrl } from "@/utils";
@@ -40,6 +41,8 @@ import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 
 export default function ActivityDetailPage() {
+	useDocumentTitle("Detail Activity Page");
+
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const { data, isLoading, error } = userVolunteerHistoryById(id);

@@ -4,19 +4,11 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { AsyncImage } from "loadable-image";
 import { Fade } from "transitions-kit";
-import {
-	Building2,
-	MapPin,
-	Mail,
-	Phone,
-	Globe,
-	Star,
-	CheckCircle,
-	Search,
-} from "lucide-react";
+import { Building2, MapPin, Mail, Phone, Globe, Star, CheckCircle, Search } from "lucide-react";
 
 // Hooks
 import { useOrganizations } from "@/_hooks/useOrganizations";
+import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
 
 // Helpers
 import { getImageUrl } from "@/utils";
@@ -28,6 +20,8 @@ import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 
 export default function OrganizationsPage() {
+	useDocumentTitle("Organizations Page");
+	
 	const {
 		data: organizations = [],
 		isLoading,
@@ -52,16 +46,11 @@ export default function OrganizationsPage() {
 						<div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-4">
 							<Building2 className="w-8 h-8 text-red-600" />
 						</div>
-						<h2 className="text-2xl font-bold text-red-600 mb-4">
-							Gagal Memuat Organisasi
-						</h2>
+						<h2 className="text-2xl font-bold text-red-600 mb-4">Gagal Memuat Organisasi</h2>
 						<p className="text-gray-600 mb-6">
-							{error.message ||
-								"Terjadi kesalahan saat mengambil data organisasi."}
+							{error.message || "Terjadi kesalahan saat mengambil data organisasi."}
 						</p>
-						<DynamicButton
-							onClick={() => window.location.reload()}
-							variant="primary">
+						<DynamicButton onClick={() => window.location.reload()} variant="primary">
 							Coba Lagi
 						</DynamicButton>
 					</div>
@@ -83,8 +72,8 @@ export default function OrganizationsPage() {
 						Organisasi Komunitas
 					</h1>
 					<p className="text-xl text-gray-600 max-w-2xl mx-auto">
-						Bergabunglah dengan berbagai organisasi komunitas yang berkontribusi
-						untuk membuat perubahan positif di masyarakat
+						Bergabunglah dengan berbagai organisasi komunitas yang berkontribusi untuk membuat
+						perubahan positif di masyarakat
 					</p>
 				</div>
 
@@ -244,9 +233,7 @@ export default function OrganizationsPage() {
 											{org.website && (
 												<a
 													href={
-														org.website.startsWith("http")
-															? org.website
-															: `https://${org.website}`
+														org.website.startsWith("http") ? org.website : `https://${org.website}`
 													}
 													target="_blank"
 													rel="noreferrer"

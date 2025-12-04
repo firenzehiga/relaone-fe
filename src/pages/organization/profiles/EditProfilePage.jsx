@@ -21,6 +21,7 @@ import {
 // Hooks / Stores
 import { useUpdateUserMutation, useUserProfile } from "@/_hooks/useUsers";
 import { useAuthStore } from "@/_hooks/useAuth";
+import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
 
 // Helpers
 import { toInputDate } from "@/utils/dateFormatter";
@@ -41,6 +42,8 @@ import Card from "@/components/ui/Card";
  * 3. Memberikan best of both worlds: speed + reliability
  */
 export default function OrganizationEditProfilePage() {
+	useDocumentTitle("Edit Profile Page");
+
 	const navigate = useNavigate();
 	// State untuk form data
 	const [formData, setFormData] = useState({

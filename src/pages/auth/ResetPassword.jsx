@@ -1,22 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-	Lock,
-	Eye,
-	EyeOff,
-	ArrowLeft,
-	Heart,
-	CheckCircle,
-	AlertCircle,
-	Mail,
-	Shield,
-} from "lucide-react";
+import { Lock, Eye, EyeOff, ArrowLeft, CheckCircle, AlertCircle, Mail, Shield } from "lucide-react";
 import DynamicButton from "@/components/ui/Button";
 import { useResetPassword, useAuthStore } from "@/_hooks/useAuth";
 import { showToast } from "@/components/ui/Toast";
+import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
 
 export default function ResetPasswordPage() {
+	useDocumentTitle("Reset Password");
+
 	const [searchParams] = useSearchParams();
 	const [formData, setFormData] = useState({
 		email: "",
@@ -32,12 +24,12 @@ export default function ResetPasswordPage() {
 	const resetPasswordMutation = useResetPassword();
 	const { isLoading } = useAuthStore();
 
-	// Validate token format (basic check)
+	// Validasi token
 	const isValidTokenFormat = (token) => {
-		return token && token.length > 20; // Basic length check
+		return token && token.length > 20; // Cek panjang token minimal
 	};
 
-	// Get token and email from URL params
+	// Ambil token dan email dari URL params
 	useEffect(() => {
 		const urlToken = searchParams.get("token");
 		const urlEmail = searchParams.get("email");
@@ -60,7 +52,7 @@ export default function ResetPasswordPage() {
 			[name]: value,
 		}));
 
-		// Real-time password strength validation
+		// Validasi kekuatan password secara real-time
 		if (name === "password") {
 			const strength = getPasswordStrength(value);
 			setPasswordStrength(strength);
@@ -146,7 +138,7 @@ export default function ResetPasswordPage() {
 			return;
 		}
 
-		// Password validation
+		// Validasi password
 		const passwordError = validatePassword(formData.password);
 		if (passwordError) {
 			showToast({
@@ -159,7 +151,7 @@ export default function ResetPasswordPage() {
 			return;
 		}
 
-		// Confirm password validation
+		// Validasi konfirmasi password
 		if (formData.password !== formData.confirmPassword) {
 			showToast({
 				type: "error",
@@ -171,7 +163,7 @@ export default function ResetPasswordPage() {
 			return;
 		}
 
-		// Call reset password mutation
+		// Panggil reset password mutation
 		resetPasswordMutation.mutate(
 			{
 				token,
@@ -181,14 +173,14 @@ export default function ResetPasswordPage() {
 			},
 			{
 				onSuccess: () => {
-					// Clear form data for security
+					// Bersihkan data form untuk keamanan
 					setFormData({
 						email: "",
 						password: "",
 						confirmPassword: "",
 					});
 					setPasswordStrength("");
-					// Token will be cleared by navigation to login
+					// Token akan dibersihkan saat navigasi ke login
 				},
 			}
 		);
@@ -210,12 +202,10 @@ export default function ResetPasswordPage() {
 								<AlertCircle className="w-10 h-10 text-red-600" />
 							</div>
 
-							<h2 className="text-3xl font-bold text-gray-900 mb-4">
-								Link Tidak Valid
-							</h2>
+							<h2 className="text-3xl font-bold text-gray-900 mb-4">Link Tidak Valid</h2>
 							<p className="text-gray-600 mb-8">
-								Link reset password tidak valid atau sudah kedaluarsa. Silakan
-								minta link reset password baru.
+								Link reset password tidak valid atau sudah kedaluarsa. Silakan minta link reset
+								password baru.
 							</p>
 
 							<Link to="/forgot-password">
@@ -255,21 +245,15 @@ export default function ResetPasswordPage() {
 							<div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
 								<Shield className="w-8 h-8 text-emerald-600" />
 							</div>
-							<h2 className="text-3xl font-bold text-gray-900 mb-2">
-								Reset Password
-							</h2>
-							<p className="text-gray-600">
-								Masukkan password baru yang aman untuk akun Anda
-							</p>
+							<h2 className="text-3xl font-bold text-gray-900 mb-2">Reset Password</h2>
+							<p className="text-gray-600">Masukkan password baru yang aman untuk akun Anda</p>
 						</div>
 
 						{/* Reset Password Form */}
 						<form onSubmit={handleSubmit} className="space-y-6">
 							{/* Email Field */}
 							<div>
-								<label
-									htmlFor="email"
-									className="block text-sm font-medium text-gray-700 mb-1">
+								<label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
 									Email Address
 								</label>
 								<div className="relative">
@@ -295,9 +279,7 @@ export default function ResetPasswordPage() {
 
 							{/* New Password Field */}
 							<div>
-								<label
-									htmlFor="password"
-									className="block text-sm font-medium text-gray-700 mb-1">
+								<label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
 									Password Baru
 								</label>
 								<div className="relative">
@@ -318,11 +300,7 @@ export default function ResetPasswordPage() {
 										onClick={() => setShowPassword(!showPassword)}
 										disabled={isLoading}
 										className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed">
-										{showPassword ? (
-											<EyeOff className="w-5 h-5" />
-										) : (
-											<Eye className="w-5 h-5" />
-										)}
+										{showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
 									</button>
 								</div>
 								{/* Password Requirements */}
@@ -330,34 +308,24 @@ export default function ResetPasswordPage() {
 									<div className="flex justify-between items-center mb-2">
 										<span>Password harus mengandung:</span>
 										{passwordStrength && (
-											<span
-												className={`font-medium ${getPasswordStrengthColor(
-													passwordStrength
-												)}`}>
+											<span className={`font-medium ${getPasswordStrengthColor(passwordStrength)}`}>
 												{getPasswordStrengthText(passwordStrength)}
 											</span>
 										)}
 									</div>
 									<ul className="list-disc list-inside space-y-1">
-										<li
-											className={
-												formData.password.length >= 8 ? "text-green-600" : ""
-											}>
+										<li className={formData.password.length >= 8 ? "text-green-600" : ""}>
 											Minimal 8 karakter
 										</li>
 										<li
 											className={
-												/[A-Z]/.test(formData.password) &&
-												/[a-z]/.test(formData.password)
+												/[A-Z]/.test(formData.password) && /[a-z]/.test(formData.password)
 													? "text-green-600"
 													: ""
 											}>
 											Huruf besar dan kecil
 										</li>
-										<li
-											className={
-												/\d/.test(formData.password) ? "text-green-600" : ""
-											}>
+										<li className={/\d/.test(formData.password) ? "text-green-600" : ""}>
 											Minimal 1 angka
 										</li>
 										<li
@@ -448,10 +416,7 @@ export default function ResetPasswordPage() {
 								type="submit"
 								variant="success"
 								disabled={
-									isLoading ||
-									!formData.email ||
-									!formData.password ||
-									!formData.confirmPassword
+									isLoading || !formData.email || !formData.password || !formData.confirmPassword
 								}
 								className="w-full text-white py-3 rounded-lg font-medium transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
 								{isLoading ? (

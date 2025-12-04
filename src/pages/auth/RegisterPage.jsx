@@ -15,11 +15,15 @@ import {
 	Calendar,
 	Users,
 } from "lucide-react";
-import DynamicButton from "@/components/ui/Button";
 import { useRegister, useAuthStore } from "@/_hooks/useAuth";
+import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+
+import DynamicButton from "@/components/ui/Button";
 import { RegisterIllustration } from "@/components/common/Illustration";
 
 export default function RegisterPage() {
+	useDocumentTitle("Register Page");
+
 	const [formData, setFormData] = useState({
 		nama: "",
 		email: "",

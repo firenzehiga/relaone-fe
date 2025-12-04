@@ -2,11 +2,16 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, ArrowLeft, Heart } from "lucide-react";
-import DynamicButton from "@/components/ui/Button";
+
 import { useLogin, useAuthStore } from "@/_hooks/useAuth";
+import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+
 import { LoginIllustration } from "@/components/common/Illustration";
+import DynamicButton from "@/components/ui/Button";
 
 export default function LoginPage() {
+	useDocumentTitle("Login Page");
+
 	const [formData, setFormData] = useState({
 		email: "",
 		password: "",

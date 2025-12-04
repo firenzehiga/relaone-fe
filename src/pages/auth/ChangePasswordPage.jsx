@@ -1,11 +1,17 @@
 import { useState } from "react";
-import Button from "@/components/ui/Button";
-import { Eye, EyeOff, CheckCircle, AlertCircle, Lock } from "lucide-react";
-import { useChangePassword, useAuthStore } from "@/_hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+
+import { Eye, EyeOff, CheckCircle, AlertCircle, Lock } from "lucide-react";
 import { showToast } from "@/components/ui/Toast";
 
+import { useChangePassword, useAuthStore } from "@/_hooks/useAuth";
+import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+
+import Button from "@/components/ui/Button";
+
 export default function ChangePasswordPage() {
+	useDocumentTitle("Change Password");
+
 	const [currentPassword, setCurrentPassword] = useState("");
 	const [newPassword, setNewPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");

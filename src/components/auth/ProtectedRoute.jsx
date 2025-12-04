@@ -27,7 +27,7 @@ export default function ProtectedRoute({ children, allowedRoles = [], redirectTo
 
 	// Jika tidak ada token atau belum authenticated => redirect ke login
 	if (!token || !isAuthenticated) {
-		return <Navigate to={redirectTo} state={{ from: location }} replace />;
+		return <Navigate to={redirectTo} replace />;
 	}
 
 	// Jika ada token tapi user belum dimuat, tampilkan loading

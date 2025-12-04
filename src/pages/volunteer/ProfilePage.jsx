@@ -1,8 +1,11 @@
 import { motion } from "framer-motion";
 import { Shield } from "lucide-react";
+
+import { useUserProfile } from "@/_hooks/useUsers";
+import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+
 import ProfileCard from "@/components/common/ProfileCard";
 import ProfileDetails from "@/components/common/ProfileDetails";
-import { useUserProfile } from "@/_hooks/useUsers";
 import Skeleton from "@/components/ui/Skeleton";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
@@ -13,6 +16,8 @@ import Card from "@/components/ui/Card";
  * - Right: shared `ProfileDetails`
  */
 export default function ProfilePage() {
+	useDocumentTitle("Profile Page");
+
 	const { data: profile, isLoading, error, refetch } = useUserProfile();
 
 	if (isLoading) return <Skeleton.ProfileSkeleton />;

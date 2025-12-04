@@ -1,20 +1,15 @@
-import { Link } from "react-router-dom";
-
 // UI Libraries
 import { motion } from "framer-motion";
-import { User, Mail, Phone, MapPin, Calendar, Edit3, Shield, Building2, Globe } from "lucide-react";
+import { Shield } from "lucide-react";
 
 // Hooks
 import { useUserProfile } from "@/_hooks/useUsers";
-
-// Helpers
-import { getImageUrl, getOrganizationEventBadge, getOrganizationVerificationBadge } from "@/utils";
+import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
 
 // UI Components
 import Skeleton from "@/components/ui/Skeleton";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
-import { formatDate } from "@/utils/dateFormatter";
 import ProfileDetails from "@/components/common/ProfileDetails";
 import ProfileCard from "@/components/common/ProfileCard";
 
@@ -24,6 +19,8 @@ import ProfileCard from "@/components/common/ProfileCard";
  */
 
 export default function OrganizationProfilePage() {
+	useDocumentTitle("Profile Page");
+
 	const { data: profile, isLoading, error, refetch } = useUserProfile();
 
 	if (isLoading) {

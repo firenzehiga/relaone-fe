@@ -18,6 +18,7 @@ import {
 // Hooks
 import { useUpdateUserMutation, useUserProfile } from "@/_hooks/useUsers";
 import { useAuthStore } from "@/_hooks/useAuth";
+import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
 
 // Helpers
 import { toInputDate } from "@/utils/dateFormatter";
@@ -39,6 +40,8 @@ import Skeleton from "@/components/ui/Skeleton";
  * 3. Memberikan best of both worlds: speed + reliability
  */
 export default function EditProfilePage() {
+	useDocumentTitle("Edit Profile Page");
+
 	const navigate = useNavigate();
 	// State untuk form data
 	const [formData, setFormData] = useState({
