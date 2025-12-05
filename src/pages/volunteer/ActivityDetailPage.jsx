@@ -22,6 +22,7 @@ import {
 	UserCheck,
 	ClipboardCheck,
 	ExternalLink,
+	ClipboardX,
 } from "lucide-react";
 
 // Hooks / stores
@@ -461,6 +462,8 @@ export default function ActivityDetailPage() {
 							Timeline Partisipasi
 						</h3>
 						<div className="space-y-6">
+							{/* TIMELINE Ke-1 */}
+
 							{/* Registration */}
 							{data.tanggal_daftar && (
 								<div className="flex gap-4">
@@ -468,8 +471,14 @@ export default function ActivityDetailPage() {
 										<div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
 											<Clock size={24} className="text-yellow-600" />
 										</div>
-										{(data.tanggal_konfirmasi || data.tanggal_hadir) && (
-											<div className="flex-1 w-1 bg-gradient-to-b from-yellow-300 to-blue-300 mt-2"></div>
+										{/* garis menuju timeline selanjutnya (confirmation atau rejection) */}
+										{(data.tanggal_konfirmasi ||
+											data.tanggal_hadir ||
+											data.status === "rejected") && (
+											<div
+												className={`flex-1 w-1 bg-gradient-to-b   from-yellow-300 ${
+													data.status === "rejected" ? "to-red-300" : "to-blue-300"
+												}  mt-2`}></div>
 										)}
 									</div>
 									<div className="flex-1 pb-6">
@@ -483,6 +492,8 @@ export default function ActivityDetailPage() {
 									</div>
 								</div>
 							)}
+							{/* TIMELINE Ke-2 | Confirmation atau Rejection */}
+
 							{/* Confirmation */}
 							{data.tanggal_konfirmasi && (
 								<div className="flex gap-4">
@@ -490,6 +501,7 @@ export default function ActivityDetailPage() {
 										<div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
 											<ClipboardCheck size={24} className="text-blue-600" />
 										</div>
+										{/* garis menuju timeline selanjutnya (attendance atau no show) */}
 										{(data.tanggal_hadir ||
 											data.status === "no_show" ||
 											data.timeline_status === "finished") && (
@@ -510,6 +522,28 @@ export default function ActivityDetailPage() {
 									</div>
 								</div>
 							)}
+
+							{/* Rejection */}
+							{data.status === "rejected" && (
+								<div className="flex gap-4">
+									<div className="flex flex-col items-center">
+										<div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+											<ClipboardX size={24} className="text-red-600" />
+										</div>
+									</div>
+									<div className="flex-1 pb-6">
+										<p className="font-bold text-gray-900 text-base mb-1">Ditolak</p>
+
+										<p className="text-sm text-gray-600 leading-relaxed">
+											Maaf, pendaftaran Anda ditolak oleh organizer. Jangan berkecil hati, mungkin
+											Anda bisa mencoba mendaftar di event lain.
+										</p>
+									</div>
+								</div>
+							)}
+
+							{/* TIMELINE KE-3 jika lolos tahap confirmation | Attendance atau No Show */}
+
 							{/* Attendance */}
 							{data.tanggal_hadir && data.status !== "no_show" && (
 								<div className="flex gap-4">
@@ -555,6 +589,9 @@ export default function ActivityDetailPage() {
 									</div>
 								</div>
 							)}
+
+							{/* TIMELINE Ke-4 jika lolos tahap attendance*/}
+
 							{/* Feedback - Jika Sudah Hadir */}
 							{data.has_feedback && data.tanggal_hadir && (
 								<div className="flex gap-4">
