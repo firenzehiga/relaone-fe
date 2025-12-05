@@ -31,7 +31,7 @@ import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
 
 // Helpers
 import { getDirectionsUrl, getGoogleMapsUrl, getImageUrl } from "@/utils";
-import { formatDate, formatTime } from "@/utils/dateFormatter";
+import { formatDate, formatDateTime, formatTime } from "@/utils/dateFormatter";
 
 // UI Components
 import QrCodeDisplay from "@/components/volunteer/QrCodeDisplay";
@@ -468,10 +468,7 @@ export default function ActivityDetailPage() {
 										<div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
 											<Clock size={24} className="text-yellow-600" />
 										</div>
-										{(data.tanggal_konfirmasi ||
-											data.tanggal_hadir ||
-											data.status === "no_show" ||
-											data.timeline_status === "finished") && (
+										{(data.tanggal_konfirmasi || data.tanggal_hadir) && (
 											<div className="flex-1 w-1 bg-gradient-to-b from-yellow-300 to-blue-300 mt-2"></div>
 										)}
 									</div>
@@ -486,7 +483,6 @@ export default function ActivityDetailPage() {
 									</div>
 								</div>
 							)}
-
 							{/* Confirmation */}
 							{data.tanggal_konfirmasi && (
 								<div className="flex gap-4">
@@ -514,7 +510,6 @@ export default function ActivityDetailPage() {
 									</div>
 								</div>
 							)}
-
 							{/* Attendance */}
 							{data.tanggal_hadir && data.status !== "no_show" && (
 								<div className="flex gap-4">
@@ -522,8 +517,11 @@ export default function ActivityDetailPage() {
 										<div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
 											<CheckCircle size={24} className="text-green-600" />
 										</div>
+										{data.has_feedback && data.timeline_status === "finished" && (
+											<div className="flex-1 w-1 bg-gradient-to-b from-green-300 to-orange-300 mt-2"></div>
+										)}
 									</div>
-									<div className="flex-1">
+									<div className="flex-1 pb-6">
 										<p className="font-bold text-gray-900 text-base mb-1">Hadir</p>
 										<p className="text-sm text-emerald-600 font-semibold mb-2">
 											{formatDate(data.tanggal_hadir)}
@@ -534,10 +532,11 @@ export default function ActivityDetailPage() {
 									</div>
 								</div>
 							)}
-
 							{/* No Show */}
 							{(data.status === "no_show" ||
-								(!data.tanggal_hadir && data.timeline_status === "finished")) && (
+								(data.tanggal_konfirmasi &&
+									!data.tanggal_hadir &&
+									data.timeline_status === "finished")) && (
 								<div className="flex gap-4">
 									<div className="flex flex-col items-center">
 										<div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
@@ -550,9 +549,28 @@ export default function ActivityDetailPage() {
 											Anda tidak check-in di event ini!
 										</p>
 										<p className="text-sm text-gray-600 leading-relaxed">
-											{data.status === "no_show" || data.timeline_status === "finished"
-												? "Jika anda hadir di event ini namun tidak melakukan scan QR kehadiran, silahkan hubungi organizer"
-												: "Status kehadiran belum tersedia. Informasi akan diperbarui setelah event selesai."}
+											Jika anda hadir di event ini namun tidak melakukan scan QR kehadiran, silahkan
+											hubungi organizer
+										</p>
+									</div>
+								</div>
+							)}
+							{/* Feedback - Jika Sudah Hadir */}
+							{data.has_feedback && data.tanggal_hadir && (
+								<div className="flex gap-4">
+									<div className="flex flex-col items-center">
+										<div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center">
+											<CheckCircle size={24} className="text-orange-600" />
+										</div>
+									</div>
+									<div className="flex-1">
+										<p className="font-bold text-gray-900 text-base mb-1">Kirim Feedback</p>
+										<p className="text-sm text-emerald-600 font-semibold mb-2">
+											{formatDateTime(data.feedback?.created_at, "WIB")}
+										</p>
+										<p className="text-sm text-gray-600 leading-relaxed">
+											Anda telah mengirim feedback untuk event ini. Terima kasih atas
+											partisipasinya!
 										</p>
 									</div>
 								</div>
