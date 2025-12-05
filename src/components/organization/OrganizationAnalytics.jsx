@@ -112,14 +112,14 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 			{/* Overview stats */}
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 				<StatsCard
-					title="Total Event"
+					title="Total Events"
 					value={overview.total_events ?? 0}
-					description={`Dibuat dalam periode: ${overview.events_created_in_period ?? 0}`}
+					description={`Dibuat dalam 30 hari terakhir: ${overview.events_created_in_period ?? 0}`}
 					icon={<Activity />}
 				/>
 
 				<StatsCard
-					title="Upcoming"
+					title="Upcoming Events"
 					value={overview.upcoming_events ?? 0}
 					description={`Menunggu dimulai`}
 					icon={<Calendar />}
@@ -135,7 +135,7 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 				/>
 
 				<StatsCard
-					title="Rata‑rata Utilisasi"
+					title="Rata‑rata Kapasitas Terisi"
 					value={`${events.average_capacity_utilization_percent ?? 0}%`}
 					description="Persentase rata‑rata kapasitas terpakai"
 					icon={<CheckSquare />}
@@ -155,7 +155,7 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 					Dibatalkan: {overview.cancelled_events ?? 0}
 				</Badge>
 				<Badge variant="primary" size="md">
-					Telah Dibuat (periode): {overview.events_created_in_period ?? 0}
+					Telah Dibuat (30 hari terakhir): {overview.events_created_in_period ?? 0}
 				</Badge>
 			</div>
 

@@ -123,7 +123,7 @@ export default function AdminEventParticipant() {
 			width: "60px",
 		},
 		{
-			name: "Peserta",
+			name: "Partisipan",
 			selector: (row) => row.user?.nama || "-",
 			sortable: true,
 			wrap: true,
@@ -260,7 +260,7 @@ export default function AdminEventParticipant() {
 								<div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
 									<div className="flex items-center justify-between">
 										<div>
-											<p className="text-sm text-purple-600 font-medium">Filtered Results</p>
+											<p className="text-sm text-purple-600 font-medium">Total Filtered Results</p>
 											<p className="text-2xl font-bold text-purple-900">
 												{filteredParticipants.length}
 											</p>
@@ -280,22 +280,22 @@ export default function AdminEventParticipant() {
 										value={selectedEventId}
 										onChange={(e) => setSelectedEventId(e.target.value)}
 										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
-										<option value="all">Semua Event ({participants.length})</option>
+										<option value="all">Semua Event</option>
 										{eventsList.map((event) => (
 											<option key={event.id} value={event.id}>
-												{event.judul} ({event.count})
+												{event.judul}
 											</option>
 										))}
 									</select>
 								</div>
 								<div className="flex-1">
 									<label className="block text-sm font-medium text-gray-700 mb-1">
-										Cari Peserta
+										Cari Partisipan
 									</label>
 									<div className="relative">
 										<input
 											type="text"
-											placeholder="Cari peserta, event, status..."
+											placeholder="Cari partisipan, event, status..."
 											value={searchParticipant}
 											onChange={(e) => setSearchParticipant(e.target.value)}
 											className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 pr-8"
@@ -366,7 +366,7 @@ export default function AdminEventParticipant() {
 											{/* Left column */}
 											<div className="space-y-3">
 												<div className="text-sm text-gray-700">
-													<span className="font-semibold">Nama peserta:</span>
+													<span className="font-semibold">Nama partisipan:</span>
 													<span className="ml-2 text-gray-900">{data.user?.nama || "-"}</span>
 												</div>
 												<div className="text-sm text-gray-700">
@@ -453,8 +453,8 @@ export default function AdminEventParticipant() {
 										</h3>
 										<p className="text-gray-500 mb-4 text-center">
 											{searchParticipant
-												? "Tidak ada peserta yang sesuai dengan pencarian."
-												: "Belum ada data peserta"}
+												? "Tidak ada partisipan yang sesuai dengan pencarian."
+												: "Belum ada data partisipan"}
 										</p>
 									</div>
 								}

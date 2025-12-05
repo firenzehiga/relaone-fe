@@ -235,9 +235,9 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 							</svg>
 						}
 						color="orange"
-						description={`${data.events?.active_events || 0} Aktif, ${
-							data.events?.upcoming_events || 0
-						} Akan Datang`}
+						description={`${data.events?.upcoming_events || 0} Akan Datang, ${
+							data.events?.ongoing_events || 0
+						} Berlangsung, ${data.events?.completed_events || 0} Selesai `}
 					/>
 
 					{/* Participants */}
@@ -257,12 +257,14 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 						color="green"
 						description={`${
 							data.participants?.participants_by_status?.confirmed || 0
-						} Dikonfirmasi, ${data.participants?.new_registrations || 0} Baru Registrasi`}
+						} Dikonfirmasi, ${
+							data?.participants?.participants_by_status?.registered || 0
+						} Baru Registrasi`}
 					/>
 
 					{/* Login Activity */}
 					<StatsCard
-						title="Aktivitas Login"
+						title="Total Aktivitas Login"
 						value={loginTrendData.reduce((sum, item) => sum + item.count, 0) || 0}
 						icon={
 							<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -280,7 +282,7 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 
 					{/* Completed Events */}
 					<StatsCard
-						title="Event Selesai"
+						title="Total Event Selesai"
 						value={data.events?.completed_events || 0}
 						icon={
 							<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -119,7 +119,7 @@ export default function AdminEventParticipantEdit() {
 
 						<div>
 							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
-								Peserta (user) <span className="text-red-500">*</span>
+								Peserta (Partisipan) <span className="text-red-500">*</span>
 							</label>
 							<select
 								name="user_id"

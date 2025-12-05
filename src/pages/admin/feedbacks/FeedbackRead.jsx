@@ -133,7 +133,7 @@ export default function AdminFeedback() {
 			width: "60px",
 		},
 		{
-			name: "Nama User",
+			name: "Nama Partisipan",
 			selector: (row) => row.user?.nama || "Anonymous",
 			sortable: true,
 			wrap: true,
@@ -224,7 +224,7 @@ export default function AdminFeedback() {
 								<div>
 									<input
 										type="text"
-										placeholder="Cari user atau event feedback..."
+										placeholder="Cari partisipan atau event feedback..."
 										value={searchFeedback}
 										onChange={(e) => setSearchFeedback(e.target.value)}
 										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"

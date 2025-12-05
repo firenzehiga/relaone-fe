@@ -25,11 +25,7 @@ export default function AdminEventParticipantCreate() {
 
 	const { isLoading } = useAuthStore();
 
-	const {
-		data: events = [],
-		isLoading: eventsLoading,
-		error: eventsError,
-	} = useAdminEvents();
+	const { data: events = [], isLoading: eventsLoading, error: eventsError } = useAdminEvents();
 	const {
 		data: volunteers = [],
 		isLoading: volunteersLoading,
@@ -52,11 +48,7 @@ export default function AdminEventParticipantCreate() {
 		setFormData((s) => {
 			// when confirmation date is set, auto-mark status as confirmed
 			if (name === "tanggal_konfirmasi") {
-				const newStatus = value
-					? "confirmed"
-					: s.status === "confirmed"
-					? "registered"
-					: s.status;
+				const newStatus = value ? "confirmed" : s.status === "confirmed" ? "registered" : s.status;
 				return { ...s, tanggal_konfirmasi: value, status: newStatus };
 			}
 			return { ...s, [name]: value };
@@ -74,8 +66,7 @@ export default function AdminEventParticipantCreate() {
 		createMutation.mutateAsync(payload);
 	};
 
-	if (eventsLoading || volunteersLoading)
-		return <Skeleton.FormSkeleton title="Loading..." />;
+	if (eventsLoading || volunteersLoading) return <Skeleton.FormSkeleton title="Loading..." />;
 
 	if (eventsError || volunteersError) {
 		return <p>Error: {eventsError?.message || volunteersError?.message}</p>;
@@ -85,9 +76,7 @@ export default function AdminEventParticipantCreate() {
 		<div className="w-full mx-auto p-4 sm:p-6 max-w-6xl min-h-[calc(100vh-4rem)]">
 			<div className="bg-white shadow-xl rounded-lg p-4 sm:p-6">
 				<header className="mb-6 sm:mb-8">
-					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
-						Tambah Participant
-					</h1>
+					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Tambah Participant</h1>
 					<p className="text-xs sm:text-sm text-gray-500 mt-1">
 						Tambah peserta untuk event tertentu.
 					</p>
@@ -116,7 +105,7 @@ export default function AdminEventParticipantCreate() {
 
 						<div>
 							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
-								Peserta (user) <span className="text-red-500">*</span>
+								Peserta (Partisipan) <span className="text-red-500">*</span>
 							</label>
 							<select
 								name="user_id"
