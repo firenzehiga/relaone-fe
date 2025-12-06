@@ -40,6 +40,10 @@ import RegisterPage from "@/pages/auth/RegisterPage";
 const ForgotPasswordPage = lazy(() => import("@/pages/auth/ForgotPassword"));
 const ResetPasswordPage = lazy(() => import("@/pages/auth/ResetPassword"));
 const ChangePasswordPage = lazy(() => import("@/pages/auth/ChangePasswordPage"));
+const EmailVerificationPendingPage = lazy(() =>
+	import("@/pages/auth/EmailPendingVerificationPage")
+);
+const VerifyEmailPage = lazy(() => import("@/pages/auth/EmailVerificationPage"));
 
 // Modals
 import JoinEventModal from "@/components/volunteer/JoinEventModal";
@@ -163,6 +167,22 @@ function App() {
 						element={
 							<GuestRoute>
 								<ResetPasswordPage />
+							</GuestRoute>
+						}
+					/>
+					<Route
+						path="verify-email"
+						element={
+							<GuestRoute>
+								<VerifyEmailPage />
+							</GuestRoute>
+						}
+					/>
+					<Route
+						path="email-verification-pending"
+						element={
+							<GuestRoute>
+								<EmailVerificationPendingPage />
 							</GuestRoute>
 						}
 					/>
