@@ -213,7 +213,7 @@ export default function DetailEventPage() {
 								{event.persyaratan && (
 									<div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
 										<h4 className="font-semibold text-amber-800 mb-3 flex items-center">
-											<NotepadText className="w-5 h-5 mr-2" /> Persyaratan Persyaratan
+											<NotepadText className="w-5 h-5 mr-2" /> Persyaratan
 										</h4>
 										{Array.isArray(event.persyaratan) ? (
 											<ul className="space-y-2">
