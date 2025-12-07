@@ -23,7 +23,7 @@ export default function Footer() {
 							<span className="text-gray-900">ne</span>
 						</a>
 						<p className="py-8 text-gray-500 lg:max-w-xs text-center lg:text-left">
-							Platform yang menghubungkan para volunteer dengan organisasi untuk berbagai kegiatan
+							Platform yang menghubungkan para relawan dengan organisasi untuk berbagai kegiatan
 							sosial yang bermanfaat bagi masyarakat.
 						</p>
 						<a

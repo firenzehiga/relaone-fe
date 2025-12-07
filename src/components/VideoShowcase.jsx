@@ -20,14 +20,12 @@ export default function VideoShowcase() {
 								Lihat Kegiatan Kami
 							</h2>
 							<p className="text-xl text-gray-600 mb-6">
-								Tonton cuplikan kegiatan volunteer untuk mendapatkan gambaran
-								bagaimana acara berjalan dan peran yang dapat Anda ambil.
+								Tonton cuplikan kegiatan para relawan untuk mendapatkan gambaran bagaimana acara
+								berjalan dan peran yang dapat Anda ambil.
 							</p>
 
 							<div className="flex flex-col sm:flex-row gap-4">
-								<DynamicButton
-									variant="success"
-									onClick={() => navigate("/events")}>
+								<DynamicButton variant="success" onClick={() => navigate("/events")}>
 									Jelajahi Event
 								</DynamicButton>
 								<DynamicButton

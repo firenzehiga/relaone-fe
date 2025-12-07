@@ -34,9 +34,8 @@ export default function Hero() {
 								yang Bermakna
 							</h1>
 							<p className="text-lg lg:text-xl text-gray-600 mb-8 leading-relaxed">
-								Platform yang menghubungkan para volunteer dengan organisasi
-								untuk berbagai kegiatan sosial. Mari bersama-sama membuat
-								perubahan positif untuk masyarakat.
+								Platform yang menghubungkan para relawan dengan organisasi untuk berbagai kegiatan
+								sosial. Mari bersama-sama membuat perubahan positif untuk masyarakat.
 							</p>
 							<div className="flex flex-col sm:flex-row gap-4">
 								<DynamicButton

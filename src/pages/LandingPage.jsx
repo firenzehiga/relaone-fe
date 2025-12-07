@@ -57,7 +57,7 @@ export default function LandingPage() {
 	const features = [
 		{
 			icon: Search,
-			title: "Temukan Event",
+			title: "Temukan Kegiatan Sosial",
 			description:
 				"Cari dan ikuti berbagai kegiatan sosial yang sesuai dengan minat dan passion Anda.",
 		},
@@ -65,7 +65,7 @@ export default function LandingPage() {
 			icon: Users,
 			title: "Bergabung Komunitas",
 			description:
-				"Bertemu dengan sesama volunteer dan bangun jaringan untuk kegiatan sosial yang berkelanjutan.",
+				"Bertemu dengan sesama relawan dan bangun jaringan untuk kegiatan sosial yang berkelanjutan.",
 		},
 		{
 			icon: Heart,
@@ -145,8 +145,7 @@ export default function LandingPage() {
 								<span className="text-emerald-600">O</span>ne?
 							</h2>
 							<p className="text-xl text-gray-600 max-w-3xl mx-auto">
-								Platform terpercaya untuk menghubungkan volunteer dengan kegiatan sosial yang
-								bermakna
+								Platform terpercaya untuk menghubungkan relawan dengan kegiatan sosial yang bermakna
 							</p>
 						</div>
 
@@ -267,7 +266,7 @@ export default function LandingPage() {
 								Siap Memulai Perjalanan Volunteer Anda?
 							</h2>
 							<p className="text-xl text-emerald-100 mb-8 leading-relaxed">
-								Bergabunglah dengan ribuan volunteer lainnya dan mari bersama-sama membuat perubahan
+								Bergabunglah dengan ribuan relawan lainnya dan mari bersama-sama membuat perubahan
 								positif untuk masyarakat.
 							</p>
 							<div className="flex flex-col sm:flex-row gap-4 justify-center">
