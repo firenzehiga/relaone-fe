@@ -3,7 +3,16 @@ import { useNavigate } from "react-router-dom";
 
 // UI Libraries
 import { motion } from "framer-motion";
-import { ArrowLeft, Calendar, CheckCircle, XCircle, Clock, Sparkles } from "lucide-react";
+import {
+	ArrowLeft,
+	Calendar,
+	CheckCircle,
+	XCircle,
+	Clock,
+	Sparkles,
+	ChevronLeft,
+	ChevronRight,
+} from "lucide-react";
 
 // Hooks
 import { useVolunteerHistory } from "@/_hooks/useParticipants";
@@ -20,7 +29,14 @@ export default function MyActivitiesPage() {
 
 	const navigate = useNavigate();
 	const [activeTab, setActiveTab] = useState("all");
+	const [currentPage, setCurrentPage] = useState(1);
 	const { data, isLoading, error } = useVolunteerHistory();
+
+	// Reset to page 1 when tab changes
+	const handleTabChange = (tabId) => {
+		setActiveTab(tabId);
+		setCurrentPage(1);
+	};
 
 	if (isLoading) {
 		return <Skeleton.MyActivitiesSkeleton />;
@@ -93,7 +109,33 @@ export default function MyActivitiesPage() {
 		return data[activeTab] || [];
 	};
 
-	const currentData = getCurrentData();
+	const allData = getCurrentData();
+
+	// Pagination calculation
+	const itemsPerPage = 8;
+	const totalPages = Math.ceil(allData.length / itemsPerPage); // Total halaman: 25 items / 8 per page = 3.125 → dibulatkan ke atas = 4 halaman
+	const startIndex = (currentPage - 1) * itemsPerPage; // Index awal: (halaman ke-2 - 1) * 8 = 8 (mulai dari item ke-9)
+	const endIndex = startIndex + itemsPerPage; // Index akhir: 8 + 8 = 16 (sampai item ke-16)
+	const currentData = allData.slice(startIndex, endIndex); // Potong array dari index 8 sampai 16 (8 items)
+
+	// Pagination handlers
+	const handleNextPage = () => {
+		if (currentPage < totalPages) {
+			setCurrentPage(currentPage + 1);
+			window.scrollTo({ top: 0, behavior: "smooth" });
+		}
+	};
+
+	const handlePrevPage = () => {
+		if (currentPage > 1) {
+			setCurrentPage(currentPage - 1);
+			window.scrollTo({ top: 0, behavior: "smooth" });
+		}
+	};
+
+	const handlePageClick = (pageNumber) => {
+		setCurrentPage(pageNumber);
+	};
 
 	return (
 		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-slate-50 via-white to-emerald-50">
@@ -185,7 +227,7 @@ export default function MyActivitiesPage() {
 								return (
 									<motion.button
 										key={tab.id}
-										onClick={() => setActiveTab(tab.id)}
+										onClick={() => handleTabChange(tab.id)}
 										whileHover={{ scale: 1.02 }}
 										whileTap={{ scale: 0.98 }}
 										className={`
@@ -238,18 +280,119 @@ export default function MyActivitiesPage() {
 							</Card>
 						</motion.div>
 					) : (
-						currentData.map((item, index) => (
-							<motion.div
-								key={item.id}
-								initial={{ opacity: 0, y: 20 }}
-								animate={{ opacity: 1, y: 0 }}
-								transition={{ delay: index * 0.05 }}>
-								<ActivityCard
-									data={item}
-									onClick={() => navigate(`/volunteer/my-activities/${item.id}`)}
-								/>
-							</motion.div>
-						))
+						<>
+							{currentData.map((item, index) => (
+								<motion.div
+									key={item.id}
+									initial={{ opacity: 0, y: 20 }}
+									animate={{ opacity: 1, y: 0 }}
+									transition={{ delay: index * 0.05 }}>
+									<ActivityCard
+										data={item}
+										onClick={() => navigate(`/volunteer/my-activities/${item.id}`)}
+									/>
+								</motion.div>
+							))}
+
+							{/* Pagination Controls */}
+							{totalPages > 1 && (
+								<motion.div
+									initial={{ opacity: 0, y: 20 }}
+									animate={{ opacity: 1, y: 0 }}
+									transition={{ delay: 0.3 }}>
+									<Card className="p-6 bg-white border border-gray-200 shadow-lg">
+										<div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+											{/* Info */}
+											<div className="text-sm text-gray-600">
+												Menampilkan{" "}
+												<span className="font-semibold text-gray-900">{startIndex + 1}</span> -{" "}
+												<span className="font-semibold text-gray-900">
+													{Math.min(endIndex, allData.length)}
+												</span>{" "}
+												dari <span className="font-semibold text-gray-900">{allData.length}</span>{" "}
+												aktivitas
+											</div>
+
+											{/* Pagination Buttons */}
+											<div className="flex items-center gap-2">
+												{/* Previous Button */}
+												<button
+													onClick={handlePrevPage}
+													disabled={currentPage === 1}
+													className={`
+														p-2 rounded-lg transition-all
+														${
+															currentPage === 1
+																? "bg-gray-100 text-gray-400 cursor-not-allowed"
+																: "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-emerald-500"
+														}
+													`}>
+													<ChevronLeft size={20} />
+												</button>
+
+												{/* Page Numbers */}
+												<div className="flex items-center gap-1">
+													{Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => {
+														// Show first page, last page, current page, and pages around current
+														const showPage =
+															pageNumber === 1 ||
+															pageNumber === totalPages ||
+															(pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1);
+
+														// Show ellipsis
+														const showEllipsisBefore =
+															pageNumber === currentPage - 2 && currentPage > 3;
+														const showEllipsisAfter =
+															pageNumber === currentPage + 2 && currentPage < totalPages - 2;
+
+														if (showEllipsisBefore || showEllipsisAfter) {
+															return (
+																<span key={pageNumber} className="px-2 text-gray-400">
+																	...
+																</span>
+															);
+														}
+
+														if (!showPage) return null;
+
+														return (
+															<button
+																key={pageNumber}
+																onClick={() => handlePageClick(pageNumber)}
+																className={`
+																	px-4 py-2 rounded-lg font-medium transition-all
+																	${
+																		currentPage === pageNumber
+																			? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md"
+																			: "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-emerald-500"
+																	}
+																`}>
+																{pageNumber}
+															</button>
+														);
+													})}
+												</div>
+
+												{/* Next Button */}
+												<button
+													onClick={handleNextPage}
+													disabled={currentPage === totalPages}
+													className={`
+														p-2 rounded-lg transition-all
+														${
+															currentPage === totalPages
+																? "bg-gray-100 text-gray-400 cursor-not-allowed"
+																: "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-emerald-500"
+														}
+													`}>
+													<ChevronRight size={20} />
+												</button>
+											</div>
+										</div>
+									</Card>
+								</motion.div>
+							)}
+						</>
 					)}
 				</div>
 			</div>
