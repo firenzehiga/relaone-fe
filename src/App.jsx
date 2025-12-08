@@ -116,7 +116,7 @@ function App() {
 			<ScrollToTop />
 			<Suspense fallback={<SuspenseFallback />}>
 				<Routes>
-					{/* PUBLIC ROUTES (bareng volunteer nanti) */}
+					{/* PUBLIC & VOLUNTEER ROUTES*/}
 					<Route
 						element={
 							<PublicRoute>
@@ -133,22 +133,6 @@ function App() {
 					</Route>
 					<Route path="privacy-policy" element={<PrivacyPolicyPage />} />
 					<Route path="terms-of-service" element={<TermsOfServicePage />} />
-					<Route
-						path="volunteer"
-						element={
-							<VolunteerRoute>
-								<MainLayout />
-							</VolunteerRoute>
-						}>
-						<Route path="profile">
-							<Route index element={<ProfilePage />} />
-							<Route path="edit" element={<EditProfilePage />} />
-						</Route>
-						<Route path="my-activities">
-							<Route index element={<MyActivitiesPage />} />
-							<Route path=":id" element={<ActivityDetailPage />} />
-						</Route>
-					</Route>
 
 					<Route
 						path="forgot-password"
@@ -166,6 +150,24 @@ function App() {
 							</GuestRoute>
 						}
 					/>
+
+					{/* VOLUNTEER ROUTES*/}
+					<Route
+						path="volunteer"
+						element={
+							<VolunteerRoute>
+								<MainLayout />
+							</VolunteerRoute>
+						}>
+						<Route path="profile">
+							<Route index element={<ProfilePage />} />
+							<Route path="edit" element={<EditProfilePage />} />
+						</Route>
+						<Route path="my-activities">
+							<Route index element={<MyActivitiesPage />} />
+							<Route path=":id" element={<ActivityDetailPage />} />
+						</Route>
+					</Route>
 
 					{/* ADMIN ROUTES */}
 					<Route
@@ -261,10 +263,18 @@ function App() {
 							</GuestRoute>
 						}
 					/>
-					{/* Change Password - shared protected page for all authenticated roles */}
+					{/* Change Password  */}
 					<Route
 						element={
-							<ProtectedRoute allowedRoles={["admin", "organization", "volunteer"]}>
+							<ProtectedRoute allowedRoles={["admin"]}>
+								<AdminLayout />
+							</ProtectedRoute>
+						}>
+						<Route path="admin/change-password" element={<ChangePasswordPage />} />
+					</Route>
+					<Route
+						element={
+							<ProtectedRoute allowedRoles={["organization", "volunteer"]}>
 								<MainLayout />
 							</ProtectedRoute>
 						}>
