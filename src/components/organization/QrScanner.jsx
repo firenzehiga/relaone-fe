@@ -43,7 +43,7 @@ function QrScanner({ eventId }) {
 
 					const handleCameraDetected = (decodedText) => {
 						if (mounted && !isProcessing.current) {
-							handleScan(decodedText);
+							handleScan(decodedText, "camera");
 						}
 					};
 
@@ -98,7 +98,7 @@ function QrScanner({ eventId }) {
 			}
 		};
 	}, [scanning]);
-	const handleScan = async (decodedText) => {
+	const handleScan = async (decodedText, source = "file") => {
 		if (!decodedText || isProcessing.current) return;
 
 		// Set processing flag segera untuk menghindari penanganan ganda
@@ -115,8 +115,8 @@ function QrScanner({ eventId }) {
 		// Jika selama delay proses dibatalkan (mis. user stop), hentikan
 		if (!isProcessing.current) return;
 
-		// Hentikan scanner sementara (kami masih menampilkan UI proses saat menunggu berhenti)
-		if (scannerRef.current) {
+		// If the scan came from the camera, stop the live scanner temporarily
+		if (source === "camera" && scannerRef.current) {
 			try {
 				await scannerRef.current.stop();
 				await scannerRef.current.clear();
@@ -124,8 +124,8 @@ function QrScanner({ eventId }) {
 			} catch (err) {
 				console.error("Error stopping scanner:", err);
 			}
+			setScanning(false);
 		}
-		setScanning(false);
 
 		// Panggil mutation untuk check-in volunteer
 		scanQrMutation.mutate(
@@ -149,12 +149,20 @@ function QrScanner({ eventId }) {
 					// invalidation/refetch sudah ditangani oleh hook `useOrgScanQrMutation`.
 					// (Jika suatu saat ingin behavior custom, gunakan props ini dari parent.)
 
-					// Auto clear dan scan lagi setelah 3 detik
-					setTimeout(() => {
-						setResult(null);
-						isProcessing.current = false;
-						setScanning(true);
-					}, 3000);
+					// If scan originated from camera, resume camera scanning after a short delay.
+					if (source === "camera") {
+						setTimeout(() => {
+							setResult(null);
+							isProcessing.current = false;
+							setScanning(true);
+						}, 3000);
+					} else {
+						// For file-based scans, just clear processing state and keep current camera state unchanged.
+						setTimeout(() => {
+							setResult(null);
+							isProcessing.current = false;
+						}, 1500);
+					}
 				},
 				onError: (error) => {
 					const errorData = error.response?.data;
@@ -172,71 +180,108 @@ function QrScanner({ eventId }) {
 					// Tidak memanggil callback error ke parent karena invalidation
 					// dan notifikasi sudah ditangani di hook.
 
-					// Auto clear dan scan lagi setelah 4 detik
-					setTimeout(() => {
-						setResult(null);
-						isProcessing.current = false;
-						setScanning(true);
-					}, 4000);
+					if (source === "camera") {
+						setTimeout(() => {
+							setResult(null);
+							isProcessing.current = false;
+							setScanning(true);
+						}, 4000);
+					} else {
+						setTimeout(() => {
+							setResult(null);
+							isProcessing.current = false;
+						}, 2000);
+					}
 				},
 			}
 		);
 	};
 
-	// Scan QR code from an uploaded file (image). Uses Html5Qrcode.scanFileV2 when available,
-	// otherwise falls back to creating a temporary Html5Qrcode instance and using scanFile.
+	// Scan QR code from uploaded file with multiple strategies
 	const scanFile = async (file) => {
 		if (!file) return;
 		if (isProcessing.current) return;
 
-		// mark as processing to prevent duplicates
 		isProcessing.current = true;
 		setResult(null);
 
-		try {
-			// Prefer the static/newer API if available
+		// Helper to attempt scan
+		const attemptScan = async (fileToScan) => {
 			if (typeof Html5Qrcode.scanFileV2 === "function") {
-				const res = await Html5Qrcode.scanFileV2(file, true);
-				// scanFileV2 may return a string or an array
-				const decoded = Array.isArray(res) ? res[0] : res;
-				// Ensure we call the same handling pipeline
-				isProcessing.current = false; // allow handleScan to set flag
-				handleScan(decoded);
-				return;
-			}
-
-			// Fallback: create a temporary, hidden element and instance to scan the file
-			const tempId = "html5qr-temp-file-scan";
-			let tempEl = document.getElementById(tempId);
-			if (!tempEl) {
-				tempEl = document.createElement("div");
+				const res = await Html5Qrcode.scanFileV2(fileToScan, true);
+				return Array.isArray(res) ? res[0] : res;
+			} else {
+				const tempId = `html5qr-temp-${Date.now()}`;
+				let tempEl = document.createElement("div");
 				tempEl.id = tempId;
 				tempEl.style.display = "none";
 				document.body.appendChild(tempEl);
+
+				const tempScanner = new Html5Qrcode(tempId);
+				try {
+					const res = await tempScanner.scanFile(fileToScan, true);
+					const decoded = Array.isArray(res) ? res[0] : res;
+					tempScanner.clear();
+					if (tempEl.parentNode) tempEl.parentNode.removeChild(tempEl);
+					return decoded;
+				} catch (err) {
+					try {
+						tempScanner.clear();
+					} catch (e) {}
+					if (tempEl.parentNode) tempEl.parentNode.removeChild(tempEl);
+					throw err;
+				}
+			}
+		};
+
+		try {
+			let decoded = null;
+			const strategies = [
+				// Strategy 1: Original file as-is
+				{ name: "original", process: () => file },
+				// Strategy 2: Resize only (no contrast)
+				{ name: "resize-only", process: () => preprocessImage(file, 1500, 0) },
+				// Strategy 3: Resize + light sharpening
+				{ name: "light-sharpen", process: () => preprocessImage(file, 1200, 15) },
+				// Strategy 4: Resize + medium contrast
+				{ name: "medium-contrast", process: () => preprocessImage(file, 1200, 30) },
+				// Strategy 5: Resize + high contrast
+				{ name: "high-contrast", process: () => preprocessImage(file, 1000, 50) },
+				// Strategy 6: Convert to grayscale + threshold
+				{ name: "grayscale", process: () => preprocessGrayscale(file) },
+			];
+
+			for (const strategy of strategies) {
+				try {
+					console.log(`🔍 Trying strategy: ${strategy.name}`);
+					const processedFile = await strategy.process();
+					const fileToScan =
+						processedFile instanceof Blob
+							? new File([processedFile], file.name || "scan.png", { type: processedFile.type })
+							: processedFile;
+
+					decoded = await attemptScan(fileToScan);
+
+					if (decoded) {
+						console.log(`✅ Success with strategy: ${strategy.name}`);
+						isProcessing.current = false;
+						handleScan(decoded, "file");
+						return;
+					}
+				} catch (err) {
+					console.log(`❌ Strategy ${strategy.name} failed:`, err.message);
+					// Continue to next strategy
+				}
 			}
 
-			const tempScanner = new Html5Qrcode(tempId);
-			try {
-				const res = await tempScanner.scanFile(file, true);
-				const decoded = Array.isArray(res) ? res[0] : res;
-				tempScanner.clear();
-				if (tempEl && tempEl.parentNode) tempEl.parentNode.removeChild(tempEl);
-				isProcessing.current = false; // allow handleScan to set flag
-				handleScan(decoded);
-				return;
-			} catch (err) {
-				// cleanup then rethrow to outer catcher
-				try {
-					tempScanner.clear();
-				} catch (e) {}
-				if (tempEl && tempEl.parentNode) tempEl.parentNode.removeChild(tempEl);
-				throw err;
-			}
+			// All strategies failed
+			throw new Error("No MultiFormat Readers were able to detect the code.");
 		} catch (err) {
-			console.error("❌ File scan error:", err);
+			console.error("❌ All scan strategies failed:", err);
 			setResult({
 				message: "Gagal memindai file QR Code",
-				details: err?.message || String(err),
+				details:
+					"Pastikan gambar QR Code jelas dan tidak blur. Coba foto ulang dengan pencahayaan yang baik.",
 			});
 			setResultType("error");
 			playSound("error");
@@ -244,9 +289,129 @@ function QrScanner({ eventId }) {
 			setTimeout(() => {
 				setResult(null);
 				isProcessing.current = false;
-			}, 3000);
+			}, 4000);
 		}
 	};
+
+	// Preprocess image: resize (keep aspect), optionally boost contrast, return Blob
+	const preprocessImage = (file, maxDim = 1200, contrast = 0) =>
+		new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onerror = () => reject(new Error("Failed to read file"));
+			reader.onload = () => {
+				const img = new Image();
+				img.onload = () => {
+					let { width, height } = img;
+					const ratio = width / height;
+					if (Math.max(width, height) > maxDim) {
+						if (width >= height) {
+							width = maxDim;
+							height = Math.round(maxDim / ratio);
+						} else {
+							height = maxDim;
+							width = Math.round(maxDim * ratio);
+						}
+					}
+					const canvas = document.createElement("canvas");
+					canvas.width = width;
+					canvas.height = height;
+					const ctx = canvas.getContext("2d");
+					ctx.fillStyle = "#ffffff";
+					ctx.fillRect(0, 0, width, height);
+					ctx.drawImage(img, 0, 0, width, height);
+
+					// Apply contrast adjustment if specified
+					if (contrast !== 0) {
+						try {
+							const imgData = ctx.getImageData(0, 0, width, height);
+							const d = imgData.data;
+							const f = (259 * (contrast + 255)) / (255 * (259 - contrast));
+							for (let i = 0; i < d.length; i += 4) {
+								d[i] = Math.min(255, Math.max(0, f * (d[i] - 128) + 128));
+								d[i + 1] = Math.min(255, Math.max(0, f * (d[i + 1] - 128) + 128));
+								d[i + 2] = Math.min(255, Math.max(0, f * (d[i + 2] - 128) + 128));
+							}
+							ctx.putImageData(imgData, 0, 0);
+						} catch (e) {
+							console.warn("preprocess contrast failed", e);
+						}
+					}
+
+					canvas.toBlob(
+						(blob) => {
+							if (blob) resolve(blob);
+							else reject(new Error("Canvas toBlob failed"));
+						},
+						"image/png",
+						0.95
+					);
+				};
+				img.onerror = () => reject(new Error("Image load error"));
+				img.src = String(reader.result);
+			};
+			reader.readAsDataURL(file);
+		});
+
+	// Preprocess to grayscale with adaptive threshold for better QR detection
+	const preprocessGrayscale = (file) =>
+		new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onerror = () => reject(new Error("Failed to read file"));
+			reader.onload = () => {
+				const img = new Image();
+				img.onload = () => {
+					let { width, height } = img;
+					const ratio = width / height;
+					// Target size for grayscale processing
+					const maxDim = 1200;
+					if (Math.max(width, height) > maxDim) {
+						if (width >= height) {
+							width = maxDim;
+							height = Math.round(maxDim / ratio);
+						} else {
+							height = maxDim;
+							width = Math.round(maxDim * ratio);
+						}
+					}
+
+					const canvas = document.createElement("canvas");
+					canvas.width = width;
+					canvas.height = height;
+					const ctx = canvas.getContext("2d");
+					ctx.fillStyle = "#ffffff";
+					ctx.fillRect(0, 0, width, height);
+					ctx.drawImage(img, 0, 0, width, height);
+
+					try {
+						const imgData = ctx.getImageData(0, 0, width, height);
+						const d = imgData.data;
+
+						// Convert to grayscale and apply threshold
+						for (let i = 0; i < d.length; i += 4) {
+							const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+							// Adaptive threshold - makes QR codes sharper
+							const val = gray > 127 ? 255 : 0;
+							d[i] = d[i + 1] = d[i + 2] = val;
+						}
+						ctx.putImageData(imgData, 0, 0);
+					} catch (e) {
+						console.warn("grayscale processing failed", e);
+					}
+
+					canvas.toBlob(
+						(blob) => {
+							if (blob) resolve(blob);
+							else reject(new Error("Canvas toBlob failed"));
+						},
+						"image/png",
+						1.0
+					);
+				};
+				img.onerror = () => reject(new Error("Failed to load image"));
+				img.src = reader.result;
+			};
+			reader.readAsDataURL(file);
+		});
 
 	const handleFileChange = (e) => {
 		const file = e.target.files?.[0];
@@ -313,7 +478,14 @@ function QrScanner({ eventId }) {
 	};
 
 	return (
-		<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+		<div
+			className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6"
+			onDragOver={(e) => e.preventDefault()}
+			onDrop={(e) => {
+				e.preventDefault();
+				const f = e.dataTransfer?.files?.[0];
+				if (f) scanFile(f);
+			}}>
 			<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4">
 				<h2 className="text-lg sm:text-xl font-semibold text-gray-800 flex items-center gap-2">
 					<Scan className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />

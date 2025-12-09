@@ -58,54 +58,111 @@ export default function OrganizationEventParticipant() {
 	// Local state for search/filter
 	const [searchParticipant, setSearchParticipant] = useState("");
 	const [selectedEventId, setSelectedEventId] = useState("all");
-	const [qrDataMap, setQrDataMap] = useState({}); // Store QR data for each participant
+	const [qrDataMap, setQrDataMap] = useState({}); // Store QR data + export size for each participant
 
-	// Handle download QR code
+	// Handle download QR code (simple approach like volunteer QR)
 	const handleDownloadQR = (participant) => {
 		downloadQrMutation.mutate(participant.id, {
 			onSuccess: (response) => {
-				if (response.success) {
-					const qrData = response.data.qr_code;
-					const volunteerName = response.data.volunteer.nama;
-					const eventName = response.data.event.judul;
+				if (!response.success) return;
 
-					// Store QR data temporarily for rendering
-					setQrDataMap((prev) => ({
-						...prev,
-						[participant.id]: qrData,
-					}));
+				const qrData = response.data.qr_code;
+				const volunteerName = (response.data.volunteer?.nama || "volunteer").replace(/\s+/g, "_");
+				const eventName = (response.data.event?.judul || "event").replace(/\s+/g, "_");
 
-					// Wait a bit for canvas to render, then download
-					setTimeout(() => {
-						const canvas = document.querySelector(`#qr-canvas-${participant.id}`);
-						if (!canvas) {
-							toast.error("Gagal generate QR Code");
+				// Store QR data temporarily for rendering
+				setQrDataMap((prev) => ({
+					...prev,
+					[participant.id]: qrData,
+				}));
+
+				// Poll canvas until it has actual QR content
+				let attempts = 0;
+				const maxAttempts = 20; // Max 2 seconds
+
+				const checkAndDownload = () => {
+					attempts++;
+					const canvas = document.getElementById(`qr-canvas-${participant.id}`);
+
+					// Canvas not ready yet, retry
+					if (!canvas && attempts < maxAttempts) {
+						setTimeout(checkAndDownload, 100);
+						return;
+					}
+
+					// Timeout - canvas not found
+					if (!canvas) {
+						toast.error("Gagal generate QR Code - timeout");
+						setQrDataMap((prev) => {
+							const copy = { ...prev };
+							delete copy[participant.id];
+							return copy;
+						});
+						return;
+					}
+
+					// Check if canvas has actual QR content (not blank)
+					try {
+						const ctx = canvas.getContext("2d");
+						const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+						const pixels = imageData.data;
+
+						// Check for non-white pixels
+						let hasContent = false;
+						for (let i = 0; i < pixels.length; i += 4) {
+							if (pixels[i] < 250 || pixels[i + 1] < 250 || pixels[i + 2] < 250) {
+								hasContent = true;
+								break;
+							}
+						}
+
+						// No content yet, retry
+						if (!hasContent && attempts < maxAttempts) {
+							setTimeout(checkAndDownload, 100);
 							return;
 						}
 
-						// Download the QR code
-						const pngUrl = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+						// Still no content after timeout
+						if (!hasContent) {
+							toast.error("QR Code gagal render - silakan coba lagi");
+							setQrDataMap((prev) => {
+								const copy = { ...prev };
+								delete copy[participant.id];
+								return copy;
+							});
+							return;
+						}
+					} catch (err) {
+						console.warn("Canvas check error:", err);
+						// Continue with download anyway
+					}
 
-						const link = document.createElement("a");
-						link.href = pngUrl;
-						link.download = `QR_${volunteerName}_${eventName}.png`;
-						document.body.appendChild(link);
-						link.click();
-						document.body.removeChild(link);
+					// Canvas has content, download it
+					const pngUrl = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
 
-						// Show success message
-						toast.success(`QR Code untuk ${volunteerName} berhasil didownload`, {
+					const link = document.createElement("a");
+					link.href = pngUrl;
+					link.download = `QR_${volunteerName}_${eventName}.png`;
+					document.body.appendChild(link);
+					link.click();
+					document.body.removeChild(link);
+
+					toast.success(
+						`QR Code untuk ${response.data.volunteer?.nama || "volunteer"} berhasil didownload`,
+						{
 							position: "top-center",
-						});
+						}
+					);
 
-						// Cleanup QR data after download
-						setQrDataMap((prev) => {
-							const newMap = { ...prev };
-							delete newMap[participant.id];
-							return newMap;
-						});
-					}, 100);
-				}
+					// Cleanup
+					setQrDataMap((prev) => {
+						const copy = { ...prev };
+						delete copy[participant.id];
+						return copy;
+					});
+				};
+
+				setTimeout(checkAndDownload, 100);
 			},
 		});
 	};
@@ -730,7 +787,7 @@ export default function OrganizationEventParticipant() {
 										key={participantId}
 										id={`qr-canvas-${participantId}`}
 										value={qrData}
-										size={300}
+										size={512}
 										level="H"
 										includeMargin={true}
 									/>
