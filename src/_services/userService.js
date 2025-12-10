@@ -57,7 +57,7 @@ export const getUserRegistrations = async () => {
  * @async
  * @function adminGetUsers
  * @endpoint GET /admin/users
- * @param {Object} params - Query parameters { page, limit, search }
+ * @param {Object} params - Query parameters dalam format Query Builder
  * @returns {Promise<any>} Data users dengan pagination info.
  */
 export const adminGetUsers = async (params = {}) => {

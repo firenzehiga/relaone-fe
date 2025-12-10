@@ -2,7 +2,7 @@ import * as userService from "@/_services/userService";
 import { useAuthStore, useUserRole } from "@/_hooks/useAuth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { parseApiError } from "@/utils";
+import { parseApiError, toQueryBuilderParams } from "@/utils";
 import { showToast } from "@/components/ui/Toast";
 
 // === PUBLIC HOOKS ===
@@ -93,7 +93,9 @@ export const useAdminUsers = (page = 1, limit = 10, search = "") => {
 	return useQuery({
 		queryKey: ["adminUsers", page, limit, search],
 		queryFn: async () => {
-			const response = await userService.adminGetUsers({ page, limit, search });
+			const params = toQueryBuilderParams({ page, limit, search });
+
+			const response = await userService.adminGetUsers(params);
 			return response;
 		},
 		enabled,
@@ -161,9 +163,6 @@ export const useAdminDeleteUserMutation = () => {
 		mutationFn: userService.adminDeleteUser,
 		onMutate: () => setLoading(true),
 		onSuccess: (_, id) => {
-			queryClient.setQueryData(["adminUsers"], (oldData) =>
-				oldData.filter((user) => user.id !== id)
-			);
 			queryClient.invalidateQueries(["adminUsers"]);
 			setLoading(false);
 			showToast({
