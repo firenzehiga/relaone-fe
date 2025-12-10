@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Lock, Eye, EyeOff, ArrowLeft, CheckCircle, AlertCircle, Mail, Shield } from "lucide-react";
 import DynamicButton from "@/components/ui/Button";
 import { useResetPassword, useAuthStore } from "@/_hooks/useAuth";
@@ -8,6 +9,7 @@ import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
 
 export default function ResetPasswordPage() {
 	useDocumentTitle("Reset Password");
+	const navigate = useNavigate();
 
 	const [searchParams] = useSearchParams();
 	const [formData, setFormData] = useState({
@@ -21,6 +23,7 @@ export default function ResetPasswordPage() {
 	const [tokenValid, setTokenValid] = useState(true);
 	const [tokenExpired, setTokenExpired] = useState(false);
 	const [passwordStrength, setPasswordStrength] = useState("");
+	const [shouldRender, setShouldRender] = useState(false);
 
 	const resetPasswordMutation = useResetPassword();
 	const { isLoading } = useAuthStore();
@@ -37,15 +40,15 @@ export default function ResetPasswordPage() {
 		const urlExpires = searchParams.get("expires");
 		const urlSignature = searchParams.get("signature");
 
-		// Validasi format token
+		// 🔒 PROTEKSI: Redirect jika tidak ada token atau format invalid
 		if (!urlToken || !isValidTokenFormat(urlToken)) {
-			setTokenValid(false);
+			navigate("/login", { replace: true });
 			return;
 		}
 
-		// Validasi parameter lengkap
+		// 🔒 PROTEKSI: Redirect jika parameter tidak lengkap
 		if (!urlEmail || !urlExpires || !urlSignature) {
-			setTokenValid(false);
+			navigate("/login", { replace: true });
 			return;
 		}
 
@@ -55,13 +58,17 @@ export default function ResetPasswordPage() {
 
 		if (!isNaN(expiresTimestamp) && currentTimestamp > expiresTimestamp) {
 			setTokenExpired(true);
+			setTokenValid(false);
+			setShouldRender(true);
 			return;
 		}
 
 		// Jika semua validasi lolos, set data
 		setToken(urlToken);
+		setTokenValid(true);
 		setFormData((prev) => ({ ...prev, email: urlEmail }));
-	}, [searchParams]);
+		setShouldRender(true);
+	}, [searchParams, navigate]);
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
@@ -203,6 +210,11 @@ export default function ResetPasswordPage() {
 			}
 		);
 	};
+
+	// Jangan render apapun sampai validasi selesai
+	if (!shouldRender) {
+		return null;
+	}
 
 	// Token expired state
 	if (tokenExpired) {

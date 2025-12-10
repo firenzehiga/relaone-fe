@@ -52,59 +52,83 @@ api.interceptors.response.use(
 		const originalRequest = error.config;
 		if (!originalRequest) return Promise.reject(error);
 
-		if (error.response?.status === 401 && !originalRequest._retry) {
-			originalRequest._retry = true;
+		// Cek apakah error 401 Unauthorized
+		const is401Error = error.response?.status === 401;
+		const alreadyRetried = originalRequest._retry;
 
-			const oldToken = localStorage.getItem("authToken");
-			if (!oldToken) return Promise.reject(error);
-
-			if (isRefreshing) {
-				return new Promise((resolve, reject) => {
-					failedQueue.push({ resolve, reject });
-				})
-					.then((token) => {
-						originalRequest.headers = originalRequest.headers || {};
-						originalRequest.headers.Authorization = `Bearer ${token}`;
-						return api(originalRequest);
-					})
-					.catch((err) => Promise.reject(err));
-			}
-
-			isRefreshing = true;
-
-			try {
-				// Gunakan axios tanpa interceptor untuk refresh agar tidak memicu loop
-				const refreshClient = axios.create({ baseURL: BASE_URL });
-				const res = await refreshClient.post(
-					"/refresh-token",
-					{},
-					{ headers: { Authorization: `Bearer ${oldToken}` } }
-				);
-				console.debug("refresh response:", res.status, res.data);
-
-				// Ambil token dari beberapa kemungkinan lokasi (sesuaikan dengan backend Anda)
-				const newToken = res.data?.data?.token || null;
-				if (!newToken) throw new Error("No token returned from refresh endpoint");
-
-				localStorage.setItem("authToken", newToken);
-				processQueue(null, newToken);
-				isRefreshing = false;
-
-				originalRequest.headers = originalRequest.headers || {};
-				originalRequest.headers.Authorization = `Bearer ${newToken}`;
-				return api(originalRequest);
-			} catch (err) {
-				processQueue(err, null);
-				isRefreshing = false;
-				localStorage.removeItem("authToken");
-
-				window.location.href = "/login"; // Redirect ke login page
-
-				return Promise.reject(err);
-			}
+		if (!is401Error || alreadyRetried) {
+			return Promise.reject(error);
 		}
 
-		return Promise.reject(error);
+		// Tandai bahwa request ini sudah pernah di-retry
+		originalRequest._retry = true;
+
+		// Cek apakah ada token
+		const oldToken = localStorage.getItem("authToken");
+
+		// Jika tidak ada token, langsung reject (user belum login)
+		if (!oldToken) {
+			return Promise.reject(error);
+		}
+
+		// Jika ada request lain yang sedang refresh, masukkan ke queue
+		if (isRefreshing) {
+			return new Promise((resolve, reject) => {
+				failedQueue.push({ resolve, reject });
+			})
+				.then((token) => {
+					originalRequest.headers = originalRequest.headers || {};
+					originalRequest.headers.Authorization = `Bearer ${token}`;
+					return api(originalRequest);
+				})
+				.catch((err) => Promise.reject(err));
+		}
+
+		// Mulai proses refresh token
+		isRefreshing = true;
+
+		try {
+			// Refresh token menggunakan axios client tanpa interceptor
+			const refreshClient = axios.create({ baseURL: BASE_URL });
+			const res = await refreshClient.post(
+				"/refresh-token",
+				{},
+				{ headers: { Authorization: `Bearer ${oldToken}` } }
+			);
+
+			const newToken = res.data?.data?.token;
+			if (!newToken) {
+				throw new Error("No token returned from refresh endpoint");
+			}
+
+			// Simpan token baru
+			localStorage.setItem("authToken", newToken);
+			processQueue(null, newToken);
+			isRefreshing = false;
+
+			// Retry request dengan token baru
+			originalRequest.headers = originalRequest.headers || {};
+			originalRequest.headers.Authorization = `Bearer ${newToken}`;
+			return api(originalRequest);
+		} catch (refreshError) {
+			// Refresh token gagal
+			processQueue(refreshError, null);
+			isRefreshing = false;
+
+			// Clear token
+			localStorage.removeItem("authToken");
+
+			// Redirect ke login KECUALI untuk endpoint verify email atau resend verification
+			const isVerifyEmail =
+				originalRequest.url?.includes("/email/verify") ||
+				originalRequest.url?.includes("/email/resend");
+
+			if (!isVerifyEmail) {
+				window.location.href = "/login";
+			}
+
+			return Promise.reject(refreshError);
+		}
 	}
 );
 

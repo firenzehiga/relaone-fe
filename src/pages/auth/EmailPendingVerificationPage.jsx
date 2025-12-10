@@ -22,18 +22,21 @@ export default function EmailVerificationPendingPage() {
 	const [isInitialized, setIsInitialized] = useState(false);
 
 	useEffect(() => {
-		// Ambil email dari state navigation atau localStorage
-		const stateEmail = location.state?.email;
-		const stateUserName = location.state?.userName;
-
+		// Cek apakah ada pendingUser di localStorage
 		let foundEmail = "";
 		let foundName = "";
 
+		// 1. Prioritas pertama: dari state navigation (fresh dari register)
+		const stateEmail = location.state?.email;
+		const stateUserName = location.state?.userName;
+
 		if (stateEmail) {
 			foundEmail = stateEmail;
+			foundName = stateUserName || "";
 			setEmail(stateEmail);
+			setUserName(foundName);
 		} else {
-			// Fallback ke localStorage jika ada
+			// 2. Fallback: cek localStorage
 			try {
 				const pendingUser = localStorage.getItem("pendingUser");
 				if (pendingUser) {
@@ -44,24 +47,18 @@ export default function EmailVerificationPendingPage() {
 					setUserName(foundName);
 				}
 			} catch (e) {
-				// ignore
+				// JSON parse error, hapus corrupt data
+				localStorage.removeItem("pendingUser");
 			}
-		}
-
-		if (stateUserName) {
-			foundName = stateUserName;
-			setUserName(stateUserName);
 		}
 
 		// Set initialized flag
 		setIsInitialized(true);
 
-		// Jika tidak ada email sama sekali setelah cek semua sumber, redirect ke register
+		// PROTEKSI: Jika tidak ada email sama sekali (tidak ada pendingUser),
+		// berarti user tidak punya akses ke halaman ini
 		if (!foundEmail) {
-			const timer = setTimeout(() => {
-				navigate("/login", { replace: true });
-			}, 100);
-			return () => clearTimeout(timer);
+			navigate("/login", { replace: true });
 		}
 	}, [location.state, navigate]);
 
@@ -209,7 +206,7 @@ export default function EmailVerificationPendingPage() {
 							</DynamicButton>
 						</div>
 					</motion.div>
-				</div>	
+				</div>
 			</div>
 		</div>
 	);

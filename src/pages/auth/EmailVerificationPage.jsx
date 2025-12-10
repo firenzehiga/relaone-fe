@@ -15,6 +15,7 @@ export default function EmailVerificationPage() {
 	const { mutate, isSuccess, isError, error, isPending, data } = useVerifyEmail();
 	const [localError, setLocalError] = useState("");
 	const [alreadyVerified, setAlreadyVerified] = useState(false);
+	const [shouldRender, setShouldRender] = useState(false);
 
 	useEffect(() => {
 		// Ambil parameter dari URL
@@ -23,9 +24,9 @@ export default function EmailVerificationPage() {
 		const expires = searchParams.get("expires");
 		const signature = searchParams.get("signature");
 
-		// Validasi parameter
+		// 🔒 PROTEKSI: Validasi parameter - redirect jika tidak lengkap
 		if (!id || !hash || !expires || !signature) {
-			setLocalError("Link verifikasi tidak valid atau tidak lengkap.");
+			navigate("/login", { replace: true });
 			return;
 		}
 
@@ -33,12 +34,12 @@ export default function EmailVerificationPage() {
 		try {
 			const pendingUser = localStorage.getItem("pendingUser");
 			if (!pendingUser) {
-				// Tidak ada pendingUser = sudah verifikasi sebelumnya
 				setAlreadyVerified(true);
+				setShouldRender(true);
 				return;
 			}
 		} catch (e) {
-			// ignore storage errors, lanjut ke validasi berikutnya
+			// ignore storage errors
 		}
 
 		// 🔒 Validasi expires SEBELUM hit backend
@@ -47,12 +48,19 @@ export default function EmailVerificationPage() {
 
 		if (!isNaN(expiresTimestamp) && currentTimestamp > expiresTimestamp) {
 			setLocalError("Link verifikasi sudah kadaluarsa. Silakan kirim ulang email verifikasi.");
+			setShouldRender(true);
 			return;
 		}
 
-		// Panggil mutation untuk verifikasi
+		// Izinkan render dan panggil mutation
+		setShouldRender(true);
 		mutate({ id, hash, expires, signature });
-	}, []);
+	}, [mutate, searchParams, navigate]);
+
+	// Jangan render apapun sampai validasi selesai
+	if (!shouldRender) {
+		return null;
+	}
 
 	// Determine status for illustration
 	const status = alreadyVerified
@@ -127,7 +135,7 @@ export default function EmailVerificationPage() {
 								variant="success"
 								onClick={() => navigate("/login")}
 								className="w-full py-3 rounded-lg font-medium transition-all transform hover:scale-105">
-								Login Sekarang
+								Kembali ke Halaman Login
 							</DynamicButton>
 						</motion.div>
 					)}
@@ -147,14 +155,18 @@ export default function EmailVerificationPage() {
 								<CheckCircle className="w-10 h-10 text-green-600" />
 							</motion.div>
 
-							<h2 className="text-3xl font-bold text-gray-900 mb-4">Email Terverifikasi!</h2>
+							<h2 className="text-3xl font-bold text-gray-900 mb-4">
+								Email Berhasil Diverifikasi!
+							</h2>
 							<p className="text-gray-600 mb-4">
 								{data?.message || "Email Anda telah berhasil diverifikasi!"}
 							</p>
-							<div className="flex items-center justify-center text-sm text-gray-500">
-								<Loader2 className="w-4 h-4 mr-2 animate-spin" />
-								Mengarahkan ke halaman login dalam 3 detik...
-							</div>
+							<DynamicButton
+								variant="success"
+								onClick={() => navigate("/login")}
+								className="w-full py-3 rounded-lg font-medium transition-all transform hover:scale-105">
+								Login Sekarang
+							</DynamicButton>
 						</motion.div>
 					)}
 

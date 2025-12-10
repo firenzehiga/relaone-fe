@@ -487,7 +487,6 @@ export const useChangePassword = () => {
 };
 
 export const useVerifyEmail = () => {
-	const navigate = useNavigate();
 	const { setLoading, setError, clearError } = useAuthStore();
 
 	return useMutation({
@@ -507,9 +506,7 @@ export const useVerifyEmail = () => {
 			} catch (e) {
 				// ignore storage errors
 			}
-
-			// Redirect ke login setelah 3 detik
-			setTimeout(() => navigate("/login"), 3000);
+			// Toast dihapus karena sudah ditampilkan di UI success state
 		},
 		onError: (error) => {
 			setLoading(false);
