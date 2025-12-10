@@ -295,12 +295,9 @@ export default function ResetPasswordPage() {
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
 			<div className="max-w-lg w-full">
-				{/* Green accent card */}
 				<div className="bg-white rounded-xl shadow-xl overflow-hidden border-t-4 border-emerald-500 relative">
-					{/* Subtle green accent */}
 					<div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-bl-full"></div>
 					<div className="absolute bottom-0 left-0 w-24 h-24 bg-emerald-500/5 rounded-tr-full"></div>
-
 					<div className="px-8 py-12 relative z-10">
 						{/* Back Button */}
 						<Link
