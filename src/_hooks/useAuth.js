@@ -146,29 +146,9 @@ const useAuthStore = create((set, get) => ({
 		// set initialized langsung agar UI (header dll) tidak ter-block
 		set({ token, isAuthenticated: true, user: parsedUser, initialized: true });
 
-		// Jalankan verifikasi profil di background tanpa menunggu.
-		// TUJUAN: memvalidasi token saja. Jangan menimpa `authUser` yang sudah ada
-		// karena shape dari login/register bisa berbeda. Hanya clear auth bila
-		// server menolak token (401). Untuk error jaringan/transient jangan auto-logout.
-		(async () => {
-			try {
-				await userService.getUserProfile();
-				// token valid — tidak perlu menimpa local authUser di keadaan normal
-			} catch (err) {
-				const status = err?.response?.status;
-				if (status === 401) {
-					// token invalid/expired -> clear auth
-					set({ user: null, token: null, isAuthenticated: false });
-					try {
-						localStorage.removeItem("authToken");
-						localStorage.removeItem("authUser");
-					} catch (e) {}
-				} else {
-					// network / transient error -> jangan clear auth supaya pengguna tidak
-					// ter-logout karena masalah sementara
-				}
-			}
-		})();
+		// TIDAK perlu panggil getUserProfile() di sini!
+		// Biar component yang butuh (ProtectedRoute, Dashboard, dll) yang panggil sendiri.
+		// initializeAuth() cukup restore state dari localStorage saja.
 	},
 }));
 
