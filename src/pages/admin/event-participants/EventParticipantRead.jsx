@@ -23,6 +23,7 @@ import FetchLoader from "@/components/ui/FetchLoader";
 import { parseApiError } from "@/utils";
 import { formatDate, formatDateTime, formatTime } from "@/utils/dateFormatter";
 import Badge from "@/components/ui/Badge";
+import { useAuthStore } from "@/_hooks/useAuth";
 
 export default function AdminEventParticipant() {
 	const {
@@ -33,6 +34,8 @@ export default function AdminEventParticipant() {
 	} = useAdminParticipants();
 
 	const deleteParticipantMutation = useAdminDeleteParticipantMutation();
+
+	const { isLoading } = useAuthStore();
 
 	// Local state for search/filter
 	const [searchParticipant, setSearchParticipant] = useState("");
@@ -99,18 +102,7 @@ export default function AdminEventParticipant() {
 			backdrop: true,
 		}).then((result) => {
 			if (result.isConfirmed) {
-				deleteParticipantMutation.mutate(id, {
-					onSuccess: () => {
-						toast.success("Participant berhasil dihapus.", {
-							position: "top-center",
-						});
-					},
-					onError: (err) => {
-						// ambil pesan backend kalau ada, fallback ke err.message
-						const msg = parseApiError(err) || "Gagal menghapus participant.";
-						toast.error(msg, { position: "top-center" });
-					},
-				}); // Panggil fungsi deleteMutation dengan ID event
+				deleteParticipantMutation.mutate(id);
 			}
 		});
 	};
