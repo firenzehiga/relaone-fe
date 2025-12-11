@@ -83,20 +83,26 @@ export default function JoinEventModal() {
 			};
 
 			// Catat waktu mulai request untuk monitoring response time
-			startTime = typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
+			startTime =
+				typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
 
 			// Tunggu join selesai
 			await joinMutation.mutateAsync(payload);
 
 			// Hitung durasi
-			const endTime = typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
+			const endTime =
+				typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
 			const durationMs = Math.round(endTime - startTime);
 			const formatDuration = (ms) => (ms >= 1000 ? `${(ms / 1000).toFixed(2)} s` : `${ms} ms`);
 
 			// Log sebagai kalimat panjang menggunakan huruf kapital
 			if (import.meta.env && import.meta.env.DEV) {
 				console.log(
-					`[PERFORMANCE] PENDAFTARAN UNTUK EVENT "${event.judul || event.title || event.id}" OLEH PENGGUNA ${user?.id || "-"} TELAH BERHASIL DAN SELESAI DALAM ${formatDuration(durationMs)}. TERIMA KASIH ATAS PARTISIPASINYA.`
+					`[PERFORMANCE] PENDAFTARAN UNTUK EVENT "${
+						event.judul || event.title || event.id
+					}" OLEH PENGGUNA ${user?.id || "-"} TELAH BERHASIL DAN SELESAI DALAM ${formatDuration(
+						durationMs
+					)}. TERIMA KASIH ATAS PARTISIPASINYA.`
 				);
 			}
 
@@ -113,19 +119,26 @@ export default function JoinEventModal() {
 			}, 11500);
 		} catch (err) {
 			// Jika request gagal, log juga durasi (jika tersedia)
-			const endTime = typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
+			const endTime =
+				typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
 			const durationMs = startTime ? Math.round(endTime - startTime) : null;
 			const formatDuration = (ms) => (ms >= 1000 ? `${(ms / 1000).toFixed(2)} s` : `${ms} ms`);
 			if (durationMs !== null) {
 				if (import.meta.env && import.meta.env.DEV) {
 					console.log(
-						`[PERFORMANCE] PENDAFTARAN UNTUK EVENT "${event.judul || event.title || event.id}" OLEH PENGGUNA ${user?.id || "-"} GAGAL SETELAH ${formatDuration(durationMs)}. SILAKAN COBA LAGI NANTI.`
+						`[PERFORMANCE] PENDAFTARAN UNTUK EVENT "${
+							event.judul || event.title || event.id
+						}" OLEH PENGGUNA ${user?.id || "-"} GAGAL SETELAH ${formatDuration(
+							durationMs
+						)}. SILAKAN COBA LAGI NANTI.`
 					);
 				}
 			} else {
 				if (import.meta.env && import.meta.env.DEV) {
 					console.log(
-						`[PERFORMANCE] PENDAFTARAN UNTUK EVENT "${event.judul || event.title || event.id}" OLEH PENGGUNA ${user?.id || "-"} GAGAL. SILAKAN COBA KEMBALI.`
+						`[PERFORMANCE] PENDAFTARAN UNTUK EVENT "${
+							event.judul || event.title || event.id
+						}" OLEH PENGGUNA ${user?.id || "-"} GAGAL. SILAKAN COBA KEMBALI.`
 					);
 				}
 			}

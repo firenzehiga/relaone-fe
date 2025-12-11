@@ -108,12 +108,15 @@ export default function RegisterPage() {
 		setApiErrors(null); // bersihkan error lama
 
 		// Mulai timer performa
-		const start = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+		const start =
+			typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
 		try {
 			await registerMutation.mutateAsync(payload);
-			const end = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+			const end =
+				typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
 			const durationMs = Math.max(0, end - start);
-			let formatted = durationMs < 1000 ? `${Math.round(durationMs)} MS` : `${(durationMs / 1000).toFixed(2)} S`;
+			let formatted =
+				durationMs < 1000 ? `${Math.round(durationMs)} MS` : `${(durationMs / 1000).toFixed(2)} S`;
 			setApiErrors(null);
 			if (import.meta.env && import.meta.env.DEV) {
 				console.log(
@@ -122,9 +125,11 @@ export default function RegisterPage() {
 			}
 			// pesan sukses ditangani di mutation
 		} catch (error) {
-			const end = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+			const end =
+				typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
 			const durationMs = Math.max(0, end - start);
-			let formatted = durationMs < 1000 ? `${Math.round(durationMs)} MS` : `${(durationMs / 1000).toFixed(2)} S`;
+			let formatted =
+				durationMs < 1000 ? `${Math.round(durationMs)} MS` : `${(durationMs / 1000).toFixed(2)} S`;
 			if (import.meta.env && import.meta.env.DEV) {
 				console.error(
 					`[PERFORMANCE] REGISTRASI AKUN UNTUK EMAIL "${formData.email}" GAGAL DALAM ${formatted}`

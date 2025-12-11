@@ -94,7 +94,7 @@ export default function EventsPage() {
 	useEffect(() => {
 		if (!eventsLoading && !categoriesLoading) {
 			// call endRouteTimer for SPA route measurement
-			import('@/utils/perfRoute').then((m) => m.endRouteTimer('events-page', '(EVENTS PAGE)'));
+			import("@/utils/perfRoute").then((m) => m.endRouteTimer("events-page", "(EVENTS PAGE)"));
 		}
 	}, [eventsLoading, categoriesLoading]);
 

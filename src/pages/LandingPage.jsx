@@ -57,7 +57,7 @@ export default function LandingPage() {
 	// End route timer when landing page data ready
 	useEffect(() => {
 		if (!eventsLoading) {
-			import('@/utils/perfRoute').then((m) => m.endRouteTimer('landing-page', '(LANDING PAGE)'));
+			import("@/utils/perfRoute").then((m) => m.endRouteTimer("landing-page", "(LANDING PAGE)"));
 		}
 	}, [eventsLoading]);
 

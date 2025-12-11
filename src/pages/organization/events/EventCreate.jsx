@@ -186,24 +186,31 @@ export default function OrganizationEventCreate() {
 
 		// Cepat: ukur waktu request untuk pelaporan performa (log sebagai kalimat panjang uppercase)
 		(async () => {
-			const start = typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now();
+			const start =
+				typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
 			try {
 				await createEventMutation.mutateAsync(payload);
-				const end = typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now();
+				const end =
+					typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
 				const durationMs = Math.round(end - start);
 				const formatDuration = (ms) => (ms >= 1000 ? `${(ms / 1000).toFixed(2)} S` : `${ms} MS`);
 				if (import.meta.env && import.meta.env.DEV) {
 					console.log(
-						`[PERFORMANCE] PEMBUATAN EVENT "${formData.judul || '-'}" OLEH ORGANISASI ${formData.organization_id || '-'} BERHASIL DALAM ${formatDuration(durationMs)}. TERIMA KASIH.`
+						`[PERFORMANCE] PEMBUATAN EVENT "${formData.judul || "-"}" OLEH ORGANISASI ${
+							formData.organization_id || "-"
+						} BERHASIL DALAM ${formatDuration(durationMs)}. TERIMA KASIH.`
 					);
 				}
 			} catch (err) {
-				const end = typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now();
+				const end =
+					typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
 				const durationMs = Math.round(end - start);
 				const formatDuration = (ms) => (ms >= 1000 ? `${(ms / 1000).toFixed(2)} S` : `${ms} MS`);
 				if (import.meta.env && import.meta.env.DEV) {
 					console.log(
-						`[PERFORMANCE] PEMBUATAN EVENT "${formData.judul || '-'}" OLEH ORGANISASI ${formData.organization_id || '-'} GAGAL SETELAH ${formatDuration(durationMs)}. SILAKAN COBA LAGI.`
+						`[PERFORMANCE] PEMBUATAN EVENT "${formData.judul || "-"}" OLEH ORGANISASI ${
+							formData.organization_id || "-"
+						} GAGAL SETELAH ${formatDuration(durationMs)}. SILAKAN COBA LAGI.`
 					);
 				}
 				throw err; // biarkan hook/komponen menanganinya juga

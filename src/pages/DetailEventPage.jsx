@@ -28,7 +28,9 @@ export default function DetailEventPage() {
 
 	useEffect(() => {
 		if (!isLoading && event) {
-			import('@/utils/perfRoute').then((m) => m.endRouteTimer('detail-event-page', '(DETAIL EVENT)'));
+			import("@/utils/perfRoute").then((m) =>
+				m.endRouteTimer("detail-event-page", "(DETAIL EVENT)")
+			);
 		}
 	}, [isLoading, event]);
 	const { openJoinModal } = useModalStore();

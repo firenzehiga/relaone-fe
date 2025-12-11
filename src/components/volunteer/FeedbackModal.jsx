@@ -9,11 +9,7 @@ import { useVolunteerSendFeedbackMutation } from "@/_hooks/useFeedbacks";
 import { useAuthStore } from "@/_hooks/useAuth";
 
 export default function FeedbackModal() {
-	const {
-		isFeedbackModalOpen,
-		selectedFeedbackParticipant,
-		closeFeedbackModal,
-	} = useModalStore();
+	const { isFeedbackModalOpen, selectedFeedbackParticipant, closeFeedbackModal } = useModalStore();
 
 	const [formData, setFormData] = useState({
 		rating: 5,
@@ -32,8 +28,7 @@ export default function FeedbackModal() {
 		}
 	}, [isFeedbackModalOpen, selectedFeedbackParticipant, setLoading]);
 
-	const handleRatingChange = (value) =>
-		setFormData((s) => ({ ...s, rating: value }));
+	const handleRatingChange = (value) => setFormData((s) => ({ ...s, rating: value }));
 	const handleChange = (e) => {
 		const { name, value, type, checked } = e.target;
 		if (type === "checkbox") setFormData((s) => ({ ...s, [name]: checked }));
@@ -42,9 +37,7 @@ export default function FeedbackModal() {
 
 	const handleSubmit = async (e) => {
 		e?.preventDefault();
-		const eventId =
-			selectedFeedbackParticipant?.event?.id ||
-			selectedFeedbackParticipant?.event_id;
+		const eventId = selectedFeedbackParticipant?.event?.id || selectedFeedbackParticipant?.event_id;
 		if (!eventId) return;
 
 		if (!isAuthenticated) {
@@ -54,7 +47,8 @@ export default function FeedbackModal() {
 
 		let startTime = null;
 		try {
-			startTime = typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
+			startTime =
+				typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
 			const payload = new FormData();
 			payload.append("event_id", eventId);
 			payload.append("rating", String(formData.rating));
@@ -64,12 +58,17 @@ export default function FeedbackModal() {
 			await sendFeedbackMutation.mutateAsync(payload);
 
 			// Hitung durasi dan log sebagai kalimat panjang UPPERCASE
-			const endTime = typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
+			const endTime =
+				typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
 			const durationMs = Math.round(endTime - startTime);
 			const formatDuration = (ms) => (ms >= 1000 ? `${(ms / 1000).toFixed(2)} S` : `${ms} MS`);
 			if (import.meta.env && import.meta.env.DEV) {
 				console.log(
-					`[PERFORMANCE] PENGIRIMAN FEEDBACK UNTUK EVENT "${selectedFeedbackParticipant?.event?.judul || eventId}" OLEH VOLUNTEER BERHASIL DALAM ${formatDuration(durationMs)}. TERIMA KASIH ATAS UMPAN BALIK ANDA.`
+					`[PERFORMANCE] PENGIRIMAN FEEDBACK UNTUK EVENT "${
+						selectedFeedbackParticipant?.event?.judul || eventId
+					}" OLEH VOLUNTEER BERHASIL DALAM ${formatDuration(
+						durationMs
+					)}. TERIMA KASIH ATAS UMPAN BALIK ANDA.`
 				);
 			}
 
@@ -82,19 +81,24 @@ export default function FeedbackModal() {
 			}, 10200);
 		} catch (err) {
 			// Log error with duration if available (kalimat panjang UPPERCASE)
-			const endTime = typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
+			const endTime =
+				typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
 			const durationMs = startTime ? Math.round(endTime - startTime) : null;
 			const formatDuration = (ms) => (ms >= 1000 ? `${(ms / 1000).toFixed(2)} S` : `${ms} MS`);
 			if (durationMs !== null) {
 				if (import.meta.env && import.meta.env.DEV) {
 					console.error(
-						`[PERFORMANCE] PENGIRIMAN FEEDBACK UNTUK EVENT "${selectedFeedbackParticipant?.event?.judul || eventId}" OLEH VOLUNTEER GAGAL SETELAH ${formatDuration(durationMs)}. SILAKAN COBA LAGI.`
+						`[PERFORMANCE] PENGIRIMAN FEEDBACK UNTUK EVENT "${
+							selectedFeedbackParticipant?.event?.judul || eventId
+						}" OLEH VOLUNTEER GAGAL SETELAH ${formatDuration(durationMs)}. SILAKAN COBA LAGI.`
 					);
 				}
 			} else {
 				if (import.meta.env && import.meta.env.DEV) {
 					console.error(
-						`[PERFORMANCE] PENGIRIMAN FEEDBACK UNTUK EVENT "${selectedFeedbackParticipant?.event?.judul || eventId}" OLEH VOLUNTEER GAGAL. SILAKAN COBA KEMBALI.`
+						`[PERFORMANCE] PENGIRIMAN FEEDBACK UNTUK EVENT "${
+							selectedFeedbackParticipant?.event?.judul || eventId
+						}" OLEH VOLUNTEER GAGAL. SILAKAN COBA KEMBALI.`
 					);
 				}
 			}
@@ -114,11 +118,7 @@ export default function FeedbackModal() {
 	if (!selectedFeedbackParticipant) return null;
 
 	return (
-		<Modal
-			isOpen={isFeedbackModalOpen}
-			onClose={handleClose}
-			title="Kirim Feedback"
-			size="md">
+		<Modal isOpen={isFeedbackModalOpen} onClose={handleClose} title="Kirim Feedback" size="md">
 			{success ? (
 				<motion.div
 					initial={{ opacity: 0, scale: 0.8 }}
@@ -138,9 +138,7 @@ export default function FeedbackModal() {
 							/>
 						</svg>
 					</div>
-					<h3 className="text-2xl font-bold text-gray-900 mb-3">
-						Feedback Terkirim
-					</h3>
+					<h3 className="text-2xl font-bold text-gray-900 mb-3">Feedback Terkirim</h3>
 					<p className="text-gray-600 text-lg leading-relaxed">
 						Terima kasih telah memberikan feedback untuk event <br />
 						<span className="font-semibold text-blue-600">

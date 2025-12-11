@@ -9,7 +9,6 @@ import App from "@/App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { useAuthStore } from "@/_hooks/useAuth";
 
-
 const queryClient = new QueryClient();
 
 /**
