@@ -166,3 +166,49 @@ export const changePassword = async (currentPassword, newPassword) => {
 		throw error;
 	}
 };
+
+/**
+ * Verify email dengan id, hash, expires, signature dari email
+ */
+export const verifyEmail = async (id, hash, expires, signature) => {
+	try {
+		const response = await api.get(`/email/verify/${id}/${hash}`, {
+			params: { expires, signature },
+		});
+
+		if (response.data.success) {
+			return response.data;
+		} else {
+			throw new Error(response.data.message || "Email verification failed");
+		}
+	} catch (error) {
+		// Jika ada response dari server, lempar data (mengandung message & errors)
+		if (error.response?.data) {
+			throw error.response.data;
+		}
+		// Jika tidak ada response (network/CORS), lempar error asli
+		throw error;
+	}
+};
+
+/**
+ * Resend email verification
+ */
+export const resendVerification = async (email) => {
+	try {
+		const response = await api.post("/email/resend", { email });
+
+		if (response.data.success) {
+			return response.data;
+		} else {
+			throw new Error(response.data.message || "Failed to resend verification email");
+		}
+	} catch (error) {
+		// Jika ada response dari server, lempar data (mengandung message & errors)
+		if (error.response?.data) {
+			throw error.response.data;
+		}
+		// Jika tidak ada response (network/CORS), lempar error asli
+		throw error;
+	}
+};

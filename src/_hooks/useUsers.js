@@ -2,7 +2,7 @@ import * as userService from "@/_services/userService";
 import { useAuthStore, useUserRole } from "@/_hooks/useAuth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { parseApiError } from "@/utils";
+import { parseApiError, toQueryBuilderParams } from "@/utils";
 import { showToast } from "@/components/ui/Toast";
 
 // === PUBLIC HOOKS ===
@@ -80,22 +80,27 @@ export const useUpdateUserMutation = () => {
 };
 // === ADMIN HOOKS ===
 /**
- * Hook untuk mengambil data semua users (khusus admin)
+ * Hook untuk mengambil data semua users dengan pagination (khusus admin)
+ * @param {number} page - Halaman yang diminta
+ * @param {number} limit - Jumlah data per halaman
+ * @param {string} search - Kata kunci pencarian
  * @returns {Object} Query result dengan data, isLoading, error, etc
  */
-export const useAdminUsers = () => {
+export const useAdminUsers = (page = 1, limit = 10, search = "") => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "admin";
 
 	return useQuery({
-		queryKey: ["adminUsers"],
+		queryKey: ["adminUsers", page, limit, search],
 		queryFn: async () => {
-			const response = await userService.adminGetUsers();
+			const params = toQueryBuilderParams({ page, limit, search });
+
+			const response = await userService.adminGetUsers(params);
 			return response;
 		},
 		enabled,
-		staleTime: 1 * 60 * 1000,
-		cacheTime: 5 * 60 * 1000,
+		keepPreviousData: true, // Menjaga data sebelumnya saat fetching
+		staleTime: 30000, // 30 detik
 		retry: 1,
 	});
 };
@@ -158,9 +163,6 @@ export const useAdminDeleteUserMutation = () => {
 		mutationFn: userService.adminDeleteUser,
 		onMutate: () => setLoading(true),
 		onSuccess: (_, id) => {
-			queryClient.setQueryData(["adminUsers"], (oldData) =>
-				oldData.filter((user) => user.id !== id)
-			);
 			queryClient.invalidateQueries(["adminUsers"]);
 			setLoading(false);
 			showToast({

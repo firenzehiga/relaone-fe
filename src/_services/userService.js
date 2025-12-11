@@ -53,16 +53,16 @@ export const getUserRegistrations = async () => {
 };
 
 // ADMIN SERVICES
-/** Mengambil semua users.
-
+/** Mengambil semua users dengan pagination dan search.
  * @async
  * @function adminGetUsers
  * @endpoint GET /admin/users
- * @returns {Promise<any>} Data semua users.
+ * @param {Object} params - Query parameters dalam format Query Builder
+ * @returns {Promise<any>} Data users dengan pagination info.
  */
-export const adminGetUsers = async () => {
-	const response = await api.get("/admin/users");
-	return response.data.data || response.data;
+export const adminGetUsers = async (params = {}) => {
+	const response = await api.get("/admin/users", { params });
+	return response.data; // Return full response karena berisi data dan pagination
 };
 
 /** Mengambil semua users yang ada di organisasi.

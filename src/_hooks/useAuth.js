@@ -146,29 +146,9 @@ const useAuthStore = create((set, get) => ({
 		// set initialized langsung agar UI (header dll) tidak ter-block
 		set({ token, isAuthenticated: true, user: parsedUser, initialized: true });
 
-		// Jalankan verifikasi profil di background tanpa menunggu.
-		// TUJUAN: memvalidasi token saja. Jangan menimpa `authUser` yang sudah ada
-		// karena shape dari login/register bisa berbeda. Hanya clear auth bila
-		// server menolak token (401). Untuk error jaringan/transient jangan auto-logout.
-		(async () => {
-			try {
-				await userService.getUserProfile();
-				// token valid — tidak perlu menimpa local authUser di keadaan normal
-			} catch (err) {
-				const status = err?.response?.status;
-				if (status === 401) {
-					// token invalid/expired -> clear auth
-					set({ user: null, token: null, isAuthenticated: false });
-					try {
-						localStorage.removeItem("authToken");
-						localStorage.removeItem("authUser");
-					} catch (e) {}
-				} else {
-					// network / transient error -> jangan clear auth supaya pengguna tidak
-					// ter-logout karena masalah sementara
-				}
-			}
-		})();
+		// TIDAK perlu panggil getUserProfile() di sini!
+		// Biar component yang butuh (ProtectedRoute, Dashboard, dll) yang panggil sendiri.
+		// initializeAuth() cukup restore state dari localStorage saja.
 	},
 }));
 
@@ -248,44 +228,71 @@ export const useRegister = () => {
 			clearError();
 		},
 		onSuccess: (data) => {
-			setAuth(data.data.user, data.data.token);
 			setLoading(false);
 
-			if (data.data.user.role === "organization") {
+			// Cek apakah memerlukan verifikasi email
+			if (data.data.requires_verification) {
+				// Simpan user data tapi tidak set auth (belum terverifikasi)
+				try {
+					localStorage.setItem("pendingUser", JSON.stringify(data.data.user));
+				} catch (e) {
+					// ignore storage errors
+				}
+
 				showToast({
 					type: "success",
-					title: `Selamat datang di RelaOne, ${data.data.user.nama}!`,
-					message: `${data.message}, akun Anda sedang dalam proses verifikasi oleh admin.`,
-					duration: 3000,
-					position: "top-right",
-				});
-			} else {
-				// Show success toast
-				showToast({
-					type: "success",
-					title: `Selamat datang di RelaOne, ${data.data.user.nama}!`,
-					message: `${data.message}`,
-					duration: 3000,
+					title: "Registrasi Berhasil!",
+					message: data.message,
+					duration: 5000,
 					position: "top-center",
 				});
-			}
 
-			// Invalidate and refetch user profile
-			queryClient.invalidateQueries(["auth", "profile"]);
+				// Navigate ke halaman email verification pending
+				navigate("/email-verification-pending", {
+					state: {
+						email: data.data.user.email,
+						userName: data.data.user.nama,
+					},
+				});
+			} else {
+				// Flow lama: langsung login (jika backend tidak require verification)
+				setAuth(data.data.user, data.data.token);
 
-			// Navigate based on user role
-			const userRole = data.data.user.role;
-			switch (userRole) {
-				case "admin":
-					navigate("/admin/dashboard");
-					break;
-				case "organization":
-					navigate("/organization/dashboard");
-					break;
-				case "volunteer":
-				default:
-					navigate("/");
-					break;
+				if (data.data.user.role === "organization") {
+					showToast({
+						type: "success",
+						title: `Selamat datang di RelaOne, ${data.data.user.nama}!`,
+						message: `${data.message}, akun Anda sedang dalam proses verifikasi oleh admin.`,
+						duration: 3000,
+						position: "top-right",
+					});
+				} else {
+					showToast({
+						type: "success",
+						title: `Selamat datang di RelaOne, ${data.data.user.nama}!`,
+						message: `${data.message}`,
+						duration: 3000,
+						position: "top-center",
+					});
+				}
+
+				// Invalidate and refetch user profile
+				queryClient.invalidateQueries(["auth", "profile"]);
+
+				// Navigate based on user role
+				const userRole = data.data.user.role;
+				switch (userRole) {
+					case "admin":
+						navigate("/admin/dashboard");
+						break;
+					case "organization":
+						navigate("/organization/dashboard");
+						break;
+					case "volunteer":
+					default:
+						navigate("/");
+						break;
+				}
 			}
 		},
 		onError: (error) => {
@@ -455,6 +462,73 @@ export const useChangePassword = () => {
 				position: "top-center",
 			});
 			console.error("Change password error:", error);
+		},
+	});
+};
+
+export const useVerifyEmail = () => {
+	const { setLoading, setError, clearError } = useAuthStore();
+
+	return useMutation({
+		mutationKey: ["verifyEmail"],
+		mutationFn: ({ id, hash, expires, signature }) =>
+			authService.verifyEmail(id, hash, expires, signature),
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: (data) => {
+			setLoading(false);
+
+			// Hapus pending user dari localStorage
+			try {
+				localStorage.removeItem("pendingUser");
+			} catch (e) {
+				// ignore storage errors
+			}
+			// Toast dihapus karena sudah ditampilkan di UI success state
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Email verification failed";
+			setError(msg);
+		},
+	});
+};
+
+export const useResendVerification = () => {
+	const { setLoading, setError, clearError } = useAuthStore();
+
+	return useMutation({
+		mutationKey: ["resendVerification"],
+		mutationFn: (email) => authService.resendVerification(email),
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: (data) => {
+			setLoading(false);
+			showToast({
+				type: "success",
+				title: "Email Terkirim!",
+				message: data.message || "Email verifikasi telah dikirim ulang. Cek inbox Anda.",
+				duration: 4000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Failed to resend verification email";
+			setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Pastikan email yang Anda masukkan benar dan belum terverifikasi.",
+				message: msg,
+				duration: 4000,
+				position: "top-center",
+			});
+			console.error("Resend verification error:", error);
 		},
 	});
 };

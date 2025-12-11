@@ -10,11 +10,15 @@ import { useLocation } from "react-router";
 export function ScrollToTop() {
 	const { pathname } = useLocation();
 
+	const behavior =
+		pathname.includes("terms-of-service") || pathname.includes("privacy-policy")
+			? "instant"
+			: "smooth";
 	useEffect(() => {
 		window.scrollTo({
 			top: 0,
 			left: 0,
-			behavior: "smooth",
+			behavior: behavior,
 		});
 	}, [pathname]);
 

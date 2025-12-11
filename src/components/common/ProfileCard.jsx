@@ -153,7 +153,7 @@ export default function ProfileCard({ profile, role = "volunteer" }) {
 						</Button>
 					</Link>
 
-					{/* Admin - outline button*/}
+					{/* Admin - outline button */}
 					<Link to="/admin/change-password">
 						<Button variant="outline" className="w-full mt-2" size="sm">
 							Ganti Password

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import {
 	ChevronDown,
@@ -14,6 +14,7 @@ import {
 	useAdminUsers,
 	useAdminChangeStatusUserMutation,
 } from "@/_hooks/useUsers";
+import { useDebounce } from "@/_hooks/useDebounce";
 import FetchLoader from "@/components/ui/FetchLoader";
 import { getImageUrl } from "@/utils";
 import { formatDate } from "@/utils/dateFormatter";
@@ -22,30 +23,31 @@ import { useAuthStore } from "@/_hooks/useAuth";
 import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
 
 export default function AdminUser() {
+	const [searchUser, setSearchUser] = useState("");
+	const [currentPage, setCurrentPage] = useState(1);
+	const [rowsPerPage, setRowsPerPage] = useState(10);
+
+	// Debounce search menggunakan custom hook
+	const debouncedSearch = useDebounce(searchUser, 500);
+
+	// Reset ke halaman 1 saat search berubah
+	useEffect(() => {
+		setCurrentPage(1);
+	}, [debouncedSearch]);
+
 	const {
-		data: users = [],
+		data: response,
 		isLoading: usersLoading,
 		error: usersError,
 		isFetching: usersRefetching,
-	} = useAdminUsers();
+	} = useAdminUsers(currentPage, rowsPerPage, debouncedSearch);
+
+	const users = response?.data;
+	const pagination = response?.pagination || {};
 
 	const deleteUserMutation = useAdminDeleteUserMutation();
 
 	const { isLoading } = useAuthStore();
-
-	// Local state for search/filter
-	const [searchUser, setSearchUser] = useState("");
-
-	const filteredUsers = useMemo(() => {
-		if (!searchUser) return users;
-		const query = searchUser.toLowerCase();
-		return users.filter((userItem) => {
-			const nama = String(userItem.nama || "").toLowerCase();
-			const email = String(userItem.email || "").toLowerCase();
-			const jenisKelamin = String(userItem.jenis_kelamin || "").toLowerCase();
-			return nama.includes(query) || email.includes(query) || jenisKelamin.includes(query);
-		});
-	}, [users, searchUser]);
 
 	// Fungsi untuk menangani penghapusan user dengan konfirmasi ketik kata kunci
 	const handleDelete = (id) => {
@@ -86,6 +88,16 @@ export default function AdminUser() {
 				deleteUserMutation.mutate(id);
 			}
 		});
+	};
+
+	// Handler untuk perubahan halaman dan rows per page
+	const handlePageChange = (page) => {
+		setCurrentPage(page);
+	};
+
+	const handlePerRowsChange = (newPerPage, page) => {
+		setRowsPerPage(newPerPage);
+		setCurrentPage(page);
 	};
 
 	// Fungsi untuk ubah status user dengan konfirmasi mirip delete
@@ -299,8 +311,21 @@ export default function AdminUser() {
 							</div>
 							<DataTable
 								columns={columns}
-								data={Array.isArray(filteredUsers) ? filteredUsers : []}
+								data={users}
 								pagination
+								paginationServer
+								paginationTotalRows={pagination.total || 0}
+								paginationDefaultPage={currentPage}
+								onChangePage={handlePageChange}
+								onChangeRowsPerPage={handlePerRowsChange}
+								paginationPerPage={rowsPerPage}
+								paginationRowsPerPageOptions={[10, 20, 30, 50, 100]}
+								progressPending={usersRefetching}
+								progressComponent={
+									<div className="flex justify-center py-10">
+										<Loader2 className="animate-spin h-6 w-6 text-emerald-600" />
+									</div>
+								}
 								pointerOnHover
 								title=""
 								highlightOnHover

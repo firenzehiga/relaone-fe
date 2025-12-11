@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Lock, Eye, EyeOff, ArrowLeft, CheckCircle, AlertCircle, Mail, Shield } from "lucide-react";
 import DynamicButton from "@/components/ui/Button";
 import { useResetPassword, useAuthStore } from "@/_hooks/useAuth";
@@ -8,6 +9,7 @@ import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
 
 export default function ResetPasswordPage() {
 	useDocumentTitle("Reset Password");
+	const navigate = useNavigate();
 
 	const [searchParams] = useSearchParams();
 	const [formData, setFormData] = useState({
@@ -19,31 +21,54 @@ export default function ResetPasswordPage() {
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [token, setToken] = useState("");
 	const [tokenValid, setTokenValid] = useState(true);
+	const [tokenExpired, setTokenExpired] = useState(false);
 	const [passwordStrength, setPasswordStrength] = useState("");
+	const [shouldRender, setShouldRender] = useState(false);
 
 	const resetPasswordMutation = useResetPassword();
 	const { isLoading } = useAuthStore();
 
-	// Validasi token
+	// Validasi token format
 	const isValidTokenFormat = (token) => {
 		return token && token.length > 20; // Cek panjang token minimal
 	};
 
-	// Ambil token dan email dari URL params
+	// Ambil token, email, expires, signature dari URL params
 	useEffect(() => {
 		const urlToken = searchParams.get("token");
 		const urlEmail = searchParams.get("email");
+		const urlExpires = searchParams.get("expires");
+		const urlSignature = searchParams.get("signature");
 
-		if (urlToken && isValidTokenFormat(urlToken)) {
-			setToken(urlToken);
-		} else {
+		// 🔒 PROTEKSI: Redirect jika tidak ada token atau format invalid
+		if (!urlToken || !isValidTokenFormat(urlToken)) {
+			navigate("/login", { replace: true });
+			return;
+		}
+
+		// 🔒 PROTEKSI: Redirect jika parameter tidak lengkap
+		if (!urlEmail || !urlExpires || !urlSignature) {
+			navigate("/login", { replace: true });
+			return;
+		}
+
+		// 🔒 Validasi expires di frontend SEBELUM tampilkan form
+		const expiresTimestamp = parseInt(urlExpires, 10);
+		const currentTimestamp = Math.floor(Date.now() / 1000);
+
+		if (!isNaN(expiresTimestamp) && currentTimestamp > expiresTimestamp) {
+			setTokenExpired(true);
 			setTokenValid(false);
+			setShouldRender(true);
+			return;
 		}
 
-		if (urlEmail) {
-			setFormData((prev) => ({ ...prev, email: urlEmail }));
-		}
-	}, [searchParams]);
+		// Jika semua validasi lolos, set data
+		setToken(urlToken);
+		setTokenValid(true);
+		setFormData((prev) => ({ ...prev, email: urlEmail }));
+		setShouldRender(true);
+	}, [searchParams, navigate]);
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
@@ -186,14 +211,55 @@ export default function ResetPasswordPage() {
 		);
 	};
 
+	// Jangan render apapun sampai validasi selesai
+	if (!shouldRender) {
+		return null;
+	}
+
+	// Token expired state
+	if (tokenExpired) {
+		return (
+			<div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+				<div className="max-w-lg w-full">
+					<div className="bg-white rounded-xl shadow-xl overflow-hidden border-t-4 border-yellow-500 relative">
+						<div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-bl-full"></div>
+						<div className="absolute bottom-0 left-0 w-24 h-24 bg-yellow-500/5 rounded-tr-full"></div>
+
+						<div className="px-8 py-12 text-center relative z-10">
+							<div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
+								<AlertCircle className="w-10 h-10 text-yellow-600" />
+							</div>
+
+							<h2 className="text-3xl font-bold text-gray-900 mb-4">Link Sudah Kadaluarsa</h2>
+							<p className="text-gray-600 mb-2">
+								Link reset password sudah kadaluarsa untuk alasan keamanan.
+							</p>
+							<p className="text-gray-500 text-sm mb-8">
+								Link reset password hanya berlaku selama 60 menit. Silakan minta link baru untuk
+								mengatur ulang password Anda.
+							</p>
+
+							<Link to="/forgot-password">
+								<DynamicButton
+									variant="success"
+									className="w-full py-3 rounded-lg font-medium transition-all transform hover:scale-105">
+									<Mail className="w-4 h-4 mr-2 inline" />
+									Minta Link Baru
+								</DynamicButton>
+							</Link>
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
 	// Invalid token state
 	if (!tokenValid) {
 		return (
 			<div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
 				<div className="max-w-lg w-full">
-					{/* Green accent card */}
 					<div className="bg-white rounded-xl shadow-xl overflow-hidden border-t-4 border-red-500 relative">
-						{/* Subtle red accent for error */}
 						<div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-bl-full"></div>
 						<div className="absolute bottom-0 left-0 w-24 h-24 bg-red-500/5 rounded-tr-full"></div>
 
@@ -203,15 +269,19 @@ export default function ResetPasswordPage() {
 							</div>
 
 							<h2 className="text-3xl font-bold text-gray-900 mb-4">Link Tidak Valid</h2>
-							<p className="text-gray-600 mb-8">
-								Link reset password tidak valid atau sudah kedaluarsa. Silakan minta link reset
-								password baru.
+							<p className="text-gray-600 mb-2">
+								Link reset password tidak valid atau tidak lengkap.
+							</p>
+							<p className="text-gray-500 text-sm mb-8">
+								Pastikan Anda menggunakan link lengkap dari email yang kami kirimkan. Jika link
+								rusak, silakan minta link reset password baru.
 							</p>
 
 							<Link to="/forgot-password">
 								<DynamicButton
 									variant="success"
 									className="w-full py-3 rounded-lg font-medium transition-all transform hover:scale-105">
+									<Mail className="w-4 h-4 mr-2 inline" />
 									Minta Link Baru
 								</DynamicButton>
 							</Link>

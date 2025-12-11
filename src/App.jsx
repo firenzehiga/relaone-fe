@@ -40,6 +40,10 @@ import RegisterPage from "@/pages/auth/RegisterPage";
 const ForgotPasswordPage = lazy(() => import("@/pages/auth/ForgotPassword"));
 const ResetPasswordPage = lazy(() => import("@/pages/auth/ResetPassword"));
 const ChangePasswordPage = lazy(() => import("@/pages/auth/ChangePasswordPage"));
+const EmailVerificationPendingPage = lazy(() =>
+	import("@/pages/auth/EmailPendingVerificationPage")
+);
+const VerifyEmailPage = lazy(() => import("@/pages/auth/EmailVerificationPage"));
 
 // Modals
 import JoinEventModal from "@/components/volunteer/JoinEventModal";
@@ -116,7 +120,7 @@ function App() {
 			<ScrollToTop />
 			<Suspense fallback={<SuspenseFallback />}>
 				<Routes>
-					{/* PUBLIC & VOLUNTEER ROUTES*/}
+					{/* PUBLIC & VOLUNTEER ROUTES */}
 					<Route
 						element={
 							<PublicRoute>
@@ -134,24 +138,7 @@ function App() {
 					<Route path="privacy-policy" element={<PrivacyPolicyPage />} />
 					<Route path="terms-of-service" element={<TermsOfServicePage />} />
 
-					<Route
-						path="forgot-password"
-						element={
-							<GuestRoute>
-								<ForgotPasswordPage />
-							</GuestRoute>
-						}
-					/>
-					<Route
-						path="reset-password"
-						element={
-							<GuestRoute>
-								<ResetPasswordPage />
-							</GuestRoute>
-						}
-					/>
-
-					{/* VOLUNTEER ROUTES*/}
+					{/* VOLUNTEER ROUTES */}
 					<Route
 						path="volunteer"
 						element={
@@ -285,6 +272,38 @@ function App() {
 						element={
 							<GuestRoute>
 								<RegisterPage />
+							</GuestRoute>
+						}
+					/>
+					<Route
+						path="forgot-password"
+						element={
+							<GuestRoute>
+								<ForgotPasswordPage />
+							</GuestRoute>
+						}
+					/>
+					<Route
+						path="reset-password"
+						element={
+							<GuestRoute>
+								<ResetPasswordPage />
+							</GuestRoute>
+						}
+					/>
+					<Route
+						path="verify-email"
+						element={
+							<GuestRoute>
+								<VerifyEmailPage />
+							</GuestRoute>
+						}
+					/>
+					<Route
+						path="email-verification-pending"
+						element={
+							<GuestRoute>
+								<EmailVerificationPendingPage />
 							</GuestRoute>
 						}
 					/>

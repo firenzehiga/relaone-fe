@@ -28,8 +28,7 @@ export const cn = (...classes) => {
  * Digunakan di berbagai tempat untuk menggabungkan URL gambar
  */
 export const getImageUrl = (path) => {
-	const baseUrl =
-		import.meta.env.VITE_IMG_STORAGE_URL || "https://peladen.my.id/storage/";
+	const baseUrl = import.meta.env.VITE_IMG_STORAGE_URL || "https://peladen.my.id/storage/";
 	if (!path) return "";
 	return `${baseUrl}${path}`;
 };
@@ -55,12 +54,36 @@ export const parseApiError = (err) => {
 		)
 			.filter(Boolean)
 			.join(" ");
-	return (
-		flatten(data.message) ||
-		flatten(data.errors) ||
-		flatten(data) ||
-		JSON.stringify(data)
-	);
+	return flatten(data.message) || flatten(data.errors) || flatten(data) || JSON.stringify(data);
+};
+
+/**
+ * Format query params untuk Laravel Query Builder (Spatie)
+ * Mengubah parameter biasa menjadi format filter[key] yang dibutuhkan Query Builder
+ *
+ * @param {Object} params - Object params yang akan diformat
+ * @param {string[]} filterKeys - Array key yang akan diubah ke format filter[]
+ * @returns {Object} Params dengan format Query Builder
+ *
+ * @example
+ * toQueryBuilderParams({ page: 1, limit: 10, search: 'john', status: 'active' }, ['search', 'status'])
+ * // returns: { page: 1, limit: 10, 'filter[search]': 'john', 'filter[status]': 'active' }
+ *
+ * @example
+ * toQueryBuilderParams({ page: 1, search: '' }, ['search'])
+ * // returns: { page: 1 } (search kosong tidak diikutkan)
+ */
+export const toQueryBuilderParams = (params = {}, filterKeys = ["search"]) => {
+	const result = { ...params };
+
+	filterKeys.forEach((key) => {
+		if (result[key]) {
+			result[`filter[${key}]`] = result[key];
+			delete result[key];
+		}
+	});
+
+	return result;
 };
 
 // GOOGLE MAPS UTILITIES
@@ -77,9 +100,7 @@ export const getGoogleMapsUrl = (event = {}, { preferAddress = true } = {}) => {
 		event.address ||
 		(typeof event.location === "string" ? event.location : "");
 	if (preferAddress && address) {
-		return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-			address
-		)}`;
+		return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
 	}
 
 	// fallback to coordinates if present
@@ -90,9 +111,7 @@ export const getGoogleMapsUrl = (event = {}, { preferAddress = true } = {}) => {
 	}
 
 	// final fallback to any address string (could be empty)
-	return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-		address
-	)}`;
+	return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
 };
 /**
  * Generate URL Google Maps untuk mendapatkan petunjuk arah ke lokasi event
@@ -107,9 +126,7 @@ export const getDirectionsUrl = (event = {}, { preferAddress = true } = {}) => {
 		event.address ||
 		(typeof event.location === "string" ? event.location : "");
 	if (preferAddress && address) {
-		return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-			address
-		)}`;
+		return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
 	}
 
 	// fallback to coordinates if present
@@ -120,9 +137,7 @@ export const getDirectionsUrl = (event = {}, { preferAddress = true } = {}) => {
 	}
 
 	// final fallback to any address string (could be empty)
-	return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-		address
-	)}`;
+	return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
 };
 
 /**

@@ -389,14 +389,30 @@ export const useAdminUpdateParticipantMutation = () => {
  */
 export const useAdminDeleteParticipantMutation = () => {
 	const queryClient = useQueryClient();
+	const { setLoading } = useAuthStore();
 
 	return useMutation({
 		mutationFn: eventParticipantService.adminDeleteParticipant,
+		onMutate: () => setLoading(true),
+
 		onSuccess: (_, id) => {
 			queryClient.setQueryData(["adminParticipants"], (oldData) =>
 				oldData.filter((participant) => participant.id !== id)
 			);
 			queryClient.invalidateQueries(["adminParticipants"]);
+			setLoading(false);
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: "Participant berhasil dihapus",
+				duration: 3000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Gagal menghapus participant.";
+			showToast({ type: "error", message: msg });
 		},
 	});
 };
