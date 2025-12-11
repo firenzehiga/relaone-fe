@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 import { Calendar, MapPin, Users, Clock, CalendarX, Gift, NotepadText } from "lucide-react";
 import { AsyncImage } from "loadable-image";
@@ -24,6 +25,12 @@ export default function DetailEventPage() {
 	const { eventId } = useParams();
 	const navigate = useNavigate();
 	const { data: event = null, isLoading, isFetching, error } = useEventById(eventId);
+
+	useEffect(() => {
+		if (!isLoading && event) {
+			import('@/utils/perfRoute').then((m) => m.endRouteTimer('detail-event-page', '(DETAIL EVENT)'));
+		}
+	}, [isLoading, event]);
 	const { openJoinModal } = useModalStore();
 
 	const formatDateRange = (startDateStr, endDateStr) => {

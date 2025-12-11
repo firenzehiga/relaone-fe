@@ -61,6 +61,8 @@ export default function JoinEventModal() {
 		e.preventDefault();
 		if (!agreed || !event?.id) return;
 
+		let startTime = null; // untuk menghitung durasi, juga dipakai di catch
+
 		if (!isAuthenticated) {
 			closeJoinModal();
 			showToast({
@@ -80,8 +82,23 @@ export default function JoinEventModal() {
 				catatan: formData.catatan || "",
 			};
 
+			// Catat waktu mulai request untuk monitoring response time
+			startTime = typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
+
 			// Tunggu join selesai
 			await joinMutation.mutateAsync(payload);
+
+			// Hitung durasi
+			const endTime = typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
+			const durationMs = Math.round(endTime - startTime);
+			const formatDuration = (ms) => (ms >= 1000 ? `${(ms / 1000).toFixed(2)} s` : `${ms} ms`);
+
+			// Log sebagai kalimat panjang menggunakan huruf kapital
+			if (import.meta.env && import.meta.env.DEV) {
+				console.log(
+					`[PERFORMANCE] PENDAFTARAN UNTUK EVENT "${event.judul || event.title || event.id}" OLEH PENGGUNA ${user?.id || "-"} TELAH BERHASIL DAN SELESAI DALAM ${formatDuration(durationMs)}. TERIMA KASIH ATAS PARTISIPASINYA.`
+				);
+			}
 
 			// Langsung tampilkan success animation setelah request berhasil
 			setSuccess(true);
@@ -93,16 +110,29 @@ export default function JoinEventModal() {
 				setFormData({ catatan: "" });
 				setLoading(false); // Reset loading state sebelum tutup modal
 				closeJoinModal();
-			}, 1500);
+			}, 11500);
 		} catch (err) {
-			// Error sudah dihandle di hook
+			// Jika request gagal, log juga durasi (jika tersedia)
+			const endTime = typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
+			const durationMs = startTime ? Math.round(endTime - startTime) : null;
+			const formatDuration = (ms) => (ms >= 1000 ? `${(ms / 1000).toFixed(2)} s` : `${ms} ms`);
+			if (durationMs !== null) {
+				if (import.meta.env && import.meta.env.DEV) {
+					console.log(
+						`[PERFORMANCE] PENDAFTARAN UNTUK EVENT "${event.judul || event.title || event.id}" OLEH PENGGUNA ${user?.id || "-"} GAGAL SETELAH ${formatDuration(durationMs)}. SILAKAN COBA LAGI NANTI.`
+					);
+				}
+			} else {
+				if (import.meta.env && import.meta.env.DEV) {
+					console.log(
+						`[PERFORMANCE] PENDAFTARAN UNTUK EVENT "${event.judul || event.title || event.id}" OLEH PENGGUNA ${user?.id || "-"} GAGAL. SILAKAN COBA KEMBALI.`
+					);
+				}
+			}
+			// Error handling sudah dilakukan di hook, tetap log error ke console
 			console.error("Join event error:", err);
 		}
 	};
-
-	/**
-	 * Handler untuk menutup modal dan reset form
-	 */
 	const handleClose = () => {
 		if (!isLoading) {
 			setAgreed(false);

@@ -24,7 +24,7 @@ export default function FloatingHelp({
 					aria-label="Bantuan"
 					className="w-14 h-14 rounded-full bg-gradient-to-r from-emerald-500 via-emerald-600  to-emerald-500 hover:bg-emerald-700 text-white shadow-2xl flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-emerald-300">
 					<svg
-						class="w-8 h-8 text-gray-800 dark:text-white"
+						className="w-8 h-8 text-gray-800 dark:text-white"
 						aria-hidden="true"
 						xmlns="http://www.w3.org/2000/svg"
 						width="24"
@@ -33,9 +33,9 @@ export default function FloatingHelp({
 						viewBox="0 0 24 24">
 						<path
 							stroke="currentColor"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth="2"
 							d="M9.529 9.988a2.502 2.502 0 1 1 5 .191A2.441 2.441 0 0 1 12 12.582V14m-.01 3.008H12M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
 						/>
 					</svg>
@@ -61,7 +61,7 @@ export default function FloatingHelp({
 						className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-2.5 py-1.5 rounded-lg shadow-lg text-xs whitespace-nowrap">
 						<span className="p-1.5 bg-white bg-opacity-10 rounded-full">
 							<svg
-								class="w-5 h-5 text-gray-800 dark:text-white"
+								className="w-5 h-5 text-gray-800 dark:text-white"
 								aria-hidden="true"
 								xmlns="http://www.w3.org/2000/svg"
 								width="24"
@@ -70,9 +70,9 @@ export default function FloatingHelp({
 								viewBox="0 0 24 24">
 								<path
 									fill="currentColor"
-									fill-rule="evenodd"
+									fillRule="evenodd"
 									d="M12 4a8 8 0 0 0-6.895 12.06l.569.718-.697 2.359 2.32-.648.379.243A8 8 0 1 0 12 4ZM2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10a9.96 9.96 0 0 1-5.016-1.347l-4.948 1.382 1.426-4.829-.006-.007-.033-.055A9.958 9.958 0 0 1 2 12Z"
-									clip-rule="evenodd"
+									clipRule="evenodd"
 								/>
 								<path
 									fill="currentColor"

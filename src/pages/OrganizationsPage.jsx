@@ -21,7 +21,7 @@ import Card from "@/components/ui/Card";
 
 export default function OrganizationsPage() {
 	useDocumentTitle("Organizations Page");
-	
+
 	const {
 		data: organizations = [],
 		isLoading,
@@ -155,7 +155,7 @@ export default function OrganizationsPage() {
 													className="object-cover w-full h-full"
 													onError={(e) => {
 														e.currentTarget.parentElement.innerHTML = `
-															<div class="text-emerald-600 font-bold text-2xl">
+															<div className="text-emerald-600 font-bold text-2xl">
 																${String(org.nama || "A")
 																	.split(" ")
 																	.map((s) => s[0])

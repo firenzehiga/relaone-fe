@@ -52,7 +52,9 @@ export default function FeedbackModal() {
 			return;
 		}
 
+		let startTime = null;
 		try {
+			startTime = typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
 			const payload = new FormData();
 			payload.append("event_id", eventId);
 			payload.append("rating", String(formData.rating));
@@ -61,14 +63,41 @@ export default function FeedbackModal() {
 
 			await sendFeedbackMutation.mutateAsync(payload);
 
+			// Hitung durasi dan log sebagai kalimat panjang UPPERCASE
+			const endTime = typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
+			const durationMs = Math.round(endTime - startTime);
+			const formatDuration = (ms) => (ms >= 1000 ? `${(ms / 1000).toFixed(2)} S` : `${ms} MS`);
+			if (import.meta.env && import.meta.env.DEV) {
+				console.log(
+					`[PERFORMANCE] PENGIRIMAN FEEDBACK UNTUK EVENT "${selectedFeedbackParticipant?.event?.judul || eventId}" OLEH VOLUNTEER BERHASIL DALAM ${formatDuration(durationMs)}. TERIMA KASIH ATAS UMPAN BALIK ANDA.`
+				);
+			}
+
 			setSuccess(true);
 			setTimeout(() => {
 				setSuccess(false);
 				setFormData({ rating: 5, komentar: "", is_anonim: false });
 				setLoading(false);
 				closeFeedbackModal();
-			}, 1200);
+			}, 10200);
 		} catch (err) {
+			// Log error with duration if available (kalimat panjang UPPERCASE)
+			const endTime = typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
+			const durationMs = startTime ? Math.round(endTime - startTime) : null;
+			const formatDuration = (ms) => (ms >= 1000 ? `${(ms / 1000).toFixed(2)} S` : `${ms} MS`);
+			if (durationMs !== null) {
+				if (import.meta.env && import.meta.env.DEV) {
+					console.error(
+						`[PERFORMANCE] PENGIRIMAN FEEDBACK UNTUK EVENT "${selectedFeedbackParticipant?.event?.judul || eventId}" OLEH VOLUNTEER GAGAL SETELAH ${formatDuration(durationMs)}. SILAKAN COBA LAGI.`
+					);
+				}
+			} else {
+				if (import.meta.env && import.meta.env.DEV) {
+					console.error(
+						`[PERFORMANCE] PENGIRIMAN FEEDBACK UNTUK EVENT "${selectedFeedbackParticipant?.event?.judul || eventId}" OLEH VOLUNTEER GAGAL. SILAKAN COBA KEMBALI.`
+					);
+				}
+			}
 			console.error("Send feedback error:", err);
 		}
 	};

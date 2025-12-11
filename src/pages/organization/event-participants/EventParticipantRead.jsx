@@ -295,15 +295,15 @@ export default function OrganizationEventParticipant() {
 
 		Swal.fire({
 			title: "Update Status Tidak Hadir?",
-			html: `<div class="text-left">
-				<p class="mb-2">Event: <strong>${selectedEvent?.judul}</strong></p>
+			html: `<div className="text-left">
+				<p className="mb-2">Event: <strong>${selectedEvent?.judul}</strong></p>
 				${
 					confirmedCount > 0
-						? `<p class="mb-2">Participant dengan status "Dikonfirmasi": <strong>${confirmedCount} orang</strong></p>`
-						: '<p class="mb-2 text-gray-600">Sistem akan mengecek participant yang perlu diupdate...</p>'
+						? `<p className="mb-2">Participant dengan status "Dikonfirmasi": <strong>${confirmedCount} orang</strong></p>`
+						: '<p className="mb-2 text-gray-600">Sistem akan mengecek participant yang perlu diupdate...</p>'
 				}
-				<p class="text-red-600 mt-4">⚠️ Semua participant yang masih berstatus "Dikonfirmasi" akan diubah menjadi "Tidak Hadir".</p>
-				<p class="text-sm text-gray-500 mt-2">Note: Event harus sudah selesai untuk melakukan update ini.</p>
+				<p className="text-red-600 mt-4">⚠️ Semua participant yang masih berstatus "Dikonfirmasi" akan diubah menjadi "Tidak Hadir".</p>
+				<p className="text-sm text-gray-500 mt-2">Note: Event harus sudah selesai untuk melakukan update ini.</p>
 			</div>`,
 			icon: "warning",
 			showCancelButton: true,

@@ -103,6 +103,7 @@ import OrganizationLocationEdit from "@/pages/organization/locations/LocationEdi
 
 import { ScrollToTop } from "@/components/common/ScrollToTop";
 import FloatingHelp from "@/components/common/FloatingHelp";
+import RoutePerfListener from "@/components/common/RoutePerfListener";
 /**
  * Komponen utama aplikasi volunteer platform
  * Mengatur routing dengan layout yang menggunakan Outlet
@@ -113,6 +114,8 @@ import FloatingHelp from "@/components/common/FloatingHelp";
 function App() {
 	return (
 		<>
+			{/* Route performance listener starts a timer on location change */}
+			<RoutePerfListener />
 			<ScrollToTop />
 			<Suspense fallback={<SuspenseFallback />}>
 				<Routes>

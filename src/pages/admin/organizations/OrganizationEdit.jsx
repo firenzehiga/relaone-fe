@@ -103,7 +103,7 @@ export default function AdminOrganizationEdit() {
 		}
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 		const payload = new FormData();
 		payload.append("_method", "PUT");
@@ -119,7 +119,28 @@ export default function AdminOrganizationEdit() {
 			}
 		}
 
-		updateOrganizationMutation.mutateAsync({ id, data: payload });
+		// Mulai timer performa
+		const start = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+		try {
+			await updateOrganizationMutation.mutateAsync({ id, data: payload });
+			const end = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+			const durationMs = Math.max(0, end - start);
+			let formatted = durationMs < 1000 ? `${Math.round(durationMs)} MS` : `${(durationMs / 1000).toFixed(2)} S`;
+			if (import.meta.env && import.meta.env.DEV) {
+				console.log(
+					`[PERFORMANCE] PEMBARUAN ORGANISASI "${formData.nama}" (ID: ${id}) BERHASIL DALAM ${formatted}`
+				);
+			}
+		} catch (err) {
+			const end = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+			const durationMs = Math.max(0, end - start);
+			let formatted = durationMs < 1000 ? `${Math.round(durationMs)} MS` : `${(durationMs / 1000).toFixed(2)} S`;
+			if (import.meta.env && import.meta.env.DEV) {
+				console.error(
+					`[PERFORMANCE] PEMBARUAN ORGANISASI "${formData.nama}" (ID: ${id}) GAGAL DALAM ${formatted}`
+				);
+			}
+		}
 	};
 
 	if (showOrganizationLoading) {

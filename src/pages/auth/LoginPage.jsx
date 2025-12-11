@@ -30,7 +30,7 @@ export default function LoginPage() {
 		}));
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 
 		// Basic validation
@@ -38,11 +38,31 @@ export default function LoginPage() {
 			return;
 		}
 
-		// Call login mutation with email and password
-		loginMutation.mutate({
-			email: formData.email,
-			password: formData.password,
-		});
+		// Mulai timer performa
+		const start = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+		try {
+			await loginMutation.mutateAsync({
+				email: formData.email,
+				password: formData.password,
+			});
+			const end = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+			const durationMs = Math.max(0, end - start);
+			let formatted = durationMs < 1000 ? `${Math.round(durationMs)} MS` : `${(durationMs / 1000).toFixed(2)} S`;
+			if (import.meta.env && import.meta.env.DEV) {
+				console.log(
+					`[PERFORMANCE] LOGIN UNTUK EMAIL "${formData.email}" BERHASIL DALAM ${formatted}`
+				);
+			}
+		} catch (error) {
+			const end = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+			const durationMs = Math.max(0, end - start);
+			let formatted = durationMs < 1000 ? `${Math.round(durationMs)} MS` : `${(durationMs / 1000).toFixed(2)} S`;
+			if (import.meta.env && import.meta.env.DEV) {
+				console.error(
+					`[PERFORMANCE] LOGIN UNTUK EMAIL "${formData.email}" GAGAL DALAM ${formatted}`
+				);
+			}
+		}
 	};
 
 	return (

@@ -96,9 +96,9 @@ export default function AdminUser() {
 		Swal.fire({
 			title: "Ubah Status User?",
 			html:
-				`<div class="text-left space-y-3">` +
-				`<p class="text-sm text-gray-600">Pilih status yang diinginkan untuk user ini.</p>` +
-				`<div><select id="swal-status" class="border border-gray-300 rounded-md px-3 py-2 text-sm w-full bg-white">` +
+				`<div className="text-left space-y-3">` +
+				`<p className="text-sm text-gray-600">Pilih status yang diinginkan untuk user ini.</p>` +
+				`<div><select id="swal-status" className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full bg-white">` +
 				`<option value="active" ${currentStatus === "active" ? "selected" : ""}>Active</option>` +
 				`<option value="inactive" ${
 					currentStatus === "inactive" ? "selected" : ""
@@ -107,8 +107,8 @@ export default function AdminUser() {
 					currentStatus === "suspend" ? "selected" : ""
 				}>Suspend</option>` +
 				`</select></div>` +
-				`<div class="text-xs text-gray-500">Ketik <strong>${confirmText}</strong> untuk konfirmasi perubahan status.</div>` +
-				`<input id="swal-confirm" class="border border-gray-300 rounded-md px-3 py-2 text-sm w-full mt-2" placeholder="${confirmText}">` +
+				`<div className="text-xs text-gray-500">Ketik <strong>${confirmText}</strong> untuk konfirmasi perubahan status.</div>` +
+				`<input id="swal-confirm" className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full mt-2" placeholder="${confirmText}">` +
 				`</div>`,
 			icon: "question",
 			showCancelButton: true,

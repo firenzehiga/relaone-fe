@@ -54,6 +54,13 @@ export default function LandingPage() {
 		}, 500);
 	}, [setStats]);
 
+	// End route timer when landing page data ready
+	useEffect(() => {
+		if (!eventsLoading) {
+			import('@/utils/perfRoute').then((m) => m.endRouteTimer('landing-page', '(LANDING PAGE)'));
+		}
+	}, [eventsLoading]);
+
 	const features = [
 		{
 			icon: Search,
