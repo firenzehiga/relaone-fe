@@ -171,9 +171,9 @@ export default function EventsPage() {
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Header */}
 				<div className="mb-8 text-center">
-					<h1 className="text-4xl lg:text-5xl font-bold text-emerald-600 mb-4">Event Relawan</h1>
+					<h1 className="text-4xl lg:text-5xl font-bold text-emerald-600 mb-4">Kegiatan Relawan</h1>
 					<p className="text-xl text-gray-600">
-						Temukan berbagai kegiatan sosial yang dapat Anda ikuti
+						Temukan berbagai kegiatan sosial yang dapat Anda ikuti. Mereka butuh bantuan Anda!
 					</p>
 				</div>
 
@@ -299,7 +299,7 @@ export default function EventsPage() {
 
 				{/* Results Count */}
 				<div className="flex items-center justify-between mb-6">
-					<p className="text-gray-600 font-medium">{`${filteredEvents.length} event ditemukan`}</p>
+					<p className="text-gray-600 font-medium">{`${filteredEvents.length} kegiatan ditemukan`}</p>
 				</div>
 
 				{/* Events Display */}

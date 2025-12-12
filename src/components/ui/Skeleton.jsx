@@ -118,10 +118,7 @@ function SkeletonText({ lines = 3, className }) {
 	return (
 		<div className={className}>
 			{Array.from({ length: lines }).map((_, i) => (
-				<Skeleton
-					key={i}
-					className={cn("h-3 mb-2", i === lines - 1 ? "w-2/3" : "w-full")}
-				/>
+				<Skeleton key={i} className={cn("h-3 mb-2", i === lines - 1 ? "w-2/3" : "w-full")} />
 			))}
 		</div>
 	);
@@ -216,9 +213,7 @@ function FormSkeleton({ title = "", rows = 4 }) {
 			<div className="bg-white shadow-lg rounded-lg p-4 sm:p-6 max-w-7xl mx-auto">
 				<div className="flex items-center justify-center gap-3 mb-6">
 					<Loader2 className="animate-spin h-6 w-6 sm:h-7 sm:w-7 text-emerald-500" />
-					<div className="text-sm sm:text-base font-medium text-gray-700">
-						{title}
-					</div>
+					<div className="text-sm sm:text-base font-medium text-gray-700">{title}</div>
 				</div>
 				<form className="space-y-6 flex flex-col">
 					{/* Responsive 2-column grid */}
@@ -265,8 +260,8 @@ function OrgSkeleton() {
 						Organisasi Komunitas
 					</h1>
 					<p className="text-xl text-gray-600 max-w-2xl mx-auto">
-						Bergabunglah dengan berbagai organisasi komunitas yang berkontribusi
-						untuk membuat perubahan positif di masyarakat
+						Bergabunglah dengan berbagai organisasi komunitas yang berkontribusi untuk membuat
+						perubahan positif di masyarakat
 					</p>
 				</div>
 
@@ -288,19 +283,12 @@ function OrgSkeleton() {
 				{/* Organizations Grid - 2 columns on desktop */}
 				<div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
 					{Array.from({ length: 2 }).map((_, i) => (
-						<Card
-							key={i}
-							className="h-full overflow-hidden animate-pulse"
-							aria-hidden>
+						<Card key={i} className="h-full overflow-hidden animate-pulse" aria-hidden>
 							{/* Banner with gradient */}
 							<div className="relative h-40 bg-gradient-to-br from-emerald-400 to-teal-500 overflow-hidden">
 								{/* Verified Badge */}
 								<div className="absolute top-3 right-3">
-									<ChkSkeleton
-										height="24px"
-										width="120px"
-										borderRadius="full"
-									/>
+									<ChkSkeleton height="24px" width="120px" borderRadius="full" />
 								</div>
 							</div>
 
@@ -356,11 +344,9 @@ function EventsSkeleton() {
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Hero Header - mirror actual EventsPage */}
 				<div className="mb-8 text-center">
-					<h1 className="text-4xl lg:text-5xl font-bold text-emerald-600 mb-4">
-						Event Relawan
-					</h1>
+					<h1 className="text-4xl lg:text-5xl font-bold text-emerald-600 mb-4">Kegiatan Relawan</h1>
 					<p className="text-xl text-gray-600">
-						Temukan berbagai kegiatan sosial yang dapat Anda ikuti
+						Temukan berbagai kegiatan sosial yang dapat Anda ikuti. Mereka butuh bantuan Anda!
 					</p>
 				</div>
 
@@ -559,9 +545,7 @@ function AnalyticsSkeleton() {
 				{/* Pie Chart 1 */}
 				<Card>
 					<ChkSkeleton height="24px" width="200px" mb={4} />
-					<div
-						className="flex items-center justify-center"
-						style={{ height: 300 }}>
+					<div className="flex items-center justify-center" style={{ height: 300 }}>
 						<SkeletonCircle size="200px" />
 					</div>
 				</Card>
@@ -569,9 +553,7 @@ function AnalyticsSkeleton() {
 				{/* Pie Chart 2 */}
 				<Card>
 					<ChkSkeleton height="24px" width="220px" mb={4} />
-					<div
-						className="flex items-center justify-center"
-						style={{ height: 300 }}>
+					<div className="flex items-center justify-center" style={{ height: 300 }}>
 						<SkeletonCircle size="200px" />
 					</div>
 				</Card>
@@ -611,9 +593,7 @@ function AnalyticsSkeleton() {
 					<ChkSkeleton height="24px" width="150px" mb={4} />
 					<div className="space-y-3">
 						{Array.from({ length: 5 }).map((_, i) => (
-							<div
-								key={i}
-								className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+							<div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
 								<div className="flex-1">
 									<ChkSkeleton height="16px" width="140px" mb={2} />
 									<ChkSkeleton height="14px" width="180px" mb={1} />
@@ -630,9 +610,7 @@ function AnalyticsSkeleton() {
 					<ChkSkeleton height="24px" width="180px" mb={4} />
 					<div className="space-y-3">
 						{Array.from({ length: 5 }).map((_, i) => (
-							<div
-								key={i}
-								className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+							<div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
 								<div className="flex-1">
 									<ChkSkeleton height="16px" width="140px" mb={2} />
 									<ChkSkeleton height="14px" width="180px" />
@@ -674,9 +652,7 @@ function EventScannerSkeleton() {
 								<h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
 									Scanner Check-in Event
 								</h1>
-								<p className="text-xs sm:text-sm mt-1 truncate text-yellow-700">
-									Loading event..
-								</p>
+								<p className="text-xs sm:text-sm mt-1 truncate text-yellow-700">Loading event..</p>
 							</div>
 						</div>
 						<div className="w-full sm:w-auto">
@@ -726,8 +702,7 @@ function LoadingEventScanner() {
 						<span className="font-medium">Kembali ke Daftar Participants</span>
 					</div>
 
-					<div
-						className={`rounded-lg shadow-sm border p-4 sm:p-6 bg-gray-50 border-gray-200`}>
+					<div className={`rounded-lg shadow-sm border p-4 sm:p-6 bg-gray-50 border-gray-200`}>
 						<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
 							<div className="flex items-center gap-3 w-full sm:w-auto">
 								<div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-gray-500 to-gray-500">
@@ -753,9 +728,7 @@ function LoadingEventScanner() {
 				{/* Stats Cards */}
 				<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
 					{Array.from({ length: 4 }).map((_, i) => (
-						<div
-							key={i}
-							className="bg-white rounded-xl shadow-md p-3 border-2 border-gray-200">
+						<div key={i} className="bg-white rounded-xl shadow-md p-3 border-2 border-gray-200">
 							<div className="flex items-center justify-between mb-4">
 								<ChkSkeleton height="20px" width="120px" />
 								<ChkSkeleton height="32px" width="30px" />
@@ -851,11 +824,7 @@ function ActivityDetailSkeleton() {
 							<div className="space-y-3">
 								{Array.from({ length: 2 }).map((_, i) => (
 									<div key={i} className="flex items-center gap-3">
-										<ChkSkeleton
-											width="32px"
-											height="32px"
-											borderRadius="full"
-										/>
+										<ChkSkeleton width="32px" height="32px" borderRadius="full" />
 										<div className="flex-1">
 											<ChkSkeleton height="16px" width="120px" mb={1} />
 											<ChkSkeleton height="14px" width="160px" />
@@ -902,9 +871,7 @@ function MyActivitiesSkeleton() {
 				{/* Stats Cards */}
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 					{Array.from({ length: 3 }).map((_, i) => (
-						<div
-							key={i}
-							className="bg-white rounded-xl shadow-md p-6 border-2 border-emerald-200">
+						<div key={i} className="bg-white rounded-xl shadow-md p-6 border-2 border-emerald-200">
 							<div className="flex items-center justify-between mb-4">
 								<ChkSkeleton width="48px" height="48px" borderRadius="lg" />
 								<ChkSkeleton height="32px" width="60px" />
@@ -918,9 +885,7 @@ function MyActivitiesSkeleton() {
 				<div className="bg-white rounded-xl shadow-md mb-6 border-2 border-emerald-200">
 					<div className="flex border-b">
 						{Array.from({ length: 4 }).map((_, i) => (
-							<div
-								key={i}
-								className="flex-1 p-4 text-center border-r last:border-r-0">
+							<div key={i} className="flex-1 p-4 text-center border-r last:border-r-0">
 								<ChkSkeleton height="20px" width="80px" mx="auto" />
 							</div>
 						))}

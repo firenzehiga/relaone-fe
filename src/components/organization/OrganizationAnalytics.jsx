@@ -112,14 +112,14 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 			{/* Overview stats */}
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 				<StatsCard
-					title="Total Events"
+					title="Total Kegiatan"
 					value={overview.total_events ?? 0}
 					description={`Dibuat dalam 30 hari terakhir: ${overview.events_created_in_period ?? 0}`}
 					icon={<Activity />}
 				/>
 
 				<StatsCard
-					title="Upcoming Events"
+					title="Kegiatan Mendatang"
 					value={overview.upcoming_events ?? 0}
 					description={`Menunggu dimulai`}
 					icon={<Calendar />}
@@ -127,7 +127,7 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 				/>
 
 				<StatsCard
-					title="Pending Registrations"
+					title="Registrasi Relawan"
 					value={overview.pending_registrations_count ?? 0}
 					description="Perlu konfirmasi peserta"
 					icon={<Users />}
@@ -143,7 +143,7 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 				/>
 			</div>
 			{/* Small overview badges (status ringkas event) pakai judul header*/}
-			<h1 className="text-2xl font-bold text-gray-900 mb-3 border-emerald-600">Status Event</h1>
+			<h1 className="text-2xl font-bold text-gray-900 mb-3 border-emerald-600">Status Kegiatan</h1>
 			<div className="flex flex-wrap gap-3 mt-2">
 				<Badge variant="warning" size="md">
 					Sedang Berlangsung: {overview.active_events ?? 0}
@@ -165,10 +165,10 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 					<div className="flex items-center justify-between mb-3">
 						<div className="flex items-center gap-3">
 							<Activity className="w-5 h-5 text-indigo-500" />
-							<h4 className="font-semibold text-gray-800">Events</h4>
+							<h4 className="font-semibold text-gray-800">Kegiatan</h4>
 						</div>
 						<Badge variant="outline" size="sm">
-							{upcomingEvents.length} upcoming
+							{upcomingEvents.length} Mendatang
 						</Badge>
 					</div>
 
@@ -204,17 +204,17 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 								</ResponsiveContainer>
 							</div>
 							<div className="text-xs text-gray-500 mt-2">
-								Chart: Persentase terisi per event (sumber: peserta per event / upcoming)
+								Chart: Persentase terisi per kegiatan (sumber: peserta per kegiatan / mendatang)
 							</div>
 						</div>
 					)}
 
 					<hr className="my-4" />
 
-					<h5 className="text-sm font-medium mb-2">Upcoming events</h5>
+					<h5 className="text-sm font-medium mb-2">Kegiatan Mendatang</h5>
 					<div className="space-y-2">
 						{upcomingEvents.length === 0 ? (
-							<p className="text-sm text-gray-500">Tidak ada event mendatang.</p>
+							<p className="text-sm text-gray-500">Tidak ada kegiatan mendatang.</p>
 						) : (
 							upcomingEvents.map((ev) => (
 								<div
@@ -253,7 +253,7 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
 						<div className="space-y-1">
 							<div className="flex items-center justify-between">
-								<p className="text-xs text-gray-500">Confirmed</p>
+								<p className="text-xs text-gray-500">Dikonfirmasi</p>
 								<div className="text-sm font-medium text-gray-800">
 									{participants.confirmed ?? 0}
 								</div>
@@ -268,7 +268,7 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 
 						<div className="space-y-1">
 							<div className="flex items-center justify-between">
-								<p className="text-xs text-gray-500">Attended</p>
+								<p className="text-xs text-gray-500">Hadir</p>
 								<div className="text-sm font-medium text-gray-800">
 									{participants.attended ?? 0}
 								</div>
@@ -324,7 +324,7 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 
 					<div className="space-y-2">
 						{(participants.participants_by_event ?? []).length === 0 ? (
-							<p className="text-sm text-gray-500">Belum ada data peserta per event.</p>
+							<p className="text-sm text-gray-500">Belum ada data peserta per kegiatan.</p>
 						) : (
 							participants.participants_by_event.map((pe) => {
 								const pct =
@@ -363,7 +363,9 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 							<p className="text-sm text-gray-500">Tidak ada pendaftaran pending.</p>
 						) : (
 							(participants.pending_registrations ?? []).map((p) => (
-								<div key={p.id} className="flex items-start justify-between py-3 border rounded">
+								<div
+									key={p.id}
+									className="flex items-start justify-between py-3 px-3 border rounded">
 									<div className="flex-1">
 										<div className="text-sm font-medium">{p.nama}</div>
 										<div className="text-xs text-gray-500">
@@ -371,9 +373,23 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 										</div>
 									</div>
 									<div className="ml-4">
-										<Badge variant="warning" size="sm">
-											{p.status}
-										</Badge>
+										<>
+											{p.status === "registered" ? (
+												<Badge variant={"warning"}>Sudah Daftar</Badge>
+											) : p.status === "cancelled" ? (
+												<Badge variant={"danger"}>Dibatalkan</Badge>
+											) : p.status === "confirmed" ? (
+												<Badge variant={"primary"}>Dikonfirmasi</Badge>
+											) : p.status === "attended" ? (
+												<Badge variant={"success"}>Hadir</Badge>
+											) : p.status === "no_show" ? (
+												<Badge variant={"danger"}>Tidak Hadir</Badge>
+											) : p.status === "rejected" ? (
+												<Badge variant={"danger"}>Ditolak</Badge>
+											) : (
+												<Badge variant={"secondary"}>{p.status || "-"}</Badge>
+											)}
+										</>
 									</div>
 								</div>
 							))
@@ -458,8 +474,8 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 								{volunteers.recent_volunteers.map((rv) => {
 									const mapVariant = {
 										registered: {
-											color: "default",
-											status: "Mendaftar",
+											color: "warning",
+											status: "Sudah Daftar",
 										},
 										confirmed: {
 											color: "primary",
@@ -478,7 +494,7 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 											status: "Hadir",
 										},
 										no_show: {
-											color: "warning",
+											color: "danger",
 											status: "Tidak Hadir",
 										},
 									};

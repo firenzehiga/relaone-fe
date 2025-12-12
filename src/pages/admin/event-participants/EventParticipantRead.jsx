@@ -122,7 +122,7 @@ export default function AdminEventParticipant() {
 			width: "150px",
 		},
 		{
-			name: "Event yang diikuti",
+			name: "Kegiatan yang diikuti",
 			selector: (row) => row.event?.judul || "-",
 			sortable: false,
 			wrap: true,
@@ -210,7 +210,7 @@ export default function AdminEventParticipant() {
 							{participantsRefetching ? (
 								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
 							) : (
-								"Daftar Participant"
+								"Daftar Partisipan"
 							)}
 						</h2>
 						<LinkButton
@@ -218,7 +218,7 @@ export default function AdminEventParticipant() {
 							variant="success"
 							size="sm"
 							className="w-full md:w-auto">
-							<Plus className="w-4 h-4 mr-2" /> Tambah Event Participant
+							<Plus className="w-4 h-4 mr-2" /> Tambah Partisipan
 						</LinkButton>
 					</div>
 
@@ -234,7 +234,7 @@ export default function AdminEventParticipant() {
 								<div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
 									<div className="flex items-center justify-between">
 										<div>
-											<p className="text-sm text-blue-600 font-medium">Total Events</p>
+											<p className="text-sm text-blue-600 font-medium">Total Kegiatan</p>
 											<p className="text-2xl font-bold text-blue-900">{eventsList.length}</p>
 										</div>
 										<Calendar className="w-10 h-10 text-blue-500 opacity-70" />
@@ -243,7 +243,7 @@ export default function AdminEventParticipant() {
 								<div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg p-4 border border-emerald-200">
 									<div className="flex items-center justify-between">
 										<div>
-											<p className="text-sm text-emerald-600 font-medium">Total Participants</p>
+											<p className="text-sm text-emerald-600 font-medium">Total Partisipan</p>
 											<p className="text-2xl font-bold text-emerald-900">{participants.length}</p>
 										</div>
 										<Users className="w-10 h-10 text-emerald-500 opacity-70" />
@@ -252,7 +252,7 @@ export default function AdminEventParticipant() {
 								<div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
 									<div className="flex items-center justify-between">
 										<div>
-											<p className="text-sm text-purple-600 font-medium">Total Filtered Results</p>
+											<p className="text-sm text-purple-600 font-medium">Total Hasil Filter</p>
 											<p className="text-2xl font-bold text-purple-900">
 												{filteredParticipants.length}
 											</p>
@@ -266,13 +266,13 @@ export default function AdminEventParticipant() {
 							<div className="flex flex-col md:flex-row gap-4 mb-4">
 								<div className="flex-1">
 									<label className="block text-sm font-medium text-gray-700 mb-1">
-										Filter berdasarkan Event
+										Filter berdasarkan Kegiatan
 									</label>
 									<select
 										value={selectedEventId}
 										onChange={(e) => setSelectedEventId(e.target.value)}
 										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
-										<option value="all">Semua Event</option>
+										<option value="all">Semua Kegiatan</option>
 										{eventsList.map((event) => (
 											<option key={event.id} value={event.id}>
 												{event.judul}
@@ -287,7 +287,7 @@ export default function AdminEventParticipant() {
 									<div className="relative">
 										<input
 											type="text"
-											placeholder="Cari partisipan, event, status..."
+											placeholder="Cari partisipan, kegiatan, status..."
 											value={searchParticipant}
 											onChange={(e) => setSearchParticipant(e.target.value)}
 											className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 pr-8"

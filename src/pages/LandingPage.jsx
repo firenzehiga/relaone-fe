@@ -220,7 +220,9 @@ export default function LandingPage() {
 					<div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 						<div className="flex items-center justify-between mb-12">
 							<div>
-								<h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Event Terbaru</h2>
+								<h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+									Kegiatan Terbaru
+								</h2>
 								<p className="text-xl text-gray-600">
 									Kegiatan sosial yang sedang dibuka untuk pendaftaran
 								</p>
@@ -275,7 +277,7 @@ export default function LandingPage() {
 									variant="secondary"
 									className="border-white text-black hover:bg-white hover:text-emerald-600"
 									onClick={() => navigate("/events")}>
-									Jelajahi Event
+									Jelajahi Kegiatan
 								</DynamicButton>
 							</div>
 						</motion.div>

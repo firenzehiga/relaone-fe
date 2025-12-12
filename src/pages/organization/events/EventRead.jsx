@@ -237,7 +237,7 @@ export default function OrganizationEvent() {
 			width: "60px",
 		},
 		{
-			name: "Nama Event",
+			name: "Judul Kegiatan",
 			selector: (row) => row.judul || "-",
 			sortable: true,
 			wrap: true,
@@ -374,12 +374,12 @@ export default function OrganizationEvent() {
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="bg-white rounded-xl shadow p-6">
 					<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
-						<h2 className="text-lg font-semibold">Daftar Event/Kegiatan</h2>
+						<h2 className="text-lg font-semibold">Daftar Kegiatan</h2>
 						<LinkButton
 							variant="success"
 							to="/organization/events/create"
 							className="w-full md:w-auto">
-							<Plus className="w-4 h-4 mr-2" /> Tambah Event
+							<Plus className="w-4 h-4 mr-2" /> Tambah Kegiatan
 						</LinkButton>
 					</div>
 

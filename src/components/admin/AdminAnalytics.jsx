@@ -198,7 +198,7 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 		<div className="space-y-8">
 			{/* Key Metrics Overview - Reduced to 6 most important cards */}
 			<div>
-				<h2 className="text-2xl font-bold text-gray-900 mb-4">📊 Ringkasan Statistik</h2>
+				<h2 className="text-2xl font-bold text-gray-900 mb-4">📊 Ringkasan Informasi</h2>
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 					{/* Users */}
 					<StatsCard
@@ -222,7 +222,7 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 
 					{/* Events */}
 					<StatsCard
-						title="Total Event"
+						title="Total Kegiatan"
 						value={data.events?.total_events || 0}
 						icon={
 							<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -235,7 +235,7 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 							</svg>
 						}
 						color="orange"
-						description={`${data.events?.upcoming_events || 0} Akan Datang, ${
+						description={`${data.events?.upcoming_events || 0} Mendatang, ${
 							data.events?.ongoing_events || 0
 						} Berlangsung, ${data.events?.completed_events || 0} Selesai `}
 					/>
@@ -282,7 +282,7 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 
 					{/* Completed Events */}
 					<StatsCard
-						title="Total Event Selesai"
+						title="Total Kegiatan Selesai"
 						value={data.events?.completed_events || 0}
 						icon={
 							<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -295,7 +295,7 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 							</svg>
 						}
 						color="purple"
-						description="Total event terlaksana"
+						description="Total kegiatan terlaksana"
 					/>
 
 					{/* Attendance Rate */}

@@ -151,7 +151,7 @@ export default function MyActivitiesPage() {
 						</h1>
 					</div>
 					<p className="text-xl text-gray-600 ml-0 sm:ml-12">
-						Kelola partisipasi event volunteer kamu
+						Pantau aktivitas partisipasi kegiatan volunteer kamu
 					</p>
 				</div>
 
@@ -164,7 +164,7 @@ export default function MyActivitiesPage() {
 						<Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
 							<div className="flex items-center justify-between p-5">
 								<div>
-									<p className="text-blue-100 text-sm font-medium mb-1">Total Event</p>
+									<p className="text-blue-100 text-sm font-medium mb-1">Total Kegiatan</p>
 									<p className="text-4xl font-bold">{data?.statistics?.total || 0}</p>
 								</div>
 								<Sparkles size={40} className="opacity-80" />
@@ -271,11 +271,11 @@ export default function MyActivitiesPage() {
 								<h3 className="text-2xl font-bold text-gray-900 mb-3">Belum Ada Aktivitas</h3>
 								<p className="text-gray-600 text-lg mb-8 max-w-md mx-auto">
 									Kamu belum memiliki aktivitas di kategori ini. Yuk mulai berkontribusi dengan
-									mengikuti event volunteer!
+									mengikuti kegiatan volunteer!
 								</p>
 								<DynamicButton variant="success" size="lg" onClick={() => navigate("/events")}>
 									<Sparkles size={18} className="mr-2" />
-									Jelajahi Event
+									Jelajahi Kegiatan
 								</DynamicButton>
 							</Card>
 						</motion.div>

@@ -43,7 +43,7 @@ export default function Hero() {
 									variant="success"
 									onClick={() => navigate("/events")}
 									className="group">
-									Lihat Event
+									Lihat Kegiatan
 									<ArrowRight
 										size={20}
 										className="ml-2 group-hover:translate-x-1 transition-transform"

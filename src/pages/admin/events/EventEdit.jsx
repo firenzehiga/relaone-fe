@@ -772,6 +772,9 @@ export default function AdminEventEdit() {
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 											<option value="draft">Draft</option>
 											<option value="published">Published</option>
+											<option value="cancelled">Cancel</option>
+											<option value="ongoing">Ongoing</option>
+											<option value="completed">Complete</option>
 										</select>
 									</div>
 								</div>

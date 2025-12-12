@@ -171,7 +171,7 @@ export default function DetailEventPage() {
 						</div>
 
 						<div className="mt-6 text-gray-700">
-							<h3 className="text-lg font-semibold text-gray-900 mb-3">Deskripsi Event</h3>
+							<h3 className="text-lg font-semibold text-gray-900 mb-3">Deskripsi Kegiatan</h3>
 							<p className="leading-relaxed">{event.deskripsi}</p>
 						</div>
 
@@ -260,7 +260,7 @@ export default function DetailEventPage() {
 								/>
 								<div>
 									<div className="font-medium text-gray-900">{event.organization.nama}</div>
-									<div className="text-sm text-gray-500">Event Organizer</div>
+									<div className="text-sm text-gray-500">Penyelenggara Kegiatan</div>
 								</div>
 							</div>
 						)}

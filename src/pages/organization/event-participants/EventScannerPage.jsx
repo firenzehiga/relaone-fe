@@ -109,7 +109,7 @@ export default function EventScannerPage() {
 						to="/organization/event-participants"
 						className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors text-sm">
 						<ArrowLeft className="w-4 h-4" />
-						<span className="font-medium">Kembali ke Daftar Participants</span>
+						<span className="font-medium">Kembali</span>
 					</Link>
 
 					<div
@@ -134,7 +134,7 @@ export default function EventScannerPage() {
 								</div>
 								<div className="flex-1 min-w-0">
 									<h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
-										Scanner Check-in/Absensi Event
+										Scanner Check-in (Presensi Kegiatan)
 									</h1>
 									<p
 										className={`text-xs sm:text-sm mt-1 truncate ${
@@ -176,9 +176,9 @@ export default function EventScannerPage() {
 										: "bg-yellow-100 border-yellow-300 text-yellow-800"
 								}`}>
 								{eventStatus === "completed" ? (
-									<>⚠️ Event sudah selesai. Scanner tidak dapat digunakan.</>
+									<>⚠️ Kegiatan sudah selesai. Scanner tidak dapat digunakan.</>
 								) : (
-									<>⚠️ Event belum dimulai. Scanner akan aktif saat event berlangsung.</>
+									<>⚠️ Kegiatan belum dimulai. Scanner akan aktif saat kegiatan berlangsung.</>
 								)}
 							</div>
 						)}
@@ -209,12 +209,12 @@ export default function EventScannerPage() {
 									</h3>
 									<p className="text-xs sm:text-sm text-gray-500 mb-4">
 										{eventStatus === "completed"
-											? "Event sudah selesai. Scanner QR tidak dapat digunakan lagi."
-											: "Event belum dimulai. Scanner akan aktif saat event berlangsung."}
+											? "Kegiatan sudah selesai. Scanner QR tidak dapat digunakan lagi."
+											: "Kegiatan belum dimulai. Scanner akan aktif saat kegiatan berlangsung."}
 									</p>
 									{eventInfo && (
 										<div className="text-xs sm:text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
-											<p className="font-medium mb-1">Jadwal Event:</p>
+											<p className="font-medium mb-1">Jadwal Kegiatan:</p>
 											<p className="text-xs sm:text-sm">
 												{new Date(eventInfo.tanggal_mulai).toLocaleDateString("id-ID", {
 													day: "numeric",
@@ -229,7 +229,7 @@ export default function EventScannerPage() {
 												})}
 											</p>
 
-											<p className="font-medium mt-2 mb-1">Waktu Event:</p>
+											<p className="font-medium mt-2 mb-1">Waktu Kegiatan:</p>
 											<p className="text-xs sm:text-sm">
 												{formatTime(eventInfo.waktu_mulai)} -{" "}
 												{formatTime(eventInfo.waktu_selesai, "WIB")}
@@ -256,8 +256,8 @@ export default function EventScannerPage() {
 						<li>Pastikan pencahayaan cukup untuk hasil scan yang optimal</li>
 						<li>Minta volunteer menunjukkan QR Code dengan jelas di layar HP atau print-out</li>
 						<li>Statistik dan daftar check-in akan otomatis refresh secara realtime</li>
-						<li>Volunteer hanya bisa check-in jika status sudah "Confirmed"</li>
-						<li>Setiap volunteer hanya bisa check-in satu kali per event</li>
+						<li>Volunteer hanya bisa check-in jika status sudah "Dikonfirmasi"</li>
+						<li>Setiap volunteer hanya bisa check-in satu kali per kegiatan</li>
 					</ul>
 				</div>
 			</div>
