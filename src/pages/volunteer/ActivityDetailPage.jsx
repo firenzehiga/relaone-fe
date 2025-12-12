@@ -172,7 +172,7 @@ export default function ActivityDetailPage() {
 						</h1>
 					</div>
 					<p className="text-lg text-gray-600 ml-0 sm:ml-12">
-						Informasi lengkap partisipasi event Anda
+						Informasi lengkap partisipasi kegiatan Anda
 					</p>
 				</div>
 				{/* Status Cards */}
@@ -229,7 +229,7 @@ export default function ActivityDetailPage() {
 									<timelineConfig.Icon size={28} className={timelineConfig.color} />
 								</div>
 								<div className="flex-1">
-									<p className="text-sm text-gray-600 mb-2 font-medium">Status Event</p>
+									<p className="text-sm text-gray-600 mb-2 font-medium">Status Kegiatan</p>
 									<span
 										className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold ${timelineConfig.bg} ${timelineConfig.color}`}>
 										{timelineConfig.label}
@@ -237,9 +237,9 @@ export default function ActivityDetailPage() {
 								</div>
 							</div>
 							<p className="text-sm text-gray-600 leading-relaxed">
-								{data.timeline_status === "upcoming" && "Event belum dimulai"}
-								{data.timeline_status === "ongoing" && "Event sedang berlangsung"}
-								{data.timeline_status === "finished" && "Event telah selesai"}
+								{data.timeline_status === "upcoming" && "Kegiatan belum dimulai"}
+								{data.timeline_status === "ongoing" && "Kegiatan sedang berlangsung"}
+								{data.timeline_status === "finished" && "Kegiatan telah selesai"}
 							</p>
 						</Card>
 					</motion.div>
@@ -290,7 +290,7 @@ export default function ActivityDetailPage() {
 							<div className="mb-8">
 								<h3 className="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
 									<div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full"></div>
-									Deskripsi Event
+									Deskripsi Kegiatan
 								</h3>
 								<p className="text-gray-700 leading-relaxed whitespace-pre-wrap text-base">
 									{data.event.deskripsi}
@@ -304,7 +304,7 @@ export default function ActivityDetailPage() {
 								<div>
 									<h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
 										<Building2 size={20} className="text-emerald-600" />
-										Organizer
+										Penyelenggara
 									</h3>
 									<div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
 										{data.event.organization.logo ? (
@@ -379,7 +379,7 @@ export default function ActivityDetailPage() {
 							<div>
 								<h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
 									<Calendar size={20} className="text-emerald-600" />
-									Waktu Event
+									Waktu Kegiatan
 								</h3>
 								<div className="space-y-3">
 									<div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
@@ -416,7 +416,7 @@ export default function ActivityDetailPage() {
 								<div>
 									<h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
 										<User size={20} className="text-emerald-600" />
-										Kontak Person
+										Penanggung Jawab
 									</h3>
 									<div className="space-y-2">
 										<div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
@@ -517,7 +517,7 @@ export default function ActivityDetailPage() {
 											{formatDate(data.tanggal_konfirmasi)}
 										</p>
 										<p className="text-sm text-gray-600 leading-relaxed">
-											Pendaftaran Anda dikonfirmasi oleh organizer
+											Pendaftaran Anda dikonfirmasi oleh Penyelenggara
 										</p>
 									</div>
 								</div>
@@ -535,8 +535,8 @@ export default function ActivityDetailPage() {
 										<p className="font-bold text-gray-900 text-base mb-1">Ditolak</p>
 
 										<p className="text-sm text-gray-600 leading-relaxed">
-											Maaf, pendaftaran Anda ditolak oleh organizer. Jangan berkecil hati, mungkin
-											Anda bisa mencoba mendaftar di event lain.
+											Maaf, pendaftaran Anda ditolak oleh Penyelenggara. Jangan berkecil hati,
+											mungkin Anda bisa mencoba mendaftar di kegiatan lain.
 										</p>
 									</div>
 								</div>
@@ -561,7 +561,7 @@ export default function ActivityDetailPage() {
 											{formatDate(data.tanggal_hadir)}
 										</p>
 										<p className="text-sm text-gray-600 leading-relaxed">
-											Anda telah check-in di event ini
+											Anda telah check-in di kegiatan ini
 										</p>
 									</div>
 								</div>
@@ -578,13 +578,13 @@ export default function ActivityDetailPage() {
 										</div>
 									</div>
 									<div className="flex-1">
-										<p className="font-bold text-gray-900 text-base mb-1">No Show</p>
+										<p className="font-bold text-gray-900 text-base mb-1">Tidak Hadir</p>
 										<p className="text-sm text-red-600 font-semibold mb-2">
-											Anda tidak check-in di event ini!
+											Anda tidak check-in di kegiatan ini!
 										</p>
 										<p className="text-sm text-gray-600 leading-relaxed">
-											Jika anda hadir di event ini namun tidak melakukan scan QR kehadiran, silahkan
-											hubungi organizer
+											Jika anda hadir di kegiatan ini namun tidak melakukan scan QR kehadiran,
+											silahkan hubungi Penyelenggara
 										</p>
 									</div>
 								</div>
@@ -606,7 +606,7 @@ export default function ActivityDetailPage() {
 											{formatDateTime(data.feedback?.created_at, "WIB")}
 										</p>
 										<p className="text-sm text-gray-600 leading-relaxed">
-											Anda telah mengirim feedback untuk event ini. Terima kasih atas
+											Anda telah mengirim feedback untuk kegiatan ini. Terima kasih atas
 											partisipasinya!
 										</p>
 									</div>
@@ -629,7 +629,7 @@ export default function ActivityDetailPage() {
 							</h3>
 							<QrCodeDisplay participationId={data.id} eventData={data.event} />
 							<p className="text-sm text-gray-700 text-center mt-6 font-medium">
-								Tunjukkan QR code ini kepada organizer untuk check-in
+								Tunjukkan QR code ini kepada Penyelenggara untuk check-in (presensi)
 							</p>
 						</Card>
 					</motion.div>

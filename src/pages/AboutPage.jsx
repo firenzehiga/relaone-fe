@@ -70,8 +70,8 @@ export default function AboutPage() {
 							</h2>
 
 							<p className="text-gray-600 leading-relaxed text-justify mb-4">
-								RelaOne Volunteer adalah platform yang dirancang untuk mempermudah organisasi dan
-								relawan berkolaborasi pada kegiatan sosial. Dengan sistem terpusat, organisasi dapat
+								RelaOne adalah platform yang dirancang untuk mempermudah organisasi dan relawan
+								berkolaborasi pada kegiatan sosial. Dengan sistem terpusat, organisasi dapat
 								mempublikasikan event dan mengelola peserta, sementara relawan dapat menemukan
 								kegiatan yang sesuai dan mendaftar dengan mudah.
 							</p>
@@ -84,7 +84,7 @@ export default function AboutPage() {
 
 							<div className="mt-6 flex flex-wrap gap-3">
 								<DynamicButton variant="success" onClick={() => navigate("/events")}>
-									Jelajahi Event
+									Jelajahi Kegiatan
 								</DynamicButton>
 								<DynamicButton variant="outline" onClick={() => navigate("/organizations")}>
 									Lihat Organisasi

@@ -25,12 +25,12 @@ export default function OrganizationDashboard() {
 			<div className="max-w-7xl mx-auto">
 				{/* Event selector */}
 				<div className="mb-6 flex items-center justify-end">
-					<label className="mr-3 text-sm font-medium text-gray-700">Filter Event:</label>
+					<label className="mr-3 text-sm font-medium text-gray-700">Filter Kegiatan:</label>
 					<select
 						value={selectedEventId}
 						onChange={(e) => setSelectedEventId(e.target.value)}
 						className="border border-gray-200 rounded-lg px-3 py-2 bg-white text-sm">
-						<option value="">Semua Event</option>
+						<option value="">Semua Kegiatan</option>
 						{eventsData &&
 							Array.isArray(eventsData) &&
 							eventsData.map((ev) => (

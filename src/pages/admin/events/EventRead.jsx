@@ -20,6 +20,7 @@ import { getImageUrl, parseApiError } from "@/utils";
 import { formatDate, formatTime } from "@/utils/dateFormatter";
 import FetchLoader from "@/components/ui/FetchLoader";
 import Badge from "@/components/ui/Badge";
+import { useAuthStore } from "@/_hooks/useAuth";
 
 export default function AdminEvent() {
 	const {
@@ -31,6 +32,7 @@ export default function AdminEvent() {
 
 	const deleteEventMutation = useAdminDeleteEventMutation();
 
+	const { isLoading } = useAuthStore();
 	// Local state for search/filter
 	const [searchEvent, setSearchEvent] = useState("");
 	const [statusFilter, setStatusFilter] = useState("all");
@@ -202,31 +204,36 @@ export default function AdminEvent() {
 
 		{
 			name: "Aksi",
-			cell: (row) => (
-				<Menu>
-					<MenuButton
-						as={IconButton}
-						aria-label="Options"
-						icon={<EllipsisVerticalIcon />}
-						variant="ghost"
-					/>
-					<Portal>
-						<MenuList className="font-semibold">
-							<Link to={`/admin/events/edit/${row.id}`}>
-								<MenuItem icon={<EditIcon className="text-yellow-500 hover:text-yellow-600" />}>
-									Edit
+			cell: (row) => {
+				if (isLoading) {
+					return <Loader2 className="animate-spin h-5 w-5 text-emerald-600" />;
+				}
+				return (
+					<Menu>
+						<MenuButton
+							as={IconButton}
+							aria-label="Options"
+							icon={<EllipsisVerticalIcon />}
+							variant="ghost"
+						/>
+						<Portal>
+							<MenuList className="font-semibold">
+								<Link to={`/admin/events/edit/${row.id}`}>
+									<MenuItem icon={<EditIcon className="text-yellow-500 hover:text-yellow-600" />}>
+										Edit
+									</MenuItem>
+								</Link>
+								<MenuItem
+									onClick={() => handleDelete(row.id)}
+									disabled={deleteEventMutation.isLoading}
+									icon={<Trash className="text-red-500 hover:text-red-600" />}>
+									Hapus
 								</MenuItem>
-							</Link>
-							<MenuItem
-								onClick={() => handleDelete(row.id)}
-								disabled={deleteEventMutation.isLoading}
-								icon={<Trash className="text-red-500 hover:text-red-600" />}>
-								Hapus
-							</MenuItem>
-						</MenuList>
-					</Portal>
-				</Menu>
-			),
+							</MenuList>
+						</Portal>
+					</Menu>
+				);
+			},
 			width: "140px",
 		},
 	];
@@ -253,11 +260,11 @@ export default function AdminEvent() {
 							{eventsRefetching ? (
 								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
 							) : (
-								"Daftar Event/Kegiatan"
+								"Daftar Kegiatan"
 							)}
 						</h2>
 						<LinkButton variant="success" to="/admin/events/create" className="w-full md:w-auto">
-							<Plus className="w-4 h-4 mr-2" /> Tambah Event
+							<Plus className="w-4 h-4 mr-2" /> Tambah Kegiatan
 						</LinkButton>
 					</div>
 

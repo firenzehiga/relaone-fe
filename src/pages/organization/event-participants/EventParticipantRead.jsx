@@ -284,7 +284,7 @@ export default function OrganizationEventParticipant() {
 	// Fungsi update no show participants
 	const handleUpdateNoShow = () => {
 		if (selectedEventId === "all") {
-			toast.error("Pilih event terlebih dahulu untuk update status tidak hadir", {
+			toast.error("Pilih kegiatan terlebih dahulu untuk perbarui status tidak hadir", {
 				position: "top-center",
 			});
 			return;
@@ -294,20 +294,20 @@ export default function OrganizationEventParticipant() {
 		const confirmedCount = filteredParticipants.filter((p) => p.status === "confirmed").length;
 
 		Swal.fire({
-			title: "Update Status Tidak Hadir?",
+			title: "Perbarui Status Tidak Hadir?",
 			html: `<div class="text-left">
-				<p class="mb-2">Event: <strong>${selectedEvent?.judul}</strong></p>
+				<p class="mb-2">Kegiatan: <strong>${selectedEvent?.judul}</strong></p>
 				${
 					confirmedCount > 0
-						? `<p class="mb-2">Participant dengan status "Dikonfirmasi": <strong>${confirmedCount} orang</strong></p>`
-						: '<p class="mb-2 text-gray-600">Sistem akan mengecek participant yang perlu diupdate...</p>'
+						? `<p class="mb-2">Partisipan dengan status "Dikonfirmasi": <strong>${confirmedCount} orang</strong></p>`
+						: '<p class="mb-2 text-gray-600">Sistem akan mengecek partisipan yang perlu diupdate...</p>'
 				}
-				<p class="text-red-600 mt-4">⚠️ Semua participant yang masih berstatus "Dikonfirmasi" akan diubah menjadi "Tidak Hadir".</p>
-				<p class="text-sm text-gray-500 mt-2">Note: Event harus sudah selesai untuk melakukan update ini.</p>
+				<p class="text-red-600 mt-4">⚠️ Semua partisipan yang masih berstatus "Dikonfirmasi" akan diubah menjadi "Tidak Hadir".</p>
+				<p class="text-sm text-gray-500 mt-2">Note: Kegiatan harus sudah selesai untuk melakukan perbarui ini.</p>
 			</div>`,
 			icon: "warning",
 			showCancelButton: true,
-			confirmButtonText: "Ya, Update!",
+			confirmButtonText: "Ya, Perbarui!",
 			cancelButtonText: "Batal",
 			customClass: {
 				popup: "bg-white rounded-xl shadow-xl p-5 max-w-md w-full",
@@ -342,7 +342,7 @@ export default function OrganizationEventParticipant() {
 			width: "180px",
 		},
 		{
-			name: "Event yang diikuti",
+			name: "Kegiatan yang diikuti",
 			selector: (row) => row.event?.judul || "-",
 			sortable: false,
 			wrap: true,
@@ -399,7 +399,7 @@ export default function OrganizationEventParticipant() {
 				if (isLoading) return <Loader2 className="text-emerald-600 animate-spin" />; // Show spinner while isLoading
 
 				if (isEventCompleted)
-					return <span className="text-xs text-gray-400 italic">Event sudah selesai</span>;
+					return <span className="text-xs text-gray-400 italic">Kegiatan sudah selesai</span>;
 				return (
 					<Menu>
 						<MenuButton
@@ -467,7 +467,7 @@ export default function OrganizationEventParticipant() {
 							{participantsRefetching ? (
 								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
 							) : (
-								"Daftar Participant"
+								"Daftar Partisipan (Relawan)"
 							)}
 						</h2>
 
@@ -480,7 +480,7 @@ export default function OrganizationEventParticipant() {
 									disabled={updateNoShowMutation.isPending}
 									className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md text-sm font-medium transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
 									<UserX className="w-4 h-4" />
-									{updateNoShowMutation.isPending ? "Updating..." : "Update Status"}
+									{updateNoShowMutation.isPending ? "Memperbarui..." : "Perbarui Status"}
 								</button>
 							)}
 
@@ -491,7 +491,7 @@ export default function OrganizationEventParticipant() {
 									className="flex items-center gap-2"
 									to={`/organization/event-participants/scanner/${selectedEventId}`}>
 									<Scan className="w-4 h-4" />
-									Buka Absen
+									Buka Presensi
 								</LinkButton>
 							)}
 						</div>
@@ -528,12 +528,12 @@ export default function OrganizationEventParticipant() {
 								</div>
 								<div>
 									{isEventCompleted ? (
-										<Badge variant="secondary" className="text-sm">
-											✓ Event Sudah Selesai
+										<Badge variant="success" className="text-sm">
+											🟢Kegiatan Sudah Selesai
 										</Badge>
 									) : (
-										<Badge variant="success" className="text-sm">
-											🟢 Event Aktif/Berjalan
+										<Badge variant="warning" className="text-sm">
+											🟠 Kegiatan Aktif
 										</Badge>
 									)}
 								</div>
@@ -551,16 +551,17 @@ export default function OrganizationEventParticipant() {
 										Fitur Manajemen Kehadiran
 									</h3>
 									<p className="text-sm text-blue-700 mb-3">
-										Pilih event terlebih dahulu untuk mengakses fitur scanner check-in dan update
-										status kehadiran
+										Pilih kegiatan terlebih dahulu untuk mengakses fitur scanner check-in dan
+										perbarui status kehadiran
 									</p>
 									<div className="text-xs text-blue-600 space-y-1">
 										<div>
-											� <strong>Scanner QR:</strong> Scan QR volunteer untuk check-in realtime
+											� <strong>Scanner Presensi:</strong> Scan kode QR volunteer untuk check-in
+											realtime
 										</div>
 										<div>
-											⏰ <strong>Update Status:</strong> Ubah status participant yang tidak hadir
-											setelah event selesai
+											⏰ <strong>Perbarui Status:</strong> Ubah status partisipan yang tidak hadir
+											setelah kegiatan selesai
 										</div>
 									</div>
 								</div>
@@ -579,7 +580,7 @@ export default function OrganizationEventParticipant() {
 								<div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
 									<div className="flex items-center justify-between">
 										<div>
-											<p className="text-sm text-blue-600 font-medium">Total Events</p>
+											<p className="text-sm text-blue-600 font-medium">Total Kegiatan</p>
 											<p className="text-2xl font-bold text-blue-900">{eventsList.length}</p>
 										</div>
 										<Calendar className="w-10 h-10 text-blue-500 opacity-70" />
@@ -588,7 +589,7 @@ export default function OrganizationEventParticipant() {
 								<div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg p-4 border border-emerald-200">
 									<div className="flex items-center justify-between">
 										<div>
-											<p className="text-sm text-emerald-600 font-medium">Total Participants</p>
+											<p className="text-sm text-emerald-600 font-medium">Total Partisipan</p>
 											<p className="text-2xl font-bold text-emerald-900">{participants.length}</p>
 										</div>
 										<Users className="w-10 h-10 text-emerald-500 opacity-70" />
@@ -597,7 +598,7 @@ export default function OrganizationEventParticipant() {
 								<div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
 									<div className="flex items-center justify-between">
 										<div>
-											<p className="text-sm text-purple-600 font-medium">Total Filtered Results</p>
+											<p className="text-sm text-purple-600 font-medium">Total Hasil Filter</p>
 											<p className="text-2xl font-bold text-purple-900">
 												{filteredParticipants.length}
 											</p>
@@ -611,13 +612,13 @@ export default function OrganizationEventParticipant() {
 							<div className="flex flex-col md:flex-row gap-4 mb-4">
 								<div className="flex-1">
 									<label className="block text-sm font-medium text-gray-700 mb-1">
-										Filter berdasarkan Event
+										Filter berdasarkan Kegiatan
 									</label>
 									<select
 										value={selectedEventId}
 										onChange={(e) => setSelectedEventId(e.target.value)}
 										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
-										<option value="all">Semua Event</option>
+										<option value="all">Semua Kegiatan</option>
 										{eventsList.map((event) => (
 											<option key={event.id} value={event.id}>
 												{event.judul}
@@ -632,7 +633,7 @@ export default function OrganizationEventParticipant() {
 									<div className="relative">
 										<input
 											type="text"
-											placeholder="Cari partisipan, event, status..."
+											placeholder="Cari partisipan, kegiatan, status..."
 											value={searchParticipant}
 											onChange={(e) => setSearchParticipant(e.target.value)}
 											className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 pr-8"

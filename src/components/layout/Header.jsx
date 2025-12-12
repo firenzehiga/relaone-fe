@@ -185,7 +185,7 @@ export default function Header() {
 														className="flex items-center px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors rounded-lg"
 														onClick={() => setUserMenuOpen(false)}>
 														<Calendar size={18} className="mr-3" />
-														<span className="font-medium">Aktivitas Saya</span>
+														<span className="font-medium">Riwayat Aktivitas</span>
 													</Link>
 												</>
 											) : (
