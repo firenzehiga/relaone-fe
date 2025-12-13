@@ -107,6 +107,7 @@ import OrganizationLocationEdit from "@/pages/organization/locations/LocationEdi
 
 import { ScrollToTop } from "@/components/common/ScrollToTop";
 import FloatingHelp from "@/components/common/FloatingHelp";
+import { FloatingFaQ } from "./components/common/FloatingFaQ";
 /**
  * Komponen utama aplikasi volunteer platform
  * Mengatur routing dengan layout yang menggunakan Outlet
@@ -319,6 +320,9 @@ function App() {
 
 			{/* Floating help button */}
 			<FloatingHelp whatsapp={"6285894310722"} email={"relaonevolunteer@gmail.com"} />
+
+			{/* Floating FAQ button */}
+			<FloatingFaQ />
 		</>
 	);
 }

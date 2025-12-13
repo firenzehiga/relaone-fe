@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import DynamicButton from "@/components/ui/Button";
 import { useAuthStore } from "@/_hooks/useAuth";
+import GradientText from "./ui/GradientText";
 export default function Hero() {
 	const navigate = useNavigate();
 	const { isAuthenticated } = useAuthStore();
@@ -28,15 +29,20 @@ export default function Hero() {
 						<div className="max-w-xl">
 							<h1 className="text-5xl sm:text-6xl lg:text-6xl xl:text-6xl font-bold text-gray-900 mb-6 leading-tight">
 								Bergabung dalam
-								<span className="block text-transparent bg-clip-text bg-gradient-to-br from-emerald-600 via-emerald-500 to-blue-500 mt-2">
+								<GradientText
+									colors={["#059669", "#059669", "#10b981", "#3b82f6", "#059669"]}
+									animationSpeed={6}
+									showBorder={false}
+									className="block text-transparent bg-clip-text mt-3">
 									Aksi Sosial
-								</span>
+								</GradientText>
 								yang Bermakna
 							</h1>
 							<p className="text-lg lg:text-xl text-gray-600 mb-8 leading-relaxed">
 								Platform yang menghubungkan para relawan dengan organisasi untuk berbagai kegiatan
 								sosial. Mari bersama-sama membuat perubahan positif untuk masyarakat.
 							</p>
+
 							<div className="flex flex-col sm:flex-row gap-4">
 								<DynamicButton
 									size="lg"
