@@ -12,24 +12,12 @@ import { getUserDashboard } from "./ProtectedRoute";
  * @returns {React.ReactNode} Children component atau Navigate ke dashboard
  */
 export default function GuestRoute({ children, redirectTo }) {
-	const { isAuthenticated, user, initialized } = useAuthStore();
+	const { isAuthenticated, user, initialized, token } = useAuthStore();
 	const location = useLocation();
 
-	// Cek token di localStorage secara langsung untuk validasi cepat
-	const token = localStorage.getItem("authToken");
-
-	// Jika store belum di-initialized, tunggu agar tidak memutuskan redirect
-	// secara prematur (ini mencegah redirect loops saat app meng-verifikasi token)
-	if (!initialized) {
-		return (
-			<div className="min-h-screen flex items-center justify-center bg-gray-50">
-				<div className="flex flex-col items-center space-y-4">
-					<div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-					<p className="text-gray-600 text-sm">Checking authentication...</p>
-				</div>
-			</div>
-		);
-	}
+	// Tidak menunggu `initialized` di sini — jika store menandakan
+	// authenticated tetapi `user` belum ada, kita anggap sebagai tidak
+	// authenticated dan arahkan ke dashboard/login sesuai kondisi.
 
 	// Jika sudah authenticated, ada user, dan token masih ada di storage,
 	// redirect ke dashboard sesuai role. Memastikan token hadir mencegah

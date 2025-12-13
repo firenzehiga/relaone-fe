@@ -51,6 +51,25 @@ export default function AdminEventCreate() {
 		error: locationsError,
 	} = useAdminLocations();
 
+	// Lokasi yang difilter berdasarkan organisasi yang dipilih di form
+	const filteredLocations = locations.filter((loc) =>
+		formData.organization_id
+			? String(loc.organization_id) === String(formData.organization_id)
+			: false
+	);
+
+	// Jika organisasi berubah dan lokasi saat ini tidak cocok, kosongkan lokasi
+	useEffect(() => {
+		if (!formData.organization_id) return;
+		const ok = locations.some(
+			(loc) =>
+				String(loc.organization_id) === String(formData.organization_id) &&
+				String(loc.id) === String(formData.location_id)
+		);
+		if (!ok && formData.location_id) {
+			setFormData((s) => ({ ...s, location_id: "" }));
+		}
+	}, [formData.organization_id, locations]);
 	const {
 		data: organizations = [],
 		isLoading: organizationsLoading,
@@ -491,7 +510,7 @@ export default function AdminEventCreate() {
 											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 											<option value="">Pilih Lokasi</option>
-											{locations.map((location) => (
+											{filteredLocations.map((location) => (
 												<option key={location.id} value={location.id}>
 													{location.nama}
 												</option>

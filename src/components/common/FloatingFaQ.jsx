@@ -84,9 +84,9 @@ const faqData = [
 			},
 			{
 				id: "s3",
-				question: "Bisakah saya mendapatkan sertifikat?",
+				question: "Apa manfaat menjadi relawan?",
 				answer:
-					"Ya, sertifikat tersedia setelah kegiatan selesai:\n\n📄 Cara mendapatkan:\n1. Tunggu kegiatan selesai\n2. Organisasi akan memproses sertifikat\n3. Cek email Anda atau menu 'Sertifikat Saya'\n4. Download sertifikat dalam format PDF\n5. Cetak atau bagikan digital\n\n⏱️ Catatan:\n• Sertifikat dikirim dalam 1-3 hari kerja\n• Pastikan Anda hadir di kegiatan",
+					"Menjadi relawan memberikan banyak manfaat meskipun sertifikat tidak selalu tersedia:\n\n• Pengalaman praktis dan keterampilan baru\n• Memperluas jaringan dan relasi profesional\n• Meningkatkan kepercayaan diri dan kemampuan kepemimpinan\n• Kepuasan pribadi karena memberi dampak positif pada masyarakat\n\nCatatan:\n• Beberapa organisasi mungkin memberikan sertifikat, tetapi tidak semua\n• Jika Anda memerlukan sertifikat, tanyakan langsung kepada penyelenggara sebelum mendaftar",
 			},
 		],
 	},

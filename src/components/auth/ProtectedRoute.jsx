@@ -11,11 +11,8 @@ import { useAuthStore } from "@/_hooks/useAuth";
  * @returns {React.ReactNode} Children component atau Navigate ke login page
  */
 export default function ProtectedRoute({ children, allowedRoles = [], redirectTo = "/login" }) {
-	const { isAuthenticated, user } = useAuthStore();
+	const { isAuthenticated, user, token } = useAuthStore();
 	const location = useLocation();
-
-	// Cek token di localStorage secara langsung
-	const token = localStorage.getItem("authToken");
 
 	// Apakah kita mengizinkan guest/public? (gunakan string kosong "" untuk publik)
 	const allowGuest = allowedRoles.includes("");
@@ -30,16 +27,12 @@ export default function ProtectedRoute({ children, allowedRoles = [], redirectTo
 		return <Navigate to={redirectTo} replace />;
 	}
 
-	// Jika ada token tapi user belum dimuat, tampilkan loading
+	// Jika ada token tapi user belum dimuat, kita tidak lagi menampilkan
+	// loading di sini — treat missing `user` sebagai tidak authenticated
+	// sehingga route akan redirect ke login. Ini menyederhanakan perilaku
+	// dan mencegah tampilan yang jarang terlihat menjadi membingungkan.
 	if (token && isAuthenticated && !user) {
-		return (
-			<div className="min-h-screen flex items-center justify-center bg-gray-50">
-				<div className="flex flex-col items-center space-y-4">
-					<div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-					<p className="text-gray-600 text-sm">Verifying permissions...</p>
-				</div>
-			</div>
-		);
+		return <Navigate to={redirectTo} replace />;
 	}
 
 	// Jika ada pembatasan role dan user role tidak sesuai

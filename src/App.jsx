@@ -108,6 +108,7 @@ import OrganizationLocationEdit from "@/pages/organization/locations/LocationEdi
 import { ScrollToTop } from "@/components/common/ScrollToTop";
 import FloatingHelp from "@/components/common/FloatingHelp";
 import { FloatingFaQ } from "./components/common/FloatingFaQ";
+import { useUserRole } from "./_hooks/useAuth";
 /**
  * Komponen utama aplikasi volunteer platform
  * Mengatur routing dengan layout yang menggunakan Outlet
@@ -116,6 +117,7 @@ import { FloatingFaQ } from "./components/common/FloatingFaQ";
  * @returns {JSX.Element} Struktur aplikasi lengkap dengan routing dan layout
  */
 function App() {
+	const currentRole = useUserRole();
 	return (
 		<>
 			<ScrollToTop />
@@ -317,12 +319,18 @@ function App() {
 			<CancelJoinModal />
 			<FeedbackModal />
 			<OnboardingModal />
-
-			{/* Floating help button */}
-			<FloatingHelp whatsapp={"6285894310722"} email={"relaonevolunteer@gmail.com"} />
-
-			{/* Floating FAQ button */}
-			<FloatingFaQ />
+			{currentRole && currentRole !== "admin" && (
+				<>
+					{/* Floating help button */}
+					<FloatingHelp whatsapp={"6285894310722"} email={"relaonevolunteer@gmail.com"} />
+				</>
+			)}
+			{currentRole && currentRole !== "admin" && currentRole !== "organization" && (
+				<>
+					{/* Floating FAQ button */}
+					<FloatingFaQ />
+				</>
+			)}
 		</>
 	);
 }

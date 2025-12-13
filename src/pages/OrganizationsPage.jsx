@@ -21,7 +21,7 @@ import Card from "@/components/ui/Card";
 
 export default function OrganizationsPage() {
 	useDocumentTitle("Organizations Page");
-	
+
 	const {
 		data: organizations = [],
 		isLoading,
@@ -69,11 +69,11 @@ export default function OrganizationsPage() {
 				{/* Hero Header */}
 				<div className="mb-8 text-center">
 					<h1 className="text-4xl lg:text-5xl font-bold  text-emerald-600 mb-4">
-						Organisasi Komunitas
+						Organisasi Penyelenggara
 					</h1>
 					<p className="text-xl text-gray-600 max-w-2xl mx-auto">
-						Bergabunglah dengan berbagai organisasi komunitas yang berkontribusi untuk membuat
-						perubahan positif di masyarakat
+						Bergabunglah dengan berbagai organisasi yang berkontribusi untuk membuat perubahan
+						positif di masyarakat
 					</p>
 				</div>
 
