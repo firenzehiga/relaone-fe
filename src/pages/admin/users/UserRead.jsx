@@ -36,14 +36,12 @@ export default function AdminUser() {
 	}, [debouncedSearch]);
 
 	const {
-		data: response,
+		users,
+		pagination,
 		isLoading: usersLoading,
 		error: usersError,
 		isFetching: usersRefetching,
 	} = useAdminUsers(currentPage, rowsPerPage, debouncedSearch);
-
-	const users = response?.data;
-	const pagination = response?.pagination || {};
 
 	const deleteUserMutation = useAdminDeleteUserMutation();
 
@@ -293,102 +291,99 @@ export default function AdminUser() {
 							)}
 						</h2>
 					</div>
-
+					<div className="w-full md:w-80 mb-4">
+						<input
+							type="text"
+							placeholder="Cari nama, email, atau jenis kelamin..."
+							value={searchUser}
+							onChange={(e) => setSearchUser(e.target.value)}
+							className="border border-gray-300 rounded-md px-3 py-2 text-sm md:text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
+						/>
+					</div>
 					{usersLoading ? (
 						<div className="flex h-72 md:h-96 justify-center py-20">
 							<Loader2 className="animate-spin h-6 w-6 md:h-7 md:w-7 text-emerald-600" />
 						</div>
 					) : (
-						<>
-							<div className="w-full md:w-80 mb-4">
-								<input
-									type="text"
-									placeholder="Cari nama, email, atau jenis kelamin..."
-									value={searchUser}
-									onChange={(e) => setSearchUser(e.target.value)}
-									className="border border-gray-300 rounded-md px-3 py-2 text-sm md:text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
-								/>
-							</div>
-							<DataTable
-								columns={columns}
-								data={users}
-								pagination
-								paginationServer
-								paginationTotalRows={pagination.total || 0}
-								paginationDefaultPage={currentPage}
-								onChangePage={handlePageChange}
-								onChangeRowsPerPage={handlePerRowsChange}
-								paginationPerPage={rowsPerPage}
-								paginationRowsPerPageOptions={[10, 20, 30, 50, 100]}
-								progressPending={usersRefetching}
-								progressComponent={
-									<div className="flex justify-center py-10">
-										<Loader2 className="animate-spin h-6 w-6 text-emerald-600" />
-									</div>
-								}
-								pointerOnHover
-								title=""
-								highlightOnHover
-								persistTableHead
-								responsive
-								fixedHeader
-								striped
-								sortIcon={<ChevronDown />}
-								expandableRows
-								expandableRowsComponent={({ data }) => (
-									<div className="p-6 bg-white rounded-md border border-gray-100 shadow-sm">
-										<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-											{/* Left column */}
-											<div className="space-y-3">
-												<div className="flex items-start">
-													<div className="text-sm text-gray-700 font-semibold">Jenis Kelamin:</div>
-													<div className="text-sm ml-2">
-														{data.jenis_kelamin === "laki-laki" ? (
-															<p className="text-sm text-gray-800 mt-1">Laki-laki</p>
-														) : data.jenis_kelamin === "perempuan" ? (
-															<p className="text-sm text-gray-800 mt-1">Perempuan</p>
-														) : (
-															<p className="text-sm text-gray-800 mt-1">-</p>
-														)}
-													</div>
-												</div>
-												<div className="text-sm text-gray-700">
-													<span className="font-semibold">Tanggal Lahir:</span>
-													<span className="ml-2 text-gray-900">
-														{formatDate(data.tanggal_lahir) || "-"}
-													</span>
+						<DataTable
+							columns={columns}
+							data={users}
+							pagination
+							paginationServer
+							paginationTotalRows={pagination.total || 0}
+							paginationDefaultPage={currentPage}
+							onChangePage={handlePageChange}
+							onChangeRowsPerPage={handlePerRowsChange}
+							paginationPerPage={rowsPerPage}
+							paginationRowsPerPageOptions={[10, 20, 30, 50, 100]}
+							progressPending={usersRefetching}
+							progressComponent={
+								<div className="flex justify-center py-10">
+									<Loader2 className="animate-spin h-6 w-6 text-emerald-600" />
+								</div>
+							}
+							pointerOnHover
+							title=""
+							highlightOnHover
+							persistTableHead
+							responsive
+							fixedHeader
+							striped
+							sortIcon={<ChevronDown />}
+							expandableRows
+							expandableRowsComponent={({ data }) => (
+								<div className="p-6 bg-white rounded-md border border-gray-100 shadow-sm">
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+										{/* Left column */}
+										<div className="space-y-3">
+											<div className="flex items-start">
+												<div className="text-sm text-gray-700 font-semibold">Jenis Kelamin:</div>
+												<div className="text-sm ml-2">
+													{data.jenis_kelamin === "laki-laki" ? (
+														<p className="text-sm text-gray-800 mt-1">Laki-laki</p>
+													) : data.jenis_kelamin === "perempuan" ? (
+														<p className="text-sm text-gray-800 mt-1">Perempuan</p>
+													) : (
+														<p className="text-sm text-gray-800 mt-1">-</p>
+													)}
 												</div>
 											</div>
+											<div className="text-sm text-gray-700">
+												<span className="font-semibold">Tanggal Lahir:</span>
+												<span className="ml-2 text-gray-900">
+													{formatDate(data.tanggal_lahir) || "-"}
+												</span>
+											</div>
+										</div>
 
-											{/* Right column */}
-											<div className="space-y-3">
-												<div className="text-sm text-gray-700">
-													<span className="font-semibold">No Telepon:</span>
-													<span className="ml-2 text-gray-900">{data.telepon || "-"}</span>
-												</div>
-												<div className="text-sm text-gray-700">
-													<span className="font-semibold">Alamat:</span>
-													<span className="ml-2 text-gray-900">{data?.alamat || "-"}</span>
-												</div>
+										{/* Right column */}
+										<div className="space-y-3">
+											<div className="text-sm text-gray-700">
+												<span className="font-semibold">No Telepon:</span>
+												<span className="ml-2 text-gray-900">{data.telepon || "-"}</span>
+											</div>
+											<div className="text-sm text-gray-700">
+												<span className="font-semibold">Alamat:</span>
+												<span className="ml-2 text-gray-900">{data?.alamat || "-"}</span>
 											</div>
 										</div>
 									</div>
-								)}
-								noDataComponent={
-									<div className="flex flex-col items-center justify-center h-64 text-gray-600">
-										<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
-										<h3 className="text-lg font-semibold mb-2">
-											{searchUser ? "No Matching Users Found" : "No Users Available"}
-										</h3>
-										<p className="text-gray-500 mb-4 text-center">
-											{searchUser
-												? "Tidak ada pengguna yang sesuai dengan pencarian."
-												: "Belum ada data pengguna."}
-										</p>
-									</div>
-								}
-							/>
-						</>
+								</div>
+							)}
+							noDataComponent={
+								<div className="flex flex-col items-center justify-center h-64 text-gray-600">
+									<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+									<h3 className="text-lg font-semibold mb-2">
+										{searchUser ? "No Matching Users Found" : "No Users Available"}
+									</h3>
+									<p className="text-gray-500 mb-4 text-center">
+										{searchUser
+											? "Tidak ada pengguna yang sesuai dengan pencarian."
+											: "Belum ada data pengguna."}
+									</p>
+								</div>
+							}
+						/>
 					)}
 				</div>
 			</div>

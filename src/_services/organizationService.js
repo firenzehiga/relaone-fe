@@ -35,14 +35,10 @@ export const getOrganizationById = async (id) => {
  * @returns {Promise<any>} Data semua organizations.
  */
 export const adminGetOrganizations = async (params = {}) => {
-	const token = localStorage.getItem("authToken");
 	const response = await api.get("/admin/organizations", {
 		params,
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
 	});
-	return response.data.data || response.data;
+	return response.data;
 };
 
 /** Mengambil detail organization berdasarkan ID.

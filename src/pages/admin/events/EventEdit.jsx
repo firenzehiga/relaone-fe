@@ -50,23 +50,15 @@ export default function AdminEventEdit() {
 
 	// fetch event detail for editing
 	const { data: showEvent, isLoading: showEventLoading } = useAdminEventById(id);
-	const {
-		data: locations = [],
-		isLoading: locationsLoading,
-		error: locationsError,
-	} = useAdminLocations();
+	const { locations, isLoading: locationsLoading, error: locationsError } = useAdminLocations();
 
 	const {
-		data: organizations = [],
+		organizations,
 		isLoading: organizationsLoading,
 		error: organizationsError,
 	} = useAdminOrganizations();
 
-	const {
-		data: categories = [],
-		isLoading: categoriesLoading,
-		error: categoriesError,
-	} = useAdminCategory();
+	const { categories, isLoading: categoriesLoading, error: categoriesError } = useAdminCategory();
 
 	// Lokasi yang difilter berdasarkan organisasi yang dipilih di form
 	const filteredLocations = locations.filter((loc) =>

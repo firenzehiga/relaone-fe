@@ -23,10 +23,7 @@ export const getFeedbacks = async () => {
  */
 export const volunteerSendFeedback = async (data) => {
 	try {
-		const response = await api.post(
-			`/volunteer/event-participations/feedback`,
-			data
-		);
+		const response = await api.post(`/volunteer/event-participations/feedback`, data);
 		return response.data.data || response.data;
 	} catch (error) {
 		console.log("Error sending feedback:", error);
@@ -45,7 +42,7 @@ export const volunteerSendFeedback = async (data) => {
  */
 export const adminGetFeedbacks = async (params = {}) => {
 	const response = await api.get("/admin/feedbacks", { params });
-	return response.data.data || response.data;
+	return response.data;
 };
 
 /** Mengambil detail feedback berdasarkan ID.

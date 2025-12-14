@@ -243,8 +243,8 @@ export default function AdminOrganizationEdit() {
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 								<option value="">Pilih status</option>
 								<option value="pending">Pending</option>
-								<option value="verified">Disetujui</option>
-								<option value="rejected">Ditolak</option>
+								<option value="verified">Verified</option>
+								<option value="rejected">Rejected</option>
 							</select>
 						</div>
 					</div>

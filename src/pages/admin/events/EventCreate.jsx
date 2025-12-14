@@ -45,11 +45,7 @@ export default function AdminEventCreate() {
 	const [imagePreview, setImagePreview] = useState(null);
 
 	const createEventMutation = useAdminCreateEventMutation();
-	const {
-		data: locations = [],
-		isLoading: locationsLoading,
-		error: locationsError,
-	} = useAdminLocations();
+	const { locations, isLoading: locationsLoading, error: locationsError } = useAdminLocations();
 
 	// Lokasi yang difilter berdasarkan organisasi yang dipilih di form
 	const filteredLocations = locations.filter((loc) =>
@@ -71,16 +67,12 @@ export default function AdminEventCreate() {
 		}
 	}, [formData.organization_id, locations]);
 	const {
-		data: organizations = [],
+		organizations,
 		isLoading: organizationsLoading,
 		error: organizationsError,
 	} = useAdminOrganizations();
 
-	const {
-		data: categories = [],
-		isLoading: categoriesLoading,
-		error: categoriesError,
-	} = useAdminCategory();
+	const { categories, isLoading: categoriesLoading, error: categoriesError } = useAdminCategory();
 
 	const handleChange = (e) => {
 		const { name, value, files } = e.target;

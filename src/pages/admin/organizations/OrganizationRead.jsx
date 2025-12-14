@@ -1,4 +1,4 @@
-import { use, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import {
 	ChevronDown,
@@ -29,31 +29,32 @@ import { Fade } from "transitions-kit";
 import RatingStars from "@/components/ui/RatingStars";
 import { useAdminUpdateOrganizationRatingsMutation } from "@/_hooks/useUsers";
 import { useAuthStore } from "@/_hooks/useAuth";
+import { useDebounce } from "@/_hooks/useDebounce";
 
 export default function AdminOrganization() {
+	const [searchOrganization, setSearchOrganization] = useState("");
+	const [currentPage, setCurrentPage] = useState(1);
+	const [rowsPerPage, setRowsPerPage] = useState(10);
+
+	// Debounce search menggunakan custom hook
+	const debouncedSearch = useDebounce(searchOrganization, 500); // You can implement debounce if needed
+
+	// Reset ke halaman 1 saat search berubah
+	useEffect(() => {
+		setCurrentPage(1);
+	}, [debouncedSearch]);
+
 	const {
-		data: organizations = [],
+		organizations,
+		pagination,
 		isLoading: organizationsLoading,
 		error: organizationsError,
 		isFetching: organizationsRefetching,
-	} = useAdminOrganizations();
+	} = useAdminOrganizations(currentPage, rowsPerPage, debouncedSearch);
 
 	const deleteOrganizationMutation = useAdminDeleteOrganizationMutation();
 	const updateOrganizationRatingsMutation = useAdminUpdateOrganizationRatingsMutation();
 	const { isLoading } = useAuthStore();
-	// Local state for search/filter
-	const [searchOrganization, setSearchOrganization] = useState("");
-
-	const filteredOrganizations = useMemo(() => {
-		if (!searchOrganization) return organizations;
-		const query = searchOrganization.toLowerCase();
-		return organizations.filter((organizationItem) => {
-			const namaOrg = String(organizationItem.nama || "").toLowerCase();
-			const namaUser = String(organizationItem?.user?.nama || "").toLowerCase();
-			const deskripsi = String(organizationItem.deskripsi || "").toLowerCase();
-			return namaOrg.includes(query) || namaUser.includes(query) || deskripsi.includes(query);
-		});
-	}, [organizations, searchOrganization]);
 
 	// Fungsi untuk menangani penghapusan kursus
 	const handleDelete = (id) => {
@@ -97,6 +98,16 @@ export default function AdminOrganization() {
 				}); // Panggil fungsi deleteMutation dengan ID event
 			}
 		});
+	};
+
+	// Handler untuk perubahan halaman dan rows per page
+	const handlePageChange = (page) => {
+		setCurrentPage(page);
+	};
+
+	const handlePerRowsChange = (newPerPage, page) => {
+		setRowsPerPage(newPerPage);
+		setCurrentPage(page);
 	};
 
 	// Fungsi untuk menangani pembaruan rating organisasi
@@ -181,11 +192,11 @@ export default function AdminOrganization() {
 			selector: (row) => (
 				<>
 					{row.status_verifikasi === "verified" ? (
-						<Badge variant={"success"}>Disetujui</Badge>
+						<Badge variant={"success"}>Verified</Badge>
 					) : row.status_verifikasi === "pending" ? (
 						<Badge variant={"warning"}>Pending</Badge>
 					) : (
-						<Badge variant={"danger"}>Ditolak</Badge>
+						<Badge variant={"danger"}>Rejected</Badge>
 					)}
 				</>
 			),
@@ -271,123 +282,136 @@ export default function AdminOrganization() {
 						</div>
 					</div>
 
+					{/* Filter & Search - Always Visible */}
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+						<input
+							type="text"
+							placeholder="Cari organisasi, perwakilan, atau deskripsi..."
+							value={searchOrganization}
+							onChange={(e) => setSearchOrganization(e.target.value)}
+							className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
+						/>
+					</div>
+
 					{organizationsLoading ? (
 						<div className="flex h-96 justify-center py-20">
 							{" "}
 							<Loader2 className="animate-spin h-7 w-7 text-emerald-600" />
 						</div>
 					) : (
-						<>
-							<div className="w-80 ">
-								<input
-									type="text"
-									placeholder="Cari organisasi, perwakilan, atau deskripsi..."
-									value={searchOrganization}
-									onChange={(e) => setSearchOrganization(e.target.value)}
-									className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
-								/>
-							</div>
-							<DataTable
-								columns={columns}
-								data={filteredOrganizations}
-								pagination
-								pointerOnHover
-								title=""
-								highlightOnHover
-								persistTableHead
-								responsive
-								fixedHeader
-								striped
-								sortIcon={<ChevronDown />}
-								expandableRows
-								expandableRowsComponent={({ data }) => (
-									<div className="p-6 bg-white rounded-md border border-gray-100 shadow-sm">
-										<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-											{/* Left column */}
-											<div className="space-y-3">
-												<div className="text-sm text-gray-700">
-													<span className="font-semibold ">Telepon Organisasi:</span>
-													<span className="ml-2 text-gray-900 ">{data.telepon || "-"}</span>
-												</div>
-												<div className="text-sm text-gray-700">
-													<span className="font-semibold">Email Organisasi:</span>
-													<span className="ml-2 text-gray-900">{data.email || "-"}</span>
-												</div>
-												<div className="text-sm text-gray-700">
-													<span className="font-semibold">Rating:</span>
-													<RatingStars
-														rating={data.rating}
-														maxRating={5}
-														size="sm"
-														interactive={false}
-													/>{" "}
-												</div>
+						<DataTable
+							columns={columns}
+							data={organizations}
+							pagination
+							paginationServer
+							paginationTotalRows={pagination.total || 0}
+							paginationDefaultPage={currentPage}
+							onChangePage={handlePageChange}
+							onChangeRowsPerPage={handlePerRowsChange}
+							paginationPerPage={rowsPerPage}
+							paginationRowsPerPageOptions={[10, 20, 30, 50, 100]}
+							progressPending={organizationsRefetching}
+							progressComponent={
+								<div className="flex justify-center py-10">
+									<Loader2 className="animate-spin h-6 w-6 text-emerald-600" />
+								</div>
+							}
+							pointerOnHover
+							title=""
+							highlightOnHover
+							persistTableHead
+							responsive
+							fixedHeader
+							striped
+							sortIcon={<ChevronDown />}
+							expandableRows
+							expandableRowsComponent={({ data }) => (
+								<div className="p-6 bg-white rounded-md border border-gray-100 shadow-sm">
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+										{/* Left column */}
+										<div className="space-y-3">
+											<div className="text-sm text-gray-700">
+												<span className="font-semibold ">Telepon Organisasi:</span>
+												<span className="ml-2 text-gray-900 ">{data.telepon || "-"}</span>
 											</div>
-											<div className="space-y-3">
-												<div className="text-sm text-gray-700">
-													<span className="font-semibold">Nama Pengelola:</span>
-													<span className="ml-2 text-gray-900 bg-emerald-100">
-														{data.user?.nama || "-"}
-													</span>
-												</div>
-
-												<div className="text-sm text-gray-700">
-													<span className="font-semibold">Email Pengelola:</span>
-													<span className="ml-2 text-gray-900 bg-emerald-100">
-														{data.user?.email || "-"}
-													</span>
-												</div>
-												<div className="text-sm text-gray-700">
-													<span className="font-semibold">Status Akun Pengelola:</span>
-													<span className="ml-2 text-gray-900">
-														{data.user?.status === "active" ? (
-															<Badge variant={"success"}>Aktif</Badge>
-														) : data.user?.status === "inactive" ? (
-															<Badge variant={"warning"}>Inactive</Badge>
-														) : (
-															<Badge variant={"danger"}>Suspended</Badge>
-														)}
-													</span>
-												</div>
+											<div className="text-sm text-gray-700">
+												<span className="font-semibold">Email Organisasi:</span>
+												<span className="ml-2 text-gray-900">{data.email || "-"}</span>
+											</div>
+											<div className="text-sm text-gray-700">
+												<span className="font-semibold">Rating:</span>
+												<RatingStars
+													rating={data.rating}
+													maxRating={5}
+													size="sm"
+													interactive={false}
+												/>{" "}
+											</div>
+										</div>
+										<div className="space-y-3">
+											<div className="text-sm text-gray-700">
+												<span className="font-semibold">Nama Pengelola:</span>
+												<span className="ml-2 text-gray-900 bg-emerald-100">
+													{data.user?.nama || "-"}
+												</span>
 											</div>
 
-											{/* Right column */}
-											<div className="space-y-3">
-												<div>
-													<div className="text-sm font-semibold text-gray-700 mb-1">Alamat:</div>
-													<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
-														{data.alamat || "-"}
-													</div>
+											<div className="text-sm text-gray-700">
+												<span className="font-semibold">Email Pengelola:</span>
+												<span className="ml-2 text-gray-900 bg-emerald-100">
+													{data.user?.email || "-"}
+												</span>
+											</div>
+											<div className="text-sm text-gray-700">
+												<span className="font-semibold">Status Akun Pengelola:</span>
+												<span className="ml-2 text-gray-900">
+													{data.user?.status === "active" ? (
+														<Badge variant={"success"}>Aktif</Badge>
+													) : data.user?.status === "inactive" ? (
+														<Badge variant={"warning"}>Inactive</Badge>
+													) : (
+														<Badge variant={"danger"}>Suspended</Badge>
+													)}
+												</span>
+											</div>
+										</div>
+
+										{/* Right column */}
+										<div className="space-y-3">
+											<div>
+												<div className="text-sm font-semibold text-gray-700 mb-1">Alamat:</div>
+												<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
+													{data.alamat || "-"}
 												</div>
-												<div>
-													<div className="text-sm font-semibold text-gray-700 mb-1">
-														Deskripsi Organisasi:
-													</div>
-													<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
-														{data.deskripsi || "-"}
-													</div>
+											</div>
+											<div>
+												<div className="text-sm font-semibold text-gray-700 mb-1">
+													Deskripsi Organisasi:
+												</div>
+												<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
+													{data.deskripsi || "-"}
 												</div>
 											</div>
 										</div>
 									</div>
-								)}
-								noDataComponent={
-									<div className="flex flex-col items-center justify-center h-64 text-gray-600">
-										<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
-										<h3 className="text-lg font-semibold mb-2">
-											{searchOrganization
-												? "No Matching Organizations Found"
-												: "No Organizations Available"}
-										</h3>
-										<p className="text-gray-500 mb-4 text-center">
-											{searchOrganization
-												? "Tidak ada organisasi yang sesuai dengan pencarian."
-												: "Belum ada data organisasi."}
-										</p>
-									</div>
-								}
-							/>
-						</>
+								</div>
+							)}
+							noDataComponent={
+								<div className="flex flex-col items-center justify-center h-64 text-gray-600">
+									<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+									<h3 className="text-lg font-semibold mb-2">
+										{searchOrganization
+											? "No Matching Organizations Found"
+											: "No Organizations Available"}
+									</h3>
+									<p className="text-gray-500 mb-4 text-center">
+										{searchOrganization
+											? "Tidak ada organisasi yang sesuai dengan pencarian."
+											: "Belum ada data organisasi."}
+									</p>
+								</div>
+							}
+						/>
 					)}
 				</div>
 			</div>

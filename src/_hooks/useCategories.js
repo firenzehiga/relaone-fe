@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as categoryService from "@/_services/categoryService";
 import { useAuthStore, useUserRole } from "./useAuth";
-import { parseApiError } from "@/utils";
+import { parseApiError, toQueryBuilderParams } from "@/utils";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "@/components/ui/Toast";
 
@@ -38,19 +38,30 @@ export const useCategoryById = (id) => {
 };
 
 // === ADMIN HOOKS ===
-export const useAdminCategory = () => {
+export const useAdminCategory = (page = 1, limit = 10, search = "") => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "admin";
-	return useQuery({
-		queryKey: ["adminCategories"],
+	const query = useQuery({
+		queryKey: ["adminCategories", page, limit, search],
 		queryFn: async () => {
-			const response = await categoryService.adminGetCategories();
+			const params = toQueryBuilderParams({ page, limit, search });
+
+			const response = await categoryService.adminGetCategories(params);
 			return response;
 		},
 		enabled,
+		keepPreviousData: true, // Menjaga data sebelumnya saat fetching
 		staleTime: 10 * 60 * 1000, // 10 minutes (categories jarang berubah)
 		retry: 1,
 	});
+
+	return {
+		categories: query.data?.data || [],
+		pagination: query.data?.pagination || {},
+		isLoading: query.isLoading,
+		error: query.error,
+		isFetching: query.isFetching,
+	};
 };
 
 export const useAdminCategoryById = (id) => {
@@ -171,8 +182,8 @@ export const useAdminDeleteCategory = () => {
 		mutationFn: categoryService.adminDeleteCategory,
 		onSuccess: () => {
 			// Invalidate categories list
-			queryClient.invalidateQueries({ queryKey: ["adminCategories"] });
-			queryClient.invalidateQueries({ queryKey: ["categories"] });
+			queryClient.invalidateQueries(["adminCategories"]);
+			queryClient.invalidateQueries(["categories"]);
 		},
 		onError: (error) => {
 			console.error("Failed to delete category:", error);

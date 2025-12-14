@@ -2,7 +2,7 @@ import * as locationService from "@/_services/locationService";
 import { useAuthStore, useUserRole } from "./useAuth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { parseApiError } from "@/utils";
+import { parseApiError, toQueryBuilderParams } from "@/utils";
 import { showToast } from "@/components/ui/Toast";
 
 // === ADMIN HOOKS ===
@@ -10,21 +10,32 @@ import { showToast } from "@/components/ui/Toast";
  * Hook untuk mengambil data locations (admin)
  * @returns {Object} Query result dengan data, isLoading, error, etc
  */
-export const useAdminLocations = () => {
+export const useAdminLocations = (page = 1, limit = 10, search = "") => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "admin";
 
-	return useQuery({
-		queryKey: ["adminLocations"],
+	const query = useQuery({
+		queryKey: ["adminLocations", page, limit, search],
 		queryFn: async () => {
-			const response = await locationService.adminGetLocations();
+			const params = toQueryBuilderParams({ page, limit, search });
+
+			const response = await locationService.adminGetLocations(params);
 			return response;
 		},
 		enabled,
+		keepPreviousData: true, // Menjaga data sebelumnya saat fetching
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
 	});
+
+	return {
+		locations: query.data?.data || [],
+		pagination: query.data?.pagination || {},
+		isLoading: query.isLoading,
+		error: query.error,
+		isFetching: query.isFetching,
+	};
 };
 
 /**
@@ -161,9 +172,6 @@ export const useAdminDeleteLocationMutation = () => {
 	return useMutation({
 		mutationFn: locationService.adminDeleteLocation,
 		onSuccess: (_, id) => {
-			queryClient.setQueryData(["adminLocations"], (oldData) =>
-				oldData.filter((location) => location.id !== id)
-			);
 			queryClient.invalidateQueries(["adminLocations"]);
 		},
 	});

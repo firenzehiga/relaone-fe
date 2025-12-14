@@ -90,7 +90,7 @@ export const useAdminUsers = (page = 1, limit = 10, search = "") => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "admin";
 
-	return useQuery({
+	const query = useQuery({
 		queryKey: ["adminUsers", page, limit, search],
 		queryFn: async () => {
 			const params = toQueryBuilderParams({ page, limit, search });
@@ -103,6 +103,14 @@ export const useAdminUsers = (page = 1, limit = 10, search = "") => {
 		staleTime: 30000, // 30 detik
 		retry: 1,
 	});
+
+	return {
+		users: query.data?.data || [],
+		pagination: query.data?.pagination || {},
+		isLoading: query.isLoading,
+		error: query.error,
+		isFetching: query.isFetching,
+	};
 };
 
 /**

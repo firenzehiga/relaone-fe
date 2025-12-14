@@ -44,7 +44,7 @@ export const getEventById = async (id) => {
  */
 export const adminGetEvents = async (params = {}) => {
 	const response = await api.get("/admin/events", { params });
-	return response.data.data || response.data;
+	return response.data;
 };
 
 /** Mengambil detail event berdasarkan ID.

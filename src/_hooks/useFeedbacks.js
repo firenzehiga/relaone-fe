@@ -1,7 +1,7 @@
 import * as feedbackService from "@/_services/feedbackService";
 import { useAuthStore, useUserRole } from "./useAuth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { parseApiError } from "@/utils";
+import { parseApiError, toQueryBuilderParams } from "@/utils";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "@/components/ui/Toast";
 
@@ -99,21 +99,32 @@ export const useVolunteerSendFeedbackMutation = () => {
  * Hook untuk mengambil data feedbacks (admin)
  * @returns {Object} Query result dengan data, isLoading, error, etc
  */
-export const useAdminFeedbacks = () => {
+export const useAdminFeedbacks = (page = 1, limit = 10, search = "") => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "admin"; // agar jika admin login, tidak fetch feedbacks
 
-	return useQuery({
-		queryKey: ["adminFeedbacks"],
+	const query = useQuery({
+		queryKey: ["adminFeedbacks", page, limit, search],
 		queryFn: async () => {
-			const response = await feedbackService.adminGetFeedbacks();
+			const params = toQueryBuilderParams({ page, limit, search });
+
+			const response = await feedbackService.adminGetFeedbacks(params);
 			return response;
 		},
 		enabled,
+		keepPreviousData: true, // Menjaga data sebelumnya saat fetching
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
 	});
+
+	return {
+		feedbacks: query.data?.data || [],
+		pagination: query.data?.pagination || {},
+		isLoading: query.isLoading,
+		error: query.error,
+		isFetching: query.isFetching,
+	};
 };
 
 /**
@@ -202,9 +213,6 @@ export const useAdminDeleteFeedbackMutation = () => {
 	return useMutation({
 		mutationFn: feedbackService.adminDeleteFeedback,
 		onSuccess: (_, id) => {
-			queryClient.setQueryData(["adminFeedbacks"], (oldData) =>
-				oldData.filter((feedback) => feedback.id !== id)
-			);
 			queryClient.invalidateQueries(["adminFeedbacks"]);
 		},
 	});

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import {
 	ChevronDown,
@@ -18,29 +18,30 @@ import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import FetchLoader from "@/components/ui/FetchLoader";
+import { useDebounce } from "@/_hooks/useDebounce";
 
 export default function AdminCategory() {
+	const [searchCategory, setSearchCategory] = useState("");
+	const [currentPage, setCurrentPage] = useState(1);
+	const [rowsPerPage, setRowsPerPage] = useState(10);
+
+	// Debounce search menggunakan custom hook
+	const debouncedSearch = useDebounce(searchCategory, 500);
+
+	// Reset ke halaman 1 saat search berubah
+	useEffect(() => {
+		setCurrentPage(1);
+	}, [debouncedSearch]);
+
 	const {
-		data: categories = [],
+		categories,
+		pagination,
 		isLoading: categoriesLoading,
 		error: categoriesError,
 		isFetching: categoriesRefetching,
-	} = useAdminCategory();
+	} = useAdminCategory(currentPage, rowsPerPage, debouncedSearch);
 
 	const deleteCategoryMutation = useAdminDeleteCategory();
-
-	// Local state for search/filter
-	const [searchCategory, setSearchCategory] = useState("");
-
-	const filteredCategories = useMemo(() => {
-		if (!searchCategory) return categories;
-		const query = searchCategory.toLowerCase();
-		return categories.filter((categoryItem) => {
-			const nama = String(categoryItem.nama || "").toLowerCase();
-			const deskripsi = String(categoryItem.deskripsi || "").toLowerCase();
-			return nama.includes(query) || deskripsi.includes(query);
-		});
-	}, [categories, searchCategory]);
 
 	// Fungsi untuk menangani penghapusan kursus
 	const handleDelete = (id) => {
@@ -84,6 +85,16 @@ export default function AdminCategory() {
 				}); // Panggil fungsi deleteMutation dengan ID event
 			}
 		});
+	};
+
+	// Handler untuk perubahan halaman dan rows per page
+	const handlePageChange = (page) => {
+		setCurrentPage(page);
+	};
+
+	const handlePerRowsChange = (newPerPage, page) => {
+		setRowsPerPage(newPerPage);
+		setCurrentPage(page);
 	};
 
 	const columns = [
@@ -190,48 +201,60 @@ export default function AdminCategory() {
 							<Plus className="w-4 h-4 mr-2" /> Tambah Kategori
 						</LinkButton>
 					</div>
+
+					<div className="w-full md:w-80 mb-4">
+						<input
+							type="text"
+							placeholder="Cari jenis kategori, atau deskripsi..."
+							value={searchCategory}
+							onChange={(e) => setSearchCategory(e.target.value)}
+							className="border border-gray-300 rounded-md px-3 py-2 text-sm md:text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
+						/>
+					</div>
 					{categoriesLoading ? (
 						<div className="flex h-72 md:h-96 justify-center py-20">
 							<Loader2 className="animate-spin h-6 w-6 md:h-7 md:w-7 text-emerald-600" />
 						</div>
 					) : (
-						<>
-							<div className="w-full md:w-80 mb-4">
-								<input
-									type="text"
-									placeholder="Cari jenis kategori, atau deskripsi..."
-									value={searchCategory}
-									onChange={(e) => setSearchCategory(e.target.value)}
-									className="border border-gray-300 rounded-md px-3 py-2 text-sm md:text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
-								/>
-							</div>
-							<DataTable
-								columns={columns}
-								data={filteredCategories}
-								pagination
-								pointerOnHover
-								title=""
-								highlightOnHover
-								persistTableHead
-								responsive
-								fixedHeader
-								striped
-								sortIcon={<ChevronDown />}
-								noDataComponent={
-									<div className="flex flex-col items-center justify-center h-64 text-gray-600">
-										<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
-										<h3 className="text-lg font-semibold mb-2">
-											{searchCategory ? "No Matching Categories Found" : "No Categories Available"}
-										</h3>
-										<p className="text-gray-500 mb-4 text-center">
-											{searchCategory
-												? "Tidak ada kategori yang sesuai dengan pencarian."
-												: "Belum ada data kategori"}
-										</p>
-									</div>
-								}
-							/>
-						</>
+						<DataTable
+							columns={columns}
+							data={categories}
+							pagination
+							paginationServer
+							paginationTotalRows={pagination.total || 0}
+							paginationDefaultPage={currentPage}
+							onChangePage={handlePageChange}
+							onChangeRowsPerPage={handlePerRowsChange}
+							paginationPerPage={rowsPerPage}
+							paginationRowsPerPageOptions={[10, 20, 30, 50, 100]}
+							progressPending={categoriesRefetching}
+							progressComponent={
+								<div className="flex justify-center py-10">
+									<Loader2 className="animate-spin h-6 w-6 text-emerald-600" />
+								</div>
+							}
+							pointerOnHover
+							title=""
+							highlightOnHover
+							persistTableHead
+							responsive
+							fixedHeader
+							striped
+							sortIcon={<ChevronDown />}
+							noDataComponent={
+								<div className="flex flex-col items-center justify-center h-64 text-gray-600">
+									<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+									<h3 className="text-lg font-semibold mb-2">
+										{searchCategory ? "No Matching Categories Found" : "No Categories Available"}
+									</h3>
+									<p className="text-gray-500 mb-4 text-center">
+										{searchCategory
+											? "Tidak ada kategori yang sesuai dengan pencarian."
+											: "Belum ada data kategori"}
+									</p>
+								</div>
+							}
+						/>
 					)}
 				</div>
 			</div>

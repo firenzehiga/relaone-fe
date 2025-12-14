@@ -209,19 +209,21 @@ export default function AboutPage() {
 						</p>
 					</div>
 
-					<div className="p-4 sm:p-8" style={{ minHeight: "700px" }}>
-						<Masonry
-							items={galleryItems}
-							ease="power3.out"
-							duration={0.6}
-							stagger={0.05}
-							animateFrom="bottom"
-							scaleOnHover={true}
-							hoverScale={0.95}
-							blurToFocus={true}
-							colorShiftOnHover={true}
-							disableClick={true}
-						/>
+					<div className=" overflow-hidden">
+						<div className="p-4 sm:p-8" style={{ minHeight: "700px" }}>
+							<Masonry
+								items={galleryItems}
+								ease="power3.out"
+								duration={0.6}
+								stagger={0.05}
+								animateFrom="bottom"
+								scaleOnHover={true}
+								hoverScale={0.95}
+								blurToFocus={true}
+								colorShiftOnHover={true}
+								disableClick={true}
+							/>
+						</div>
 					</div>
 				</div>
 
