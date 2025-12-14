@@ -65,6 +65,7 @@ export const useAdminEvents = (page = 1, limit = 10, search = "") => {
 
 	const query = useQuery({
 		queryKey: ["adminEvents", page, limit, search],
+
 		queryFn: async () => {
 			const params = toQueryBuilderParams({ page, limit, search });
 

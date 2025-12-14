@@ -11,10 +11,12 @@ import { showToast } from "@/components/ui/Toast";
  * @returns {UseQueryResult<Array>} List organisasi
  * @features Auto-refetch setiap 1 menit, cache 5 menit
  */
-export const useOrganizations = (params = {}) => {
+export const useOrganizations = (status_verifikasi = "") => {
 	return useQuery({
-		queryKey: ["organizations"],
+		queryKey: ["organizations", status_verifikasi],
 		queryFn: async () => {
+			const params = toQueryBuilderParams({ status_verifikasi });
+
 			const response = await organizationService.getOrganizations(params);
 			return response;
 		},

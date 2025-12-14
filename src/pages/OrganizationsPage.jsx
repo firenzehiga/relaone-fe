@@ -22,11 +22,7 @@ import Card from "@/components/ui/Card";
 export default function OrganizationsPage() {
 	useDocumentTitle("Organizations Page");
 
-	const {
-		data: organizations = [],
-		isLoading,
-		error,
-	} = useOrganizations({ status_verifikasi: "verified" });
+	const { data: organizations = [], isLoading, error } = useOrganizations("verified");
 
 	const [searchTerm, setSearchTerm] = useState("");
 
@@ -138,7 +134,7 @@ export default function OrganizationsPage() {
 												variant="success"
 												className="absolute top-3 right-3 text-black backdrop-blur-sm shadow-lg">
 												<CheckCircle className="w-3 h-3 mr-1" />
-												Terverifikasi
+												Verified
 											</Badge>
 										)}
 									</div>
@@ -206,43 +202,61 @@ export default function OrganizationsPage() {
 												<span className="font-bold text-gray-900 text-lg">
 													{Number(org.rating).toFixed(1)}
 												</span>
-												<span className="text-gray-500 text-sm">/5.0</span>
+												<span className="text-gray-500 text-sm">/5.0 Reviews</span>
 											</div>
 										)}
 
-										{/* Contact Links */}
-										<div className="flex items-center gap-4 flex-wrap">
-											{org.email && (
-												<a
-													href={`mailto:${org.email}`}
-													className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors font-medium text-sm"
-													onClick={(e) => e.stopPropagation()}>
-													<Mail className="w-4 h-4" />
-													Email
-												</a>
-											)}
-											{org.telepon && (
-												<a
-													href={`tel:${org.telepon}`}
-													className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-teal-50 text-teal-700 hover:bg-teal-100 transition-colors font-medium text-sm"
-													onClick={(e) => e.stopPropagation()}>
-													<Phone className="w-4 h-4" />
-													Telepon
-												</a>
-											)}
-											{org.website && (
-												<a
-													href={
-														org.website.startsWith("http") ? org.website : `https://${org.website}`
-													}
-													target="_blank"
-													rel="noreferrer"
-													className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors font-medium text-sm"
-													onClick={(e) => e.stopPropagation()}>
-													<Globe className="w-4 h-4" />
-													Website
-												</a>
-											)}
+										{/* Contact Links with Icons */}
+										<div className="space-y-3">
+											<p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+												Hubungi Kami
+											</p>
+											<div className="flex items-center gap-3 flex-wrap">
+												{org.email && (
+													<a
+														href={`mailto:${org.email}`}
+														className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-700 hover:shadow-md transition-all font-medium text-sm border border-emerald-200"
+														onClick={(e) => e.stopPropagation()}
+														title={org.email}>
+														<Mail className="w-4 h-4" />
+														Email
+													</a>
+												)}
+												{org.telepon && (
+													<a
+														href={`tel:${org.telepon}`}
+														className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-teal-50 to-teal-100 text-teal-700 hover:shadow-md transition-all font-medium text-sm border border-teal-200"
+														onClick={(e) => e.stopPropagation()}
+														title={org.telepon}>
+														<Phone className="w-4 h-4" />
+														Call
+													</a>
+												)}
+												{org.website && (
+													<a
+														href={
+															org.website.startsWith("http")
+																? org.website
+																: `https://${org.website}`
+														}
+														target="_blank"
+														rel="noreferrer"
+														className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 hover:shadow-md transition-all font-medium text-sm border border-blue-200"
+														onClick={(e) => e.stopPropagation()}>
+														<Globe className="w-4 h-4" />
+														Website
+													</a>
+												)}
+											</div>
+										</div>
+
+										{/* Call to Action Button */}
+										<div className="mt-6 pt-6 border-t border-gray-100">
+											<DynamicButton
+												variant="primary"
+												className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold py-3 rounded-lg transition-all duration-300 group-hover:shadow-lg">
+												Pelajari Lebih Lanjut
+											</DynamicButton>
 										</div>
 									</div>
 								</Card>
