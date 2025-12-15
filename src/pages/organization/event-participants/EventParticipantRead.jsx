@@ -37,7 +37,7 @@ import { formatDate, formatDateTime } from "@/utils/dateFormatter";
 
 // UI Components
 import FetchLoader from "@/components/ui/FetchLoader";
-import { LinkButton } from "@/components/ui/Button";
+import DynamicButton, { LinkButton } from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 
 export default function OrganizationEventParticipant() {
@@ -475,13 +475,14 @@ export default function OrganizationEventParticipant() {
 						<div className="flex gap-2">
 							{/* Tombol Update No Show */}
 							{selectedEventId !== "all" && (
-								<button
+								<DynamicButton
+									variant="danger"
 									onClick={handleUpdateNoShow}
 									disabled={updateNoShowMutation.isPending}
-									className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md text-sm font-medium transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
+									className="flex items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed">
 									<UserX className="w-4 h-4" />
 									{updateNoShowMutation.isPending ? "Memperbarui..." : "Perbarui Status"}
-								</button>
+								</DynamicButton>
 							)}
 
 							{/* Tombol Scanner */}

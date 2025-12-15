@@ -117,15 +117,15 @@ export default function ForgotPasswordPage() {
 
 								{/* Forgot Password Form */}
 								<motion.form
-									initial={{ y: 10, opacity: 0 }}
-									animate={{ y: 0, opacity: 1 }}
-									transition={{ delay: 0.4, duration: 0.5 }}
+									// initial={{ y: 10, opacity: 0 }}
+									// animate={{ y: 0, opacity: 1 }}
+									// transition={{ delay: 0.4, duration: 0.5 }}
 									onSubmit={handleSubmit}
 									className="space-y-6">
 									{/* Email Field */}
 									<div>
 										<label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-											Email Address
+											Email
 										</label>
 										<div className="relative">
 											<Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -171,7 +171,7 @@ export default function ForgotPasswordPage() {
 									className="text-center text-gray-600 mt-8">
 									Sudah ingat password?{" "}
 									<Link to="/login" className="text-blue-600 hover:text-blue-800 font-medium">
-										Sign in
+										Login
 									</Link>
 								</motion.p>
 							</>

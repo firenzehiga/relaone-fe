@@ -103,10 +103,10 @@ export default function RegisterPage() {
 					<div className="w-full max-w-md">
 						{/* Back Button */}
 						<Link
-							to="/"
+							to="/login"
 							className="inline-flex items-center text-gray-600 hover:text-gray-800 mb-8 transition-colors">
 							<ArrowLeft className="w-4 h-4 mr-2" />
-							Go Back
+							Kembali ke Login
 						</Link>
 
 						{/* Header */}
@@ -115,7 +115,7 @@ export default function RegisterPage() {
 							animate={{ y: 0, opacity: 1 }}
 							transition={{ delay: 0.2, duration: 0.5 }}
 							className="mb-8">
-							<h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
+							<h2 className="text-3xl font-bold text-gray-900">Buat Akun</h2>
 						</motion.div>
 
 						{/* Register Form */}
@@ -130,7 +130,7 @@ export default function RegisterPage() {
 								{/* Full Name */}
 								<div className="md:col-span-2">
 									<label htmlFor="nama" className="block text-sm font-medium text-gray-700 mb-1">
-										Full Name <span className="text-red-500">*</span>
+										Nama Lengkap <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
 										<User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -151,7 +151,7 @@ export default function RegisterPage() {
 								{/* Email */}
 								<div>
 									<label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-										Email Address <span className="text-red-500">*</span>
+										Email Aktif <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
 										<Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -174,7 +174,7 @@ export default function RegisterPage() {
 								{/* Phone */}
 								<div>
 									<label htmlFor="telepon" className="block text-sm font-medium text-gray-700 mb-1">
-										Phone Number <span className="text-red-500">*</span>
+										Nomor Telepon/Whatsapp <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
 										<Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -194,7 +194,7 @@ export default function RegisterPage() {
 									<label
 										htmlFor="tanggal_lahir"
 										className="block text-sm font-medium text-gray-700 mb-1">
-										Date of Birth
+										Tanggal Lahir
 									</label>
 									<div className="relative">
 										<Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -212,7 +212,7 @@ export default function RegisterPage() {
 									<label
 										htmlFor="jenis_kelamin"
 										className="block text-sm font-medium text-gray-700 mb-1">
-										Gender
+										Jenis Kelamin
 									</label>
 									<div className="relative">
 										<Users className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -230,7 +230,7 @@ export default function RegisterPage() {
 								{/* Address (span full) */}
 								<div className="md:col-span-2">
 									<label htmlFor="alamat" className="block text-sm font-medium text-gray-700 mb-1">
-										Address <span className="text-red-500">*</span>
+										Alamat <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
 										<textarea
@@ -337,7 +337,7 @@ export default function RegisterPage() {
 									<label
 										htmlFor="password_confirmation"
 										className="block text-sm font-medium text-gray-700 mb-1">
-										Confirm Password <span className="text-red-500">*</span>
+										Konfirmasi Password <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
 										<Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -386,7 +386,7 @@ export default function RegisterPage() {
 														<label
 															htmlFor="organization_nama"
 															className="block text-sm font-medium text-gray-700 mb-1">
-															Organization Name <span className="text-red-500">*</span>
+															Nama Organisasi<span className="text-red-500">*</span>
 														</label>
 														<input
 															type="text"
@@ -412,7 +412,7 @@ export default function RegisterPage() {
 														<label
 															htmlFor="organization_deskripsi"
 															className="block text-sm font-medium text-gray-700 mb-1">
-															Organization Description <span className="text-red-500">*</span>
+															Deskripsi Organisasi <span className="text-red-500">*</span>
 														</label>
 														<textarea
 															id="organization_deskripsi"
@@ -458,19 +458,19 @@ export default function RegisterPage() {
 									className="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:cursor-not-allowed"
 								/>
 								<label htmlFor="agreeToTerms" className="ml-2 text-sm text-gray-600">
-									I agree to the{" "}
+									Saya menyetujui{" "}
 									<Link
 										to="/terms-of-service"
 										target="_blank"
 										className="text-blue-600 hover:text-blue-800">
-										Terms of Service
+										Syarat dan Ketentuan
 									</Link>{" "}
-									and{" "}
+									dan{" "}
 									<Link
 										to="/privacy-policy"
 										target="_blank"
 										className="text-blue-600 hover:text-blue-800">
-										Privacy Policy
+										Kebijakan Privasi
 									</Link>
 								</label>
 							</div>
@@ -484,10 +484,10 @@ export default function RegisterPage() {
 								{isLoading ? (
 									<div className="flex items-center justify-center space-x-2">
 										<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-										<span>Creating Account...</span>
+										<span>Membuat Akun...</span>
 									</div>
 								) : (
-									"Create Account"
+									"Buat Akun"
 								)}
 							</DynamicButton>
 						</motion.form>
@@ -498,9 +498,9 @@ export default function RegisterPage() {
 							animate={{ y: 0, opacity: 1 }}
 							transition={{ delay: 0.6, duration: 0.5 }}
 							className="text-center text-gray-600 mt-8">
-							Already have an account?{" "}
+							Sudah punya akun?{" "}
 							<Link to="/login" className="text-blue-600 hover:text-blue-800 font-medium">
-								Sign in
+								Login
 							</Link>
 						</motion.p>
 

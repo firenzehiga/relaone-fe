@@ -32,11 +32,11 @@ export const useOrganizations = (status_verifikasi = "") => {
  * @param {string|number} organizationId - ID organization
  * @returns {UseQueryResult<Object>} Data detail organization
  */
-export const useOrganizationById = (id) => {
+export const useOrganizationById = (id, page = 1, limit = 10) => {
 	return useQuery({
-		queryKey: ["organizations", id],
+		queryKey: ["organizations", id, page, limit],
 		queryFn: async () => {
-			const response = await organizationService.getOrganizationById(id);
+			const response = await organizationService.getOrganizationById(id, { page, limit });
 			return response;
 		},
 		enabled: !!id,

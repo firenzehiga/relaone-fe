@@ -19,6 +19,8 @@ import LandingPage from "@/pages/LandingPage";
 import EventsPage from "@/pages/EventsPage";
 import OrganizationsPage from "@/pages/OrganizationsPage";
 import AboutPage from "@/pages/AboutPage";
+import DetailEventPage from "@/pages/DetailEventPage";
+import DetailOrganizationPage from "@/pages/DetailOrganizationPage";
 const { PrivacyPolicyPage, TermsOfServicePage } = {
 	PrivacyPolicyPage: lazy(() =>
 		import("./pages/PrivacyTerms").then((m) => ({ default: m.PrivacyPolicyPage }))
@@ -28,7 +30,6 @@ const { PrivacyPolicyPage, TermsOfServicePage } = {
 	),
 };
 // Volunteer
-import DetailEventPage from "@/pages/DetailEventPage";
 const ProfilePage = lazy(() => import("@/pages/volunteer/ProfilePage"));
 const EditProfilePage = lazy(() => import("@/pages/volunteer/EditProfilePage"));
 import MyActivitiesPage from "@/pages/volunteer/MyActivitiesPage";
@@ -135,7 +136,10 @@ function App() {
 							<Route index element={<EventsPage />} />
 							<Route path="details/:eventId" element={<DetailEventPage />} />
 						</Route>
-						<Route path="organizations" element={<OrganizationsPage />} />
+						<Route path="organizations">
+							<Route index element={<OrganizationsPage />} />
+							<Route path="details/:organizationId" element={<DetailOrganizationPage />} />
+						</Route>
 						<Route path="about-us" element={<AboutPage />} />
 					</Route>
 					<Route path="privacy-policy" element={<PrivacyPolicyPage />} />

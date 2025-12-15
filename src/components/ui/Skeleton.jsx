@@ -207,6 +207,130 @@ function SkeletonDetail() {
 
 Skeleton.Detail = SkeletonDetail;
 
+// Skeleton khusus untuk Organization Detail Page
+function OrganizationDetailSkeleton() {
+	return (
+		<div className="page-transition min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 py-8">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				{/* Back Button */}
+				<div className="mb-6">
+					<ChkSkeleton height="38px" width="200px" borderRadius="lg" />
+				</div>
+
+				<div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start mb-8">
+					{/* Left: Banner & Logo */}
+					<div className="md:col-span-5">
+						<div className="relative rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-emerald-400 to-teal-500 min-h-[360px]">
+							<div className="absolute inset-0 bg-black/10" />
+							<div className="absolute top-4 right-4">
+								<ChkSkeleton height="26px" width="110px" borderRadius="full" />
+							</div>
+
+							<div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col items-center">
+								<ChkSkeleton width="140px" height="140px" borderRadius="2xl" mb={4} />
+
+								<div className="grid grid-cols-3 gap-2 w-full">
+									{Array.from({ length: 3 }).map((_, i) => (
+										<div
+											key={i}
+											className="bg-white/95 backdrop-blur-sm rounded-lg p-3 text-center">
+											<ChkSkeleton height="14px" width="36px" mx="auto" mb={2} />
+											<ChkSkeleton height="20px" width="48px" mx="auto" mb={1} />
+											<ChkSkeleton height="10px" width="40px" mx="auto" />
+										</div>
+									))}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					{/* Right: Details */}
+					<div className="md:col-span-7 space-y-4">
+						<ChkSkeleton height="32px" width="60%" />
+						<div className="flex items-start gap-2">
+							<ChkSkeleton width="18px" height="18px" />
+							<ChkSkeleton height="14px" width="50%" />
+						</div>
+
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+							{Array.from({ length: 4 }).map((_, i) => (
+								<div key={i} className="flex items-start gap-3">
+									<ChkSkeleton width="18px" height="18px" />
+									<div className="flex-1">
+										<ChkSkeleton height="12px" width="80px" mb={1} />
+										<ChkSkeleton height="14px" width="90%" />
+									</div>
+								</div>
+							))}
+						</div>
+
+						<div className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl p-4 shadow-sm">
+							<ChkSkeleton height="14px" width="40%" mb={3} />
+							<ChkSkeleton height="12px" width="100%" mb={2} />
+							<ChkSkeleton height="12px" width="95%" mb={2} />
+							<ChkSkeleton height="12px" width="80%" />
+						</div>
+
+						<div className="flex flex-wrap gap-3">
+							<ChkSkeleton height="40px" width="120px" borderRadius="lg" />
+							<ChkSkeleton height="40px" width="100px" borderRadius="lg" />
+							<ChkSkeleton height="40px" width="140px" borderRadius="lg" />
+						</div>
+					</div>
+				</div>
+
+				{/* Events mini list skeleton */}
+				<div className="bg-white rounded-xl shadow-md border border-gray-200 p-4 mb-6">
+					<div className="flex items-center justify-between mb-4">
+						<ChkSkeleton height="20px" width="160px" />
+						<ChkSkeleton height="20px" width="80px" borderRadius="full" />
+					</div>
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+						{Array.from({ length: 2 }).map((_, i) => (
+							<div
+								key={i}
+								className="flex items-start gap-3 bg-white border border-gray-100 rounded-lg p-3">
+								<ChkSkeleton width="56px" height="56px" borderRadius="lg" />
+								<div className="flex-1">
+									<ChkSkeleton height="14px" width="70%" mb={2} />
+									<ChkSkeleton height="12px" width="90%" mb={1} />
+									<ChkSkeleton height="12px" width="60%" />
+								</div>
+							</div>
+						))}
+					</div>
+				</div>
+
+				{/* Feedbacks mini list skeleton */}
+				<div className="bg-white rounded-xl shadow-md border border-gray-200 p-4">
+					<div className="flex items-center justify-between mb-4">
+						<ChkSkeleton height="20px" width="220px" />
+						<ChkSkeleton height="20px" width="100px" borderRadius="full" />
+					</div>
+					<div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+						{Array.from({ length: 4 }).map((_, i) => (
+							<div
+								key={i}
+								className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-lg p-3">
+								<div className="flex items-start gap-3 mb-3">
+									<ChkSkeleton width="40px" height="40px" borderRadius="full" />
+									<div className="flex-1">
+										<ChkSkeleton height="12px" width="50%" mb={2} />
+										<ChkSkeleton height="10px" width="70%" />
+									</div>
+								</div>
+								<ChkSkeleton height="12px" width="100%" mb={1} />
+								<ChkSkeleton height="12px" width="90%" />
+							</div>
+						))}
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+Skeleton.OrganizationDetail = OrganizationDetailSkeleton;
 function FormSkeleton({ title = "", rows = 4 }) {
 	return (
 		<div className="w-full mx-auto p-4 sm:p-6 min-h-[calc(100vh-4rem)]">
@@ -252,16 +376,16 @@ Skeleton.FormSkeleton = FormSkeleton;
 
 function OrgSkeleton() {
 	return (
-		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-emerald-50 via-white to-teal-50">
+		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-blue-50 via-green-50 to-purple-50">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Hero Header */}
 				<div className="mb-8 text-center">
 					<h1 className="text-4xl lg:text-5xl font-bold text-emerald-600 mb-4">
-						Organisasi Komunitas
+						Organisasi Penyelenggara
 					</h1>
 					<p className="text-xl text-gray-600 max-w-2xl mx-auto">
-						Bergabunglah dengan berbagai organisasi komunitas yang berkontribusi untuk membuat
-						perubahan positif di masyarakat
+						Bergabunglah dengan berbagai organisasi yang berkontribusi untuk membuat perubahan
+						positif di masyarakat
 					</p>
 				</div>
 
@@ -280,52 +404,58 @@ function OrgSkeleton() {
 					</Card>
 				</div>
 
-				{/* Organizations Grid - 2 columns on desktop */}
-				<div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
-					{Array.from({ length: 2 }).map((_, i) => (
-						<Card key={i} className="h-full overflow-hidden animate-pulse" aria-hidden>
-							{/* Banner with gradient */}
-							<div className="relative h-40 bg-gradient-to-br from-emerald-400 to-teal-500 overflow-hidden">
+				{/* Organizations Grid - 3 columns on desktop (compact) */}
+				<div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+					{Array.from({ length: 6 }).map((_, i) => (
+						<Card
+							key={i}
+							className="h-full overflow-hidden animate-pulse flex flex-col"
+							aria-hidden>
+							{/* Banner with gradient - smaller height */}
+							<div className="relative h-32 bg-gradient-to-br from-emerald-400 to-teal-500 overflow-hidden">
 								{/* Verified Badge */}
-								<div className="absolute top-3 right-3">
-									<ChkSkeleton height="24px" width="120px" borderRadius="full" />
+								<div className="absolute top-2 right-2">
+									<ChkSkeleton height="20px" width="80px" borderRadius="full" />
 								</div>
 							</div>
 
-							{/* Logo Avatar - overlapping banner */}
-							<div className="px-6 -mt-16 relative z-10 mb-4">
-								<ChkSkeleton width="96px" height="96px" borderRadius="2xl" />
+							{/* Logo Avatar - smaller, overlapping banner */}
+							<div className="px-4 -mt-12 relative z-10">
+								<ChkSkeleton width="80px" height="80px" borderRadius="xl" />
 							</div>
 
-							{/* Content */}
-							<div className="px-6 pb-6">
+							{/* Content - more compact */}
+							<div className="px-4 pt-3 pb-4 flex-1 flex flex-col">
 								{/* Organization Name */}
-								<ChkSkeleton height="28px" width="70%" mb={2} />
+								<ChkSkeleton height="20px" width="75%" mb={2} />
 
 								{/* Location */}
-								<div className="flex items-center mb-4">
-									<ChkSkeleton width="16px" height="16px" mr={2} />
-									<ChkSkeleton height="16px" width="120px" />
+								<div className="flex items-center mb-3">
+									<ChkSkeleton width="12px" height="12px" mr={1} />
+									<ChkSkeleton height="12px" width="100px" />
 								</div>
 
-								{/* Description - 3 lines */}
-								<div className="mb-4 space-y-2">
-									<ChkSkeleton height="14px" width="100%" />
-									<ChkSkeleton height="14px" width="95%" />
-									<ChkSkeleton height="14px" width="80%" />
+								{/* Description - 3 lines, smaller text */}
+								<div className="mb-3 space-y-2 flex-1">
+									<ChkSkeleton height="12px" width="100%" />
+									<ChkSkeleton height="12px" width="95%" />
+									<ChkSkeleton height="12px" width="75%" />
 								</div>
 
 								{/* Rating */}
-								<div className="flex items-center gap-2 mb-5 pb-5 border-b border-gray-100">
-									<ChkSkeleton width="20px" height="20px" />
-									<ChkSkeleton height="20px" width="60px" />
+								<div className="flex items-center gap-1 mb-3 pb-3 border-b border-gray-100">
+									<ChkSkeleton width="16px" height="16px" />
+									<ChkSkeleton height="14px" width="50px" />
 								</div>
 
-								{/* Contact Buttons */}
-								<div className="flex items-center gap-4 flex-wrap">
-									<ChkSkeleton height="36px" width="80px" borderRadius="lg" />
-									<ChkSkeleton height="36px" width="90px" borderRadius="lg" />
-									<ChkSkeleton height="36px" width="85px" borderRadius="lg" />
+								{/* Contact Section Header */}
+								<ChkSkeleton height="10px" width="40px" mb={2} />
+
+								{/* Contact Buttons - smaller, inline */}
+								<div className="flex items-center gap-2 flex-wrap">
+									<ChkSkeleton height="24px" width="55px" borderRadius="md" />
+									<ChkSkeleton height="24px" width="45px" borderRadius="md" />
+									<ChkSkeleton height="24px" width="60px" borderRadius="md" />
 								</div>
 							</div>
 						</Card>

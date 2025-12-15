@@ -188,8 +188,8 @@ export const useLogin = () => {
 			// Show success toast
 			showToast({
 				type: "success",
-				title: "Login Successful",
-				message: `Welcome back, ${data.data.user.nama}!`,
+				title: "Login Berhasil",
+				message: `Selamat datang, ${data.data.user.nama}!`,
 				duration: 2000,
 				position: "top-right",
 			});
@@ -401,8 +401,8 @@ export const useLogout = () => {
 			// Show success toast
 			showToast({
 				type: "success",
-				title: "Logout Successful",
-				message: `You have been logged out successfully`,
+				title: "Logout Berhasil!",
+				message: `Sampai Jumpa Kembali.`,
 				duration: 2000,
 				position: "top-right",
 			});

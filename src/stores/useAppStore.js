@@ -2,42 +2,6 @@ import { create } from "zustand";
 
 /**
  * ========================================
- * AUTH STORE - Kelola Authentication User
- * ========================================
- * State: user data, authentication status, loading, error
- * Actions: login, logout, setLoading, setError
- */
-export const useAuthStore = create((set) => ({
-	// STATE
-	user: null,
-	isAuthenticated: false,
-	isLoading: false,
-	error: null,
-
-	// ACTIONS
-	login: (userData) =>
-		set({
-			user: userData,
-			isAuthenticated: true,
-			error: null,
-		}),
-
-	logout: () =>
-		set({
-			user: null,
-			isAuthenticated: false,
-			error: null,
-		}),
-
-	setLoading: (loading) => set({ isLoading: loading }),
-
-	setError: (error) => set({ error }),
-
-	clearError: () => set({ error: null }),
-}));
-
-/**
- * ========================================
  * EVENT STORE - Kelola Events & Filtering
  * ========================================
  * State: events list, filtered events, selected event, filters

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // UI Libraries
 import { motion } from "framer-motion";
@@ -18,9 +19,11 @@ import DynamicButton from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
+import OrganizationCard from "@/components/OrganizationCard";
 
 export default function OrganizationsPage() {
 	useDocumentTitle("Organizations Page");
+	const navigate = useNavigate();
 
 	const { data: organizations = [], isLoading, error } = useOrganizations("verified");
 
@@ -104,162 +107,18 @@ export default function OrganizationsPage() {
 						<p className="text-gray-600">Coba ubah kata kunci pencarian Anda</p>
 					</motion.div>
 				) : (
-					<div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+					<div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
 						{filteredOrganizations.map((org, index) => (
 							<motion.div
 								key={org.id}
 								initial={{ opacity: 0, y: 20 }}
 								animate={{ opacity: 1, y: 0 }}
-								transition={{ duration: 0.5, delay: index * 0.1 }}>
-								<Card className="h-full hover:shadow-xl transition-all duration-300 group cursor-pointer overflow-hidden">
-									{/* Organization Banner */}
-									<div className="relative h-40 bg-gradient-to-br rounded-lg from-emerald-400 to-teal-500 overflow-hidden">
-										{org.logo && (
-											<AsyncImage
-												loading="lazy"
-												Transition={Fade}
-												src={getImageUrl(`organizations/${org.logo}`)}
-												alt={`${org.nama} banner`}
-												className="object-cover w-full h-full opacity-40 group-hover:opacity-60 transition-opacity"
-												onError={(e) => {
-													e.currentTarget.style.display = "none";
-												}}
-											/>
-										)}
-										<div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-										{/* Verified Badge */}
-										{org.status_verifikasi === "verified" && (
-											<Badge
-												variant="success"
-												className="absolute top-3 right-3 text-black backdrop-blur-sm shadow-lg">
-												<CheckCircle className="w-3 h-3 mr-1" />
-												Verified
-											</Badge>
-										)}
-									</div>
-
-									{/* Organization Logo Avatar */}
-									<div className="px-6 -mt-16 relative z-10">
-										<div className="w-24 h-24 rounded-2xl bg-white border-4 border-white shadow-xl overflow-hidden flex items-center justify-center">
-											{org.logo ? (
-												<AsyncImage
-													loading="lazy"
-													Transition={Fade}
-													src={getImageUrl(`organizations/${org.logo}`)}
-													alt={`${org.nama} logo`}
-													className="object-cover w-full h-full"
-													onError={(e) => {
-														e.currentTarget.parentElement.innerHTML = `
-															<div class="text-emerald-600 font-bold text-2xl">
-																${String(org.nama || "A")
-																	.split(" ")
-																	.map((s) => s[0])
-																	.slice(0, 2)
-																	.join("")}
-															</div>
-														`;
-													}}
-												/>
-											) : (
-												<div className="text-emerald-600 font-bold text-2xl">
-													{String(org.nama || "Anonymous")
-														.split(" ")
-														.map((s) => s[0])
-														.slice(0, 2)
-														.join("")}
-												</div>
-											)}
-										</div>
-									</div>
-
-									{/* Content */}
-									<div className="px-6 pt-4 pb-6">
-										{/* Organization Name */}
-										<h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors">
-											{org.nama}
-										</h3>
-
-										{/* Location */}
-										{org.kota && (
-											<div className="flex items-center text-gray-600 mb-4">
-												<MapPin className="w-4 h-4 mr-2 text-emerald-500" />
-												<span className="text-sm font-medium">{org.kota}</span>
-											</div>
-										)}
-
-										{/* Description */}
-										{org.deskripsi && (
-											<p className="text-gray-700 mb-4 line-clamp-3 leading-relaxed">
-												{org.deskripsi}
-											</p>
-										)}
-
-										{/* Rating */}
-										{org.rating != null && (
-											<div className="flex items-center gap-1 mb-5 pb-5 border-b border-gray-100">
-												<Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-												<span className="font-bold text-gray-900 text-lg">
-													{Number(org.rating).toFixed(1)}
-												</span>
-												<span className="text-gray-500 text-sm">/5.0 Reviews</span>
-											</div>
-										)}
-
-										{/* Contact Links with Icons */}
-										<div className="space-y-3">
-											<p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-												Hubungi Kami
-											</p>
-											<div className="flex items-center gap-3 flex-wrap">
-												{org.email && (
-													<a
-														href={`mailto:${org.email}`}
-														className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-700 hover:shadow-md transition-all font-medium text-sm border border-emerald-200"
-														onClick={(e) => e.stopPropagation()}
-														title={org.email}>
-														<Mail className="w-4 h-4" />
-														Email
-													</a>
-												)}
-												{org.telepon && (
-													<a
-														href={`tel:${org.telepon}`}
-														className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-teal-50 to-teal-100 text-teal-700 hover:shadow-md transition-all font-medium text-sm border border-teal-200"
-														onClick={(e) => e.stopPropagation()}
-														title={org.telepon}>
-														<Phone className="w-4 h-4" />
-														Call
-													</a>
-												)}
-												{org.website && (
-													<a
-														href={
-															org.website.startsWith("http")
-																? org.website
-																: `https://${org.website}`
-														}
-														target="_blank"
-														rel="noreferrer"
-														className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 hover:shadow-md transition-all font-medium text-sm border border-blue-200"
-														onClick={(e) => e.stopPropagation()}>
-														<Globe className="w-4 h-4" />
-														Website
-													</a>
-												)}
-											</div>
-										</div>
-
-										{/* Call to Action Button */}
-										<div className="mt-6 pt-6 border-t border-gray-100">
-											<DynamicButton
-												variant="primary"
-												className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold py-3 rounded-lg transition-all duration-300 group-hover:shadow-lg">
-												Pelajari Lebih Lanjut
-											</DynamicButton>
-										</div>
-									</div>
-								</Card>
+								transition={{ duration: 0.5, delay: index * 0.05 }}
+								className="cursor-pointer">
+								<OrganizationCard
+									organization={org}
+									onClick={(id) => navigate(`/organizations/details/${id}`)}
+								/>
 							</motion.div>
 						))}
 					</div>

@@ -21,8 +21,8 @@ export const getOrganizations = async (params = {}) => {
  * @param {string|number} id - ID organization
  * @returns {Promise<any>} Data detail organization
  */
-export const getOrganizationById = async (id) => {
-	const response = await api.get(`/organizations/${id}`);
+export const getOrganizationById = async (id, params = {}) => {
+	const response = await api.get(`/organizations/${id}`, { params });
 	return response.data.data || response.data;
 };
 

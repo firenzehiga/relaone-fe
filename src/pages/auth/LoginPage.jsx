@@ -51,7 +51,7 @@ export default function LoginPage() {
 							to="/"
 							className="inline-flex items-center text-gray-600 hover:text-gray-800 mb-8 transition-colors">
 							<ArrowLeft className="w-4 h-4 mr-2" />
-							Go Back
+							Kembali
 						</Link>
 
 						{/* Header */}
@@ -61,8 +61,8 @@ export default function LoginPage() {
 							transition={{ delay: 0.2, duration: 0.5 }}
 							exit={{ opacity: 0 }}
 							className="mb-8">
-							<h2 className="text-3xl font-bold text-gray-900 mb-2">Sign In</h2>
-							<p className="text-gray-600">Enter your credentials to continue</p>
+							<h2 className="text-3xl font-bold text-gray-900 mb-2">Login</h2>
+							<p className="text-gray-600">Masukkan kredensial anda untuk masuk</p>
 						</motion.div>
 
 						{/* Login Form */}
@@ -75,7 +75,7 @@ export default function LoginPage() {
 							{/* Email Field */}
 							<div>
 								<label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-									Email Address
+									Email
 								</label>
 								<div className="relative">
 									<Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -162,7 +162,7 @@ export default function LoginPage() {
 									</span>
 								</label> */}
 								<Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-800">
-									Forgot password?
+									Lupa Password?
 								</Link>
 							</div>
 
@@ -175,10 +175,10 @@ export default function LoginPage() {
 								{isLoading ? (
 									<div className="flex items-center justify-center space-x-2">
 										<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-										<span>Signing In...</span>
+										<span>Logging In...</span>
 									</div>
 								) : (
-									"Sign In"
+									"Login"
 								)}
 							</DynamicButton>
 						</motion.form>
@@ -189,9 +189,9 @@ export default function LoginPage() {
 							animate={{ y: 0, opacity: 1 }}
 							transition={{ delay: 0.6, duration: 0.5 }}
 							className="text-center text-gray-600 mt-8">
-							Don't have an account?{" "}
+							Belum punya akun?{" "}
 							<Link to="/register" className="text-blue-600 hover:text-blue-800 font-medium">
-								Sign up
+								Daftar
 							</Link>
 						</motion.p>
 

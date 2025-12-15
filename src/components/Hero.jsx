@@ -81,9 +81,7 @@ export default function Hero() {
 						className="relative h-full min-h-[400px] lg:min-h-screen">
 						<div className="absolute inset-0 lg:inset-y-0 lg:right-0">
 							<img
-								src={
-									"https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=1200&h=1200&fit=crop"
-								}
+								src={"/images/hero.avif"}
 								alt="Volunteer activities"
 								className="w-full h-full object-cover rounded-tl-[100px] shadow-2xl"
 							/>
