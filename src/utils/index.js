@@ -28,7 +28,7 @@ export const cn = (...classes) => {
  * Digunakan di berbagai tempat untuk menggabungkan URL gambar
  */
 export const getImageUrl = (path) => {
-	const baseUrl = import.meta.env.VITE_IMG_STORAGE_URL || "https://peladen.my.id/storage/";
+	const baseUrl = import.meta.env.VITE_IMG_STORAGE_URL;
 	if (!path) return "";
 	return `${baseUrl}${path}`;
 };
