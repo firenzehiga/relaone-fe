@@ -48,11 +48,7 @@ export default function OrganizationEventCreate() {
 	const [imagePreview, setImagePreview] = useState(null);
 
 	const createEventMutation = useOrgCreateEventMutation();
-	const {
-		data: locations = [],
-		isLoading: locationsLoading,
-		error: locationsError,
-	} = useOrgLocations();
+	const { locations, isLoading: locationsLoading, error: locationsError } = useOrgLocations();
 
 	const {
 		data: categories = [],
