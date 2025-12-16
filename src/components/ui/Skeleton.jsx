@@ -374,7 +374,7 @@ function FormSkeleton({ title = "", rows = 4 }) {
 }
 Skeleton.FormSkeleton = FormSkeleton;
 
-function OrgSkeleton() {
+function OrgSkeleton({ rows = 3 }) {
 	return (
 		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-blue-50 via-green-50 to-purple-50">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -406,7 +406,7 @@ function OrgSkeleton() {
 
 				{/* Organizations Grid - 3 columns on desktop (compact) */}
 				<div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
-					{Array.from({ length: 6 }).map((_, i) => (
+					{Array.from({ length: rows }).map((_, i) => (
 						<Card
 							key={i}
 							className="h-full overflow-hidden animate-pulse flex flex-col"
@@ -468,7 +468,7 @@ function OrgSkeleton() {
 Skeleton.OrgSkeleton = OrgSkeleton;
 
 // Skeleton untuk Events Page (full page skeleton mirip EventsPage)
-function EventsSkeleton() {
+function EventsSkeleton({ rows = 3 }) {
 	return (
 		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-emerald-50 via-white to-blue-50">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -516,7 +516,7 @@ function EventsSkeleton() {
 
 				{/* Cards grid skeleton */}
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-					{Array.from({ length: 3 }).map((_, i) => (
+					{Array.from({ length: rows }).map((_, i) => (
 						<div key={i} className="animate-pulse">
 							<SkeletonEventCard />
 						</div>

@@ -44,6 +44,7 @@ import Avatar from "@/components/ui/Avatar";
 import RatingStars from "@/components/ui/RatingStars";
 
 export default function DetailOrganizationPage() {
+	useDocumentTitle("Detail Organisasi");
 	const { organizationId } = useParams();
 	const navigate = useNavigate();
 	const [eventPage, setEventPage] = useState(1);
@@ -54,12 +55,6 @@ export default function DetailOrganizationPage() {
 		isLoading,
 		error,
 	} = useOrganizationById(organizationId, eventPage, eventsPerPage);
-
-	useDocumentTitle(
-		organizationData?.organization?.nama
-			? `${organizationData.organization.nama} - Detail Organisasi`
-			: "Detail Organisasi"
-	);
 
 	if (isLoading) {
 		return <Skeleton.OrganizationDetail />;
@@ -181,14 +176,11 @@ export default function DetailOrganizationPage() {
 								<div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
 
 								{/* Verified Badge */}
-								{organization.status_verifikasi === "verified" && (
-									<Badge
-										variant="success"
-										className="absolute top-2 right-2 text-xs backdrop-blur-sm shadow-lg">
-										<CheckCircle className="w-4 h-4 mr-1" />
-										Verified
-									</Badge>
-								)}
+								<Badge
+									variant="success"
+									className="absolute top-2 right-2 text-xs backdrop-blur-sm shadow-lg">
+									Bergabung sejak {formatDate(organization.created_at)}
+								</Badge>
 
 								{/* Logo at Center-Bottom */}
 								<div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col items-center">
@@ -199,7 +191,7 @@ export default function DetailOrganizationPage() {
 												Transition={Fade}
 												src={getImageUrl(`organizations/${organization.logo}`)}
 												alt={`${organization.nama} logo`}
-												className="object-cover w-full h-full"
+												className="object-cover w-32 h-32"
 												onError={(e) => {
 													e.currentTarget.parentElement.innerHTML = `
 														<div class="text-emerald-600 font-bold text-4xl">
@@ -239,14 +231,14 @@ export default function DetailOrganizationPage() {
 											<div className="text-lg font-bold text-gray-900">
 												{organization.events_count || 0}
 											</div>
-											<div className="text-xs text-gray-600">Event</div>
+											<div className="text-xs text-gray-600">Kegiatan</div>
 										</div>
 										<div className="bg-white/95 backdrop-blur-sm rounded-lg p-3 text-center">
 											<div className="flex items-center justify-center mb-1">
 												<MessageSquare className="w-4 h-4 text-purple-600" />
 											</div>
 											<div className="text-lg font-bold text-gray-900">{displayFeedbacksCount}</div>
-											<div className="text-xs text-gray-600">Feedback</div>
+											<div className="text-xs text-gray-600">Ulasan</div>
 										</div>
 									</div>
 								</div>
@@ -447,12 +439,8 @@ export default function DetailOrganizationPage() {
 														</h3>
 														{event.category && (
 															<Badge
-																variant="outline"
-																className="text-xs flex-shrink-0 whitespace-nowrap"
-																style={{
-																	borderColor: event.category.warna,
-																	color: event.category.warna,
-																}}>
+																color={event.category.warna}
+																className="text-xs flex-shrink-0 whitespace-nowrap">
 																{event.category.nama}
 															</Badge>
 														)}
@@ -479,14 +467,14 @@ export default function DetailOrganizationPage() {
 														{/* Location */}
 														{event.location && (
 															<div className="flex items-center text-gray-600 min-w-0">
-																<MapPinned className="w-3 h-3 mr-1 text-red-500 flex-shrink-0" />
+																<MapPinned className="w-3 h-3 mr-1 text-purple-600 flex-shrink-0" />
 																<span className="truncate">{event.location.kota}</span>
 															</div>
 														)}
 
 														{/* Participants */}
 														<div className="flex items-center text-gray-600 min-w-0">
-															<UserCheck className="w-3 h-3 mr-1 text-purple-500 flex-shrink-0" />
+															<UserCheck className="w-3 h-3 mr-1 text-orange-600 flex-shrink-0" />
 															<span className="truncate">
 																{event.peserta_saat_ini || 0}/{event.maks_peserta} peserta
 															</span>

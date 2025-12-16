@@ -234,21 +234,32 @@ export const useAdminDeleteEventMutation = () => {
  * Hook untuk mengambil data events (organization)
  * @returns {Object} Query result dengan data, isLoading, error, etc
  */
-export const useOrgEvents = () => {
+export const useOrgEvents = (page = 1, limit = 10, search = "") => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "organization";
 
-	return useQuery({
-		queryKey: ["orgEvents"],
+	const query = useQuery({
+		queryKey: ["orgEvents", page, limit, search],
 		queryFn: async () => {
-			const response = await eventService.orgGetEvents();
+			const params = toQueryBuilderParams({ page, limit, search });
+
+			const response = await eventService.orgGetEvents(params);
 			return response;
 		},
 		enabled,
+		keepPreviousData: true, // Menjaga data sebelumnya saat fetching
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
 	});
+
+	return {
+		events: query.data?.data || [],
+		pagination: query.data?.pagination || {},
+		isLoading: query.isLoading,
+		error: query.error,
+		isFetching: query.isFetching,
+	};
 };
 
 /**

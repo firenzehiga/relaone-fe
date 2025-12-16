@@ -192,7 +192,6 @@ export default function AdminLocation() {
 				<div className="bg-white rounded-lg shadow p-6">
 					<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
 						<h2 className="text-lg font-semibold">
-							{" "}
 							{locationsRefetching ? (
 								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
 							) : (

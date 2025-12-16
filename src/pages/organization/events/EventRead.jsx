@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 // UI Libraries
@@ -38,14 +38,28 @@ import { getImageUrl, parseApiError } from "@/utils";
 import FetchLoader from "@/components/ui/FetchLoader";
 import { LinkButton } from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
+import { useDebounce } from "@/_hooks/useDebounce";
 
 export default function OrganizationEvent() {
+	const [searchEvent, setSearchEvent] = useState("");
+	const [currentPage, setCurrentPage] = useState(1);
+	const [rowsPerPage, setRowsPerPage] = useState(10);
+
+	// Debounce search menggunakan custom hook
+	const debouncedSearch = useDebounce(searchEvent, 500); // You can implement debounce if needed
+
+	// Reset ke halaman 1 saat search berubah
+	useEffect(() => {
+		setCurrentPage(1);
+	}, [debouncedSearch]);
+
 	const {
-		data: events = [],
+		events,
+		pagination,
 		isLoading: eventsLoading,
 		error: eventsError,
 		isFetching: eventsRefetching,
-	} = useOrgEvents();
+	} = useOrgEvents(currentPage, rowsPerPage, debouncedSearch);
 
 	const deleteEventMutation = useOrgDeleteEventMutation();
 	const startEventMutation = useOrgStartEventMutation();
@@ -55,7 +69,6 @@ export default function OrganizationEvent() {
 	const { isLoading } = useAuthStore();
 
 	// Local state for search/filter
-	const [searchEvent, setSearchEvent] = useState("");
 	const [statusFilter, setStatusFilter] = useState("all"); // all, upcoming, ongoing, completed
 
 	const filteredEvents = useMemo(() => {
@@ -82,20 +95,18 @@ export default function OrganizationEvent() {
 				return true;
 			});
 		}
-
-		// Filter by search query
-		if (searchEvent) {
-			const query = searchEvent.toLowerCase();
-			filtered = filtered.filter((eventItem) => {
-				const title = String(eventItem.judul || "").toLowerCase();
-				const description = String(eventItem.deskripsi || "").toLowerCase();
-				const location = String(eventItem.lokasi || "").toLowerCase();
-				return title.includes(query) || description.includes(query) || location.includes(query);
-			});
-		}
-
 		return filtered;
-	}, [events, searchEvent, statusFilter]);
+	}, [events, statusFilter]);
+
+	// Handler untuk perubahan halaman dan rows per page
+	const handlePageChange = (page) => {
+		setCurrentPage(page);
+	};
+
+	const handlePerRowsChange = (newPerPage, page) => {
+		setRowsPerPage(newPerPage);
+		setCurrentPage(page);
+	};
 
 	// Fungsi untuk menangani penghapusan kursus
 	const handleDelete = (id) => {
@@ -374,7 +385,13 @@ export default function OrganizationEvent() {
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="bg-white rounded-xl shadow p-6">
 					<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
-						<h2 className="text-lg font-semibold">Daftar Kegiatan</h2>
+						<h2 className="text-lg font-semibold">
+							{eventsRefetching ? (
+								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
+							) : (
+								"Daftar Kegiatan"
+							)}
+						</h2>
 						<LinkButton
 							variant="success"
 							to="/organization/events/create"
@@ -383,122 +400,129 @@ export default function OrganizationEvent() {
 						</LinkButton>
 					</div>
 
+					{/* Filter & Search */}
+					<div className="flex flex-col sm:flex-row gap-3 mb-4">
+						<div className="flex-1 max-w-md">
+							<input
+								type="text"
+								placeholder="Cari judul, deskripsi, atau lokasi..."
+								value={searchEvent}
+								onChange={(e) => setSearchEvent(e.target.value)}
+								className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
+							/>
+						</div>
+						<div className="w-full sm:w-48">
+							<select
+								value={statusFilter}
+								onChange={(e) => setStatusFilter(e.target.value)}
+								className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+								<option value="all">Semua Status</option>
+								<option value="cancelled">Dibatalkan</option>
+								<option value="upcoming">Belum Mulai</option>
+								<option value="ongoing">Sedang Berlangsung</option>
+								<option value="completed">Sudah Selesai</option>
+							</select>
+						</div>
+					</div>
 					{eventsLoading ? (
 						<div className="flex h-96 justify-center py-20">
 							{" "}
 							<Loader2 className="animate-spin h-7 w-7 text-emerald-600" />
 						</div>
 					) : (
-						<>
-							{eventsRefetching && <FetchLoader />}
+						<DataTable
+							columns={columns}
+							data={filteredEvents}
+							pagination
+							paginationServer
+							paginationTotalRows={pagination.total || 0}
+							paginationDefaultPage={currentPage}
+							onChangePage={handlePageChange}
+							onChangeRowsPerPage={handlePerRowsChange}
+							paginationPerPage={rowsPerPage}
+							paginationRowsPerPageOptions={[10, 20, 30, 50, 100]}
+							progressPending={eventsRefetching}
+							progressComponent={
+								<div className="flex justify-center py-10">
+									<Loader2 className="animate-spin h-6 w-6 text-emerald-600" />
+								</div>
+							}
+							pointerOnHover
+							title=""
+							fixedHeader
+							highlightOnHover
+							persistTableHead
+							responsive
+							striped
+							sortIcon={<ChevronDown />}
+							expandableRows
+							expandableRowsComponent={({ data }) => (
+								<div className="p-6 bg-white rounded-md border border-gray-100 shadow-sm">
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+										{/* Left column */}
+										<div className="space-y-3">
+											<div className="text-sm text-gray-700">
+												<span className="font-semibold">Judul:</span>
+												<span className="ml-2 text-gray-900">{data.judul || "-"}</span>
+											</div>
+											<div className="text-sm text-gray-700">
+												<span className="font-semibold">Lokasi:</span>
+												<span className="ml-2 text-gray-900">{data.location?.nama || "-"}</span>
+											</div>
+											<div className="text-sm text-gray-700">
+												<span className="font-semibold">Alamat:</span>
+												<span className="ml-2 text-gray-900">{data.location?.alamat || "-"}</span>
+											</div>
+										</div>
 
-							{/* Filter & Search */}
-							<div className="flex flex-col sm:flex-row gap-3 mb-4">
-								<div className="flex-1 max-w-md">
-									<input
-										type="text"
-										placeholder="Cari judul, deskripsi, atau lokasi..."
-										value={searchEvent}
-										onChange={(e) => setSearchEvent(e.target.value)}
-										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
-									/>
-								</div>
-								<div className="w-full sm:w-48">
-									<select
-										value={statusFilter}
-										onChange={(e) => setStatusFilter(e.target.value)}
-										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
-										<option value="all">Semua Status</option>
-										<option value="cancelled">Dibatalkan</option>
-										<option value="upcoming">Belum Mulai</option>
-										<option value="ongoing">Sedang Berlangsung</option>
-										<option value="completed">Sudah Selesai</option>
-									</select>
-								</div>
-							</div>
-							<DataTable
-								columns={columns}
-								data={filteredEvents}
-								pagination
-								pointerOnHover
-								title=""
-								fixedHeader
-								highlightOnHover
-								persistTableHead
-								responsive
-								striped
-								sortIcon={<ChevronDown />}
-								expandableRows
-								expandableRowsComponent={({ data }) => (
-									<div className="p-6 bg-white rounded-md border border-gray-100 shadow-sm">
-										<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-											{/* Left column */}
-											<div className="space-y-3">
-												<div className="text-sm text-gray-700">
-													<span className="font-semibold">Judul:</span>
-													<span className="ml-2 text-gray-900">{data.judul || "-"}</span>
-												</div>
-												<div className="text-sm text-gray-700">
-													<span className="font-semibold">Lokasi:</span>
-													<span className="ml-2 text-gray-900">{data.location?.nama || "-"}</span>
-												</div>
-												<div className="text-sm text-gray-700">
-													<span className="font-semibold">Alamat:</span>
-													<span className="ml-2 text-gray-900">{data.location?.alamat || "-"}</span>
+										{/* Right column */}
+										<div className="space-y-3">
+											<div className="flex items-start">
+												<div className="text-sm text-gray-700 font-semibold">Tanggal:</div>
+												<div className="text-sm text-gray-900 ml-2">
+													{formatDate(data.tanggal_mulai) || "-"} -{" "}
+													{formatDate(data.tanggal_selesai) || "-"} WIB
 												</div>
 											</div>
-
-											{/* Right column */}
-											<div className="space-y-3">
-												<div className="flex items-start">
-													<div className="text-sm text-gray-700 font-semibold">Tanggal:</div>
-													<div className="text-sm text-gray-900 ml-2">
-														{formatDate(data.tanggal_mulai) || "-"} -{" "}
-														{formatDate(data.tanggal_selesai) || "-"} WIB
-													</div>
+											<div className="flex items-start">
+												<div className="text-sm text-gray-700 font-semibold">Waktu:</div>
+												<div className="text-sm ml-2">
+													{formatTime(data.waktu_mulai) || "-"} -{" "}
+													{formatTime(data.waktu_selesai) || "-"}
 												</div>
-												<div className="flex items-start">
-													<div className="text-sm text-gray-700 font-semibold">Waktu:</div>
-													<div className="text-sm ml-2">
-														{formatTime(data.waktu_mulai) || "-"} -{" "}
-														{formatTime(data.waktu_selesai) || "-"}
-													</div>
-												</div>
-												<div className="flex items-start">
-													<div className="text-sm text-gray-700 font-semibold">
-														Jumlah Perserta:
-													</div>
-													<div className="text-sm ml-2">
-														{data.peserta_saat_ini || 0} / {data.maks_peserta || 0} Peserta
-													</div>
+											</div>
+											<div className="flex items-start">
+												<div className="text-sm text-gray-700 font-semibold">Jumlah Perserta:</div>
+												<div className="text-sm ml-2">
+													{data.peserta_saat_ini || 0} / {data.maks_peserta || 0} Peserta
 												</div>
 											</div>
 										</div>
-										<div className="mt-4">
-											<div className="text-sm font-semibold text-gray-700 mb-1">Deskripsi:</div>
-											<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
-												{data.deskripsi || "-"}
-											</div>
+									</div>
+									<div className="mt-4">
+										<div className="text-sm font-semibold text-gray-700 mb-1">Deskripsi:</div>
+										<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
+											{data.deskripsi || "-"}
 										</div>
 									</div>
-								)}
-								noDataComponent={
-									<div className="flex flex-col items-center justify-center h-64 text-gray-600">
-										<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
-										<h3 className="text-lg font-semibold mb-2">
-											{searchEvent || statusFilter
-												? "No Matching Events Found"
-												: "No Events Available"}
-										</h3>
-										<p className="text-gray-500 mb-4 text-center">
-											{searchEvent || statusFilter
-												? "Tidak ada event yang sesuai dengan pencarian."
-												: "Belum ada data event"}
-										</p>
-									</div>
-								}
-							/>
-						</>
+								</div>
+							)}
+							noDataComponent={
+								<div className="flex flex-col items-center justify-center h-64 text-gray-600">
+									<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+									<h3 className="text-lg font-semibold mb-2">
+										{searchEvent || statusFilter
+											? "No Matching Events Found"
+											: "No Events Available"}
+									</h3>
+									<p className="text-gray-500 mb-4 text-center">
+										{searchEvent || statusFilter
+											? "Tidak ada event yang sesuai dengan pencarian."
+											: "Belum ada data event"}
+									</p>
+								</div>
+							}
+						/>
 					)}
 				</div>
 			</div>

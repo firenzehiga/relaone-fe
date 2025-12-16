@@ -4,6 +4,7 @@ import { CheckCircle, MapPin, Mail, Phone, Globe, Star } from "lucide-react";
 import Badge from "./ui/Badge";
 import Card from "./ui/Card";
 import { getImageUrl } from "@/utils";
+import DynamicButton from "./ui/Button";
 
 export default function OrganizationCard({ organization, onClick, className = "" }) {
 	if (!organization) return null;
@@ -139,10 +140,13 @@ export default function OrganizationCard({ organization, onClick, className = ""
 					</div>
 				</div>
 
-				<div className="mt-auto">
-					<div className="inline-flex items-center justify-center w-full py-2 text-sm font-semibold text-white rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500">
+				<div className="mt-2">
+					<DynamicButton
+						variant="success"
+						onClick={() => navigate(`/organizations/details/${organization.id}`)}
+						className="w-full py-2 text-sm font-semibold">
 						Pelajari Lebih Lanjut
-					</div>
+					</DynamicButton>
 				</div>
 			</div>
 		</Card>

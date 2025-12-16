@@ -182,21 +182,32 @@ export const useAdminDeleteLocationMutation = () => {
  * Hook untuk mengambil data locations (organization)
  * @returns {Object} Query result dengan data, isLoading, error, etc
  */
-export const useOrgLocations = () => {
+export const useOrgLocations = (page = 1, limit = 10, search = "") => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "organization";
 
-	return useQuery({
-		queryKey: ["orgLocations"],
+	const query = useQuery({
+		queryKey: ["orgLocations", page, limit, search],
 		queryFn: async () => {
-			const response = await locationService.orgGetLocations();
+			const params = toQueryBuilderParams({ page, limit, search });
+
+			const response = await locationService.orgGetLocations(params);
 			return response;
 		},
 		enabled,
+		keepPreviousData: true, // Menjaga data sebelumnya saat fetching
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
 	});
+
+	return {
+		locations: query.data?.data || [],
+		pagination: query.data?.pagination || {},
+		isLoading: query.isLoading,
+		error: query.error,
+		isFetching: query.isFetching,
+	};
 };
 
 /**

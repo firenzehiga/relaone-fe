@@ -1,15 +1,7 @@
-import {
-	useAdminCreateLocationMutation,
-	useAdminLocationById,
-	useAdminUpdateLocationMutation,
-} from "@/_hooks/useLocations";
-import DynamicButton from "@/components/ui/Button";
+import { useAdminLocationById, useAdminUpdateLocationMutation } from "@/_hooks/useLocations";
 import Skeleton from "@/components/ui/Skeleton";
 import Button from "@/components/ui/Button";
-import { parseApiError } from "@/utils";
-import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuthStore } from "@/_hooks/useAuth";
 import { useAdminOrganizations } from "@/_hooks/useOrganizations";
@@ -44,7 +36,7 @@ export default function AdminLocationEdit() {
 	} = useAdminLocationById(id);
 
 	const {
-		data: organizations = [],
+		organizations,
 		isLoading: organizationsLoading,
 		error: organizationsError,
 	} = useAdminOrganizations();

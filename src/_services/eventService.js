@@ -125,7 +125,7 @@ export const adminDeleteEvent = async (id) => {
  */
 export const orgGetEvents = async (params = {}) => {
 	const response = await api.get("/organization/events", { params });
-	return response.data.data || response.data;
+	return response.data;
 };
 
 /** Mengambil detail event berdasarkan ID.

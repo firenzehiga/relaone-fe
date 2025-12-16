@@ -11,13 +11,9 @@ import { Building2, MapPin, Mail, Phone, Globe, Star, CheckCircle, Search } from
 import { useOrganizations } from "@/_hooks/useOrganizations";
 import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
 
-// Helpers
-import { getImageUrl } from "@/utils";
-
 // UI Components
 import DynamicButton from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
-import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import OrganizationCard from "@/components/OrganizationCard";
 
@@ -59,7 +55,7 @@ export default function OrganizationsPage() {
 	}
 
 	if (isLoading) {
-		return <Skeleton.OrgSkeleton />;
+		return <Skeleton.OrgSkeleton rows={3} />;
 	}
 
 	return (

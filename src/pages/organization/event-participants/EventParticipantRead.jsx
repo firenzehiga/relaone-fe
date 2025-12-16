@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 // UI Libraries
 import DataTable from "react-data-table-component";
@@ -39,14 +39,28 @@ import { formatDate, formatDateTime } from "@/utils/dateFormatter";
 import FetchLoader from "@/components/ui/FetchLoader";
 import DynamicButton, { LinkButton } from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
+import { useDebounce } from "@/_hooks/useDebounce";
 
 export default function OrganizationEventParticipant() {
+	const [searchParticipant, setSearchParticipant] = useState("");
+	const [currentPage, setCurrentPage] = useState(1);
+	const [rowsPerPage, setRowsPerPage] = useState(10);
+
+	// Debounce search menggunakan custom hook
+	const debouncedSearch = useDebounce(searchParticipant, 500); // You can implement debounce if needed
+
+	// Reset ke halaman 1 saat search berubah
+	useEffect(() => {
+		setCurrentPage(1);
+	}, [debouncedSearch]);
+
 	const {
-		data: participants = [],
+		participants,
+		pagination,
 		isLoading: participantsLoading,
 		error: participantsError,
 		isFetching: participantsRefetching,
-	} = useOrgParticipants();
+	} = useOrgParticipants(currentPage, rowsPerPage, debouncedSearch);
 
 	const { isLoading } = useAuthStore();
 
@@ -56,9 +70,18 @@ export default function OrganizationEventParticipant() {
 	// const deleteParticipantMutation = useOrgDeleteParticipantMutation();
 
 	// Local state for search/filter
-	const [searchParticipant, setSearchParticipant] = useState("");
 	const [selectedEventId, setSelectedEventId] = useState("all");
 	const [qrDataMap, setQrDataMap] = useState({}); // Store QR data + export size for each participant
+
+	// Handler untuk perubahan halaman dan rows per page
+	const handlePageChange = (page) => {
+		setCurrentPage(page);
+	};
+
+	const handlePerRowsChange = (newPerPage, page) => {
+		setRowsPerPage(newPerPage);
+		setCurrentPage(page);
+	};
 
 	// Handle download QR code (simple approach like volunteer QR)
 	const handleDownloadQR = (participant) => {
@@ -213,19 +236,8 @@ export default function OrganizationEventParticipant() {
 			filtered = filtered.filter((p) => p.event?.id === parseInt(selectedEventId));
 		}
 
-		// Filter by search query
-		if (searchParticipant) {
-			const query = searchParticipant.toLowerCase();
-			filtered = filtered.filter((participantItem) => {
-				const peserta = String(participantItem.user?.nama || "").toLowerCase();
-				const event = String(participantItem.event?.judul || "").toLowerCase();
-				const status = String(participantItem.status || "").toLowerCase();
-				return peserta.includes(query) || event.includes(query) || status.includes(query);
-			});
-		}
-
 		return filtered;
-	}, [participants, searchParticipant, selectedEventId]);
+	}, [participants, selectedEventId]);
 
 	// Fungsi konfirmasi participant
 	const confirmParticipantMutation = useOrgConfirmParticipantMutation();
@@ -570,233 +582,258 @@ export default function OrganizationEventParticipant() {
 						</div>
 					)}
 
+					{/* Stats Cards */}
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+						<div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
+							<div className="flex items-center justify-between">
+								<div>
+									<p className="text-sm text-blue-600 font-medium">Total Kegiatan</p>
+									<p className="text-2xl font-bold text-blue-900">
+										{participantsLoading ? (
+											<Loader2 className="animate-spin h-4 w-4 text-blue-600 mt-2" />
+										) : (
+											eventsList.length
+										)}
+									</p>
+								</div>
+								<Calendar className="w-10 h-10 text-blue-500 opacity-70" />
+							</div>
+						</div>
+						<div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg p-4 border border-emerald-200">
+							<div className="flex items-center justify-between">
+								<div>
+									<p className="text-sm text-emerald-600 font-medium">Total Partisipan</p>
+									<p className="text-2xl font-bold text-emerald-900">
+										{participantsLoading ? (
+											<Loader2 className="animate-spin h-4 w-4 text-emerald-600 mt-2" />
+										) : (
+											participants.length
+										)}
+									</p>
+								</div>
+								<Users className="w-10 h-10 text-emerald-500 opacity-70" />
+							</div>
+						</div>
+						<div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
+							<div className="flex items-center justify-between">
+								<div>
+									<p className="text-sm text-purple-600 font-medium">Total Hasil Filter</p>
+									<p className="text-2xl font-bold text-purple-900">
+										<p className="text-2xl font-bold text-purple-900">
+											{participantsLoading ? (
+												<Loader2 className="animate-spin h-4 w-4 text-purple-600 mt-2" />
+											) : (
+												filteredParticipants.length
+											)}
+										</p>
+									</p>
+								</div>
+								<Filter className="w-10 h-10 text-purple-500 opacity-70" />
+							</div>
+						</div>
+					</div>
+
+					{/* Filters */}
+					<div className="flex flex-col md:flex-row gap-4 mb-4">
+						<div className="flex-1">
+							<label className="block text-sm font-medium text-gray-700 mb-1">
+								Filter berdasarkan Kegiatan
+							</label>
+							<select
+								value={selectedEventId}
+								onChange={(e) => setSelectedEventId(e.target.value)}
+								className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+								<option value="all">Semua Kegiatan</option>
+								{eventsList.map((event) => (
+									<option key={event.id} value={event.id}>
+										{event.judul}
+									</option>
+								))}
+							</select>
+						</div>
+						<div className="flex-1">
+							<label className="block text-sm font-medium text-gray-700 mb-1">
+								Cari Partisipan
+							</label>
+							<div className="relative">
+								<input
+									type="text"
+									placeholder="Cari partisipan, kegiatan, status..."
+									value={searchParticipant}
+									onChange={(e) => setSearchParticipant(e.target.value)}
+									className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 pr-8"
+								/>
+								{searchParticipant && (
+									<button
+										onClick={() => setSearchParticipant("")}
+										className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+										<X className="w-4 h-4" />
+									</button>
+								)}
+							</div>
+						</div>
+					</div>
+
+					{/* Active Filters Display */}
+					{(selectedEventId !== "all" || searchParticipant) && (
+						<div className="mb-4 flex flex-wrap gap-2">
+							<span className="text-sm text-gray-600">Filter aktif:</span>
+							{selectedEventId !== "all" && (
+								<Badge variant="primary" className="flex items-center gap-1">
+									Event:{" "}
+									{eventsList.find((e) => e.id === parseInt(selectedEventId))?.judul || "Unknown"}
+									<button
+										onClick={() => setSelectedEventId("all")}
+										className="ml-1 hover:text-white">
+										<X className="w-3 h-3" />
+									</button>
+								</Badge>
+							)}
+							{searchParticipant && (
+								<Badge variant="secondary" className="flex items-center gap-1">
+									Search: {searchParticipant}
+									<button
+										onClick={() => setSearchParticipant("")}
+										className="ml-1 hover:text-gray-800">
+										<X className="w-3 h-3" />
+									</button>
+								</Badge>
+							)}
+							<button
+								onClick={() => {
+									setSelectedEventId("all");
+									setSearchParticipant("");
+								}}
+								className="text-sm text-emerald-600 hover:text-emerald-700 font-medium">
+								Reset semua filter
+							</button>
+						</div>
+					)}
 					{participantsLoading ? (
 						<div className="flex h-96 justify-center py-20">
 							<Loader2 className="animate-spin h-7 w-7 text-emerald-600" />
 						</div>
 					) : (
-						<>
-							{/* Stats Cards */}
-							<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-								<div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
-									<div className="flex items-center justify-between">
-										<div>
-											<p className="text-sm text-blue-600 font-medium">Total Kegiatan</p>
-											<p className="text-2xl font-bold text-blue-900">{eventsList.length}</p>
-										</div>
-										<Calendar className="w-10 h-10 text-blue-500 opacity-70" />
-									</div>
+						<DataTable
+							columns={columns}
+							data={filteredParticipants}
+							pagination
+							paginationServer
+							paginationTotalRows={pagination.total || 0}
+							paginationDefaultPage={currentPage}
+							onChangePage={handlePageChange}
+							onChangeRowsPerPage={handlePerRowsChange}
+							paginationPerPage={rowsPerPage}
+							paginationRowsPerPageOptions={[10, 20, 30, 50, 100]}
+							progressPending={participantsRefetching}
+							progressComponent={
+								<div className="flex justify-center py-10">
+									<Loader2 className="animate-spin h-6 w-6 text-emerald-600" />
 								</div>
-								<div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg p-4 border border-emerald-200">
-									<div className="flex items-center justify-between">
-										<div>
-											<p className="text-sm text-emerald-600 font-medium">Total Partisipan</p>
-											<p className="text-2xl font-bold text-emerald-900">{participants.length}</p>
-										</div>
-										<Users className="w-10 h-10 text-emerald-500 opacity-70" />
-									</div>
-								</div>
-								<div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
-									<div className="flex items-center justify-between">
-										<div>
-											<p className="text-sm text-purple-600 font-medium">Total Hasil Filter</p>
-											<p className="text-2xl font-bold text-purple-900">
-												{filteredParticipants.length}
-											</p>
-										</div>
-										<Filter className="w-10 h-10 text-purple-500 opacity-70" />
-									</div>
-								</div>
-							</div>
+							}
+							pointerOnHover
+							title=""
+							highlightOnHover
+							persistTableHead
+							responsive
+							fixedHeader
+							striped
+							sortIcon={<ChevronDown />}
+							expandableRows
+							expandableRowsComponent={({ data }) => (
+								<div className="p-6 bg-white rounded-md border border-gray-100 shadow-sm">
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+										{/* Left column */}
+										<div className="space-y-3">
+											<div className="text-sm text-gray-700">
+												<span className="font-semibold">Nama partisipan:</span>
+												<span className="ml-2 text-gray-900">{data.user?.nama || "-"}</span>
+											</div>
+											<div className="flex items-start">
+												<div className="text-sm text-gray-700 font-semibold">Tanggal:</div>
+												<div className="text-sm text-gray-900 ml-2">
+													{formatDate(data.event?.tanggal_mulai) || "-"} -{" "}
+													{formatDate(data.event?.tanggal_selesai) || "-"}
+												</div>
+											</div>
 
-							{/* Filters */}
-							<div className="flex flex-col md:flex-row gap-4 mb-4">
-								<div className="flex-1">
-									<label className="block text-sm font-medium text-gray-700 mb-1">
-										Filter berdasarkan Kegiatan
-									</label>
-									<select
-										value={selectedEventId}
-										onChange={(e) => setSelectedEventId(e.target.value)}
-										className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
-										<option value="all">Semua Kegiatan</option>
-										{eventsList.map((event) => (
-											<option key={event.id} value={event.id}>
-												{event.judul}
-											</option>
-										))}
-									</select>
-								</div>
-								<div className="flex-1">
-									<label className="block text-sm font-medium text-gray-700 mb-1">
-										Cari Partisipan
-									</label>
-									<div className="relative">
-										<input
-											type="text"
-											placeholder="Cari partisipan, kegiatan, status..."
-											value={searchParticipant}
-											onChange={(e) => setSearchParticipant(e.target.value)}
-											className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 pr-8"
-										/>
-										{searchParticipant && (
-											<button
-												onClick={() => setSearchParticipant("")}
-												className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-												<X className="w-4 h-4" />
-											</button>
-										)}
-									</div>
-								</div>
-							</div>
+											<div>
+												<div className="text-sm font-semibold text-gray-700 mb-1">Catatan</div>
+												<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
+													{data.catatan || "-"}
+												</div>
+											</div>
+										</div>
 
-							{/* Active Filters Display */}
-							{(selectedEventId !== "all" || searchParticipant) && (
-								<div className="mb-4 flex flex-wrap gap-2">
-									<span className="text-sm text-gray-600">Filter aktif:</span>
-									{selectedEventId !== "all" && (
-										<Badge variant="primary" className="flex items-center gap-1">
-											Event:{" "}
-											{eventsList.find((e) => e.id === parseInt(selectedEventId))?.judul ||
-												"Unknown"}
-											<button
-												onClick={() => setSelectedEventId("all")}
-												className="ml-1 hover:text-white">
-												<X className="w-3 h-3" />
-											</button>
-										</Badge>
-									)}
-									{searchParticipant && (
-										<Badge variant="secondary" className="flex items-center gap-1">
-											Search: {searchParticipant}
-											<button
-												onClick={() => setSearchParticipant("")}
-												className="ml-1 hover:text-gray-800">
-												<X className="w-3 h-3" />
-											</button>
-										</Badge>
-									)}
-									<button
-										onClick={() => {
-											setSelectedEventId("all");
-											setSearchParticipant("");
-										}}
-										className="text-sm text-emerald-600 hover:text-emerald-700 font-medium">
-										Reset semua filter
-									</button>
+										{/* Right column */}
+										<div className="space-y-3">
+											<div className="flex items-start">
+												<div className="text-sm text-gray-700 font-semibold">Tanggal Daftar:</div>
+												<div className="text-sm text-gray-900 ml-2">
+													{formatDate(data.tanggal_daftar) || "-"}
+												</div>
+											</div>
+
+											<div className="flex items-start">
+												<div className="text-sm text-gray-700 font-semibold">
+													Tanggal Konfirmasi:
+												</div>
+												<div className="text-sm ml-2">
+													{data.tanggal_konfirmasi ? (
+														<span className="text-gray-900">
+															{formatDate(data.tanggal_konfirmasi)}
+														</span>
+													) : (
+														<Badge variant="default">Belum Dikonfirmasi</Badge>
+													)}
+												</div>
+											</div>
+											<div className="flex items-start">
+												<div className="text-sm text-gray-700 font-semibold">Waktu Kehadiran:</div>
+												<div className="text-sm ml-2">
+													{data.tanggal_hadir ? (
+														<span className="text-gray-900">
+															{formatDateTime(data.tanggal_hadir, "WIB")}{" "}
+														</span>
+													) : (
+														<span className="text-gray-500 italic">Belum Check-In</span>
+													)}
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
 							)}
-							<DataTable
-								columns={columns}
-								data={filteredParticipants}
-								pagination
-								pointerOnHover
-								title=""
-								highlightOnHover
-								persistTableHead
-								responsive
-								fixedHeader
-								striped
-								sortIcon={<ChevronDown />}
-								expandableRows
-								expandableRowsComponent={({ data }) => (
-									<div className="p-6 bg-white rounded-md border border-gray-100 shadow-sm">
-										<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-											{/* Left column */}
-											<div className="space-y-3">
-												<div className="text-sm text-gray-700">
-													<span className="font-semibold">Nama partisipan:</span>
-													<span className="ml-2 text-gray-900">{data.user?.nama || "-"}</span>
-												</div>
-												<div className="flex items-start">
-													<div className="text-sm text-gray-700 font-semibold">Tanggal:</div>
-													<div className="text-sm text-gray-900 ml-2">
-														{formatDate(data.event?.tanggal_mulai) || "-"} -{" "}
-														{formatDate(data.event?.tanggal_selesai) || "-"}
-													</div>
-												</div>
-
-												<div>
-													<div className="text-sm font-semibold text-gray-700 mb-1">Catatan</div>
-													<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
-														{data.catatan || "-"}
-													</div>
-												</div>
-											</div>
-
-											{/* Right column */}
-											<div className="space-y-3">
-												<div className="flex items-start">
-													<div className="text-sm text-gray-700 font-semibold">Tanggal Daftar:</div>
-													<div className="text-sm text-gray-900 ml-2">
-														{formatDate(data.tanggal_daftar) || "-"}
-													</div>
-												</div>
-
-												<div className="flex items-start">
-													<div className="text-sm text-gray-700 font-semibold">
-														Tanggal Konfirmasi:
-													</div>
-													<div className="text-sm ml-2">
-														{data.tanggal_konfirmasi ? (
-															<span className="text-gray-900">
-																{formatDate(data.tanggal_konfirmasi)}
-															</span>
-														) : (
-															<Badge variant="default">Belum Dikonfirmasi</Badge>
-														)}
-													</div>
-												</div>
-												<div className="flex items-start">
-													<div className="text-sm text-gray-700 font-semibold">
-														Waktu Kehadiran:
-													</div>
-													<div className="text-sm ml-2">
-														{data.tanggal_hadir ? (
-															<span className="text-gray-900">
-																{formatDateTime(data.tanggal_hadir, "WIB")}{" "}
-															</span>
-														) : (
-															<span className="text-gray-500 italic">Belum Check-In</span>
-														)}
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								)}
-								noDataComponent={
-									<div className="flex flex-col items-center justify-center h-64 text-gray-600">
-										<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
-										<h3 className="text-lg font-semibold mb-2">
-											{searchParticipant
-												? "No Matching Participants Found"
-												: "No Participants Available"}
-										</h3>
-										<p className="text-gray-500 mb-4 text-center">
-											{searchParticipant
-												? "Tidak ada partisipan yang sesuai dengan pencarian."
-												: "Belum ada data partisipan"}
-										</p>
-									</div>
-								}
-							/>
-
-							{/* Hidden QR Code Canvases for download */}
-							<div style={{ position: "absolute", left: "-9999px" }}>
-								{Object.entries(qrDataMap).map(([participantId, qrData]) => (
-									<QRCodeCanvas
-										key={participantId}
-										id={`qr-canvas-${participantId}`}
-										value={qrData}
-										size={512}
-										level="H"
-										includeMargin={true}
-									/>
-								))}
-							</div>
-						</>
+							noDataComponent={
+								<div className="flex flex-col items-center justify-center h-64 text-gray-600">
+									<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+									<h3 className="text-lg font-semibold mb-2">
+										{searchParticipant
+											? "No Matching Participants Found"
+											: "No Participants Available"}
+									</h3>
+									<p className="text-gray-500 mb-4 text-center">
+										{searchParticipant
+											? "Tidak ada partisipan yang sesuai dengan pencarian."
+											: "Belum ada data partisipan"}
+									</p>
+								</div>
+							}
+						/>
 					)}
+					{/* Hidden QR Code Canvases for download */}
+					<div style={{ position: "absolute", left: "-9999px" }}>
+						{Object.entries(qrDataMap).map(([participantId, qrData]) => (
+							<QRCodeCanvas
+								key={participantId}
+								id={`qr-canvas-${participantId}`}
+								value={qrData}
+								size={512}
+								level="H"
+								includeMargin={true}
+							/>
+						))}
+					</div>
 				</div>
 			</div>
 		</div>

@@ -223,19 +223,30 @@ export const useAdminDeleteFeedbackMutation = () => {
  * Hook untuk mengambil data feedbacks (organization)
  * @returns {Object} Query result dengan data, isLoading, error, etc
  */
-export const useOrgFeedbacks = () => {
+export const useOrgFeedbacks = (page = 1, limit = 10, search = "") => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "organization";
 
-	return useQuery({
-		queryKey: ["orgFeedbacks"],
+	const query = useQuery({
+		queryKey: ["orgFeedbacks", page, limit, search],
 		queryFn: async () => {
-			const response = await feedbackService.orgGetFeedbacks();
+			const params = toQueryBuilderParams({ page, limit, search });
+
+			const response = await feedbackService.orgGetFeedbacks(params);
 			return response;
 		},
 		enabled,
+		keepPreviousData: true, // Menjaga data sebelumnya saat fetching
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
 	});
+
+	return {
+		feedbacks: query.data?.data || [],
+		pagination: query.data?.pagination || {},
+		isLoading: query.isLoading,
+		error: query.error,
+		isFetching: query.isFetching,
+	};
 };

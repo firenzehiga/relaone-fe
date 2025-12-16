@@ -1,6 +1,5 @@
 import { useAdminDeleteParticipantMutation, useAdminParticipants } from "@/_hooks/useParticipants";
 import Swal from "sweetalert2";
-import { toast } from "react-hot-toast";
 import { LinkButton } from "@/components/ui/Button";
 import {
 	ChevronDown,

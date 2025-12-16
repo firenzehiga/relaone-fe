@@ -104,7 +104,7 @@ export const adminDeleteFeedback = async (id) => {
  * @param {Object} params - Query parameters untuk filtering
  * @returns {Promise} Promise dengan data feedbacks
  */
-export const orgGetFeedbacks = async () => {
-	const response = await api.get("/organization/feedbacks");
-	return response.data.data || response.data;
+export const orgGetFeedbacks = async (params = {}) => {
+	const response = await api.get("/organization/feedbacks", { params });
+	return response.data;
 };

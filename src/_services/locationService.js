@@ -85,9 +85,9 @@ export const adminDeleteLocation = async (id) => {
  * @param {Object} params - Query parameters untuk filtering
  * @returns {Promise} Promise dengan data locations
  */
-export const orgGetLocations = async () => {
-	const response = await api.get("/organization/locations");
-	return response.data.data || response.data;
+export const orgGetLocations = async (params = {}) => {
+	const response = await api.get("/organization/locations", { params });
+	return response.data;
 };
 
 /** Mengambil detail lokasi berdasarkan ID.

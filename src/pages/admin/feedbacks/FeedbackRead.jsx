@@ -216,7 +216,6 @@ export default function AdminFeedback() {
 				<div className="bg-white rounded-lg shadow p-6">
 					<div className="flex justify-between items-center mb-4">
 						<h2 className="text-lg font-semibold">
-							{" "}
 							{feedbacksRefetching ? (
 								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
 							) : (
