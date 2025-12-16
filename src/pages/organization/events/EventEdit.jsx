@@ -55,11 +55,7 @@ export default function OrganizationEventEdit() {
 
 	// fetch event detail for editing
 	const { data: showEvent, isLoading: showEventLoading } = useOrgEventById(id);
-	const {
-		data: locations = [],
-		isLoading: locationsLoading,
-		error: locationsError,
-	} = useOrgLocations();
+	const { locations, isLoading: locationsLoading, error: locationsError } = useOrgLocations();
 
 	const {
 		data: categories = [],
