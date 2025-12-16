@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://peladen.my.id/api";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // ============================================================================
 // REFRESH TOKEN STATE MANAGEMENT
@@ -34,7 +34,17 @@ api.interceptors.request.use(
 			return config;
 		}
 
-		const token = localStorage.getItem("authToken");
+		const token = (() => {
+			try {
+				const t = localStorage.getItem("authToken");
+				if (!t) return null;
+				if (t === "undefined" || t === "null") return null;
+				return t;
+			} catch (e) {
+				return null;
+			}
+		})();
+
 		if (token) {
 			config.headers.Authorization = `Bearer ${token}`;
 		}
@@ -104,7 +114,16 @@ function logError(error) {
  */
 async function handleUnauthorizedError(error) {
 	const originalRequest = error.config;
-	const oldToken = localStorage.getItem("authToken");
+	const oldToken = (() => {
+		try {
+			const t = localStorage.getItem("authToken");
+			if (!t) return null;
+			if (t === "undefined" || t === "null") return null;
+			return t;
+		} catch (e) {
+			return null;
+		}
+	})();
 
 	// Guard clauses
 	if (!originalRequest || originalRequest._retry) {
@@ -148,8 +167,10 @@ async function refreshTokenAndRetry(originalRequest, oldToken) {
 	try {
 		const newToken = await refreshToken(oldToken);
 
-		// Update token
-		localStorage.setItem("authToken", newToken);
+		// Update token (hanya jika ada nilai valid)
+		if (newToken) {
+			localStorage.setItem("authToken", newToken);
+		}
 		processQueue(null, newToken);
 
 		// Retry original request dengan token baru

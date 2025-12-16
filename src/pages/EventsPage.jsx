@@ -163,7 +163,7 @@ export default function EventsPage() {
 	}
 
 	if (eventsLoading || categoriesLoading) {
-		return <Skeleton.EventsSkeleton />;
+		return <Skeleton.EventsSkeleton rows={3} />;
 	}
 
 	return (

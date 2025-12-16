@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // UI Libraries
 import { motion } from "framer-motion";
@@ -10,23 +11,17 @@ import { Building2, MapPin, Mail, Phone, Globe, Star, CheckCircle, Search } from
 import { useOrganizations } from "@/_hooks/useOrganizations";
 import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
 
-// Helpers
-import { getImageUrl } from "@/utils";
-
 // UI Components
 import DynamicButton from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
-import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
+import OrganizationCard from "@/components/OrganizationCard";
 
 export default function OrganizationsPage() {
 	useDocumentTitle("Organizations Page");
-	
-	const {
-		data: organizations = [],
-		isLoading,
-		error,
-	} = useOrganizations({ status_verifikasi: "verified" });
+	const navigate = useNavigate();
+
+	const { data: organizations = [], isLoading, error } = useOrganizations("verified");
 
 	const [searchTerm, setSearchTerm] = useState("");
 
@@ -60,7 +55,7 @@ export default function OrganizationsPage() {
 	}
 
 	if (isLoading) {
-		return <Skeleton.OrgSkeleton />;
+		return <Skeleton.OrgSkeleton rows={3} />;
 	}
 
 	return (
@@ -69,11 +64,11 @@ export default function OrganizationsPage() {
 				{/* Hero Header */}
 				<div className="mb-8 text-center">
 					<h1 className="text-4xl lg:text-5xl font-bold  text-emerald-600 mb-4">
-						Organisasi Komunitas
+						Organisasi Penyelenggara
 					</h1>
 					<p className="text-xl text-gray-600 max-w-2xl mx-auto">
-						Bergabunglah dengan berbagai organisasi komunitas yang berkontribusi untuk membuat
-						perubahan positif di masyarakat
+						Bergabunglah dengan berbagai organisasi yang berkontribusi untuk membuat perubahan
+						positif di masyarakat
 					</p>
 				</div>
 
@@ -108,144 +103,18 @@ export default function OrganizationsPage() {
 						<p className="text-gray-600">Coba ubah kata kunci pencarian Anda</p>
 					</motion.div>
 				) : (
-					<div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+					<div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
 						{filteredOrganizations.map((org, index) => (
 							<motion.div
 								key={org.id}
 								initial={{ opacity: 0, y: 20 }}
 								animate={{ opacity: 1, y: 0 }}
-								transition={{ duration: 0.5, delay: index * 0.1 }}>
-								<Card className="h-full hover:shadow-xl transition-all duration-300 group cursor-pointer overflow-hidden">
-									{/* Organization Banner */}
-									<div className="relative h-40 bg-gradient-to-br rounded-lg from-emerald-400 to-teal-500 overflow-hidden">
-										{org.logo && (
-											<AsyncImage
-												loading="lazy"
-												Transition={Fade}
-												src={getImageUrl(`organizations/${org.logo}`)}
-												alt={`${org.nama} banner`}
-												className="object-cover w-full h-full opacity-40 group-hover:opacity-60 transition-opacity"
-												onError={(e) => {
-													e.currentTarget.style.display = "none";
-												}}
-											/>
-										)}
-										<div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-										{/* Verified Badge */}
-										{org.status_verifikasi === "verified" && (
-											<Badge
-												variant="success"
-												className="absolute top-3 right-3 text-black backdrop-blur-sm shadow-lg">
-												<CheckCircle className="w-3 h-3 mr-1" />
-												Terverifikasi
-											</Badge>
-										)}
-									</div>
-
-									{/* Organization Logo Avatar */}
-									<div className="px-6 -mt-16 relative z-10">
-										<div className="w-24 h-24 rounded-2xl bg-white border-4 border-white shadow-xl overflow-hidden flex items-center justify-center">
-											{org.logo ? (
-												<AsyncImage
-													loading="lazy"
-													Transition={Fade}
-													src={getImageUrl(`organizations/${org.logo}`)}
-													alt={`${org.nama} logo`}
-													className="object-cover w-full h-full"
-													onError={(e) => {
-														e.currentTarget.parentElement.innerHTML = `
-															<div class="text-emerald-600 font-bold text-2xl">
-																${String(org.nama || "A")
-																	.split(" ")
-																	.map((s) => s[0])
-																	.slice(0, 2)
-																	.join("")}
-															</div>
-														`;
-													}}
-												/>
-											) : (
-												<div className="text-emerald-600 font-bold text-2xl">
-													{String(org.nama || "Anonymous")
-														.split(" ")
-														.map((s) => s[0])
-														.slice(0, 2)
-														.join("")}
-												</div>
-											)}
-										</div>
-									</div>
-
-									{/* Content */}
-									<div className="px-6 pt-4 pb-6">
-										{/* Organization Name */}
-										<h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors">
-											{org.nama}
-										</h3>
-
-										{/* Location */}
-										{org.kota && (
-											<div className="flex items-center text-gray-600 mb-4">
-												<MapPin className="w-4 h-4 mr-2 text-emerald-500" />
-												<span className="text-sm font-medium">{org.kota}</span>
-											</div>
-										)}
-
-										{/* Description */}
-										{org.deskripsi && (
-											<p className="text-gray-700 mb-4 line-clamp-3 leading-relaxed">
-												{org.deskripsi}
-											</p>
-										)}
-
-										{/* Rating */}
-										{org.rating != null && (
-											<div className="flex items-center gap-1 mb-5 pb-5 border-b border-gray-100">
-												<Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-												<span className="font-bold text-gray-900 text-lg">
-													{Number(org.rating).toFixed(1)}
-												</span>
-												<span className="text-gray-500 text-sm">/5.0</span>
-											</div>
-										)}
-
-										{/* Contact Links */}
-										<div className="flex items-center gap-4 flex-wrap">
-											{org.email && (
-												<a
-													href={`mailto:${org.email}`}
-													className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors font-medium text-sm"
-													onClick={(e) => e.stopPropagation()}>
-													<Mail className="w-4 h-4" />
-													Email
-												</a>
-											)}
-											{org.telepon && (
-												<a
-													href={`tel:${org.telepon}`}
-													className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-teal-50 text-teal-700 hover:bg-teal-100 transition-colors font-medium text-sm"
-													onClick={(e) => e.stopPropagation()}>
-													<Phone className="w-4 h-4" />
-													Telepon
-												</a>
-											)}
-											{org.website && (
-												<a
-													href={
-														org.website.startsWith("http") ? org.website : `https://${org.website}`
-													}
-													target="_blank"
-													rel="noreferrer"
-													className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors font-medium text-sm"
-													onClick={(e) => e.stopPropagation()}>
-													<Globe className="w-4 h-4" />
-													Website
-												</a>
-											)}
-										</div>
-									</div>
-								</Card>
+								transition={{ duration: 0.5, delay: index * 0.05 }}
+								className="cursor-pointer">
+								<OrganizationCard
+									organization={org}
+									onClick={(id) => navigate(`/organizations/details/${id}`)}
+								/>
 							</motion.div>
 						))}
 					</div>

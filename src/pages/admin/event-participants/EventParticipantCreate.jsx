@@ -25,7 +25,7 @@ export default function AdminEventParticipantCreate() {
 
 	const { isLoading } = useAuthStore();
 
-	const { data: events = [], isLoading: eventsLoading, error: eventsError } = useAdminEvents();
+	const { events, isLoading: eventsLoading, error: eventsError } = useAdminEvents();
 	const {
 		data: volunteers = [],
 		isLoading: volunteersLoading,

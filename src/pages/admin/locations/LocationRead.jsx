@@ -13,37 +13,37 @@ import {
 	AlertCircle,
 } from "lucide-react";
 import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import { getGoogleMapsUrl, parseApiError } from "@/utils";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import FetchLoader from "@/components/ui/FetchLoader";
 import Badge from "@/components/ui/Badge";
+import { useDebounce } from "@/_hooks/useDebounce";
 
 export default function AdminLocation() {
+	const [searchLocation, setSearchLocation] = useState("");
+	const [currentPage, setCurrentPage] = useState(1);
+	const [rowsPerPage, setRowsPerPage] = useState(10);
+
+	// Debounce search menggunakan custom hook
+	const debouncedSearch = useDebounce(searchLocation, 500);
+
+	// Reset ke halaman 1 saat search berubah
+	useEffect(() => {
+		setCurrentPage(1);
+	}, [debouncedSearch]);
+
 	const {
-		data: locations = [],
+		locations,
+		pagination,
 		isLoading: locationsLoading,
 		error: locationsError,
 		isFetching: locationsRefetching,
-	} = useAdminLocations();
+	} = useAdminLocations(currentPage, rowsPerPage, debouncedSearch);
 
 	const deleteLocationMutation = useAdminDeleteLocationMutation();
-
-	// Local state for search/filter
-	const [searchLocation, setSearchLocation] = useState("");
-
-	const filteredLocations = useMemo(() => {
-		if (!searchLocation) return locations;
-		const query = searchLocation.toLowerCase();
-		return locations.filter((locationItem) => {
-			const lokasi = String(locationItem.nama || "").toLowerCase();
-			const kota = String(locationItem.kota || "").toLowerCase();
-			const provinsi = String(locationItem.provinsi || "").toLowerCase();
-			return lokasi.includes(query) || kota.includes(query) || provinsi.includes(query);
-		});
-	}, [locations, searchLocation]);
 
 	// Fungsi untuk menangani penghapusan kursus
 	const handleDelete = (id) => {
@@ -87,6 +87,16 @@ export default function AdminLocation() {
 				}); // Panggil fungsi deleteMutation dengan ID event
 			}
 		});
+	};
+
+	// Handler untuk perubahan halaman dan rows per page
+	const handlePageChange = (page) => {
+		setCurrentPage(page);
+	};
+
+	const handlePerRowsChange = (newPerPage, page) => {
+		setRowsPerPage(newPerPage);
+		setCurrentPage(page);
 	};
 
 	const columns = [
@@ -182,7 +192,6 @@ export default function AdminLocation() {
 				<div className="bg-white rounded-lg shadow p-6">
 					<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
 						<h2 className="text-lg font-semibold">
-							{" "}
 							{locationsRefetching ? (
 								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
 							) : (
@@ -198,99 +207,109 @@ export default function AdminLocation() {
 						</LinkButton>
 					</div>
 
+					<div className="w-80 mb-4">
+						<input
+							type="text"
+							placeholder="Cari lokasi, kota, atau provinsi..."
+							value={searchLocation}
+							onChange={(e) => setSearchLocation(e.target.value)}
+							className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
+						/>
+					</div>
 					{locationsLoading ? (
 						<div className="flex h-96 justify-center py-20">
-							{" "}
 							<Loader2 className="animate-spin h-7 w-7 text-emerald-600" />
 						</div>
 					) : (
-						<>
-							<div className="w-80 mb-4">
-								<input
-									type="text"
-									placeholder="Cari lokasi, kota, atau provinsi..."
-									value={searchLocation}
-									onChange={(e) => setSearchLocation(e.target.value)}
-									className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
-								/>
-							</div>
-							<DataTable
-								columns={columns}
-								data={filteredLocations}
-								pagination
-								pointerOnHover
-								title=""
-								highlightOnHover
-								persistTableHead
-								responsive
-								fixedHeader
-								striped
-								sortIcon={<ChevronDown />}
-								expandableRows
-								expandableRowsComponent={({ data }) => (
-									<div className="p-4 bg-white rounded-md border border-gray-100 shadow-sm">
-										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-											<div className="space-y-3">
-												<p className="text-sm text-gray-600">
-													<strong>Lokasi:</strong> {data.nama || "-"}
-												</p>
-												<p className="text-sm text-gray-600">
-													<strong>Alamat:</strong> {data.alamat || "-"}
-												</p>
-												<p className="text-sm text-gray-600">
-													<strong>Kota:</strong> {data.kota || "-"}
-												</p>
-												<p className="text-sm text-gray-600">
-													<strong>Provinsi:</strong> {data.provinsi || "-"}
-												</p>
-											</div>
-											<div>
-												<p className="text-sm text-gray-600">
-													<strong>Koordinat Peta:</strong>
-												</p>
-												<p className="text-sm text-gray-800 mt-1">
-													<strong>Lat:</strong> {data.latitude ?? 0} <br />
-													<strong>Long:</strong> {data.longitude ?? 0}
-												</p>
-
-												<div className="mt-3">
-													<a
-														href={getGoogleMapsUrl({ location: data })}
-														target="_blank"
-														rel="noreferrer"
-														className="text-sm text-blue-600 hover:underline">
-														Buka di Google Maps
-													</a>
-												</div>
-											</div>
-											{data.alamat_lengkap && (
-												<div className="md:col-span-2">
-													<p className="text-sm text-gray-600 mb-1">
-														<strong>Alamat Lengkap:</strong>{" "}
-													</p>
-													<p className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
-														{data.alamat_lengkap || "-"}
-													</p>
-												</div>
-											)}
+						<DataTable
+							columns={columns}
+							data={locations}
+							pagination
+							paginationServer
+							paginationTotalRows={pagination.total || 0}
+							paginationDefaultPage={currentPage}
+							onChangePage={handlePageChange}
+							onChangeRowsPerPage={handlePerRowsChange}
+							paginationPerPage={rowsPerPage}
+							paginationRowsPerPageOptions={[10, 20, 30, 50, 100]}
+							progressPending={locationsRefetching}
+							progressComponent={
+								<div className="flex justify-center py-10">
+									<Loader2 className="animate-spin h-6 w-6 text-emerald-600" />
+								</div>
+							}
+							pointerOnHover
+							title=""
+							highlightOnHover
+							persistTableHead
+							responsive
+							fixedHeader
+							striped
+							sortIcon={<ChevronDown />}
+							expandableRows
+							expandableRowsComponent={({ data }) => (
+								<div className="p-4 bg-white rounded-md border border-gray-100 shadow-sm">
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+										<div className="space-y-3">
+											<p className="text-sm text-gray-600">
+												<strong>Lokasi:</strong> {data.nama || "-"}
+											</p>
+											<p className="text-sm text-gray-600">
+												<strong>Alamat:</strong> {data.alamat || "-"}
+											</p>
+											<p className="text-sm text-gray-600">
+												<strong>Kota:</strong> {data.kota || "-"}
+											</p>
+											<p className="text-sm text-gray-600">
+												<strong>Provinsi:</strong> {data.provinsi || "-"}
+											</p>
 										</div>
+										<div>
+											<p className="text-sm text-gray-600">
+												<strong>Koordinat Peta:</strong>
+											</p>
+											<p className="text-sm text-gray-800 mt-1">
+												<strong>Lat:</strong> {data.latitude ?? 0} <br />
+												<strong>Long:</strong> {data.longitude ?? 0}
+											</p>
+
+											<div className="mt-3">
+												<a
+													href={getGoogleMapsUrl({ location: data })}
+													target="_blank"
+													rel="noreferrer"
+													className="text-sm text-blue-600 hover:underline">
+													Buka di Google Maps
+												</a>
+											</div>
+										</div>
+										{data.alamat_lengkap && (
+											<div className="md:col-span-2">
+												<p className="text-sm text-gray-600 mb-1">
+													<strong>Alamat Lengkap:</strong>{" "}
+												</p>
+												<p className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
+													{data.alamat_lengkap || "-"}
+												</p>
+											</div>
+										)}
 									</div>
-								)}
-								noDataComponent={
-									<div className="flex flex-col items-center justify-center h-64 text-gray-600">
-										<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
-										<h3 className="text-lg font-semibold mb-2">
-											{searchLocation ? "No Matching Locations Found" : "No Locations Available"}
-										</h3>
-										<p className="text-gray-500 mb-4 text-center">
-											{searchLocation
-												? "Tidak ada lokasi yang sesuai dengan pencarian."
-												: "Belum ada data lokasi"}
-										</p>
-									</div>
-								}
-							/>
-						</>
+								</div>
+							)}
+							noDataComponent={
+								<div className="flex flex-col items-center justify-center h-64 text-gray-600">
+									<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+									<h3 className="text-lg font-semibold mb-2">
+										{searchLocation ? "No Matching Locations Found" : "No Locations Available"}
+									</h3>
+									<p className="text-gray-500 mb-4 text-center">
+										{searchLocation
+											? "Tidak ada lokasi yang sesuai dengan pencarian."
+											: "Belum ada data lokasi"}
+									</p>
+								</div>
+							}
+						/>
 					)}
 				</div>
 			</div>

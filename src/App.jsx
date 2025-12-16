@@ -19,6 +19,8 @@ import LandingPage from "@/pages/LandingPage";
 import EventsPage from "@/pages/EventsPage";
 import OrganizationsPage from "@/pages/OrganizationsPage";
 import AboutPage from "@/pages/AboutPage";
+import DetailEventPage from "@/pages/DetailEventPage";
+import DetailOrganizationPage from "@/pages/DetailOrganizationPage";
 const { PrivacyPolicyPage, TermsOfServicePage } = {
 	PrivacyPolicyPage: lazy(() =>
 		import("./pages/PrivacyTerms").then((m) => ({ default: m.PrivacyPolicyPage }))
@@ -28,7 +30,6 @@ const { PrivacyPolicyPage, TermsOfServicePage } = {
 	),
 };
 // Volunteer
-import DetailEventPage from "@/pages/DetailEventPage";
 const ProfilePage = lazy(() => import("@/pages/volunteer/ProfilePage"));
 const EditProfilePage = lazy(() => import("@/pages/volunteer/EditProfilePage"));
 import MyActivitiesPage from "@/pages/volunteer/MyActivitiesPage";
@@ -108,6 +109,7 @@ import OrganizationLocationEdit from "@/pages/organization/locations/LocationEdi
 import { ScrollToTop } from "@/components/common/ScrollToTop";
 import FloatingHelp from "@/components/common/FloatingHelp";
 import { FloatingFaQ } from "./components/common/FloatingFaQ";
+import { useUserRole } from "./_hooks/useAuth";
 /**
  * Komponen utama aplikasi volunteer platform
  * Mengatur routing dengan layout yang menggunakan Outlet
@@ -116,6 +118,7 @@ import { FloatingFaQ } from "./components/common/FloatingFaQ";
  * @returns {JSX.Element} Struktur aplikasi lengkap dengan routing dan layout
  */
 function App() {
+	const currentRole = useUserRole();
 	return (
 		<>
 			<ScrollToTop />
@@ -133,7 +136,10 @@ function App() {
 							<Route index element={<EventsPage />} />
 							<Route path="details/:eventId" element={<DetailEventPage />} />
 						</Route>
-						<Route path="organizations" element={<OrganizationsPage />} />
+						<Route path="organizations">
+							<Route index element={<OrganizationsPage />} />
+							<Route path="details/:organizationId" element={<DetailOrganizationPage />} />
+						</Route>
 						<Route path="about-us" element={<AboutPage />} />
 					</Route>
 					<Route path="privacy-policy" element={<PrivacyPolicyPage />} />
@@ -317,12 +323,18 @@ function App() {
 			<CancelJoinModal />
 			<FeedbackModal />
 			<OnboardingModal />
-
-			{/* Floating help button */}
-			<FloatingHelp whatsapp={"6285894310722"} email={"relaonevolunteer@gmail.com"} />
-
-			{/* Floating FAQ button */}
-			<FloatingFaQ />
+			{currentRole && currentRole !== "admin" && (
+				<>
+					{/* Floating help button */}
+					<FloatingHelp whatsapp={"6285894310722"} email={"relaonevolunteer@gmail.com"} />
+				</>
+			)}
+			{currentRole && currentRole !== "admin" && currentRole !== "organization" && (
+				<>
+					{/* Floating FAQ button */}
+					<FloatingFaQ />
+				</>
+			)}
 		</>
 	);
 }

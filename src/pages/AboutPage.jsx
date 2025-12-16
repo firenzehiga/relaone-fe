@@ -161,9 +161,7 @@ export default function AboutPage() {
 								/>
 								<div className="text-5xl font-bold bg-black bg-clip-text text-transparent">
 									Rela
-									<span className="text-5xl font-bold bg-emerald-600 bg-clip-text text-transparent">
-										O
-									</span>
+									<span className="text-5xl font-bold text-emerald-600">O</span>
 									ne.
 								</div>
 							</div>
@@ -171,11 +169,11 @@ export default function AboutPage() {
 
 						{/* Description */}
 						<div className="w-full lg:w-1/2 px-2 lg:px-6">
-							<h5 className="text-gray-500 text-sm mb-2">About RelaOne</h5>
-							<h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
+							<h2 className="text-3xl md:text-4xl font-bold mb-4">
 								Connecting People with <br className="hidden md:inline" />
 								Social Purpose
 							</h2>
+							<h5 className="text-black font-semibold text-lg mb-2">About RelaOne</h5>
 
 							<p className="text-gray-600 leading-relaxed text-justify mb-4">
 								RelaOne adalah platform yang dirancang untuk mempermudah organisasi dan relawan
@@ -211,7 +209,7 @@ export default function AboutPage() {
 						</p>
 					</div>
 
-					<div className="bg-transparent rounded-2xl shadow-sm overflow-hidden">
+					<div className=" overflow-hidden">
 						<div className="p-4 sm:p-8" style={{ minHeight: "700px" }}>
 							<Masonry
 								items={galleryItems}

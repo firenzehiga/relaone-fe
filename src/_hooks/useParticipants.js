@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as eventParticipantService from "@/_services/eventParticipantService";
 import { useAuthStore, useUserRole } from "./useAuth";
 import { useNavigate } from "react-router-dom";
-import { parseApiError } from "@/utils";
+import { parseApiError, toQueryBuilderParams } from "@/utils";
 import { showToast } from "@/components/ui/Toast";
 
 /** PUBLIC HOOKS
@@ -242,21 +242,32 @@ export const userVolunteerHistoryById = (id) => {
  * Hook untuk mengambil data event participants hanya untuk admin
  * @returns {Object} Query result dengan data, isLoading, error, etc
  */
-export const useAdminParticipants = () => {
+export const useAdminParticipants = (page = 1, limit = 10, search = "") => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "admin";
 
-	return useQuery({
-		queryKey: ["adminParticipants"],
+	const query = useQuery({
+		queryKey: ["adminParticipants", page, limit, search],
 		queryFn: async () => {
-			const response = await eventParticipantService.adminGetParticipants();
+			const params = toQueryBuilderParams({ page, limit, search });
+
+			const response = await eventParticipantService.adminGetParticipants(params);
 			return response;
 		},
 		enabled,
+		keepPreviousData: true, // Menjaga data sebelumnya saat fetching
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
 	});
+
+	return {
+		participants: query.data?.data || [],
+		pagination: query.data?.pagination || {},
+		isLoading: query.isLoading,
+		error: query.error,
+		isFetching: query.isFetching,
+	};
 };
 
 /**
@@ -396,9 +407,6 @@ export const useAdminDeleteParticipantMutation = () => {
 		onMutate: () => setLoading(true),
 
 		onSuccess: (_, id) => {
-			queryClient.setQueryData(["adminParticipants"], (oldData) =>
-				oldData.filter((participant) => participant.id !== id)
-			);
 			queryClient.invalidateQueries(["adminParticipants"]);
 			setLoading(false);
 			showToast({
@@ -422,21 +430,32 @@ export const useAdminDeleteParticipantMutation = () => {
  * Hook untuk mengambil data event participants hanya untuk organization
  * @returns {Object} Query result dengan data, isLoading, error, etc
  */
-export const useOrgParticipants = () => {
+export const useOrgParticipants = (page = 1, limit = 10, search = "") => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "organization";
 
-	return useQuery({
-		queryKey: ["orgParticipants"],
+	const query = useQuery({
+		queryKey: ["orgParticipants", page, limit, search],
 		queryFn: async () => {
-			const response = await eventParticipantService.orgGetParticipants();
+			const params = toQueryBuilderParams({ page, limit, search });
+
+			const response = await eventParticipantService.orgGetParticipants(params);
 			return response;
 		},
 		enabled,
+		keepPreviousData: true, // Menjaga data sebelumnya saat fetching
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
 	});
+
+	return {
+		participants: query.data?.data || [],
+		pagination: query.data?.pagination || {},
+		isLoading: query.isLoading,
+		error: query.error,
+		isFetching: query.isFetching,
+	};
 };
 
 /**

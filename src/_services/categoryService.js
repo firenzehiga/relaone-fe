@@ -34,9 +34,9 @@ export const getCategoryById = async (id) => {
  * @endpoint GET /admin/categories
  * @returns {Promise<any>} Data semua categories.
  */
-export const adminGetCategories = async () => {
-	const response = await api.get("/admin/categories");
-	return response.data.data || response.data;
+export const adminGetCategories = async (params = {}) => {
+	const response = await api.get("/admin/categories", { params });
+	return response.data;
 };
 
 /** Mengambil detail category berdasarkan ID.

@@ -16,7 +16,7 @@ export default function AdminEventParticipantEdit() {
 	const navigate = useNavigate();
 	const isDirty = useRef(false);
 
-	const { data: events = [], isLoading: eventsLoading } = useAdminEvents();
+	const { events, isLoading: eventsLoading } = useAdminEvents();
 	const { data: volunteers = [], isLoading: volunteersLoading } = useAdminVolunteerUsers();
 	const { data: showParticipant, isLoading: showLoading } = useAdminParticipantById(id);
 	const updateMutation = useAdminUpdateParticipantMutation();

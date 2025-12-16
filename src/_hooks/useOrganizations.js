@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as organizationService from "@/_services/organizationService";
 import { useAuthStore, useUserRole } from "@/_hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { parseApiError } from "@/utils";
+import { parseApiError, toQueryBuilderParams } from "@/utils";
 import { showToast } from "@/components/ui/Toast";
 
 /**
@@ -11,10 +11,12 @@ import { showToast } from "@/components/ui/Toast";
  * @returns {UseQueryResult<Array>} List organisasi
  * @features Auto-refetch setiap 1 menit, cache 5 menit
  */
-export const useOrganizations = (params = {}) => {
+export const useOrganizations = (status_verifikasi = "") => {
 	return useQuery({
-		queryKey: ["organizations"],
+		queryKey: ["organizations", status_verifikasi],
 		queryFn: async () => {
+			const params = toQueryBuilderParams({ status_verifikasi });
+
 			const response = await organizationService.getOrganizations(params);
 			return response;
 		},
@@ -30,11 +32,11 @@ export const useOrganizations = (params = {}) => {
  * @param {string|number} organizationId - ID organization
  * @returns {UseQueryResult<Object>} Data detail organization
  */
-export const useOrganizationById = (id) => {
+export const useOrganizationById = (id, page = 1, limit = 10) => {
 	return useQuery({
-		queryKey: ["organizations", id],
+		queryKey: ["organizations", id, page, limit],
 		queryFn: async () => {
-			const response = await organizationService.getOrganizationById(id);
+			const response = await organizationService.getOrganizationById(id, { page, limit });
 			return response;
 		},
 		enabled: !!id,
@@ -50,20 +52,33 @@ export const useOrganizationById = (id) => {
  * @returns {UseQueryResult<Array>} List organisasi
  * @features Auto-refetch setiap 1 menit, cache 5 menit
  */
-export const useAdminOrganizations = (params = {}) => {
+export const useAdminOrganizations = (page = 1, limit = 10, search = "") => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "admin";
-	return useQuery({
-		queryKey: ["adminOrganizations"],
+
+	const query = useQuery({
+		queryKey: ["adminOrganizations", page, limit, search],
 		queryFn: async () => {
+			const params = toQueryBuilderParams({ page, limit, search });
+
 			const response = await organizationService.adminGetOrganizations(params);
 			return response;
 		},
 		enabled,
+		keepPreviousData: true, // Menjaga data sebelumnya saat fetching
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
 	});
+
+	return {
+		organizations: query.data?.data || [],
+		pagination: query.data?.pagination || {},
+		isLoading: query.isLoading,
+		isError: query.isError,
+		error: query.error,
+		isFetching: query.isFetching,
+	};
 };
 
 /**
@@ -202,9 +217,6 @@ export const useAdminDeleteOrganizationMutation = () => {
 	return useMutation({
 		mutationFn: organizationService.adminDeleteOrganization,
 		onSuccess: (_, id) => {
-			queryClient.setQueryData(["adminOrganizations"], (oldData) =>
-				oldData.filter((organization) => organization.id !== id)
-			);
 			queryClient.invalidateQueries(["adminOrganizations"]);
 		},
 	});

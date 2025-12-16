@@ -24,6 +24,20 @@ const rehydratedUser = (() => {
 	}
 })();
 
+// Helper untuk mengambil token dari localStorage dengan sanitasi
+const getStoredToken = () => {
+	try {
+		const t = localStorage.getItem("authToken");
+		if (!t) return null;
+		// localStorage bisa berisi string "undefined" atau "null" jika
+		// sesuatu menulis nilai tidak valid — anggap itu sebagai tidak ada token
+		if (t === "undefined" || t === "null") return null;
+		return t;
+	} catch (e) {
+		return null;
+	}
+};
+
 /**
  * Helper untuk mengambil status verifikasi organisasi tanpa memodifikasi objek user.
  * Mengcover beberapa kemungkinan shape yang dikembalikan backend.
@@ -47,8 +61,8 @@ export function getOrgVerificationStatus(user) {
 const useAuthStore = create((set, get) => ({
 	// data yang diisi dari localStorage apabila ada (rehydrated pada startup)
 	user: rehydratedUser,
-	token: localStorage.getItem("authToken"),
-	isAuthenticated: !!localStorage.getItem("authToken"),
+	token: getStoredToken(),
+	isAuthenticated: !!getStoredToken(),
 	isLoading: false,
 	error: null,
 	// flag untuk menandakan inisialisasi store selesai (dipakai oleh AuthInitializer)
@@ -113,7 +127,7 @@ const useAuthStore = create((set, get) => ({
 	 * Fungsi ini bisa dipanggil sekali di entrypoint (mis. main.jsx) untuk menghindari "flash"
 	 */
 	initializeAuth: async () => {
-		const token = localStorage.getItem("authToken");
+		const token = getStoredToken();
 
 		// jika tidak ada token, pastikan kita tidak menampilkan data user yang kadaluarsa
 		if (!token) {
@@ -174,8 +188,8 @@ export const useLogin = () => {
 			// Show success toast
 			showToast({
 				type: "success",
-				title: "Login Successful",
-				message: `Welcome back, ${data.data.user.nama}!`,
+				title: "Login Berhasil",
+				message: `Selamat datang, ${data.data.user.nama}!`,
 				duration: 2000,
 				position: "top-right",
 			});
@@ -387,8 +401,8 @@ export const useLogout = () => {
 			// Show success toast
 			showToast({
 				type: "success",
-				title: "Logout Successful",
-				message: `You have been logged out successfully`,
+				title: "Logout Berhasil!",
+				message: `Sampai Jumpa Kembali.`,
 				duration: 2000,
 				position: "top-right",
 			});

@@ -61,10 +61,7 @@ export const volunteerCancelJoin = async (data) => {
 export const volunteerGenerateQrCode = async (data) => {
 	try {
 		// backend expects event_id in the request body
-		const response = await api.post(
-			"/volunteer/event-participations/generate-qr",
-			data
-		);
+		const response = await api.post("/volunteer/event-participations/generate-qr", data);
 		return response.data.data || response.data;
 	} catch (error) {
 		console.log("Error creating QR Code:", error);
@@ -99,9 +96,7 @@ export const volunteerGetHistory = async () => {
  * @returns {Promise<any>} Data detail participant
  */
 export const volunteerGetHistoryById = async (id) => {
-	const response = await api.get(
-		`/volunteer/event-participations/history/${id}`
-	);
+	const response = await api.get(`/volunteer/event-participations/history/${id}`);
 	return response.data.data || response.data;
 };
 
@@ -116,7 +111,7 @@ export const volunteerGetHistoryById = async (id) => {
  */
 export const adminGetParticipants = async (params = {}) => {
 	const response = await api.get("/admin/event-participants", { params });
-	return response.data.data || response.data;
+	return response.data;
 };
 
 /** Mengambil detail participant berdasarkan ID.
@@ -196,9 +191,9 @@ export const adminDeleteParticipant = async (id) => {
  * @param {Object} params - Query parameters untuk filtering
  * @returns {Promise} Promise dengan data participants
  */
-export const orgGetParticipants = async () => {
-	const response = await api.get("/organization/event-participants");
-	return response.data.data || response.data;
+export const orgGetParticipants = async (params = {}) => {
+	const response = await api.get("/organization/event-participants", { params });
+	return response.data;
 };
 
 /** * Konfirmasi status pendaftaran partisipan
@@ -245,9 +240,7 @@ export const orgRejectParticipant = async (id) => {
  * @returns {Promise} Promise dengan data statistics
  */
 export const orgGetAttendanceStats = async (eventId) => {
-	const response = await api.get(
-		`/organization/events/${eventId}/attendance/statistics`
-	);
+	const response = await api.get(`/organization/events/${eventId}/attendance/statistics`);
 	return response.data.data || response.data;
 };
 
@@ -277,9 +270,7 @@ export const orgScanQrCheckIn = async ({ eventId, qr_data }) => {
  * @returns {Promise} Promise dengan data recent check-ins
  */
 export const orgGetRecentCheckIns = async (eventId) => {
-	const response = await api.get(
-		`/organization/events/${eventId}/attendance/recent`
-	);
+	const response = await api.get(`/organization/events/${eventId}/attendance/recent`);
 	return response.data.data || response.data;
 };
 
@@ -292,9 +283,7 @@ export const orgGetRecentCheckIns = async (eventId) => {
  * @returns {Promise} Promise dengan data QR code
  */
 export const orgGetParticipantQR = async (participantId) => {
-	const response = await api.get(
-		`/organization/event-participants/${participantId}/qr-code`
-	);
+	const response = await api.get(`/organization/event-participants/${participantId}/qr-code`);
 	return response.data;
 };
 
@@ -307,8 +296,6 @@ export const orgGetParticipantQR = async (participantId) => {
  * @returns {Promise} Promise dengan data hasil update
  */
 export const orgUpdateNoShowParticipants = async (eventId) => {
-	const response = await api.post(
-		`/organization/events/${eventId}/update-no-show`
-	);
+	const response = await api.post(`/organization/events/${eventId}/update-no-show`);
 	return response.data;
 };

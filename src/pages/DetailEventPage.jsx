@@ -1,6 +1,15 @@
 import { useParams, useNavigate } from "react-router-dom";
 
-import { Calendar, MapPin, Users, Clock, CalendarX, Gift, NotepadText } from "lucide-react";
+import {
+	Calendar,
+	MapPin,
+	Users,
+	Clock,
+	CalendarX,
+	Gift,
+	NotepadText,
+	ArrowLeft,
+} from "lucide-react";
 import { AsyncImage } from "loadable-image";
 import { Fade } from "transitions-kit";
 
@@ -158,6 +167,7 @@ export default function DetailEventPage() {
 									size="sm"
 									className="w-full md:w-auto"
 									onClick={() => navigate("/events")}>
+									<ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
 									Kembali
 								</DynamicButton>
 								<DynamicButton

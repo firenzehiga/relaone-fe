@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -24,92 +25,64 @@ import { RegisterIllustration } from "@/components/common/Illustration";
 export default function RegisterPage() {
 	useDocumentTitle("Register Page");
 
-	const [formData, setFormData] = useState({
-		nama: "",
-		email: "",
-		password: "",
-		password_confirmation: "",
-		telepon: "",
-		tanggal_lahir: "",
-		jenis_kelamin: "",
-		alamat: "",
-		role: "volunteer",
-		// organization specific
-		organization_nama: "",
-		organization_deskripsi: "",
-		agreeToTerms: false,
-	});
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+	const {
+		register,
+		handleSubmit,
+		watch,
+		getValues,
+		formState: { errors, isSubmitting, isSubmitted, isValid },
+	} = useForm({
+		defaultValues: {
+			nama: "",
+			email: "",
+			password: "",
+			password_confirmation: "",
+			telepon: "",
+			tanggal_lahir: "",
+			jenis_kelamin: "",
+			alamat: "",
+			role: "volunteer",
+			organization_nama: "",
+			organization_deskripsi: "",
+			agreeToTerms: false,
+		},
+		mode: "onChange",
+		reValidateMode: "onChange",
+	});
+	const watchRole = watch("role");
+
 	const registerMutation = useRegister();
 	const { isLoading } = useAuthStore();
-	const { error: storeError } = useAuthStore();
 
-	const [submitAttempted, setSubmitAttempted] = useState(false);
 	const [apiErrors, setApiErrors] = useState(null);
 
-	const handleInputChange = (e) => {
-		const { name, value, type, checked } = e.target;
-		setFormData((prev) => ({
-			...prev,
-			[name]: type === "checkbox" ? checked : value,
-		}));
-	};
-
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-
-		// Basic validation
-		setSubmitAttempted(true);
-
-		if (
-			!formData.nama ||
-			!formData.email ||
-			!formData.password ||
-			!formData.password_confirmation
-		) {
-			return;
-		}
-
-		// If registering as organization, require organization_nama
-		if (formData.role === "organization" && !formData.organization_nama) {
-			return;
-		}
-
-		if (formData.password !== formData.password_confirmation) {
-			return;
-		}
-
-		if (!formData.agreeToTerms) {
-			return;
-		}
-
-		// Prepare data for API (remove confirm password and agreeToTerms)
+	const onSubmit = async (data) => {
+		// data comes from react-hook-form
+		// prepare payload similar to previous behavior
 		const payload = {
-			nama: formData.nama,
-			email: formData.email,
-			password: formData.password,
-			password_confirmation: formData.password_confirmation,
-			telepon: formData.telepon || null,
-			tanggal_lahir: formData.tanggal_lahir || null,
-			jenis_kelamin: formData.jenis_kelamin || null,
-			alamat: formData.alamat || null,
-			role: formData.role,
+			nama: data.nama,
+			email: data.email,
+			password: data.password,
+			password_confirmation: data.password_confirmation,
+			telepon: data.telepon || null,
+			tanggal_lahir: data.tanggal_lahir || null,
+			jenis_kelamin: data.jenis_kelamin || null,
+			alamat: data.alamat || null,
+			role: data.role,
 		};
 
-		// tambahkan field organisasi bila diperlukan
-		if (formData.role === "organization") {
-			payload.organization_nama = formData.organization_nama || "";
-			payload.organization_deskripsi = formData.organization_deskripsi || "";
+		if (data.role === "organization") {
+			payload.organization_nama = data.organization_nama || "";
+			payload.organization_deskripsi = data.organization_deskripsi || "";
 		}
 
-		// Panggil mutation register pakai try/catch agar handling lebih sederhana
-		setApiErrors(null); // bersihkan error lama
+		setApiErrors(null);
 		try {
 			await registerMutation.mutateAsync(payload);
 			setApiErrors(null);
-			// pesan sukses ditangani di mutation
 		} catch (error) {
 			console.log(error?.errors);
 			const msg = error?.errors || "Registrasi gagal";
@@ -130,10 +103,10 @@ export default function RegisterPage() {
 					<div className="w-full max-w-md">
 						{/* Back Button */}
 						<Link
-							to="/"
+							to="/login"
 							className="inline-flex items-center text-gray-600 hover:text-gray-800 mb-8 transition-colors">
 							<ArrowLeft className="w-4 h-4 mr-2" />
-							Go Back
+							Kembali ke Login
 						</Link>
 
 						{/* Header */}
@@ -142,7 +115,7 @@ export default function RegisterPage() {
 							animate={{ y: 0, opacity: 1 }}
 							transition={{ delay: 0.2, duration: 0.5 }}
 							className="mb-8">
-							<h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
+							<h2 className="text-3xl font-bold text-gray-900">Buat Akun</h2>
 						</motion.div>
 
 						{/* Register Form */}
@@ -150,64 +123,65 @@ export default function RegisterPage() {
 							// initial={{ y: 20, opacity: 0 }}
 							// animate={{ y: 0, opacity: 1 }}
 							// transition={{ delay: 0.4, duration: 0.5 }}
-							onSubmit={handleSubmit}
+							onSubmit={handleSubmit(onSubmit)}
 							className="space-y-6">
 							{/* Use grid for main fields to reduce vertical length on larger screens */}
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 								{/* Full Name */}
 								<div className="md:col-span-2">
 									<label htmlFor="nama" className="block text-sm font-medium text-gray-700 mb-1">
-										Full Name <span className="text-red-500">*</span>
+										Nama Lengkap <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
 										<User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
 										<input
 											type="text"
 											id="nama"
-											name="nama"
-											value={formData.nama}
-											onChange={handleInputChange}
+											{...register("nama", { required: "Full name is required" })}
 											className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 											placeholder="John Doe"
 											disabled={isLoading}
-											required
 										/>
+										{isSubmitted && errors.nama && (
+											<p className="mt-1 text-sm text-red-600">{errors.nama.message}</p>
+										)}
 									</div>
 								</div>
 
 								{/* Email */}
 								<div>
 									<label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-										Email Address <span className="text-red-500">*</span>
+										Email Aktif <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
 										<Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
 										<input
 											type="email"
 											id="email"
-											name="email"
-											value={formData.email}
-											onChange={handleInputChange}
+											{...register("email", {
+												required: "Email wajib diisi",
+												pattern: { value: /^\S+@\S+$/i, message: "Format email tidak valid" },
+											})}
 											className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 											placeholder="your@example.com"
 											disabled={isLoading}
-											required
 										/>
+										{isSubmitted && errors.email && (
+											<p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+										)}
 									</div>
 								</div>
 								{/* Phone */}
 								<div>
 									<label htmlFor="telepon" className="block text-sm font-medium text-gray-700 mb-1">
-										Phone Number <span className="text-red-500">*</span>
+										Nomor Telepon/Whatsapp <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
 										<Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
 										<input
 											type="tel"
 											id="telepon"
-											name="telepon"
-											value={formData.telepon}
-											onChange={handleInputChange}
+											{...register("telepon")}
 											className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 											placeholder="081xxxxxxxxx"
 											disabled={isLoading}
@@ -220,16 +194,14 @@ export default function RegisterPage() {
 									<label
 										htmlFor="tanggal_lahir"
 										className="block text-sm font-medium text-gray-700 mb-1">
-										Date of Birth
+										Tanggal Lahir
 									</label>
 									<div className="relative">
 										<Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
 										<input
 											type="date"
 											id="tanggal_lahir"
-											name="tanggal_lahir"
-											value={formData.tanggal_lahir}
-											onChange={handleInputChange}
+											{...register("tanggal_lahir")}
 											className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 											disabled={isLoading}
 										/>
@@ -240,15 +212,13 @@ export default function RegisterPage() {
 									<label
 										htmlFor="jenis_kelamin"
 										className="block text-sm font-medium text-gray-700 mb-1">
-										Gender
+										Jenis Kelamin
 									</label>
 									<div className="relative">
 										<Users className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
 										<select
 											id="jenis_kelamin"
-											name="jenis_kelamin"
-											value={formData.jenis_kelamin}
-											onChange={handleInputChange}
+											{...register("jenis_kelamin")}
 											className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none disabled:bg-gray-50 disabled:cursor-not-allowed"
 											disabled={isLoading}>
 											<option value="">Select Gender</option>
@@ -260,18 +230,19 @@ export default function RegisterPage() {
 								{/* Address (span full) */}
 								<div className="md:col-span-2">
 									<label htmlFor="alamat" className="block text-sm font-medium text-gray-700 mb-1">
-										Address <span className="text-red-500">*</span>
+										Alamat <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
 										<textarea
 											id="alamat"
-											name="alamat"
-											value={formData.alamat}
-											onChange={handleInputChange}
+											{...register("alamat", { required: "Address is required" })}
 											placeholder="Alamat lengkap"
 											className="w-full pl-3 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 											disabled={isLoading}
 										/>
+										{isSubmitted && errors.alamat && (
+											<p className="mt-1 text-sm text-red-600">{errors.alamat.message}</p>
+										)}
 									</div>
 								</div>
 
@@ -288,13 +259,10 @@ export default function RegisterPage() {
 												<input
 													type="radio"
 													id="volunteer-option"
-													name="role"
 													value="volunteer"
-													checked={formData.role === "volunteer"}
-													onChange={handleInputChange}
+													{...register("role", { required: true })}
 													className="hidden peer"
 													disabled={isLoading}
-													required
 												/>
 												<label
 													htmlFor="volunteer-option"
@@ -313,10 +281,8 @@ export default function RegisterPage() {
 												<input
 													type="radio"
 													id="organization-option"
-													name="role"
 													value="organization"
-													checked={formData.role === "organization"}
-													onChange={handleInputChange}
+													{...register("role", { required: true })}
 													className="hidden peer"
 													disabled={isLoading}
 												/>
@@ -345,15 +311,17 @@ export default function RegisterPage() {
 										<input
 											type={showPassword ? "text" : "password"}
 											id="password"
-											name="password"
-											value={formData.password}
-											onChange={handleInputChange}
+											{...register("password", {
+												required: "Password wajib diisi",
+												minLength: { value: 8, message: "Password minimal 8 karakter" },
+											})}
 											className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 											placeholder="••••••••"
 											disabled={isLoading}
-											minLength={8}
-											required
 										/>
+										{isSubmitted && errors.password && (
+											<p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+										)}
 										<button
 											type="button"
 											onClick={() => setShowPassword(!showPassword)}
@@ -369,21 +337,26 @@ export default function RegisterPage() {
 									<label
 										htmlFor="password_confirmation"
 										className="block text-sm font-medium text-gray-700 mb-1">
-										Confirm Password <span className="text-red-500">*</span>
+										Konfirmasi Password <span className="text-red-500">*</span>
 									</label>
 									<div className="relative">
 										<Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
 										<input
 											type={showConfirmPassword ? "text" : "password"}
 											id="password_confirmation"
-											name="password_confirmation"
-											value={formData.password_confirmation}
-											onChange={handleInputChange}
+											{...register("password_confirmation", {
+												required: "Confirm password is required",
+												validate: (v) => v === getValues("password") || "Passwords do not match",
+											})}
 											className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 											placeholder="••••••••"
 											disabled={isLoading}
-											required
 										/>
+										{isSubmitted && errors.password_confirmation && (
+											<p className="mt-1 text-sm text-red-600">
+												{errors.password_confirmation.message}
+											</p>
+										)}
 										<button
 											type="button"
 											onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -396,14 +369,11 @@ export default function RegisterPage() {
 											)}
 										</button>
 									</div>
-									{formData.password_confirmation &&
-										formData.password !== formData.password_confirmation && (
-											<p className="mt-1 text-sm text-red-600">Passwords do not match</p>
-										)}
+									{/* password confirmation handled by react-hook-form validation */}
 								</div>
 							</div>
 							{/* Organization-specific fields (shown only when role === 'organization') */}
-							{formData.role === "organization" && (
+							{watchRole === "organization" && (
 								<div className="mt-2">
 									<details className="bg-gray-50 border border-gray-100 rounded-lg p-3">
 										<summary className="cursor-pointer font-medium">
@@ -416,21 +386,24 @@ export default function RegisterPage() {
 														<label
 															htmlFor="organization_nama"
 															className="block text-sm font-medium text-gray-700 mb-1">
-															Organization Name <span className="text-red-500">*</span>
+															Nama Organisasi<span className="text-red-500">*</span>
 														</label>
 														<input
 															type="text"
 															id="organization_nama"
-															name="organization_nama"
-															value={formData.organization_nama}
-															onChange={handleInputChange}
+															{...register("organization_nama", {
+																validate: (v) =>
+																	watchRole !== "organization" ||
+																	(v && v.trim() !== "") ||
+																	"Organization name is required.",
+															})}
 															className="w-full pl-3 pr-4 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 															placeholder="Your organization name"
 															disabled={isLoading}
 														/>
-														{submitAttempted && !formData.organization_nama && (
+														{isSubmitted && errors.organization_nama && (
 															<p className="mt-1 text-sm text-red-600">
-																Organization name is required.
+																{errors.organization_nama.message}
 															</p>
 														)}
 													</div>
@@ -439,13 +412,11 @@ export default function RegisterPage() {
 														<label
 															htmlFor="organization_deskripsi"
 															className="block text-sm font-medium text-gray-700 mb-1">
-															Organization Description <span className="text-red-500">*</span>
+															Deskripsi Organisasi <span className="text-red-500">*</span>
 														</label>
 														<textarea
 															id="organization_deskripsi"
-															name="organization_deskripsi"
-															value={formData.organization_deskripsi}
-															onChange={handleInputChange}
+															{...register("organization_deskripsi")}
 															className="w-full pl-3 pr-4 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
 															placeholder="A short description"
 															disabled={isLoading}
@@ -482,27 +453,24 @@ export default function RegisterPage() {
 								<input
 									type="checkbox"
 									id="agreeToTerms"
-									name="agreeToTerms"
-									checked={formData.agreeToTerms}
-									onChange={handleInputChange}
+									{...register("agreeToTerms", { required: true })}
 									disabled={isLoading}
 									className="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:cursor-not-allowed"
-									required
 								/>
 								<label htmlFor="agreeToTerms" className="ml-2 text-sm text-gray-600">
-									I agree to the{" "}
+									Saya menyetujui{" "}
 									<Link
 										to="/terms-of-service"
 										target="_blank"
 										className="text-blue-600 hover:text-blue-800">
-										Terms of Service
+										Syarat dan Ketentuan
 									</Link>{" "}
-									and{" "}
+									dan{" "}
 									<Link
 										to="/privacy-policy"
 										target="_blank"
 										className="text-blue-600 hover:text-blue-800">
-										Privacy Policy
+										Kebijakan Privasi
 									</Link>
 								</label>
 							</div>
@@ -511,23 +479,15 @@ export default function RegisterPage() {
 							<DynamicButton
 								type="submit"
 								variant="success"
-								disabled={
-									isLoading ||
-									!formData.nama ||
-									!formData.email ||
-									!formData.password ||
-									!formData.password_confirmation ||
-									formData.password !== formData.password_confirmation ||
-									!formData.agreeToTerms
-								}
+								disabled={isLoading || isSubmitting || !isValid}
 								className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white py-3 rounded-lg font-medium transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
 								{isLoading ? (
 									<div className="flex items-center justify-center space-x-2">
 										<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-										<span>Creating Account...</span>
+										<span>Membuat Akun...</span>
 									</div>
 								) : (
-									"Create Account"
+									"Buat Akun"
 								)}
 							</DynamicButton>
 						</motion.form>
@@ -538,9 +498,9 @@ export default function RegisterPage() {
 							animate={{ y: 0, opacity: 1 }}
 							transition={{ delay: 0.6, duration: 0.5 }}
 							className="text-center text-gray-600 mt-8">
-							Already have an account?{" "}
+							Sudah punya akun?{" "}
 							<Link to="/login" className="text-blue-600 hover:text-blue-800 font-medium">
-								Sign in
+								Login
 							</Link>
 						</motion.p>
 

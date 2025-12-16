@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as eventService from "@/_services/eventService";
 import { useAuthStore, useUserRole } from "./useAuth";
 import { useNavigate } from "react-router-dom";
-import { parseApiError } from "@/utils";
+import { parseApiError, toQueryBuilderParams } from "@/utils";
 import { showToast } from "@/components/ui/Toast";
 
 // === PUBLIC HOOKS ===
@@ -59,21 +59,33 @@ export const useEventById = (id) => {
  * Hook untuk mengambil data events (admin)
  * @returns {Object} Query result dengan data, isLoading, error, etc
  */
-export const useAdminEvents = () => {
+export const useAdminEvents = (page = 1, limit = 10, search = "") => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "admin"; // supaya kalo admin login, ga fetch events
 
-	return useQuery({
-		queryKey: ["adminEvents"],
+	const query = useQuery({
+		queryKey: ["adminEvents", page, limit, search],
+
 		queryFn: async () => {
-			const response = await eventService.adminGetEvents();
+			const params = toQueryBuilderParams({ page, limit, search });
+
+			const response = await eventService.adminGetEvents(params);
 			return response;
 		},
 		enabled,
+		keepPreviousData: true, // Menjaga data sebelumnya saat fetching
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
 	});
+
+	return {
+		events: query.data?.data || [],
+		pagination: query.data?.pagination || {},
+		isLoading: query.isLoading,
+		error: query.error,
+		isFetching: query.isFetching,
+	};
 };
 
 /**
@@ -211,9 +223,6 @@ export const useAdminDeleteEventMutation = () => {
 	return useMutation({
 		mutationFn: eventService.adminDeleteEvent,
 		onSuccess: (_, id) => {
-			queryClient.setQueryData(["adminEvents"], (oldData) =>
-				oldData.filter((event) => event.id !== id)
-			);
 			queryClient.invalidateQueries(["adminEvents"]);
 			queryClient.invalidateQueries(["orgEvents"]);
 		},
@@ -225,21 +234,32 @@ export const useAdminDeleteEventMutation = () => {
  * Hook untuk mengambil data events (organization)
  * @returns {Object} Query result dengan data, isLoading, error, etc
  */
-export const useOrgEvents = () => {
+export const useOrgEvents = (page = 1, limit = 10, search = "") => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "organization";
 
-	return useQuery({
-		queryKey: ["orgEvents"],
+	const query = useQuery({
+		queryKey: ["orgEvents", page, limit, search],
 		queryFn: async () => {
-			const response = await eventService.orgGetEvents();
+			const params = toQueryBuilderParams({ page, limit, search });
+
+			const response = await eventService.orgGetEvents(params);
 			return response;
 		},
 		enabled,
+		keepPreviousData: true, // Menjaga data sebelumnya saat fetching
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
 	});
+
+	return {
+		events: query.data?.data || [],
+		pagination: query.data?.pagination || {},
+		isLoading: query.isLoading,
+		error: query.error,
+		isFetching: query.isFetching,
+	};
 };
 
 /**

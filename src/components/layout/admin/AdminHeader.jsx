@@ -89,10 +89,7 @@ export default function AdminHeader() {
 	useEffect(() => {
 		const handleClickOutside = (event) => {
 			// Tutup desktop submenu jika klik di luar
-			if (
-				desktopSubmenuRef.current &&
-				!desktopSubmenuRef.current.contains(event.target)
-			) {
+			if (desktopSubmenuRef.current && !desktopSubmenuRef.current.contains(event.target)) {
 				setDesktopSubmenuOpen(null);
 			}
 
@@ -116,19 +113,15 @@ export default function AdminHeader() {
 			<div className="w-full px-4 sm:px-6 lg:px-8">
 				<div className="flex items-center justify-between h-16 max-w-7xl mx-auto">
 					{/* Logo */}
-					<Link
-						to="/admin/dashboard"
-						className="flex items-center space-x-2 group">
-						<img
-							src="/images/logo_fe.png"
-							alt="RelaOne Logo"
-							className="w-10 h-10"
-						/>
-						<span className="text-xl font-bold bg-gradient-to-r from-gray-600 to-gray-600 bg-clip-text text-transparent">
-							Admin
-						</span>
-						<span className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-600 bg-clip-text text-transparent">
-							RelaOne
+					<Link to="/admin/dashboard" className="flex items-center space-x-2 group">
+						<img src="/images/logo_fe.png" alt="RelaOne Logo" className="w-10 h-10" />
+						<span className="text-xl font-bold bg-gradient-to-r from-gray-600 to-gray-600 bg-clip-text text-transparent"></span>
+						<span className="text-xl font-bold bg-black bg-clip-text text-transparent">
+							Admin Rela
+							<span className="text-xl font-bold bg-emerald-600 bg-clip-text text-transparent">
+								O
+							</span>
+							ne.
 						</span>
 					</Link>
 
@@ -136,8 +129,7 @@ export default function AdminHeader() {
 					<nav className="hidden lg:flex items-center space-x-4 flex-1 justify-center">
 						{navItems.map((item) => {
 							const active =
-								isActive(item.href) ||
-								(item.submenu && item.submenu.some((s) => isActive(s.href)));
+								isActive(item.href) || (item.submenu && item.submenu.some((s) => isActive(s.href)));
 							if (item.submenu) {
 								return (
 									<div
@@ -153,15 +145,10 @@ export default function AdminHeader() {
 													: "text-gray-700 hover:text-emerald-600 hover:bg-emerald-50"
 											}`}
 											onClick={() =>
-												setDesktopSubmenuOpen(
-													desktopSubmenuOpen === item.name ? null : item.name
-												)
+												setDesktopSubmenuOpen(desktopSubmenuOpen === item.name ? null : item.name)
 											}
 											aria-expanded={desktopSubmenuOpen === item.name}>
-											<item.icon
-												size={16}
-												className={active ? "text-emerald-600" : ""}
-											/>
+											<item.icon size={16} className={active ? "text-emerald-600" : ""} />
 											<span className="font-medium">{item.name}</span>
 											<ChevronDown size={14} />
 										</button>
@@ -200,10 +187,7 @@ export default function AdminHeader() {
 											? "text-emerald-600 bg-emerald-50 font-semibold"
 											: "text-gray-700 hover:text-emerald-600 hover:bg-emerald-50"
 									}`}>
-									<item.icon
-										size={16}
-										className={active ? "text-emerald-600" : ""}
-									/>
+									<item.icon size={16} className={active ? "text-emerald-600" : ""} />
 									<span className="font-medium">{item.name}</span>
 								</Link>
 							);
@@ -226,10 +210,7 @@ export default function AdminHeader() {
 									<span className="text-sm font-medium text-gray-700 hidden sm:block">
 										{user?.nama}
 									</span>
-									<ChevronDown
-										size={16}
-										className="text-gray-500 hidden sm:block"
-									/>
+									<ChevronDown size={16} className="text-gray-500 hidden sm:block" />
 								</button>
 
 								<AnimatePresence>
@@ -240,9 +221,7 @@ export default function AdminHeader() {
 											exit={{ opacity: 0, y: -10 }}
 											className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
 											<div className="p-3 border-b border-gray-100">
-												<p className="text-sm font-medium text-gray-800">
-													{user?.nama}
-												</p>
+												<p className="text-sm font-medium text-gray-800">{user?.nama}</p>
 												<p className="text-xs text-gray-500">{user?.email}</p>
 											</div>
 											<div className="p-2">
@@ -267,10 +246,7 @@ export default function AdminHeader() {
 							</div>
 						) : (
 							<div className="hidden lg:flex items-center space-x-2">
-								<DynamicButton
-									variant="success"
-									size="sm"
-									onClick={() => navigate("/login")}>
+								<DynamicButton variant="success" size="sm" onClick={() => navigate("/login")}>
 									<LogIn size={16} className="mr-1" />
 									Masuk
 								</DynamicButton>
@@ -306,8 +282,7 @@ export default function AdminHeader() {
 									{navItems.map((item, index) => {
 										const active =
 											isActive(item.href) ||
-											(item.submenu &&
-												item.submenu.some((s) => isActive(s.href)));
+											(item.submenu && item.submenu.some((s) => isActive(s.href)));
 										if (item.submenu) {
 											return (
 												<motion.div
@@ -325,9 +300,7 @@ export default function AdminHeader() {
 														<div className="flex items-center space-x-3">
 															<item.icon
 																size={20}
-																className={
-																	active ? "text-emerald-600" : "text-gray-500"
-																}
+																className={active ? "text-emerald-600" : "text-gray-500"}
 															/>
 															<span className="font-medium">{item.name}</span>
 														</div>
@@ -348,9 +321,7 @@ export default function AdminHeader() {
 																	<s.icon
 																		size={18}
 																		className={
-																			isActive(s.href)
-																				? "text-emerald-600"
-																				: "text-gray-500"
+																			isActive(s.href) ? "text-emerald-600" : "text-gray-500"
 																		}
 																	/>
 																	<span className="font-medium">{s.name}</span>
@@ -377,9 +348,7 @@ export default function AdminHeader() {
 													onClick={() => setMobileMenuOpen(false)}>
 													<item.icon
 														size={20}
-														className={
-															active ? "text-emerald-600" : "text-gray-500"
-														}
+														className={active ? "text-emerald-600" : "text-gray-500"}
 													/>
 													<span className="font-medium">{item.name}</span>
 												</Link>

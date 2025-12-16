@@ -1,9 +1,10 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, ArrowLeft, Heart } from "lucide-react";
 
-import { useLogin, useAuthStore } from "@/_hooks/useAuth";
+import { useAuthStore, useLogin } from "@/_hooks/useAuth";
 import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
 
 import { LoginIllustration } from "@/components/common/Illustration";
@@ -12,37 +13,29 @@ import DynamicButton from "@/components/ui/Button";
 export default function LoginPage() {
 	useDocumentTitle("Login Page");
 
-	const [formData, setFormData] = useState({
-		email: "",
-		password: "",
-		rememberMe: false,
-	});
 	const [showPassword, setShowPassword] = useState(false);
+
+	const {
+		register,
+		handleSubmit,
+		formState: { errors, isSubmitting, isSubmitted, isValid },
+	} = useForm({
+		defaultValues: { email: "", password: "" },
+		mode: "onChange",
+		reValidateMode: "onChange",
+	});
 
 	const loginMutation = useLogin();
 	const { isLoading } = useAuthStore();
 
-	const handleInputChange = (e) => {
-		const { name, value, type, checked } = e.target;
-		setFormData((prev) => ({
-			...prev,
-			[name]: type === "checkbox" ? checked : value,
-		}));
-	};
-
-	const handleSubmit = (e) => {
-		e.preventDefault();
-
-		// Basic validation
-		if (!formData.email || !formData.password) {
-			return;
+	const onSubmit = async (data) => {
+		try {
+			await loginMutation.mutateAsync({ email: data.email, password: data.password });
+			// optional: redirect or show success
+		} catch (err) {
+			// optional: handle server error (toast, setError, etc.)
+			console.error(err);
 		}
-
-		// Call login mutation with email and password
-		loginMutation.mutate({
-			email: formData.email,
-			password: formData.password,
-		});
 	};
 
 	return (
@@ -58,7 +51,7 @@ export default function LoginPage() {
 							to="/"
 							className="inline-flex items-center text-gray-600 hover:text-gray-800 mb-8 transition-colors">
 							<ArrowLeft className="w-4 h-4 mr-2" />
-							Go Back
+							Kembali
 						</Link>
 
 						{/* Header */}
@@ -68,8 +61,8 @@ export default function LoginPage() {
 							transition={{ delay: 0.2, duration: 0.5 }}
 							exit={{ opacity: 0 }}
 							className="mb-8">
-							<h2 className="text-3xl font-bold text-gray-900 mb-2">Sign In</h2>
-							<p className="text-gray-600">Enter your credentials to continue</p>
+							<h2 className="text-3xl font-bold text-gray-900 mb-2">Login</h2>
+							<p className="text-gray-600">Masukkan kredensial anda untuk masuk</p>
 						</motion.div>
 
 						{/* Login Form */}
@@ -77,27 +70,41 @@ export default function LoginPage() {
 							// initial={{ y: 10, opacity: 0 }}
 							// animate={{ y: 0, opacity: 1 }}
 							// transition={{ delay: 0.4, duration: 0.5 }}
-							onSubmit={handleSubmit}
+							onSubmit={handleSubmit(onSubmit)}
 							className="space-y-6">
 							{/* Email Field */}
 							<div>
 								<label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-									Email Address
+									Email
 								</label>
 								<div className="relative">
 									<Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
 									<input
 										type="email"
 										id="email"
-										name="email"
-										value={formData.email}
-										onChange={handleInputChange}
-										className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+										{...register("email", {
+											required: "Email wajib diisi",
+											pattern: {
+												value: /^\S+@\S+$/i,
+												message: "Format email tidak valid",
+											},
+										})}
+										aria-invalid={!!errors.email}
+										aria-describedby={errors.email ? "email-error" : undefined}
+										className={`w-full pl-10 pr-4 py-3 border rounded-lg outline-none transition-all disabled:bg-gray-50 disabled:cursor-not-allowed ${
+											isSubmitted && errors.email
+												? "border-red-500 focus:ring-1 focus:ring-red-500"
+												: "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+										}`}
 										placeholder="your@example.com"
-										disabled={isLoading}
-										required
+										disabled={isLoading || isSubmitting}
 									/>
 								</div>
+								{isSubmitted && errors.email && (
+									<p id="email-error" className="text-xs text-red-600 mt-1">
+										{errors.email.message}
+									</p>
+								)}
 							</div>
 
 							{/* Password Field */}
@@ -110,13 +117,19 @@ export default function LoginPage() {
 									<input
 										type={showPassword ? "text" : "password"}
 										id="password"
-										name="password"
-										value={formData.password}
-										onChange={handleInputChange}
-										className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+										{...register("password", {
+											required: "Password wajib diisi",
+											minLength: { value: 8, message: "Password minimal 8 karakter" },
+										})}
+										aria-invalid={!!errors.password}
+										aria-describedby={errors.password ? "password-error" : undefined}
+										className={`w-full pl-10 pr-12 py-3 border rounded-lg outline-none transition-all disabled:bg-gray-50 disabled:cursor-not-allowed ${
+											isSubmitted && errors.password
+												? "border-red-500 focus:ring-1 focus:ring-red-500"
+												: "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+										}`}
 										placeholder="••••••••"
-										disabled={isLoading}
-										required
+										disabled={isLoading || isSubmitting}
 									/>
 									<button
 										type="button"
@@ -126,6 +139,11 @@ export default function LoginPage() {
 										{showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
 									</button>
 								</div>
+								{isSubmitted && errors.password && (
+									<p id="password-error" className="text-xs text-red-600 mt-1">
+										{errors.password.message}
+									</p>
+								)}
 							</div>
 
 							{/* Remember Me & Forgot Password */}
@@ -144,7 +162,7 @@ export default function LoginPage() {
 									</span>
 								</label> */}
 								<Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-800">
-									Forgot password?
+									Lupa Password?
 								</Link>
 							</div>
 
@@ -152,15 +170,15 @@ export default function LoginPage() {
 							<DynamicButton
 								type="submit"
 								variant="success"
-								disabled={isLoading || !formData.email || !formData.password}
+								disabled={isLoading || isSubmitting || !isValid}
 								className="w-full text-white py-3 rounded-lg font-medium transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
 								{isLoading ? (
 									<div className="flex items-center justify-center space-x-2">
 										<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-										<span>Signing In...</span>
+										<span>Logging In...</span>
 									</div>
 								) : (
-									"Sign In"
+									"Login"
 								)}
 							</DynamicButton>
 						</motion.form>
@@ -171,9 +189,9 @@ export default function LoginPage() {
 							animate={{ y: 0, opacity: 1 }}
 							transition={{ delay: 0.6, duration: 0.5 }}
 							className="text-center text-gray-600 mt-8">
-							Don't have an account?{" "}
+							Belum punya akun?{" "}
 							<Link to="/register" className="text-blue-600 hover:text-blue-800 font-medium">
-								Sign up
+								Daftar
 							</Link>
 						</motion.p>
 
