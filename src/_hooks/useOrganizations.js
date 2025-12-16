@@ -93,7 +93,7 @@ export const useAdminOrganizationById = (id) => {
 	return useQuery({
 		queryKey: ["adminOrganizations", id],
 		queryFn: async () => {
-			const response = await organizationService.getOrganizationById(id);
+			const response = await organizationService.adminGetOrganizationById(id);
 			return response;
 		},
 		enabled,
