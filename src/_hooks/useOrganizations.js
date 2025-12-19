@@ -17,6 +17,9 @@ export const useOrganizations = (
 	status_verifikasi = "",
 	search = ""
 ) => {
+	const currentRole = useUserRole();
+	const enabled = currentRole !== "admin" && currentRole !== "organization"; // supaya kalo admin login, ga fetch events
+
 	const query = useInfiniteQuery({
 		queryKey: ["organizations", limit, status_verifikasi, search],
 		queryFn: async ({ pageParam = initialPage }) => {
@@ -31,6 +34,7 @@ export const useOrganizations = (
 				? lastPage.pagination.current_page + 1
 				: undefined;
 		},
+		enabled,
 		keepPreviousData: true,
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,

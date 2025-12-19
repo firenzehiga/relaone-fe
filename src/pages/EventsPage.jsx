@@ -1,15 +1,17 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 // UI Libraries
 import { motion } from "framer-motion";
 import { Search, Filter, Calendar, MapPin } from "lucide-react";
+import { useInView } from "react-intersection-observer";
 
 // Hooks / stores
 import { useEvents } from "@/_hooks/useEvents";
 import { useCategory } from "@/_hooks/useCategories";
 import { useModalStore } from "@/stores/useAppStore";
 import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+import { useDebounce } from "@/_hooks/useDebounce";
 
 // Helpers
 import { toInputDate } from "@/utils/dateFormatter";
@@ -30,8 +32,25 @@ export default function EventsPage() {
 	useDocumentTitle("Events Page");
 	const navigate = useNavigate();
 	const [searchParams, setSearchParams] = useSearchParams();
+	const { ref: sentinelRef, inView } = useInView({ threshold: 0 });
 
-	const { data: events = [], isLoading: eventsLoading, error: eventsError } = useEvents();
+	const [filters, setFilters] = useState({
+		search: searchParams.get("search") || "",
+		category: searchParams.get("category") || "",
+		tanggal_mulai: "",
+		city: "",
+	});
+
+	const debouncedSearch = useDebounce(filters.search, 500);
+
+	const {
+		events,
+		isLoading: eventsLoading,
+		error: eventsError,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+	} = useEvents(1, 10, debouncedSearch, filters.category);
 
 	const {
 		data: categories = [],
@@ -41,14 +60,14 @@ export default function EventsPage() {
 
 	const { openJoinModal } = useModalStore();
 
-	const [filters, setFilters] = useState({
-		search: searchParams.get("search") || "",
-		category: searchParams.get("category") || "",
-		tanggal_mulai: "",
-		city: "",
-	});
-
 	const [showFilters, setShowFilters] = useState(false);
+
+	// Auto fetch next page when sentinel is in view
+	useEffect(() => {
+		if (inView && hasNextPage && !isFetchingNextPage) {
+			fetchNextPage();
+		}
+	}, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
 	const filteredEvents = useMemo(() => {
 		if (!events.length) return [];
@@ -56,23 +75,12 @@ export default function EventsPage() {
 
 		let list = events.filter((e) => e.status !== "draft");
 
-		if (q) {
-			list = list.filter((e) =>
-				(
-					(String(e.judul) || "") +
-					" " +
-					(String(e.deskripsi) || "") +
-					" " +
-					(String(e.location?.alamat) || "")
-				)
-					.toLowerCase()
-					.includes(q)
-			);
-		}
+		// Note: search dan category sudah dihandle oleh API via useEvents hook
+		// Keeping client-side filtering untuk filter lainnya
 
-		if (filters.category) {
-			list = list.filter((e) => e.category_id?.toString() === filters.category);
-		}
+		// if (filters.category) {
+		// 	list = list.filter((e) => e.category_id?.toString() === filters.category);
+		// }
 
 		if (filters.tanggal_mulai) {
 			// Karena format tanggal backend stabil, cukup bandingkan versi YYYY-MM-DD saja.
@@ -88,7 +96,7 @@ export default function EventsPage() {
 		}
 
 		return list;
-	}, [events, categories, filters.search, filters.category, filters.tanggal_mulai, filters.city]);
+	}, [events, filters.tanggal_mulai, filters.city]);
 
 	/**
 	 * Handler untuk mengubah filter dan sinkronisasi dengan URL search params
@@ -162,10 +170,6 @@ export default function EventsPage() {
 		);
 	}
 
-	if (eventsLoading || categoriesLoading) {
-		return <Skeleton.EventsSkeleton rows={3} />;
-	}
-
 	return (
 		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-blue-50 via-white to-purple-50">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -190,6 +194,7 @@ export default function EventsPage() {
 								type="text"
 								placeholder="Cari event berdasarkan nama, deskripsi, atau lokasi..."
 								value={filters.search}
+								disabled={eventsLoading || categoriesLoading}
 								onChange={(e) => handleFilterChange("search", e.target.value)}
 								className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
 							/>
@@ -228,6 +233,7 @@ export default function EventsPage() {
 									<label className="block text-gray-900 font-semibold mb-2">Kategori</label>
 									<select
 										value={filters.category}
+										disabled={eventsLoading || categoriesLoading}
 										onChange={(e) => handleFilterChange("category", e.target.value)}
 										className="w-full px-3 py-3 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
 										<option value="">Semua Kategori</option>
@@ -244,6 +250,7 @@ export default function EventsPage() {
 									<label className="block text-gray-900 font-semibold mb-2">Kota</label>
 									<select
 										value={filters.city}
+										disabled={eventsLoading || categoriesLoading}
 										onChange={(e) => handleFilterChange("city", e.target.value)}
 										className="w-full px-3 py-3 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
 										<option value="">Semua Kota</option>
@@ -261,6 +268,7 @@ export default function EventsPage() {
 									<input
 										type="date"
 										value={filters.tanggal_mulai}
+										disabled={eventsLoading || categoriesLoading}
 										onChange={(e) => handleFilterChange("tanggal_mulai", e.target.value)}
 										className="w-full px-3 py-3 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 									/>
@@ -297,14 +305,29 @@ export default function EventsPage() {
 					</div>
 				)}
 
-				{/* Results Count */}
-				<div className="flex items-center justify-between mb-6">
-					<p className="text-gray-600 font-medium">{`${filteredEvents.length} kegiatan ditemukan`}</p>
-				</div>
-
-				{/* Events Display */}
-				{filteredEvents.length > 0 ? (
+				{/* Events List */}
+				{eventsLoading || categoriesLoading ? (
+					<Skeleton.EventsSkeleton rows={3} />
+				) : filteredEvents.length === 0 ? (
+					<div className="text-center py-16">
+						<div className="mx-auto w-20 h-20 bg-gray-100 rounded-full flex items-center justify-between mb-6">
+							<Calendar className="text-gray-400 ml-5" size={36} />
+						</div>
+						<h3 className="text-2xl font-bold text-gray-900 mb-3">Tidak ada event ditemukan</h3>
+						<p className="text-gray-600 mb-6 text-lg">
+							Coba ubah filter pencarian atau kata kunci Anda
+						</p>
+						<DynamicButton variant="success" onClick={clearFilters}>
+							Hapus Filter
+						</DynamicButton>
+					</div>
+				) : (
 					<>
+						{/* Results Count */}
+						<div className="flex items-center justify-between mb-6">
+							<p className="text-gray-600 font-medium">{`${filteredEvents.length} kegiatan ditemukan`}</p>
+						</div>
+
 						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 							{filteredEvents.map((event, index) => (
 								<motion.div
@@ -322,20 +345,18 @@ export default function EventsPage() {
 								</motion.div>
 							))}
 						</div>
-					</>
-				) : (
-					<div className="text-center py-16">
-						<div className="mx-auto w-20 h-20 bg-gray-100 rounded-full flex items-center justify-between mb-6">
-							<Calendar className="text-gray-400 ml-5" size={36} />
+
+						{/* Sentinel: Auto load next page when scrolled into view */}
+						<div
+							ref={sentinelRef}
+							className="h-8 flex items-center justify-center mt-6 text-emerald-600">
+							{isFetchingNextPage
+								? "Memuat..."
+								: hasNextPage
+								? "Scroll untuk memuat lebih"
+								: "Tidak ada data lagi"}
 						</div>
-						<h3 className="text-2xl font-bold text-gray-900 mb-3">Tidak ada event ditemukan</h3>
-						<p className="text-gray-600 mb-6 text-lg">
-							Coba ubah filter pencarian atau kata kunci Anda
-						</p>
-						<DynamicButton variant="success" onClick={clearFilters}>
-							Hapus Filter
-						</DynamicButton>
-					</div>
+					</>
 				)}
 			</div>
 		</div>

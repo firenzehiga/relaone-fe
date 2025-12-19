@@ -1,31 +1,59 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 import * as eventService from "@/_services/eventService";
 import { useAuthStore, useUserRole } from "./useAuth";
 import { useNavigate } from "react-router-dom";
 import { parseApiError, toQueryBuilderParams } from "@/utils";
 import { showToast } from "@/components/ui/Toast";
 
-// === PUBLIC HOOKS ===
+// === PUBLIC & VOLUNTEER HOOKS ===
 /**
  * Hook untuk mengambil data events
- * @param {Object} params - Query parameters untuk filtering
+ * @param {number} initialPage - Halaman awal
+ * @param {number} limit - Jumlah item per halaman
+ * @param {string} search - Query pencarian
+ * @param {string} categoryId - Filter kategori ID
  * @returns {Object} Query result dengan data, isLoading, error, etc
  */
-export const useEvents = (params = {}) => {
+export const useEvents = (initialPage = 1, limit = 10, search = "", category_id = "") => {
 	const currentRole = useUserRole();
 	const enabled = currentRole !== "admin" && currentRole !== "organization"; // supaya kalo admin login, ga fetch events
 
-	return useQuery({
-		queryKey: ["events"],
-		queryFn: async () => {
+	const query = useInfiniteQuery({
+		queryKey: ["events", limit, search, category_id],
+		queryFn: async ({ pageParam = initialPage }) => {
+			const params = toQueryBuilderParams({
+				page: pageParam,
+				limit,
+				search,
+				category_id,
+			});
 			const response = await eventService.getEvents(params);
 			return response;
 		},
+		initialPageParam: initialPage,
+		getNextPageParam: (lastPage) => {
+			return lastPage?.pagination &&
+				lastPage.pagination.current_page < lastPage.pagination.last_page
+				? lastPage.pagination.current_page + 1
+				: undefined;
+		},
 		enabled,
-		// staleTime: 1 * 60 * 1000,
-		// cacheTime: 5 * 60 * 1000,
-		// retry: 1,
+		keepPreviousData: true,
+		staleTime: 1 * 60 * 1000,
+		cacheTime: 5 * 60 * 1000,
+		retry: 1,
 	});
+
+	return {
+		events: query.data?.pages?.flatMap((p) => p?.data || []) ?? [],
+		pagination: query.data?.pages?.slice(-1)[0]?.pagination ?? {},
+		isLoading: query.isLoading,
+		error: query.error,
+		isFetching: query.isFetching,
+		fetchNextPage: query.fetchNextPage,
+		hasNextPage: query.hasNextPage,
+		isFetchingNextPage: query.isFetchingNextPage,
+	};
 };
 
 /**

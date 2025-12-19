@@ -73,7 +73,10 @@ export const parseApiError = (err) => {
  * toQueryBuilderParams({ page: 1, search: '' }, ['search'])
  * // returns: { page: 1 } (search kosong tidak diikutkan)
  */
-export const toQueryBuilderParams = (params = {}, filterKeys = ["search", "status_verifikasi"]) => {
+export const toQueryBuilderParams = (
+	params = {},
+	filterKeys = ["search", "status_verifikasi", "category_id"]
+) => {
 	const result = { ...params };
 
 	filterKeys.forEach((key) => {

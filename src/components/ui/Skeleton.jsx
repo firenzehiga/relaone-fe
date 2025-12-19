@@ -436,60 +436,21 @@ Skeleton.OrgSkeleton = OrgSkeleton;
 // Skeleton untuk Events Page (full page skeleton mirip EventsPage)
 function EventsSkeleton({ rows = 3 }) {
 	return (
-		<div className=" min-h-screen py-8 bg-gradient-to-br from-emerald-50 via-white to-blue-50">
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				{/* Hero Header - mirror actual EventsPage */}
-				<div className="mb-8 text-center">
-					<h1 className="text-4xl lg:text-5xl font-bold text-emerald-600 mb-4">Kegiatan Relawan</h1>
-					<p className="text-xl text-gray-600">
-						Temukan berbagai kegiatan sosial yang dapat Anda ikuti. Mereka butuh bantuan Anda!
-					</p>
-				</div>
-
-				{/* Search and Filters Skeleton - mirror layout from EventsPage */}
-				<div className="bg-white border border-gray-200 rounded-2xl p-6 mb-8 shadow-lg">
-					<div className="mb-4">
-						<div className="relative">
-							<Search
-								className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
-								size={20}
-							/>
-							<input
-								type="text"
-								placeholder="Cari event berdasarkan nama, deskripsi, atau lokasi..."
-								disabled
-								className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-500 cursor-not-allowed"
-							/>
-						</div>
-					</div>
-
-					<div className="flex items-center justify-between">
-						<div className="h-8 w-36 bg-gray-100 rounded-lg" />
-
-						<div className="flex items-center gap-2">
-							<div className="flex bg-gray-100 rounded-lg p-1">
-								<div className="h-8 w-20 bg-gray-100 rounded-md" />
-								<div className="h-8 w-16 bg-gray-100 rounded-md ml-2" />
-							</div>
-						</div>
-					</div>
-				</div>
-
-				{/* Active Filters & Results count skeleton */}
-				<div className="flex flex-wrap items-center gap-2 mb-6">
-					<div className="h-4 w-32 bg-gray-100 rounded" />
-				</div>
-
-				{/* Cards grid skeleton */}
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-					{Array.from({ length: rows }).map((_, i) => (
-						<div key={i} className="animate-pulse">
-							<SkeletonEventCard />
-						</div>
-					))}
-				</div>
+		<>
+			{/* Active Filters & Results count skeleton */}
+			<div className="flex flex-wrap items-center gap-2 mb-6">
+				<div className="h-4 w-32 bg-gray-100 rounded" />
 			</div>
-		</div>
+
+			{/* Cards grid skeleton */}
+			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+				{Array.from({ length: rows }).map((_, i) => (
+					<div key={i} className="animate-pulse">
+						<SkeletonEventCard />
+					</div>
+				))}
+			</div>
+		</>
 	);
 }
 Skeleton.EventsSkeleton = EventsSkeleton;
