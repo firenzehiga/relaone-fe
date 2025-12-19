@@ -17,7 +17,7 @@ import api from "@/_api";
 export const getEvents = async (params = {}) => {
 	const response = await api.get("/events", { params });
 	// Laravel API mengembalikan format {success: true, data: [...]}
-	return response.data.data || response.data;
+	return response.data;
 };
 
 /** Mengambil detail event berdasarkan ID.
