@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as organizationService from "@/_services/organizationService";
 import { useAuthStore, useUserRole } from "@/_hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -11,19 +11,42 @@ import { showToast } from "@/components/ui/Toast";
  * @returns {UseQueryResult<Array>} List organisasi
  * @features Auto-refetch setiap 1 menit, cache 5 menit
  */
-export const useOrganizations = (status_verifikasi = "") => {
-	return useQuery({
-		queryKey: ["organizations", status_verifikasi],
-		queryFn: async () => {
-			const params = toQueryBuilderParams({ status_verifikasi });
-
+export const useOrganizations = (
+	initialPage = 1,
+	limit = 10,
+	status_verifikasi = "",
+	search = ""
+) => {
+	const query = useInfiniteQuery({
+		queryKey: ["organizations", limit, status_verifikasi, search],
+		queryFn: async ({ pageParam = initialPage }) => {
+			const params = toQueryBuilderParams({ page: pageParam, limit, status_verifikasi, search });
 			const response = await organizationService.getOrganizations(params);
 			return response;
 		},
+		initialPageParam: initialPage,
+		getNextPageParam: (lastPage) => {
+			return lastPage?.pagination &&
+				lastPage.pagination.current_page < lastPage.pagination.last_page
+				? lastPage.pagination.current_page + 1
+				: undefined;
+		},
+		keepPreviousData: true,
 		staleTime: 1 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
 		retry: 1,
 	});
+
+	return {
+		organizations: query.data?.pages?.flatMap((p) => p?.data || []) ?? [],
+		pagination: query.data?.pages?.slice(-1)[0]?.pagination ?? {},
+		isLoading: query.isLoading,
+		error: query.error,
+		isFetching: query.isFetching,
+		fetchNextPage: query.fetchNextPage,
+		hasNextPage: query.hasNextPage,
+		isFetchingNextPage: query.isFetchingNextPage,
+	};
 };
 
 /**

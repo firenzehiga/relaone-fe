@@ -210,7 +210,7 @@ Skeleton.Detail = SkeletonDetail;
 // Skeleton khusus untuk Organization Detail Page
 function OrganizationDetailSkeleton() {
 	return (
-		<div className="page-transition min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 py-8">
+		<div className=" min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 py-8">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Back Button */}
 				<div className="mb-6">
@@ -376,92 +376,58 @@ Skeleton.FormSkeleton = FormSkeleton;
 
 function OrgSkeleton({ rows = 3 }) {
 	return (
-		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-blue-50 via-green-50 to-purple-50">
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				{/* Hero Header */}
-				<div className="mb-8 text-center">
-					<h1 className="text-4xl lg:text-5xl font-bold text-emerald-600 mb-4">
-						Organisasi Penyelenggara
-					</h1>
-					<p className="text-xl text-gray-600 max-w-2xl mx-auto">
-						Bergabunglah dengan berbagai organisasi yang berkontribusi untuk membuat perubahan
-						positif di masyarakat
-					</p>
-				</div>
-
-				{/* Search Bar */}
-				<div className="mb-8">
-					<Card className="p-4">
-						<div className="relative">
-							<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-							<input
-								type="text"
-								placeholder="Cari organisasi, lokasi, atau kata kunci..."
-								disabled
-								className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed outline-none"
-							/>
+		<div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+			{Array.from({ length: rows }).map((_, i) => (
+				<Card key={i} className="h-full overflow-hidden animate-pulse flex flex-col" aria-hidden>
+					{/* Banner with gradient - smaller height */}
+					<div className="relative h-32 bg-gradient-to-br from-emerald-400 to-teal-500 overflow-hidden">
+						{/* Verified Badge */}
+						<div className="absolute top-2 right-2">
+							<ChkSkeleton height="20px" width="80px" borderRadius="full" />
 						</div>
-					</Card>
-				</div>
+					</div>
 
-				{/* Organizations Grid - 3 columns on desktop (compact) */}
-				<div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
-					{Array.from({ length: rows }).map((_, i) => (
-						<Card
-							key={i}
-							className="h-full overflow-hidden animate-pulse flex flex-col"
-							aria-hidden>
-							{/* Banner with gradient - smaller height */}
-							<div className="relative h-32 bg-gradient-to-br from-emerald-400 to-teal-500 overflow-hidden">
-								{/* Verified Badge */}
-								<div className="absolute top-2 right-2">
-									<ChkSkeleton height="20px" width="80px" borderRadius="full" />
-								</div>
-							</div>
+					{/* Logo Avatar - smaller, overlapping banner */}
+					<div className="px-4 -mt-12 relative z-10">
+						<ChkSkeleton width="80px" height="80px" borderRadius="xl" />
+					</div>
 
-							{/* Logo Avatar - smaller, overlapping banner */}
-							<div className="px-4 -mt-12 relative z-10">
-								<ChkSkeleton width="80px" height="80px" borderRadius="xl" />
-							</div>
+					{/* Content - more compact */}
+					<div className="px-4 pt-3 pb-4 flex-1 flex flex-col">
+						{/* Organization Name */}
+						<ChkSkeleton height="20px" width="75%" mb={2} />
 
-							{/* Content - more compact */}
-							<div className="px-4 pt-3 pb-4 flex-1 flex flex-col">
-								{/* Organization Name */}
-								<ChkSkeleton height="20px" width="75%" mb={2} />
+						{/* Location */}
+						<div className="flex items-center mb-3">
+							<ChkSkeleton width="12px" height="12px" mr={1} />
+							<ChkSkeleton height="12px" width="100px" />
+						</div>
 
-								{/* Location */}
-								<div className="flex items-center mb-3">
-									<ChkSkeleton width="12px" height="12px" mr={1} />
-									<ChkSkeleton height="12px" width="100px" />
-								</div>
+						{/* Description - 3 lines, smaller text */}
+						<div className="mb-3 space-y-2 flex-1">
+							<ChkSkeleton height="12px" width="100%" />
+							<ChkSkeleton height="12px" width="95%" />
+							<ChkSkeleton height="12px" width="75%" />
+						</div>
 
-								{/* Description - 3 lines, smaller text */}
-								<div className="mb-3 space-y-2 flex-1">
-									<ChkSkeleton height="12px" width="100%" />
-									<ChkSkeleton height="12px" width="95%" />
-									<ChkSkeleton height="12px" width="75%" />
-								</div>
+						{/* Rating */}
+						<div className="flex items-center gap-1 mb-3 pb-3 border-b border-gray-100">
+							<ChkSkeleton width="16px" height="16px" />
+							<ChkSkeleton height="14px" width="50px" />
+						</div>
 
-								{/* Rating */}
-								<div className="flex items-center gap-1 mb-3 pb-3 border-b border-gray-100">
-									<ChkSkeleton width="16px" height="16px" />
-									<ChkSkeleton height="14px" width="50px" />
-								</div>
+						{/* Contact Section Header */}
+						<ChkSkeleton height="10px" width="40px" mb={2} />
 
-								{/* Contact Section Header */}
-								<ChkSkeleton height="10px" width="40px" mb={2} />
-
-								{/* Contact Buttons - smaller, inline */}
-								<div className="flex items-center gap-2 flex-wrap">
-									<ChkSkeleton height="24px" width="55px" borderRadius="md" />
-									<ChkSkeleton height="24px" width="45px" borderRadius="md" />
-									<ChkSkeleton height="24px" width="60px" borderRadius="md" />
-								</div>
-							</div>
-						</Card>
-					))}
-				</div>
-			</div>
+						{/* Contact Buttons - smaller, inline */}
+						<div className="flex items-center gap-2 flex-wrap">
+							<ChkSkeleton height="24px" width="55px" borderRadius="md" />
+							<ChkSkeleton height="24px" width="45px" borderRadius="md" />
+							<ChkSkeleton height="24px" width="60px" borderRadius="md" />
+						</div>
+					</div>
+				</Card>
+			))}
 		</div>
 	);
 }
@@ -470,7 +436,7 @@ Skeleton.OrgSkeleton = OrgSkeleton;
 // Skeleton untuk Events Page (full page skeleton mirip EventsPage)
 function EventsSkeleton({ rows = 3 }) {
 	return (
-		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-emerald-50 via-white to-blue-50">
+		<div className=" min-h-screen py-8 bg-gradient-to-br from-emerald-50 via-white to-blue-50">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Hero Header - mirror actual EventsPage */}
 				<div className="mb-8 text-center">

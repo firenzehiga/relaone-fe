@@ -10,7 +10,7 @@ import api from "@/_api";
  */
 export const getOrganizations = async (params = {}) => {
 	const response = await api.get("/organizations", { params });
-	return response.data.data || response.data;
+	return response.data;
 };
 
 /** Mengambil detail organization berdasarkan ID.
