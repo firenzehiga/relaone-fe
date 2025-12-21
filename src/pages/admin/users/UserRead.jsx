@@ -70,7 +70,7 @@ export default function AdminUser() {
 				// tambahkan container actions dengan gap agar tombol tidak saling dempet
 				actions: "flex gap-3 justify-center mt-4",
 				confirmButton:
-					"px-4 py-2 focus:outline-none rounded-md bg-emerald-600 hover:bg-emerald-700 text-white",
+					"px-4 py-2 focus:outline-none rounded-md bg-red-600 hover:bg-red-700 text-white",
 				cancelButton:
 					"px-4 py-2 rounded-md border border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700",
 			},
@@ -113,9 +113,9 @@ export default function AdminUser() {
 				`<option value="inactive" ${
 					currentStatus === "inactive" ? "selected" : ""
 				}>Inactive</option>` +
-				`<option value="suspend" ${
-					currentStatus === "suspend" ? "selected" : ""
-				}>Suspend</option>` +
+				`<option value="suspended" ${
+					currentStatus === "suspended" ? "selected" : ""
+				}>Suspended</option>` +
 				`</select></div>` +
 				`<div class="text-xs text-gray-500">Ketik <strong>${confirmText}</strong> untuk konfirmasi perubahan status.</div>` +
 				`<input id="swal-confirm" class="border border-gray-300 rounded-md px-3 py-2 text-sm w-full mt-2" placeholder="${confirmText}">` +
@@ -130,7 +130,7 @@ export default function AdminUser() {
 				content: "text-sm text-gray-600 dark:text-gray-300 mt-1",
 				actions: "flex gap-3 justify-center mt-4",
 				confirmButton:
-					"px-4 py-2 focus:outline-none rounded-md bg-emerald-600 hover:bg-emerald-700 text-white",
+					"px-4 py-2 focus:outline-none rounded-md bg-yellow-600 hover:bg-yellow-700 text-white",
 				cancelButton:
 					"px-4 py-2 rounded-md border border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700",
 			},
