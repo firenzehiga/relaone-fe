@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { Shield, FileText, Eye, AlertCircle, ArrowLeft } from "lucide-react";
 
-import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 import privacyPolicyMd from "@/assets/policies/privacy-policy.md?raw";
 import termsConditionsMd from "@/assets/policies/terms-of-service.md?raw";
 

@@ -28,7 +28,7 @@ import {
 // Hooks / stores
 import { userVolunteerHistoryById } from "@/_hooks/useParticipants";
 import { useModalStore } from "@/stores/useAppStore";
-import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 // Helpers
 import { getDirectionsUrl, getGoogleMapsUrl, getImageUrl } from "@/utils";

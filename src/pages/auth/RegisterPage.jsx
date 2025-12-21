@@ -17,7 +17,7 @@ import {
 	Users,
 } from "lucide-react";
 import { useRegister, useAuthStore } from "@/_hooks/useAuth";
-import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 import DynamicButton from "@/components/ui/Button";
 import { RegisterIllustration } from "@/components/common/Illustration";

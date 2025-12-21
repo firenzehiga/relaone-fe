@@ -15,7 +15,7 @@ import { Fade } from "transitions-kit";
 
 import { useEventById } from "@/_hooks/useEvents";
 import { useModalStore } from "@/stores/useAppStore";
-import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 import { getImageUrl } from "@/utils";
 import { formatTime, formatDate } from "@/utils/dateFormatter";

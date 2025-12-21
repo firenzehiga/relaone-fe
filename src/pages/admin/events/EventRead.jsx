@@ -21,7 +21,7 @@ import { formatDate, formatTime } from "@/utils/dateFormatter";
 import FetchLoader from "@/components/ui/FetchLoader";
 import Badge from "@/components/ui/Badge";
 import { useAuthStore } from "@/_hooks/useAuth";
-import { useDebounce } from "@/_hooks/useDebounce";
+import { useDebounce } from "@/_hooks/utils/useDebounce";
 
 export default function AdminEvent() {
 	const [searchEvent, setSearchEvent] = useState("");

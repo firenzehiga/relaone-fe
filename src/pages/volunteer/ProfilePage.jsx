@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Shield } from "lucide-react";
 
 import { useUserProfile } from "@/_hooks/useUsers";
-import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 import ProfileCard from "@/components/common/ProfileCard";
 import ProfileDetails from "@/components/common/ProfileDetails";

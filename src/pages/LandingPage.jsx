@@ -10,7 +10,7 @@ import * as Lucide from "lucide-react";
 import { useEvents } from "@/_hooks/useEvents";
 import { useCategory } from "@/_hooks/useCategories";
 import { useModalStore } from "@/stores/useAppStore";
-import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 // UI Components
 import DynamicButton from "@/components/ui/Button";

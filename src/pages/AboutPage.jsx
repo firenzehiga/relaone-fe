@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useFeedbacks } from "@/_hooks/useFeedbacks";
-import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 import DynamicButton from "@/components/ui/Button";
 import Carousel from "@/components/ui/Carousel";

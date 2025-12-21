@@ -5,7 +5,7 @@ import { Lock, Eye, EyeOff, ArrowLeft, CheckCircle, AlertCircle, Mail, Shield } 
 import DynamicButton from "@/components/ui/Button";
 import { useResetPassword, useAuthStore } from "@/_hooks/useAuth";
 import { showToast } from "@/components/ui/Toast";
-import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 export default function ResetPasswordPage() {
 	useDocumentTitle("Reset Password");

@@ -5,7 +5,7 @@ import { Eye, EyeOff, CheckCircle, AlertCircle, Lock } from "lucide-react";
 import { showToast } from "@/components/ui/Toast";
 
 import { useChangePassword, useAuthStore } from "@/_hooks/useAuth";
-import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 import Button from "@/components/ui/Button";
 

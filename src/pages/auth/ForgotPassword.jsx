@@ -5,7 +5,7 @@ import { showToast } from "@/components/ui/Toast";
 import { Mail, ArrowLeft, Heart, CheckCircle, RotateCcw } from "lucide-react";
 
 import { useForgotPassword, useAuthStore } from "@/_hooks/useAuth";
-import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 import DynamicButton from "@/components/ui/Button";
 import { ForgotPasswordIllustration } from "@/components/common/Illustration";

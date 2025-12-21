@@ -39,7 +39,7 @@ import { formatDate, formatDateTime } from "@/utils/dateFormatter";
 import FetchLoader from "@/components/ui/FetchLoader";
 import DynamicButton, { LinkButton } from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
-import { useDebounce } from "@/_hooks/useDebounce";
+import { useDebounce } from "@/_hooks/utils/useDebounce";
 
 export default function OrganizationEventParticipant() {
 	const [searchParticipant, setSearchParticipant] = useState("");

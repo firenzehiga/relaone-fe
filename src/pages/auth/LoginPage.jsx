@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, ArrowLeft, Heart } from "lucide-react";
 
 import { useAuthStore, useLogin } from "@/_hooks/useAuth";
-import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 import { LoginIllustration } from "@/components/common/Illustration";
 import DynamicButton from "@/components/ui/Button";

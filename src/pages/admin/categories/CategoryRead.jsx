@@ -18,7 +18,7 @@ import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import FetchLoader from "@/components/ui/FetchLoader";
-import { useDebounce } from "@/_hooks/useDebounce";
+import { useDebounce } from "@/_hooks/utils/useDebounce";
 
 export default function AdminCategory() {
 	const [searchCategory, setSearchCategory] = useState("");

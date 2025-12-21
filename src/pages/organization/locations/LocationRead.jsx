@@ -27,7 +27,7 @@ import FetchLoader from "@/components/ui/FetchLoader";
 import { LinkButton } from "@/components/ui/Button";
 import { showToast } from "@/components/ui/Toast";
 import Badge from "@/components/ui/Badge";
-import { useDebounce } from "@/_hooks/useDebounce";
+import { useDebounce } from "@/_hooks/utils/useDebounce";
 
 export default function OrganizationLocation() {
 	const [searchLocation, setSearchLocation] = useState("");

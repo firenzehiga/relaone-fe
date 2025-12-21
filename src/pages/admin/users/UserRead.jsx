@@ -14,7 +14,7 @@ import {
 	useAdminUsers,
 	useAdminChangeStatusUserMutation,
 } from "@/_hooks/useUsers";
-import { useDebounce } from "@/_hooks/useDebounce";
+import { useDebounce } from "@/_hooks/utils/useDebounce";
 import FetchLoader from "@/components/ui/FetchLoader";
 import { getImageUrl } from "@/utils";
 import { formatDate } from "@/utils/dateFormatter";

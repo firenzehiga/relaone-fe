@@ -17,7 +17,7 @@ import DataTable from "react-data-table-component";
 import RatingStars from "@/components/ui/RatingStars";
 import { Link } from "react-router-dom";
 import FetchLoader from "@/components/ui/FetchLoader";
-import { useDebounce } from "@/_hooks/useDebounce";
+import { useDebounce } from "@/_hooks/utils/useDebounce";
 
 export default function AdminFeedback() {
 	const [searchFeedback, setSearchFeedback] = useState("");

@@ -7,7 +7,7 @@ import { Building2, Search } from "lucide-react";
 
 // Hooks
 import { useOrganizations } from "@/_hooks/useOrganizations";
-import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 import { useInView } from "react-intersection-observer";
 
 // UI Components
@@ -15,7 +15,7 @@ import DynamicButton from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
 import Card from "@/components/ui/Card";
 import OrganizationCard from "@/components/OrganizationCard";
-import { useDebounce } from "@/_hooks/useDebounce";
+import { useDebounce } from "@/_hooks/utils/useDebounce";
 
 export default function OrganizationsPage() {
 	useDocumentTitle("Organizations Page");

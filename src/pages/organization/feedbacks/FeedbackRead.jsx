@@ -14,7 +14,7 @@ import { formatDateDay, formatDate } from "@/utils/dateFormatter";
 // UI Components
 import RatingStars from "@/components/ui/RatingStars";
 import FetchLoader from "@/components/ui/FetchLoader";
-import { useDebounce } from "@/_hooks/useDebounce";
+import { useDebounce } from "@/_hooks/utils/useDebounce";
 
 export default function OrganizationFeedback() {
 	const [searchFeedback, setSearchFeedback] = useState("");

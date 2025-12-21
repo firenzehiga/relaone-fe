@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import FetchLoader from "@/components/ui/FetchLoader";
 import Badge from "@/components/ui/Badge";
-import { useDebounce } from "@/_hooks/useDebounce";
+import { useDebounce } from "@/_hooks/utils/useDebounce";
 
 export default function AdminLocation() {
 	const [searchLocation, setSearchLocation] = useState("");

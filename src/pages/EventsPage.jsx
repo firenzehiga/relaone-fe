@@ -10,8 +10,8 @@ import { useInView } from "react-intersection-observer";
 import { useEvents } from "@/_hooks/useEvents";
 import { useCategory } from "@/_hooks/useCategories";
 import { useModalStore } from "@/stores/useAppStore";
-import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
-import { useDebounce } from "@/_hooks/useDebounce";
+import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
+import { useDebounce } from "@/_hooks/utils/useDebounce";
 
 // Helpers
 import { toInputDate } from "@/utils/dateFormatter";

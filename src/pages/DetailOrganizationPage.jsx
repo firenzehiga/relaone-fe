@@ -29,7 +29,7 @@ import {
 
 // Hooks
 import { useOrganizationById } from "@/_hooks/useOrganizations";
-import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 // Helpers
 import { getImageUrl } from "@/utils";

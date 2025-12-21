@@ -16,7 +16,7 @@ import {
 
 // Hooks
 import { useVolunteerHistory } from "@/_hooks/useParticipants";
-import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 // UI Components
 import ActivityCard from "@/components/volunteer/ActivityCard";

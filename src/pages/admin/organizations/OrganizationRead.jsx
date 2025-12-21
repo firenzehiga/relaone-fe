@@ -29,7 +29,7 @@ import { Fade } from "transitions-kit";
 import RatingStars from "@/components/ui/RatingStars";
 import { useAdminUpdateOrganizationRatingsMutation } from "@/_hooks/useUsers";
 import { useAuthStore } from "@/_hooks/useAuth";
-import { useDebounce } from "@/_hooks/useDebounce";
+import { useDebounce } from "@/_hooks/utils/useDebounce";
 
 export default function AdminOrganization() {
 	const [searchOrganization, setSearchOrganization] = useState("");

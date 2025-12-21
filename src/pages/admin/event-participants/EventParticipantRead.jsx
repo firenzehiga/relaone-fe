@@ -22,7 +22,7 @@ import FetchLoader from "@/components/ui/FetchLoader";
 import { formatDate, formatDateTime, formatTime } from "@/utils/dateFormatter";
 import Badge from "@/components/ui/Badge";
 import { useAuthStore } from "@/_hooks/useAuth";
-import { useDebounce } from "@/_hooks/useDebounce";
+import { useDebounce } from "@/_hooks/utils/useDebounce";
 
 export default function AdminEventParticipant() {
 	const [searchParticipant, setSearchParticipant] = useState("");

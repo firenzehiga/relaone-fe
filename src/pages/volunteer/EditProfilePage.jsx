@@ -18,7 +18,7 @@ import {
 // Hooks
 import { useUpdateUserMutation, useUserProfile } from "@/_hooks/useUsers";
 import { useAuthStore } from "@/_hooks/useAuth";
-import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 // Helpers
 import { toInputDate } from "@/utils/dateFormatter";

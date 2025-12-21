@@ -38,7 +38,7 @@ import { getImageUrl, parseApiError } from "@/utils";
 import FetchLoader from "@/components/ui/FetchLoader";
 import { LinkButton } from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
-import { useDebounce } from "@/_hooks/useDebounce";
+import { useDebounce } from "@/_hooks/utils/useDebounce";
 
 export default function OrganizationEvent() {
 	const [searchEvent, setSearchEvent] = useState("");

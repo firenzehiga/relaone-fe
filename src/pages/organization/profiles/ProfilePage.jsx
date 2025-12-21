@@ -4,7 +4,7 @@ import { Shield } from "lucide-react";
 
 // Hooks
 import { useUserProfile } from "@/_hooks/useUsers";
-import { useDocumentTitle } from "@/_hooks/useDocumentTitle";
+import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 // UI Components
 import Skeleton from "@/components/ui/Skeleton";
