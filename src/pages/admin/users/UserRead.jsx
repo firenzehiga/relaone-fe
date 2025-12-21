@@ -57,6 +57,7 @@ export default function AdminUser() {
 				`<span style="color: #dc2626; font-weight:600">⚠️ Aksi ini tidak bisa dibatalkan!</span>` +
 				`<br/><br/>Aksi ini akan menghapus user beserta data terkait seperti, organisasi, event, partisipasi, dan lain sebagainya secara permanen dari sistem.`,
 			icon: "warning",
+			iconColor: "#dc2626",
 			input: "text",
 			inputPlaceholder: `Ketik "${confirmText}" untuk konfirmasi`,
 			showCancelButton: true,

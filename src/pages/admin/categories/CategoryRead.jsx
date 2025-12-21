@@ -47,6 +47,8 @@ export default function AdminCategory() {
 	const handleDelete = (id) => {
 		Swal.fire({
 			title: "Apa Anda yakin?",
+			icon: "warning",
+			iconColor: "#dc2626",
 			text: "Kamu tidak akan bisa mengembalikan ini!",
 			showCancelButton: true,
 			confirmButtonText: "Ya, hapus!",

@@ -95,6 +95,8 @@ export default function AdminFeedback() {
 		Swal.fire({
 			title: "Apa Anda yakin?",
 			text: "Kamu tidak akan bisa mengembalikan ini!",
+			icon: "warning",
+			iconColor: "#dc2626",
 			showCancelButton: true,
 			confirmButtonText: "Ya, hapus!",
 			cancelButtonText: "Batal",
