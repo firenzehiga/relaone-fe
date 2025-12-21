@@ -121,11 +121,11 @@ export default function AdminUser() {
 				`<input id="swal-confirm" class="border border-gray-300 rounded-md px-3 py-2 text-sm w-full mt-2" placeholder="${confirmText}">` +
 				`</div>`,
 			icon: "question",
+			iconColor: "#eab308",
 			showCancelButton: true,
 			confirmButtonText: "Ubah",
 			cancelButtonText: "Batal",
 			customClass: {
-				icon: "text-yellow-500",
 				popup: "bg-white rounded-xl shadow-xl p-5 max-w-md w-full",
 				title: "text-lg font-semibold text-gray-900",
 				content: "text-sm text-gray-600 dark:text-gray-300 mt-1",
