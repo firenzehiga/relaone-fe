@@ -27,7 +27,7 @@ export default function LandingPage() {
 	useDocumentTitle("Home Page");
 
 	const navigate = useNavigate();
-	const { data: events = [], isLoading: eventsLoading } = useEvents();
+	const { events, isLoading: eventsLoading } = useEvents();
 
 	const {
 		data: categories = [],
