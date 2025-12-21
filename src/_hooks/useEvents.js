@@ -87,7 +87,7 @@ export const useEventById = (id) => {
  * Hook untuk mengambil data events (admin)
  * @returns {Object} Query result dengan data, isLoading, error, etc
  */
-export const useAdminEvents = (page = 1, limit = 10, search = "") => {
+export const useAdminEvents = (page = 1, limit, search = "") => {
 	const currentRole = useUserRole();
 	const enabled = currentRole === "admin"; // supaya kalo admin login, ga fetch events
 
