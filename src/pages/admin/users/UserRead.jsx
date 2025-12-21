@@ -125,6 +125,7 @@ export default function AdminUser() {
 			confirmButtonText: "Ubah",
 			cancelButtonText: "Batal",
 			customClass: {
+				icon: "text-yellow-500",
 				popup: "bg-white rounded-xl shadow-xl p-5 max-w-md w-full",
 				title: "text-lg font-semibold text-gray-900",
 				content: "text-sm text-gray-600 dark:text-gray-300 mt-1",
