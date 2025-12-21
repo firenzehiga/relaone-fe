@@ -100,14 +100,14 @@ export default function AdminEventParticipantEdit() {
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 						<div>
 							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
-								Event <span className="text-red-500">*</span>
+								Event <span className="text-red-500">(read only)</span>
 							</label>
 							<select
 								name="event_id"
 								value={formData.event_id}
-								required
+								disabled
 								onChange={handleChange}
-								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+								className="mt-1 block w-full rounded-md border bg-gray-50 cursor-not-allowed border-gray-200 px-3 py-2 text-sm shadow-sm ">
 								<option value="">Pilih event</option>
 								{events.map((ev) => (
 									<option key={ev.id} value={ev.id}>
@@ -140,7 +140,7 @@ export default function AdminEventParticipantEdit() {
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 						<div>
 							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
-								Tanggal Daftar
+								Tanggal Daftar <span className="text-red-500">(read only)</span>
 							</label>
 							<input
 								type="date"
