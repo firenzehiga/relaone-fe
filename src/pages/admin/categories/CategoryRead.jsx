@@ -6,7 +6,6 @@ import {
 	Loader2,
 	Trash,
 	EllipsisVerticalIcon,
-	Eye,
 	EditIcon,
 	AlertCircle,
 } from "lucide-react";
@@ -14,7 +13,7 @@ import { LinkButton } from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
 import { useAdminCategory, useAdminDeleteCategory } from "@/_hooks/useCategories";
-import Swal from "sweetalert2";
+import { swalDelete } from "@/components/ui/Swal";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import FetchLoader from "@/components/ui/FetchLoader";
@@ -45,26 +44,7 @@ export default function AdminCategory() {
 
 	// Fungsi untuk menangani penghapusan kursus
 	const handleDelete = (id) => {
-		Swal.fire({
-			title: "Apa Anda yakin?",
-			icon: "warning",
-			iconColor: "#dc2626",
-			text: "Kamu tidak akan bisa mengembalikan ini!",
-			showCancelButton: true,
-			confirmButtonText: "Ya, hapus!",
-			cancelButtonText: "Batal",
-			customClass: {
-				popup: "bg-white rounded-xl shadow-xl p-5 max-w-md w-full",
-				title: "text-lg font-semibold text-gray-900",
-				content: "text-sm text-gray-600 dark:text-gray-300 mt-1",
-				actions: "flex gap-3 justify-center mt-4",
-				confirmButton:
-					"px-4 py-2 focus:outline-none rounded-md bg-red-600 hover:bg-red-700 text-white",
-				cancelButton:
-					"px-4 py-2 rounded-md border border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700",
-			},
-			backdrop: true,
-		}).then((result) => {
+		swalDelete().then((result) => {
 			if (result.isConfirmed) {
 				deleteCategoryMutation.mutate(id, {
 					onSuccess: () => {

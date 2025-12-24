@@ -344,9 +344,6 @@ export const useOrgDeleteLocationMutation = () => {
 	return useMutation({
 		mutationFn: locationService.orgDeleteLocation,
 		onSuccess: (_, id) => {
-			queryClient.setQueryData(["orgLocations"], (oldData) =>
-				oldData.filter((location) => location.id !== id)
-			);
 			queryClient.invalidateQueries(["orgLocations"]);
 		},
 	});

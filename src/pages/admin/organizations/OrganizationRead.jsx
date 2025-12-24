@@ -1,11 +1,10 @@
-import { use, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import {
 	ChevronDown,
 	Plus,
 	Loader2,
 	Trash,
-	Eye,
 	EditIcon,
 	EllipsisVerticalIcon,
 	AlertCircle,
@@ -13,7 +12,7 @@ import {
 } from "lucide-react";
 import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
 import DynamicButton, { LinkButton } from "@/components/ui/Button";
-import Swal from "sweetalert2";
+import { swalDelete, swalWarning } from "@/components/ui/Swal";
 import { showToast } from "@/components/ui/Toast";
 import {
 	useAdminDeleteOrganizationMutation,
@@ -58,26 +57,7 @@ export default function AdminOrganization() {
 
 	// Fungsi untuk menangani penghapusan kursus
 	const handleDelete = (id) => {
-		Swal.fire({
-			title: "Apa Anda yakin?",
-			text: "Kamu tidak akan bisa mengembalikan ini!",
-			icon: "warning",
-			iconColor: "#dc2626",
-			showCancelButton: true,
-			confirmButtonText: "Ya, hapus!",
-			cancelButtonText: "Batal",
-			customClass: {
-				popup: "bg-white rounded-xl shadow-xl p-5 max-w-md w-full",
-				title: "text-lg font-semibold text-gray-900",
-				content: "text-sm text-gray-600 dark:text-gray-300 mt-1",
-				actions: "flex gap-3 justify-center mt-4",
-				confirmButton:
-					"px-4 py-2 focus:outline-none rounded-md bg-red-600 hover:bg-red-700 text-white",
-				cancelButton:
-					"px-4 py-2 rounded-md border border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700",
-			},
-			backdrop: true,
-		}).then((result) => {
+		swalDelete().then((result) => {
 			if (result.isConfirmed) {
 				deleteOrganizationMutation.mutate(id, {
 					onSuccess: () => {
@@ -114,23 +94,10 @@ export default function AdminOrganization() {
 
 	// Fungsi untuk menangani pembaruan rating organisasi
 	const handleUpdateRatings = (id) => {
-		Swal.fire({
+		swalWarning({
 			title: "Lanjutkan pembaruan rating organisasi?",
-			text: "Aksi ini untuk memperbarui rating organisasi beserta eventnya secara massal.",
-			showCancelButton: true,
-			confirmButtonText: "Ya, lanjutkan!",
-			cancelButtonText: "Batal",
-			customClass: {
-				popup: "bg-white rounded-xl shadow-xl p-5 max-w-md w-full",
-				title: "text-lg font-semibold text-gray-900",
-				content: "text-sm text-gray-600 dark:text-gray-300 mt-1",
-				actions: "flex gap-3 justify-center mt-4",
-				confirmButton:
-					"px-4 py-2 focus:outline-none rounded-md bg-emerald-500 hover:bg-emerald-600 text-white",
-				cancelButton:
-					"px-4 py-2 rounded-md border border-gray-300 bg-gray-200 hover:bg-gray-300 text-gray-700",
-			},
-			backdrop: true,
+			text: "Aksi ini untuk memperbarui rating organisasi beserta eventnya secara massal",
+			icon: "question",
 		}).then((result) => {
 			if (result.isConfirmed) {
 				updateOrganizationRatingsMutation.mutate(); // Panggil fungsi updateOrganizationRatingsMutation tanpa ID
@@ -272,7 +239,8 @@ export default function AdminOrganization() {
 								disabled={isLoading}
 								loading={isLoading}
 								className="w-full md:w-auto">
-								<Star className="w-4 h-4 mr-2" /> Perbarui Rating
+								{isLoading ? null : <Star className="w-4 h-4 mr-2" />}
+								Perbarui Rating
 							</DynamicButton>
 							<LinkButton
 								to="/admin/organizations/create"

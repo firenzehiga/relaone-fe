@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 // UI Libraries
 import { motion } from "framer-motion";
-import { Building2, Search } from "lucide-react";
+import { Building, Building2, Calendar, Loader2, Search } from "lucide-react";
 
 // Hooks
 import { useOrganizations } from "@/_hooks/useOrganizations";
@@ -16,13 +16,19 @@ import Skeleton from "@/components/ui/Skeleton";
 import Card from "@/components/ui/Card";
 import OrganizationCard from "@/components/OrganizationCard";
 import { useDebounce } from "@/_hooks/utils/useDebounce";
+import Badge from "@/components/ui/Badge";
 
 export default function OrganizationsPage() {
 	useDocumentTitle("Organizations Page");
 	const navigate = useNavigate();
 
-	const [searchTerm, setSearchTerm] = useState("");
-	const debouncedSearch = useDebounce(searchTerm, 500);
+	const [searchTerm, setSearchTerm] = useSearchParams("");
+
+	const [filters, setFilters] = useState({
+		search: searchTerm.get("search") || "",
+	});
+
+	const debouncedSearch = useDebounce(filters.search, 500);
 
 	const { organizations, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
 		useOrganizations(1, 10, "verified", debouncedSearch);
@@ -36,6 +42,40 @@ export default function OrganizationsPage() {
 	}, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
 	const filteredOrganizations = organizations;
+
+	/**
+	 * Handler untuk mengubah filter dan sinkronisasi dengan URL search params
+	 *
+	 * @param {string} key - Key filter yang akan diubah (search, category, date, city)
+	 * @param {string} value - Nilai baru untuk filter
+	 */
+	const handleFilterChange = (key, value) => {
+		const newFilters = { ...filters, [key]: value };
+		setFilters(newFilters);
+
+		// Update URL params (only include active filters)
+		const newParams = new URLSearchParams();
+		Object.entries(newFilters).forEach(([k, v]) => {
+			if (v) {
+				newParams.set(k, v);
+			}
+		});
+		setSearchTerm(newParams);
+	};
+
+	/**
+	 * Menghapus semua filter dan reset ke default state
+	 * Juga membersihkan URL search params
+	 */
+	const clearFilters = () => {
+		setFilters({
+			search: "",
+		});
+		setSearchTerm({});
+	};
+
+	// Apakah ada filter yang yg lagi aktif (digunakan untuk menampilkan tombol Hapus Filter dan perilaku empty-state)
+	const hasActiveFilters = Boolean(filters.search);
 
 	if (error) {
 		return (
@@ -79,41 +119,55 @@ export default function OrganizationsPage() {
 							<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
 							<input
 								type="text"
-								placeholder="Cari organisasi, lokasi, atau kata kunci..."
-								value={searchTerm}
-								onChange={(e) => setSearchTerm(e.target.value)}
+								placeholder="Cari organisasi berdasarkan nama..."
+								value={filters.search}
 								disabled={isLoading}
+								onChange={(e) => handleFilterChange("search", e.target.value)}
 								className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
 							/>
 						</div>
 					</Card>
 				</div>
 
+				{/* Active Filters */}
+				{hasActiveFilters && (
+					<div className="flex flex-wrap items-center gap-2 mb-6">
+						<span className="text-gray-600 text-sm font-medium">Filter aktif:</span>
+						{filters.search && <Badge variant="primary">Search: "{filters.search}"</Badge>}
+					</div>
+				)}
+
 				{/* Organizations List */}
 				{isLoading ? (
 					<Skeleton.OrgSkeleton rows={3} />
 				) : filteredOrganizations.length === 0 ? (
-					<motion.div
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						className="text-center py-12">
-						<div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
-							<Search className="w-8 h-8 text-gray-400" />
+					<div className="text-center py-16">
+						<div className="mx-auto w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-between mb-6">
+							<Building className="text-emerald-600 ml-5 " size={39} />
 						</div>
-						<h3 className="text-xl font-semibold text-gray-900 mb-2">
+						<h3 className="text-2xl font-bold text-gray-900 mb-3">
 							Tidak ada organisasi ditemukan
 						</h3>
-						<p className="text-gray-600">Coba ubah kata kunci pencarian Anda</p>
-					</motion.div>
+						<p className="text-gray-600 mb-6 text-lg">Coba ubah kata kunci Anda</p>
+						<DynamicButton variant="success" onClick={clearFilters}>
+							Hapus Filter
+						</DynamicButton>
+					</div>
 				) : (
 					<>
+						{/* Results Count */}
+						<div className="flex items-center justify-between mb-6">
+							<p className="text-gray-600 font-medium">{`${filteredOrganizations.length} organisasi ditemukan`}</p>
+						</div>
+
 						<div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
 							{filteredOrganizations.map((org, index) => (
 								<motion.div
 									key={org.id}
 									initial={{ opacity: 0, y: 20 }}
 									animate={{ opacity: 1, y: 0 }}
-									transition={{ duration: 0.5, delay: index * 0.05 }}
+									exit={{ opacity: 0 }}
+									transition={{ delay: index * 0.1 }}
 									className="cursor-pointer">
 									<OrganizationCard
 										organization={org}
@@ -135,13 +189,20 @@ export default function OrganizationsPage() {
 								<p className="text-gray-500">Tidak ada lagi organisasi</p>
 							)}
 						</div> */}
-						{/* sentinel: ketika terlihat akan otomatis fetchNextPage */}
-						<div ref={ref} className="h-8 flex items-center justify-center mt-6 text-emerald-600">
-							{isFetchingNextPage
-								? "Memuat..."
-								: hasNextPage
-								? "Scroll untuk memuat lebih"
-								: "Tidak ada data lagi"}
+
+						{/* Sentinel: Auto load next page when scrolled into view */}
+						<div ref={ref} className="h-8 flex items-center justify-center mt-6">
+							<Badge variant="success">
+								{isFetchingNextPage ? (
+									<>
+										<Loader2 className="animate-spin h-4 w-4 mr-2" /> Memuat...
+									</>
+								) : hasNextPage ? (
+									"Scroll untuk memuat lebih"
+								) : (
+									"Tidak ada data lagi"
+								)}
+							</Badge>
 						</div>
 					</>
 				)}
