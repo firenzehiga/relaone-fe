@@ -56,55 +56,69 @@ import OnboardingModal from "@/components/volunteer/OnboardingModal";
 import SuspenseFallback from "@/components/fallback/SuspenseFallback";
 import NotFound from "@/components/fallback/NotFound";
 
-// Admin Pages
-import AdminDashboard from "@/pages/admin/AdminDashboard";
+// Admin Pages (lazy loaded)
+const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));
 const AdminProfilePage = lazy(() => import("@/pages/admin/profiles/ProfilePage"));
 const AdminEditProfilePage = lazy(() => import("@/pages/admin/profiles/EditProfilePage"));
 
-import AdminUser from "@/pages/admin/users/UserRead";
+const AdminUser = lazy(() => import("@/pages/admin/users/UserRead"));
 
-import AdminOrganization from "@/pages/admin/organizations/OrganizationRead";
-import AdminOrganizationCreate from "@/pages/admin/organizations/OrganizationCreate";
-import AdminOrganizationEdit from "@/pages/admin/organizations/OrganizationEdit";
+const AdminOrganization = lazy(() => import("@/pages/admin/organizations/OrganizationRead"));
+const AdminOrganizationCreate = lazy(() =>
+	import("@/pages/admin/organizations/OrganizationCreate")
+);
+const AdminOrganizationEdit = lazy(() => import("@/pages/admin/organizations/OrganizationEdit"));
 
-import AdminEvent from "@/pages/admin/events/EventRead";
-import AdminEventCreate from "@/pages/admin/events/EventCreate";
-import AdminEventEdit from "@/pages/admin/events/EventEdit";
+const AdminEvent = lazy(() => import("@/pages/admin/events/EventRead"));
+const AdminEventCreate = lazy(() => import("@/pages/admin/events/EventCreate"));
+const AdminEventEdit = lazy(() => import("@/pages/admin/events/EventEdit"));
 
-import AdminEventParticipant from "@/pages/admin/event-participants/EventParticipantRead";
-import AdminEventParticipantCreate from "@/pages/admin/event-participants/EventParticipantCreate";
-import AdminEventParticipantEdit from "@/pages/admin/event-participants/EventParticipantEdit";
+const AdminEventParticipant = lazy(() =>
+	import("@/pages/admin/event-participants/EventParticipantRead")
+);
+const AdminEventParticipantCreate = lazy(() =>
+	import("@/pages/admin/event-participants/EventParticipantCreate")
+);
+const AdminEventParticipantEdit = lazy(() =>
+	import("@/pages/admin/event-participants/EventParticipantEdit")
+);
 
-import AdminLocation from "@/pages/admin/locations/LocationRead";
-import AdminLocationCreate from "@/pages/admin/locations/LocationCreate";
-import AdminLocationEdit from "@/pages/admin/locations/LocationEdit";
+const AdminLocation = lazy(() => import("@/pages/admin/locations/LocationRead"));
+const AdminLocationCreate = lazy(() => import("@/pages/admin/locations/LocationCreate"));
+const AdminLocationEdit = lazy(() => import("@/pages/admin/locations/LocationEdit"));
 
-import AdminCategory from "@/pages/admin/categories/CategoryRead";
-import AdminCategoryCreate from "@/pages/admin/categories/CategoryCreate";
-import AdminCategoryEdit from "@/pages/admin/categories/CategoryEdit";
+const AdminCategory = lazy(() => import("@/pages/admin/categories/CategoryRead"));
+const AdminCategoryCreate = lazy(() => import("@/pages/admin/categories/CategoryCreate"));
+const AdminCategoryEdit = lazy(() => import("@/pages/admin/categories/CategoryEdit"));
 
-import AdminFeedback from "@/pages/admin/feedbacks/FeedbackRead";
-import AdminFeedbackEdit from "@/pages/admin/feedbacks/FeedbackEdit";
+const AdminFeedback = lazy(() => import("@/pages/admin/feedbacks/FeedbackRead"));
+const AdminFeedbackEdit = lazy(() => import("@/pages/admin/feedbacks/FeedbackEdit"));
 
-// Organization Pages
-import OrganizationsDashboard from "@/pages/organization/OrganizationDashboard";
+// Organization Pages (lazy loaded)
+const OrganizationsDashboard = lazy(() => import("@/pages/organization/OrganizationDashboard"));
 const OrganizationProfilePage = lazy(() => import("@/pages/organization/profiles/ProfilePage"));
 const OrganizationEditProfilePage = lazy(() =>
 	import("@/pages/organization/profiles/EditProfilePage")
 );
 
-import OrganizationEvent from "@/pages/organization/events/EventRead";
-import OrganizationEventCreate from "@/pages/organization/events/EventCreate";
-import OrganizationEventEdit from "@/pages/organization/events/EventEdit";
+const OrganizationEvent = lazy(() => import("@/pages/organization/events/EventRead"));
+const OrganizationEventCreate = lazy(() => import("@/pages/organization/events/EventCreate"));
+const OrganizationEventEdit = lazy(() => import("@/pages/organization/events/EventEdit"));
 
-import OrganizationEventParticipant from "@/pages/organization/event-participants/EventParticipantRead";
-import EventScannerPage from "@/pages/organization/event-participants/EventScannerPage";
+const OrganizationEventParticipant = lazy(() =>
+	import("@/pages/organization/event-participants/EventParticipantRead")
+);
+const EventScannerPage = lazy(() =>
+	import("@/pages/organization/event-participants/EventScannerPage")
+);
 
-import OrganizationFeedback from "@/pages/organization/feedbacks/FeedbackRead";
+const OrganizationFeedback = lazy(() => import("@/pages/organization/feedbacks/FeedbackRead"));
 
-import OrganizationLocation from "@/pages/organization/locations/LocationRead";
-import OrganizationLocationCreate from "@/pages/organization/locations/LocationCreate";
-import OrganizationLocationEdit from "@/pages/organization/locations/LocationEdit";
+const OrganizationLocation = lazy(() => import("@/pages/organization/locations/LocationRead"));
+const OrganizationLocationCreate = lazy(() =>
+	import("@/pages/organization/locations/LocationCreate")
+);
+const OrganizationLocationEdit = lazy(() => import("@/pages/organization/locations/LocationEdit"));
 
 import { ScrollToTop } from "@/components/common/ScrollToTop";
 import FloatingHelp from "@/components/common/FloatingHelp";

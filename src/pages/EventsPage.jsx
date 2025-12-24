@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 // UI Libraries
 import { motion } from "framer-motion";
-import { Search, Filter, Calendar, MapPin } from "lucide-react";
+import { Search, Filter, Calendar, MapPin, Loader2 } from "lucide-react";
 import { useInView } from "react-intersection-observer";
 
 // Hooks / stores
@@ -310,10 +310,10 @@ export default function EventsPage() {
 					<Skeleton.EventsSkeleton rows={3} />
 				) : filteredEvents.length === 0 ? (
 					<div className="text-center py-16">
-						<div className="mx-auto w-20 h-20 bg-gray-100 rounded-full flex items-center justify-between mb-6">
-							<Calendar className="text-gray-400 ml-5" size={36} />
+						<div className="mx-auto w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-between mb-6">
+							<Calendar className="text-emerald-600 ml-5" size={39} />
 						</div>
-						<h3 className="text-2xl font-bold text-gray-900 mb-3">Tidak ada event ditemukan</h3>
+						<h3 className="text-2xl font-bold text-gray-900 mb-3">Tidak ada kegiatam ditemukan</h3>
 						<p className="text-gray-600 mb-6 text-lg">
 							Coba ubah filter pencarian atau kata kunci Anda
 						</p>
@@ -327,7 +327,6 @@ export default function EventsPage() {
 						<div className="flex items-center justify-between mb-6">
 							<p className="text-gray-600 font-medium">{`${filteredEvents.length} kegiatan ditemukan`}</p>
 						</div>
-
 						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 							{filteredEvents.map((event, index) => (
 								<motion.div
@@ -345,16 +344,19 @@ export default function EventsPage() {
 								</motion.div>
 							))}
 						</div>
-
 						{/* Sentinel: Auto load next page when scrolled into view */}
-						<div
-							ref={sentinelRef}
-							className="h-8 flex items-center justify-center mt-6 text-emerald-600">
-							{isFetchingNextPage
-								? "Memuat..."
-								: hasNextPage
-								? "Scroll untuk memuat lebih"
-								: "Tidak ada data lagi"}
+						<div ref={sentinelRef} className="h-8 flex items-center justify-center mt-6">
+							<Badge variant="success">
+								{isFetchingNextPage ? (
+									<>
+										<Loader2 className="animate-spin h-4 w-4 mr-2" /> Memuat...
+									</>
+								) : hasNextPage ? (
+									"Scroll untuk memuat lebih"
+								) : (
+									"Tidak ada data lagi"
+								)}
+							</Badge>
 						</div>
 					</>
 				)}
