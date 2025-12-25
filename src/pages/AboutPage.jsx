@@ -9,7 +9,7 @@ import Carousel from "@/components/ui/Carousel";
 import Masonry from "@/components/ui/Masonry";
 
 export default function AboutPage() {
-	useDocumentTitle("About Page");
+	useDocumentTitle("Tentang RelaOne");
 
 	const { data: feedbacks = [], isLoading: feedbacksLoading } = useFeedbacks();
 	const navigate = useNavigate();

@@ -131,8 +131,12 @@ const Toast = ({
 		</div>
 	);
 
+	// Gunakan id yang stabil per tipe bila tidak diberikan, sehingga pemanggilan
+	// ulang akan menggantikan toast sebelumnya alih-alih menumpuk.
+	const toastId = id || `${type}-toast`;
+
 	return toast(ToastComponent, {
-		id: id || `${type}-toast-${Date.now()}`,
+		id: toastId,
 		duration,
 		position,
 		style: {

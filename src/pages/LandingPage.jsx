@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 // UI Libraries
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, Heart, Search, Users } from "lucide-react";
-import * as Lucide from "lucide-react";
+import { ArrowRight, Heart, Search, Users, GraduationCap, Leaf } from "lucide-react";
 
 // Hooks / stores
 import { useEvents } from "@/_hooks/useEvents";
@@ -24,8 +23,7 @@ import VideoShowcase from "@/components/VideoShowcase";
 import EventCard from "@/components/EventCard";
 
 export default function LandingPage() {
-	useDocumentTitle("Home Page");
-
+	useDocumentTitle("Mari Bersama-sama Membuat Perubahan Positif");
 	const navigate = useNavigate();
 	const { events, isLoading: eventsLoading } = useEvents();
 
@@ -71,6 +69,18 @@ export default function LandingPage() {
 			icon: Heart,
 			title: "Berbagi Kebaikan",
 			description: "Kontribusi nyata untuk masyarakat dan rasakan kepuasan membantu sesama.",
+		},
+	];
+
+	const categoriesIcons = [
+		{
+			icon: GraduationCap,
+		},
+		{
+			icon: Heart,
+		},
+		{
+			icon: Leaf,
 		},
 	];
 
@@ -188,8 +198,9 @@ export default function LandingPage() {
 
 						<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 							{categories.slice(0, 3).map((category, index) => {
-								// pakai Lucide untuk mendapatkan icon berdasarkan nama string
-								const Icon = Lucide[category.icon];
+								// pakai ambil dari array categoriesIcons berdasarkan index
+								const Icon = categoriesIcons[index]?.icon;
+								// const Icon = Lucide[category.icon];
 								return (
 									<motion.div
 										key={category.id}

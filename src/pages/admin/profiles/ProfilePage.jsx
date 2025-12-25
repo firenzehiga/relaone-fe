@@ -1,23 +1,9 @@
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import {
-	User,
-	Mail,
-	Phone,
-	MapPin,
-	Calendar,
-	Edit3,
-	Shield,
-	Award,
-	Star,
-	Code,
-} from "lucide-react";
+import { Shield } from "lucide-react";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { useUserProfile } from "@/_hooks/useUsers";
-import { getImageUrl, parseSkillsArray } from "@/utils";
 import Skeleton from "@/components/ui/Skeleton";
-import { formatDate } from "@/utils/dateFormatter";
 import ProfileDetails from "@/components/common/ProfileDetails";
 import ProfileCard from "@/components/common/ProfileCard";
 

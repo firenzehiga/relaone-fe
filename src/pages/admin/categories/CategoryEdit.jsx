@@ -1,21 +1,8 @@
-import {
-	useAdminCategoryById,
-	useAdminUpdateCategoryMutation,
-} from "@/_hooks/useCategories";
+import { useAdminCategoryById, useAdminUpdateCategoryMutation } from "@/_hooks/useCategories";
 import DynamicButton from "@/components/ui/Button";
 import { parseApiError } from "@/utils";
-import {
-	Loader2,
-	Activity,
-	Heart,
-	Leaf,
-	Users,
-	BookOpen,
-	Stethoscope,
-} from "lucide-react";
-import * as Lucide from "lucide-react";
+import { Activity, Heart, Leaf, Users, BookOpen, Stethoscope } from "lucide-react";
 import { useState, useEffect } from "react";
-import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import Skeleton from "@/components/ui/Skeleton";
 import Button from "@/components/ui/Button";
@@ -35,8 +22,7 @@ export default function AdminCategoryEdit() {
 
 	const updateCategoryMutation = useAdminUpdateCategoryMutation();
 
-	const { data: showCategory, isLoading: showCategoryLoading } =
-		useAdminCategoryById(id);
+	const { data: showCategory, isLoading: showCategoryLoading } = useAdminCategoryById(id);
 
 	useEffect(() => {
 		if (!showCategory) return;
@@ -78,12 +64,8 @@ export default function AdminCategoryEdit() {
 		<div className="w-full mx-auto p-4 sm:p-6 max-w-6xl min-h-[calc(100vh-4rem)]">
 			<div className="bg-white shadow-xl rounded-lg p-4 sm:p-6">
 				<header className="mb-6 sm:mb-8">
-					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
-						Edit Kategori
-					</h1>
-					<p className="text-xs sm:text-sm text-gray-500 mt-1">
-						Isi detail kategori.
-					</p>
+					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Edit Kategori</h1>
+					<p className="text-xs sm:text-sm text-gray-500 mt-1">Isi detail kategori.</p>
 				</header>
 
 				<form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
@@ -171,9 +153,7 @@ export default function AdminCategoryEdit() {
 										key={key}
 										onClick={() => setFormData((s) => ({ ...s, icon: key }))}
 										className={`flex items-center gap-2 px-2 sm:px-3 py-2 border rounded-md text-xs sm:text-sm ${
-											selected
-												? "border-indigo-600 bg-indigo-50"
-												: "border-gray-200 bg-white"
+											selected ? "border-indigo-600 bg-indigo-50" : "border-gray-200 bg-white"
 										}`}>
 										<IconComp size={16} />
 										<span className="capitalize">{key}</span>
@@ -188,9 +168,7 @@ export default function AdminCategoryEdit() {
 								type="text"
 								name="icon"
 								value={formData.icon}
-								onChange={(e) =>
-									setFormData((s) => ({ ...s, icon: e.target.value }))
-								}
+								onChange={(e) => setFormData((s) => ({ ...s, icon: e.target.value }))}
 								placeholder="Ketik nama icon Lucide, mis. Camera"
 								className="flex-1 rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 							/>
@@ -203,9 +181,8 @@ export default function AdminCategoryEdit() {
 						</div>
 
 						<div className="mt-2 text-xs sm:text-sm text-gray-500">
-							Pilih icon dari pilihan cepat atau ketik nama icon Lucide. Sistem
-							akan menyimpan nama komponen (case-sensitive), mis.{" "}
-							<code>Leaf</code>.<p></p>
+							Pilih icon dari pilihan cepat atau ketik nama icon Lucide. Sistem akan menyimpan nama
+							komponen (case-sensitive), mis. <code>Leaf</code>.<p></p>
 							<p>
 								<a
 									href="https://lucide.dev/icons/"
@@ -224,7 +201,17 @@ export default function AdminCategoryEdit() {
 							<div className="mt-3 flex items-center gap-3">
 								<span className="text-xs sm:text-sm font-medium">Preview:</span>
 								{(() => {
-									const Comp = Lucide[formData.icon];
+									// sekarang gak pakai import * lagi. ambil dari object di atas
+									const categoriesIcons = {
+										Activity,
+										Heart,
+										Leaf,
+										Users,
+										BookOpen,
+										Stethoscope,
+									};
+									const Comp = categoriesIcons[formData.icon];
+									// const Comp = Lucide[formData.icon];
 									return Comp ? (
 										<Comp size={24} />
 									) : (

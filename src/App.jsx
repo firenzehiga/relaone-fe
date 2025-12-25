@@ -18,7 +18,7 @@ import React, { lazy, Suspense } from "react";
 import LandingPage from "@/pages/LandingPage";
 import EventsPage from "@/pages/EventsPage";
 import OrganizationsPage from "@/pages/OrganizationsPage";
-import AboutPage from "@/pages/AboutPage";
+const AboutPage = lazy(() => import("@/pages/AboutPage"));
 import DetailEventPage from "@/pages/DetailEventPage";
 import DetailOrganizationPage from "@/pages/DetailOrganizationPage";
 const { PrivacyPolicyPage, TermsOfServicePage } = {
@@ -32,12 +32,12 @@ const { PrivacyPolicyPage, TermsOfServicePage } = {
 // Volunteer
 const ProfilePage = lazy(() => import("@/pages/volunteer/ProfilePage"));
 const EditProfilePage = lazy(() => import("@/pages/volunteer/EditProfilePage"));
-import MyActivitiesPage from "@/pages/volunteer/MyActivitiesPage";
-import ActivityDetailPage from "@/pages/volunteer/ActivityDetailPage";
+const MyActivitiesPage = lazy(() => import("@/pages/volunteer/MyActivitiesPage"));
+const ActivityDetailPage = lazy(() => import("@/pages/volunteer/ActivityDetailPage"));
 
 // Auth Pages
 import LoginPage from "@/pages/auth/LoginPage";
-import RegisterPage from "@/pages/auth/RegisterPage";
+const RegisterPage = lazy(() => import("@/pages/auth/RegisterPage"));
 const ForgotPasswordPage = lazy(() => import("@/pages/auth/ForgotPassword"));
 const ResetPasswordPage = lazy(() => import("@/pages/auth/ResetPassword"));
 const ChangePasswordPage = lazy(() => import("@/pages/auth/ChangePasswordPage"));

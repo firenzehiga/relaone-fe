@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 // UI Libraries
 import { motion } from "framer-motion";
@@ -12,16 +12,13 @@ import {
 	Phone,
 	Globe,
 	Star,
-	CheckCircle,
 	ArrowLeft,
 	Calendar,
-	Users,
 	Clock,
 	MessageSquare,
 	Award,
 	ChevronLeft,
 	ChevronRight,
-	CalendarDays,
 	MapPinned,
 	UserCheck,
 	Tag,

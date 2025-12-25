@@ -29,7 +29,7 @@ import Badge from "@/components/ui/Badge";
  * @returns {JSX.Element} Halaman daftar events dengan filtering dan search
  */
 export default function EventsPage() {
-	useDocumentTitle("Events Page");
+	useDocumentTitle("Temukan Kegiatan yang Butuh Bantuan Anda");
 	const navigate = useNavigate();
 	const [searchParams, setSearchParams] = useSearchParams();
 	const { ref: sentinelRef, inView } = useInView({ threshold: 0 });

@@ -88,22 +88,31 @@ export default function AdminCategory() {
 		},
 		{
 			name: "Icon",
-			selector: (row) => row.icon || "-",
+			selector: (row) => (
+				<>
+					{row.icon ? (
+						row.icon
+					) : (
+						<span className="italic text-gray-400 text-xs">Tidak ada icon</span>
+					)}
+				</>
+			),
+
 			sortable: true,
-			wrap: true,
-			width: "220px",
+			width: "170px",
 		},
 		{
 			name: "Kategori",
 			selector: (row) => <Badge color={row.warna}>{row.nama}</Badge> || "-",
 			sortable: true,
 			wrap: true,
-			width: "220px",
+			width: "150px",
 		},
 		{
 			name: "Deskripsi",
 			selector: (row) => row.deskripsi || "-",
 			sortable: true,
+			wrap: true,
 		},
 		{
 			name: "Status",

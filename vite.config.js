@@ -10,9 +10,6 @@ export default defineConfig({
 			usePolling: true,
 		},
 	},
-	optimizeDeps: {
-		exclude: ["lucide-react"],
-	},
 	resolve: {
 		alias: {
 			"@": path.resolve(__dirname, "./src"),

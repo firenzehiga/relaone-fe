@@ -19,7 +19,7 @@ import { useDebounce } from "@/_hooks/utils/useDebounce";
 import Badge from "@/components/ui/Badge";
 
 export default function OrganizationsPage() {
-	useDocumentTitle("Organizations Page");
+	useDocumentTitle("Kenali Setiap Organisasi dan Dukung Kegiatan Mereka");
 	const navigate = useNavigate();
 
 	const [searchTerm, setSearchTerm] = useSearchParams("");
