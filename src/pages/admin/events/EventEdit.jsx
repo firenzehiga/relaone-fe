@@ -12,6 +12,7 @@ import { Image } from "lucide-react";
 import { useAdminCategory } from "@/_hooks/useCategories";
 import Skeleton from "@/components/ui/Skeleton";
 import { toInputTime, toInputDate } from "@/utils/dateFormatter";
+import { AsyncImage } from "loadable-image";
 export default function AdminEventEdit() {
 	const { id } = useParams();
 	const navigate = useNavigate();
@@ -391,7 +392,7 @@ export default function AdminEventEdit() {
 											{/* Image Preview */}
 											<div className="relative mx-auto sm:mx-0">
 												{imagePreview ? (
-													<img
+													<AsyncImage
 														src={imagePreview}
 														alt="Preview"
 														className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover border-4 border-white shadow-lg"

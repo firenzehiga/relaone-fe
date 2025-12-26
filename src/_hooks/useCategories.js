@@ -190,3 +190,48 @@ export const useAdminDeleteCategory = () => {
 		},
 	});
 };
+
+/** Hook for bulk deleting categories */
+export const useAdminBulkDeleteCategory = () => {
+	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
+
+	return useMutation({
+		mutationFn: (ids) => categoryService.adminBulkDeleteCategories(ids),
+		onMutate: () => {
+			setLoading(true);
+			if (clearError) clearError();
+		},
+		onSuccess: (data, ids) => {
+			queryClient.invalidateQueries(["adminCategories"]);
+			queryClient.invalidateQueries(["categories"]);
+			setLoading(false);
+
+			const msg =
+				(data &&
+					(data.message || `Berhasil menghapus ${data.deleted_count ?? ids.length} kategori`)) ||
+				"Berhasil menghapus kategori";
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Delete bulk Kategori failed";
+			if (setError) setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali atau coba lagi.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Delete bulk Kategori error:", error);
+		},
+	});
+};

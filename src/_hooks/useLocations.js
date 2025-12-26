@@ -177,6 +177,52 @@ export const useAdminDeleteLocationMutation = () => {
 	});
 };
 
+/** Hook untuk bulk deleting locations (admin) */
+export const useAdminBulkDeleteLocations = () => {
+	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
+
+	return useMutation({
+		mutationFn: (ids) => locationService.adminBulkDeleteLocations(ids),
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: (data, variables) => {
+			queryClient.invalidateQueries(["adminLocations"]);
+			setLoading(false);
+
+			const msg =
+				(data &&
+					(data.message ||
+						`Berhasil menghapus ${data.deleted_count ?? variables.length} lokasi(s)`)) ||
+				"Berhasil menghapus lokasi";
+
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Delete bulk location failed";
+			if (setError) setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali atau coba lagi.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Bulk delete location error:", error);
+		},
+	});
+};
+
 // === ORGANIZATION HOOKS ===
 /**
  * Hook untuk mengambil data locations (organization)

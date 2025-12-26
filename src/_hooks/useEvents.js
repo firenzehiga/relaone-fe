@@ -434,6 +434,52 @@ export const useOrgDeleteEventMutation = () => {
 	});
 };
 
+/** Hook for bulk deleting events */
+export const useAdminBulkDeleteEvents = () => {
+	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
+
+	return useMutation({
+		mutationFn: (ids) => eventService.adminBulkDeleteEvents(ids),
+		onMutate: () => {
+			setLoading(true);
+			if (clearError) clearError();
+		},
+		onSuccess: (data, ids) => {
+			queryClient.invalidateQueries(["adminEvents"]);
+			queryClient.invalidateQueries(["orgEvents"]);
+			queryClient.invalidateQueries(["events"]);
+			setLoading(false);
+
+			const msg =
+				(data &&
+					(data.message || `Berhasil menghapus ${data.deleted_count ?? ids.length} event`)) ||
+				"Berhasil menghapus event";
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Delete bulk Kategori failed";
+			if (setError) setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali atau coba lagi.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Delete bulk Kategori error:", error);
+		},
+	});
+};
+
 /**
  * Start event (organization) mutation
  */

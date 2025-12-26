@@ -248,3 +248,49 @@ export const useAdminDeleteOrganizationMutation = () => {
 		},
 	});
 };
+
+/** Hook untuk bulk deleting organizations (admin) */
+export const useAdminBulkDeleteOrganizations = () => {
+	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
+
+	return useMutation({
+		mutationFn: (ids) => organizationService.adminBulkDeleteOrganizations(ids),
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: (data, variables) => {
+			queryClient.invalidateQueries(["adminOrganizations"]);
+			setLoading(false);
+
+			const msg =
+				(data &&
+					(data.message ||
+						`Berhasil menghapus ${data.deleted_count ?? variables.length} organisasi(s)`)) ||
+				"Berhasil menghapus organisasi";
+
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Delete bulk organization failed";
+			if (setError) setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali atau coba lagi.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Bulk delete organization error:", error);
+		},
+	});
+};

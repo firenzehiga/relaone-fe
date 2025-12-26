@@ -108,3 +108,19 @@ export const adminDeleteOrganization = async (id) => {
 		throw error;
 	}
 };
+
+/** Bulk delete organizations (admin)
+ * @async
+ * @function adminBulkDeleteOrganizations
+ * @endpoint POST /admin/organizations/bulk-delete
+ * @param {Array<number>} ids - Array of organization IDs to delete
+ */
+export const adminBulkDeleteOrganizations = async (ids = []) => {
+	try {
+		const response = await api.post(`/admin/organizations/bulk-delete`, { ids });
+		return response.data;
+	} catch (error) {
+		console.log("Error bulk deleting organizations:", error);
+		throw error;
+	}
+};

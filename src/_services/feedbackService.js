@@ -95,6 +95,22 @@ export const adminDeleteFeedback = async (id) => {
 	}
 };
 
+/** Bulk delete feedbacks
+ * @async
+ * @function adminBulkDeleteFeedbacks
+ * @endpoint POST /admin/feedbacks/bulk-delete
+ * @param {Array<number>} ids - Array of feedback IDs to delete
+ */
+export const adminBulkDeleteFeedbacks = async (ids = []) => {
+	try {
+		const response = await api.post(`/admin/feedbacks/bulk-delete`, { ids });
+		return response.data;
+	} catch (error) {
+		console.log("Error bulk deleting feedbacks:", error);
+		throw error;
+	}
+};
+
 // ORGANIZATION SERVICES
 /** Mengambil semua feedbacks dengan optional filtering
  *

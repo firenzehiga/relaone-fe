@@ -1,6 +1,10 @@
-import { useAdminDeleteParticipantMutation, useAdminParticipants } from "@/_hooks/useParticipants";
+import {
+	useAdminDeleteParticipantMutation,
+	useAdminParticipants,
+	useAdminBulkDeleteParticipant,
+} from "@/_hooks/useParticipants";
 import { swalDelete } from "@/components/ui/Swal";
-import { LinkButton } from "@/components/ui/Button";
+import Button, { LinkButton } from "@/components/ui/Button";
 import {
 	ChevronDown,
 	Plus,
@@ -13,6 +17,7 @@ import {
 	X,
 	Calendar,
 	Users,
+	FileText,
 } from "lucide-react";
 import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
@@ -23,6 +28,9 @@ import { formatDate, formatDateTime, formatTime } from "@/utils/dateFormatter";
 import Badge from "@/components/ui/Badge";
 import { useAuthStore } from "@/_hooks/useAuth";
 import { useDebounce } from "@/_hooks/utils/useDebounce";
+import { parseApiError } from "@/utils";
+import { showToast } from "@/components/ui/Toast";
+import ExportData from "@/components/ui/ExportData";
 
 export default function AdminEventParticipant() {
 	const [searchParticipant, setSearchParticipant] = useState("");
@@ -45,6 +53,11 @@ export default function AdminEventParticipant() {
 		isFetching: participantsRefetching,
 	} = useAdminParticipants(currentPage, rowsPerPage, searchParticipant);
 	const deleteParticipantMutation = useAdminDeleteParticipantMutation();
+
+	// bulk delete
+	const bulkDeleteMutation = useAdminBulkDeleteParticipant();
+	const [selectedRows, setSelectedRows] = useState([]);
+	const [clearSelectedRows, setClearSelectedRows] = useState(false);
 
 	const { isLoading } = useAuthStore();
 
@@ -97,6 +110,28 @@ export default function AdminEventParticipant() {
 	const handlePerRowsChange = (newPerPage, page) => {
 		setRowsPerPage(newPerPage);
 		setCurrentPage(page);
+	};
+
+	const handleSelectedRowsChange = ({ selectedRows }) => {
+		setSelectedRows(selectedRows || []);
+	};
+
+	const handleBulkDelete = async () => {
+		if (!selectedRows || selectedRows.length === 0) return;
+
+		swalDelete().then(async (result) => {
+			if (!result.isConfirmed) return;
+			const ids = selectedRows.map((r) => r.id);
+			try {
+				await bulkDeleteMutation.mutateAsync(ids);
+				setSelectedRows([]);
+				setClearSelectedRows((s) => !s);
+			} catch (err) {
+				const msg = parseApiError(err) || "Gagal menghapus participant.";
+				showToast({ type: "error", message: msg, position: "top-center" });
+				console.error("bulk delete participants error:", err);
+			}
+		});
 	};
 
 	const columns = [
@@ -272,21 +307,72 @@ export default function AdminEventParticipant() {
 							<label className="block text-sm font-medium text-gray-700 mb-1">
 								Cari Partisipan
 							</label>
-							<div className="relative">
-								<input
-									type="text"
-									placeholder="Cari partisipan, kegiatan, status..."
-									value={searchParticipant}
-									onChange={(e) => setSearchParticipant(e.target.value)}
-									className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 pr-8"
-								/>
-								{searchParticipant && (
-									<button
-										onClick={() => setSearchParticipant("")}
-										className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-										<X className="w-4 h-4" />
-									</button>
-								)}
+							<div className="relative w-full">
+								<div className="w-full flex flex-col md:flex-row gap-2">
+									<div className="flex-1 relative">
+										<input
+											type="text"
+											placeholder="Cari partisipan, kegiatan, status..."
+											value={searchParticipant}
+											onChange={(e) => setSearchParticipant(e.target.value)}
+											className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 pr-8"
+										/>
+										{searchParticipant && (
+											<button
+												onClick={() => setSearchParticipant("")}
+												className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+												<X className="w-4 h-4" />
+											</button>
+										)}
+									</div>
+									{selectedRows && selectedRows.length > 0 && (
+										<div className="flex w-full md:w-auto gap-2">
+											<Button
+												variant="danger"
+												size="sm"
+												onClick={handleBulkDelete}
+												disabled={
+													!selectedRows || selectedRows.length === 0 || bulkDeleteMutation.isLoading
+												}
+												className="w-full md:w-auto">
+												<Trash className="w-4 h-4 mr-2" /> Hapus Terpilih ({selectedRows.length})
+											</Button>
+											{/* 
+											<ExportData
+												data={selectedRows.map((p, index) => ({
+													no: index + 1,
+													nama: p.user?.nama || "",
+													email: p.user?.email || "",
+													event: p.event?.judul || "",
+													tanggal_daftar: formatDate(p.tanggal_daftar) || "",
+													status: p.status || "",
+													catatan: p.catatan || "",
+												}))}
+												filename="participants-selected"
+												buttonText={`Export Terpilih (${selectedRows.length})`}
+												variant="secondary"
+												className="w-full md:w-auto"
+											/> */}
+										</div>
+									)}
+									{/* Export CSV seluruh peserta */}
+									<ExportData
+										data={participants.map((p, index) => ({
+											no: index + 1,
+											nama: p.user?.nama || "",
+											email: p.user?.email || "",
+											event: p.event?.judul || "",
+											tanggal_daftar: formatDate(p.tanggal_daftar) || "",
+											status: p.status || "",
+											catatan: p.catatan || "",
+										}))}
+										filename="participants"
+										buttonText="Export CSV"
+										variant="success"
+										disabled={participantsLoading || !participants || participants.length === 0}
+										className="w-full md:w-auto"
+									/>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -335,6 +421,9 @@ export default function AdminEventParticipant() {
 						<DataTable
 							columns={columns}
 							data={filteredParticipants}
+							selectableRows={true}
+							onSelectedRowsChange={handleSelectedRowsChange}
+							clearSelectedRows={clearSelectedRows}
 							pagination
 							paginationServer
 							paginationTotalRows={pagination.total || 0}

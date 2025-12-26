@@ -2,7 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import { swalDelete } from "@/components/ui/Swal";
 import { toast } from "react-hot-toast";
-import { useAdminDeleteEventMutation, useAdminEvents } from "@/_hooks/useEvents";
+import {
+	useAdminBulkDeleteEvents,
+	useAdminDeleteEventMutation,
+	useAdminEvents,
+} from "@/_hooks/useEvents";
 import {
 	ChevronDown,
 	Plus,
@@ -12,9 +16,10 @@ import {
 	EditIcon,
 	EllipsisVerticalIcon,
 	AlertCircle,
+	XCircle,
 } from "lucide-react";
 import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
-import DynamicButton, { LinkButton } from "@/components/ui/Button";
+import Button, { LinkButton } from "@/components/ui/Button";
 import { Link } from "react-router-dom";
 import { getImageUrl, parseApiError } from "@/utils";
 import { formatDate, formatTime } from "@/utils/dateFormatter";
@@ -22,11 +27,16 @@ import FetchLoader from "@/components/ui/FetchLoader";
 import Badge from "@/components/ui/Badge";
 import { useAuthStore } from "@/_hooks/useAuth";
 import { useDebounce } from "@/_hooks/utils/useDebounce";
+import { AsyncImage } from "loadable-image";
+import { Fade } from "transitions-kit";
+import ExportData from "@/components/ui/ExportData";
 
 export default function AdminEvent() {
 	const [searchEvent, setSearchEvent] = useState("");
 	const [currentPage, setCurrentPage] = useState(1);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
+
+	const [previewImg, setPreviewImg] = useState(null);
 
 	// Debounce search menggunakan custom hook
 	const debouncedSearch = useDebounce(searchEvent, 500); // You can implement debounce if needed
@@ -46,7 +56,13 @@ export default function AdminEvent() {
 
 	const deleteEventMutation = useAdminDeleteEventMutation();
 
+	// bulk delete mutation + selected rows
+	const bulkDeleteMutation = useAdminBulkDeleteEvents();
 	const { isLoading } = useAuthStore();
+
+	const [selectedRows, setSelectedRows] = useState([]);
+	const [clearSelectedRows, setClearSelectedRows] = useState(false);
+
 	// Local state for search/filter
 	const [statusFilter, setStatusFilter] = useState("all");
 	const [organizationFilter, setOrganizationFilter] = useState("all");
@@ -128,53 +144,62 @@ export default function AdminEvent() {
 		setCurrentPage(page);
 	};
 
+	const handleSelectedRowsChange = ({ selectedRows }) => {
+		setSelectedRows(selectedRows || []);
+	};
+
+	const handleBulkDelete = () => {
+		if (!selectedRows || selectedRows.length === 0) return;
+
+		swalDelete().then((result) => {
+			if (result.isConfirmed) {
+				const ids = selectedRows.map((r) => r.id);
+				bulkDeleteMutation.mutateAsync(ids, {
+					onSuccess: () => {
+						// clear selection and refetch handled by onSuccess invalidation
+						setSelectedRows([]);
+						setClearSelectedRows((s) => !s);
+					},
+				});
+			}
+		});
+	};
+
 	const columns = [
 		{
 			name: "No",
 			cell: (row, index) => index + 1,
 			sortable: false,
-			width: "60px",
+			width: "50px",
 		},
 		{
 			name: "Nama Event",
 			selector: (row) => row.judul || "-",
 			sortable: true,
 			wrap: true,
-			width: "250px",
+			width: "350px",
 		},
 		{
 			name: "Banner",
 			selector: (row) => (
-				<div className="flex items-center mt-1 mb-1">
-					{row.gambar ? (
-						<img
-							src={getImageUrl(`events/${row.gambar}`)}
-							alt={row.nama || "Banner"}
-							className="w-16 h-16 rounded-md object-cover border border-gray-200"
-						/>
-					) : (
-						<div className="w-16 h-16 rounded-md bg-gray-100 flex items-center justify-center text-xs text-gray-500 border border-gray-200">
-							No Image
-						</div>
-					)}
+				<div className="flex items-center justify-center p-1">
+					<AsyncImage
+						src={getImageUrl(`events/${row.gambar}`)}
+						alt={row.judul}
+						className="h-16 w-16 object-cover rounded-lg border border-gray-200 bg-gray-50 shadow-sm hover:scale-105 transition-transform duration-200 cursor-pointer"
+						onClick={() => setPreviewImg(getImageUrl(`events/${row.gambar}`))}
+					/>
 				</div>
 			),
 			sortable: true,
-			width: "120px",
-		},
-		{
-			name: "Deskripsi Singkat",
-			selector: (row) => row.deskripsi_singkat,
-			sortable: false,
-			wrap: true,
-			width: "230px",
+			width: "150px",
 		},
 		{
 			name: "Kategori",
-			selector: (row) => row.category?.nama || "-",
+			selector: (row) => <Badge color={row.category?.warna}>{row.category?.nama}</Badge> || "-",
 			sortable: false,
 			wrap: true,
-			width: "110px",
+			width: "150px",
 		},
 		{
 			name: "Status",
@@ -194,7 +219,7 @@ export default function AdminEvent() {
 				</>
 			),
 			sortable: false,
-			width: "120px",
+			width: "130px",
 		},
 
 		{
@@ -258,12 +283,14 @@ export default function AdminEvent() {
 								"Daftar Kegiatan"
 							)}
 						</h2>
-						<LinkButton variant="success" to="/admin/events/create" className="w-full md:w-auto">
-							<Plus className="w-4 h-4 mr-2" /> Tambah Kegiatan
-						</LinkButton>
+						<div className="flex gap-2 w-full md:w-auto">
+							<LinkButton variant="success" to="/admin/events/create" className="w-full md:w-auto">
+								<Plus className="w-4 h-4 mr-2" /> Tambah Kegiatan
+							</LinkButton>
+						</div>
 					</div>
 					{/* Filter & Search */}
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+					<div className="w-full mb-4 flex flex-col md:flex-row md:items-center gap-2">
 						<div>
 							<input
 								type="text"
@@ -297,6 +324,50 @@ export default function AdminEvent() {
 								))}
 							</select>
 						</div>
+						{selectedRows && selectedRows.length > 0 && (
+							<div className="flex w-full md:w-auto">
+								<Button
+									variant="danger"
+									size="sm"
+									loading={isLoading}
+									onClick={handleBulkDelete}
+									disabled={
+										!selectedRows || selectedRows.length === 0 || bulkDeleteMutation.isLoading
+									}
+									className="w-full md:w-auto">
+									{isLoading ? null : (
+										<>
+											<Trash className="w-4 h-4 mr-2" />
+										</>
+									)}
+									Hapus Terpilih ({selectedRows.length})
+								</Button>
+							</div>
+						)}
+						{/* Export CSV seluruh peserta */}
+						<ExportData
+							data={filteredEvents.map((p, index) => ({
+								no: index + 1,
+								judul: p.judul || "",
+								kategori: p.category?.nama || "",
+								status: p.status || "",
+								tanggal_mulai: formatDate(p.tanggal_mulai) || "",
+								tanggal_selesai: formatDate(p.tanggal_selesai) || "",
+								waktu_mulai: formatTime(p.waktu_mulai) || "",
+								waktu_selesai: formatTime(p.waktu_selesai) || "",
+								lokasi: p.location?.nama || "",
+								organisasi: p.organization?.nama || "",
+								maks_peserta: p.maks_peserta || 0,
+								peserta_saat_ini: p.peserta_saat_ini || 0,
+								deskripsi_singkat: p.deskripsi_singkat || "",
+								deskripsi: p.deskripsi || "",
+							}))}
+							filename="events"
+							buttonText="Export CSV"
+							variant="success"
+							disabled={eventsLoading || !filteredEvents || filteredEvents.length === 0}
+							className="w-full md:w-auto"
+						/>
 					</div>
 					{eventsLoading ? (
 						<div className="flex h-96 justify-center py-20">
@@ -306,6 +377,8 @@ export default function AdminEvent() {
 						<DataTable
 							columns={columns}
 							data={filteredEvents}
+							onSelectedRowsChange={handleSelectedRowsChange}
+							clearSelectedRows={clearSelectedRows}
 							pagination
 							paginationServer
 							paginationTotalRows={pagination.total || 0}
@@ -322,6 +395,7 @@ export default function AdminEvent() {
 							}
 							pointerOnHover
 							title=""
+							selectableRows={true}
 							fixedHeader
 							highlightOnHover
 							persistTableHead
@@ -373,6 +447,14 @@ export default function AdminEvent() {
 										</div>
 									</div>
 									<div className="mt-4">
+										<div className="text-sm font-semibold text-gray-700 mb-1">
+											Deskripsi Singkat:
+										</div>
+										<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
+											{data.deskripsi_singkat || "-"}
+										</div>
+									</div>
+									<div className="mt-4">
 										<div className="text-sm font-semibold text-gray-700 mb-1">Deskripsi:</div>
 										<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
 											{data.deskripsi || "-"}
@@ -397,6 +479,35 @@ export default function AdminEvent() {
 					)}
 				</div>
 			</div>
+			{previewImg && (
+				<Portal>
+					<div
+						className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60"
+						onClick={() => setPreviewImg(null)}>
+						<div
+							className="relative bg-transparent p-4 rounded"
+							onClick={(e) => e.stopPropagation()}>
+							<button
+								aria-label="Close preview"
+								onClick={() => setPreviewImg(null)}
+								className="absolute -top-3 -right-3 bg-white rounded-full p-1 shadow hover:bg-gray-100 focus:outline-none">
+								<XCircle className="w-7 h-7 text-red-700" />
+							</button>
+							<div className="bg-white rounded-lg shadow-lg p-3 max-w-[92vw] max-h-[86vh] flex items-center justify-center">
+								<img
+									src={previewImg}
+									alt="Preview"
+									className="max-w-full max-h-[80vh] object-contain rounded-lg"
+									onError={(e) => {
+										e.target.onerror = null;
+										e.target.src = "https://placehold.co/800x600?text=No+Image";
+									}}
+								/>
+							</div>
+						</div>
+					</div>
+				</Portal>
+			)}
 		</div>
 	);
 }
