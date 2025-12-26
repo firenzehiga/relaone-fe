@@ -1,4 +1,9 @@
-import { useAdminDeleteFeedbackMutation, useAdminFeedbacks } from "@/_hooks/useFeedbacks";
+import {
+	useAdminBulkDeleteFeedbacks,
+	useAdminDeleteFeedbackMutation,
+	useAdminFeedbacks,
+} from "@/_hooks/useFeedbacks";
+import Button from "@/components/ui/Button";
 import {
 	ChevronDown,
 	Plus,
@@ -18,6 +23,7 @@ import RatingStars from "@/components/ui/RatingStars";
 import { Link } from "react-router-dom";
 import FetchLoader from "@/components/ui/FetchLoader";
 import { useDebounce } from "@/_hooks/utils/useDebounce";
+import { useAuthStore } from "@/_hooks/useAuth";
 
 export default function AdminFeedback() {
 	const [searchFeedback, setSearchFeedback] = useState("");
@@ -41,6 +47,13 @@ export default function AdminFeedback() {
 	} = useAdminFeedbacks(currentPage, rowsPerPage, debouncedSearch);
 
 	const deleteFeedbackMutation = useAdminDeleteFeedbackMutation();
+	// bulk delete
+	const bulkDeleteMutation = useAdminBulkDeleteFeedbacks();
+	const [selectedRows, setSelectedRows] = useState([]);
+	const [clearSelectedRows, setClearSelectedRows] = useState(false);
+
+	const { isLoading } = useAuthStore();
+
 	// Local state for search/filter
 	const [eventFilter, setEventFilter] = useState("all");
 	const [ratingFilter, setRatingFilter] = useState("all");
@@ -120,6 +133,24 @@ export default function AdminFeedback() {
 		setCurrentPage(page);
 	};
 
+	const handleSelectedRowsChange = ({ selectedRows }) => {
+		setSelectedRows(selectedRows || []);
+	};
+
+	const handleBulkDelete = async () => {
+		if (!selectedRows || selectedRows.length === 0) return;
+
+		swalDelete().then(async (result) => {
+			if (!result.isConfirmed) return;
+			const ids = selectedRows.map((r) => r.id);
+			if (result.isConfirmed) {
+				bulkDeleteMutation.mutateAsync(ids);
+				setSelectedRows([]);
+				setClearSelectedRows((s) => !s);
+			}
+		});
+	};
+
 	const columns = [
 		{
 			name: "No",
@@ -151,31 +182,37 @@ export default function AdminFeedback() {
 		},
 		{
 			name: "Aksi",
-			cell: (row) => (
-				<Menu>
-					<MenuButton
-						as={IconButton}
-						aria-label="Options"
-						icon={<EllipsisVerticalIcon />}
-						variant="ghost"
-					/>
-					<Portal>
-						<MenuList className="font-semibold">
-							<Link to={`/admin/feedbacks/edit/${row.id}`}>
-								<MenuItem icon={<EditIcon className="text-yellow-500 hover:text-yellow-600" />}>
-									Edit
+			cell: (row) => {
+				if (isLoading) {
+					return <Loader2 className="animate-spin h-5 w-5 text-emerald-600" />;
+				}
+
+				return (
+					<Menu>
+						<MenuButton
+							as={IconButton}
+							aria-label="Options"
+							icon={<EllipsisVerticalIcon />}
+							variant="ghost"
+						/>
+						<Portal>
+							<MenuList className="font-semibold">
+								<Link to={`/admin/feedbacks/edit/${row.id}`}>
+									<MenuItem icon={<EditIcon className="text-yellow-500 hover:text-yellow-600" />}>
+										Edit
+									</MenuItem>
+								</Link>
+								<MenuItem
+									onClick={() => handleDelete(row.id)}
+									disabled={deleteFeedbackMutation.isLoading}
+									icon={<Trash className="text-red-500 hover:text-red-600" />}>
+									Hapus
 								</MenuItem>
-							</Link>
-							<MenuItem
-								onClick={() => handleDelete(row.id)}
-								disabled={deleteFeedbackMutation.isLoading}
-								icon={<Trash className="text-red-500 hover:text-red-600" />}>
-								Hapus
-							</MenuItem>
-						</MenuList>
-					</Portal>
-				</Menu>
-			),
+							</MenuList>
+						</Portal>
+					</Menu>
+				);
+			},
 			width: "140px",
 		},
 	];
@@ -208,7 +245,7 @@ export default function AdminFeedback() {
 					</div>
 
 					{/* Filter & Search - Always Visible */}
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+					<div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
 						<div>
 							<input
 								type="text"
@@ -242,6 +279,20 @@ export default function AdminFeedback() {
 								<option value="low">Rating Rendah (1-2⭐)</option>
 							</select>
 						</div>
+						{selectedRows && selectedRows.length > 0 && (
+							<div className="w-full md:w-auto">
+								<Button
+									variant="danger"
+									size="sm"
+									onClick={handleBulkDelete}
+									disabled={
+										!selectedRows || selectedRows.length === 0 || bulkDeleteMutation.isLoading
+									}
+									className="w-full md:w-auto">
+									<Trash className="w-4 h-4 mr-2" /> Hapus Terpilih ({selectedRows.length})
+								</Button>
+							</div>
+						)}
 					</div>
 
 					{feedbacksLoading ? (
@@ -252,6 +303,9 @@ export default function AdminFeedback() {
 						<DataTable
 							columns={columns}
 							data={filteredFeedbacks}
+							selectableRows={true}
+							onSelectedRowsChange={handleSelectedRowsChange}
+							clearSelectedRows={clearSelectedRows}
 							pagination
 							paginationServer
 							paginationTotalRows={pagination.total || 0}

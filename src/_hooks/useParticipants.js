@@ -425,6 +425,52 @@ export const useAdminDeleteParticipantMutation = () => {
 	});
 };
 
+/** Hook untuk bulk deleting participants (admin) */
+export const useAdminBulkDeleteParticipant = () => {
+	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
+
+	return useMutation({
+		mutationFn: (ids) => eventParticipantService.adminBulkDeleteParticipants(ids),
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: (data, variables) => {
+			queryClient.invalidateQueries(["adminParticipants"]);
+			setLoading(false);
+
+			const msg =
+				(data &&
+					(data.message ||
+						`Berhasil menghapus ${data.deleted_count ?? variables.length} participant(s)`)) ||
+				"Berhasil menghapus participant";
+
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Delete bulk participant failed";
+			if (setError) setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali atau coba lagi.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Bulk delete participant error:", error);
+		},
+	});
+};
+
 /** ORGANIZATION HOOKS
  *
  * Hook untuk mengambil data event participants hanya untuk organization

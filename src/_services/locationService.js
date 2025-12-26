@@ -76,6 +76,22 @@ export const adminDeleteLocation = async (id) => {
 	}
 };
 
+/** Bulk delete locations (admin)
+ * @async
+ * @function adminBulkDeleteLocations
+ * @endpoint POST /admin/locations/bulk-delete
+ * @param {Array<number>} ids - Array of location IDs to delete
+ */
+export const adminBulkDeleteLocations = async (ids = []) => {
+	try {
+		const response = await api.post(`/admin/locations/bulk-delete`, { ids });
+		return response.data;
+	} catch (error) {
+		console.log("Error bulk deleting locations:", error);
+		throw error;
+	}
+};
+
 // ORGANIZATION SERVICES
 /** Mengambil semua locations dengan optional filtering
  *

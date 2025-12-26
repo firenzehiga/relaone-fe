@@ -114,6 +114,22 @@ export const adminDeleteEvent = async (id) => {
 	}
 };
 
+/** Bulk delete events
+ * @async
+ * @function adminBulkDeleteEvents
+ * @endpoint POST /admin/events/bulk-delete
+ * @param {Array<number>} ids - Array of event IDs to delete
+ */
+export const adminBulkDeleteEvents = async (ids = []) => {
+	try {
+		const response = await api.post(`/admin/events/bulk-delete`, { ids });
+		return response.data.data || response.data;
+	} catch (error) {
+		console.log("Error bulk deleting events:", error);
+		throw error;
+	}
+};
+
 // ORGANIZATION SERVICES
 /** Mengambil semua events dengan optional filtering
  *

@@ -1,5 +1,9 @@
-import { useAdminDeleteLocationMutation, useAdminLocations } from "@/_hooks/useLocations";
-import { LinkButton } from "@/components/ui/Button";
+import {
+	useAdminBulkDeleteLocations,
+	useAdminDeleteLocationMutation,
+	useAdminLocations,
+} from "@/_hooks/useLocations";
+import Button, { LinkButton } from "@/components/ui/Button";
 import { swalDelete } from "@/components/ui/Swal";
 import { showToast } from "@/components/ui/Toast";
 import {
@@ -21,6 +25,7 @@ import { Link } from "react-router-dom";
 import FetchLoader from "@/components/ui/FetchLoader";
 import Badge from "@/components/ui/Badge";
 import { useDebounce } from "@/_hooks/utils/useDebounce";
+import { useAuthStore } from "@/_hooks/useAuth";
 
 export default function AdminLocation() {
 	const [searchLocation, setSearchLocation] = useState("");
@@ -44,6 +49,12 @@ export default function AdminLocation() {
 	} = useAdminLocations(currentPage, rowsPerPage, debouncedSearch);
 
 	const deleteLocationMutation = useAdminDeleteLocationMutation();
+	// bulk delete
+	const bulkDeleteMutation = useAdminBulkDeleteLocations();
+	const [selectedRows, setSelectedRows] = useState([]);
+	const [clearSelectedRows, setClearSelectedRows] = useState(false);
+
+	const { isLoading } = useAuthStore();
 
 	// Fungsi untuk menangani penghapusan kursus
 	const handleDelete = (id) => {
@@ -80,6 +91,24 @@ export default function AdminLocation() {
 	const handlePerRowsChange = (newPerPage, page) => {
 		setRowsPerPage(newPerPage);
 		setCurrentPage(page);
+	};
+
+	const handleSelectedRowsChange = ({ selectedRows }) => {
+		setSelectedRows(selectedRows || []);
+	};
+
+	const handleBulkDelete = async () => {
+		if (!selectedRows || selectedRows.length === 0) return;
+
+		swalDelete().then(async (result) => {
+			if (!result.isConfirmed) return;
+			const ids = selectedRows.map((r) => r.id);
+			if (result.isConfirmed) {
+				bulkDeleteMutation.mutateAsync(ids);
+				setSelectedRows([]);
+				setClearSelectedRows((s) => !s);
+			}
+		});
 	};
 
 	const columns = [
@@ -127,31 +156,37 @@ export default function AdminLocation() {
 		},
 		{
 			name: "Aksi",
-			cell: (row) => (
-				<Menu>
-					<MenuButton
-						as={IconButton}
-						aria-label="Options"
-						icon={<EllipsisVerticalIcon />}
-						variant="ghost"
-					/>
-					<Portal>
-						<MenuList className="font-semibold">
-							<Link to={`/admin/locations/edit/${row.id}`}>
-								<MenuItem icon={<EditIcon className="text-yellow-500 hover:text-yellow-600" />}>
-									Edit
+			cell: (row) => {
+				if (isLoading) {
+					return <Loader2 className="animate-spin h-5 w-5 text-emerald-600" />;
+				}
+
+				return (
+					<Menu>
+						<MenuButton
+							as={IconButton}
+							aria-label="Options"
+							icon={<EllipsisVerticalIcon />}
+							variant="ghost"
+						/>
+						<Portal>
+							<MenuList className="font-semibold">
+								<Link to={`/admin/locations/edit/${row.id}`}>
+									<MenuItem icon={<EditIcon className="text-yellow-500 hover:text-yellow-600" />}>
+										Edit
+									</MenuItem>
+								</Link>
+								<MenuItem
+									onClick={() => handleDelete(row.id)}
+									disabled={deleteLocationMutation.isLoading}
+									icon={<Trash className="text-red-500 hover:text-red-600" />}>
+									Hapus
 								</MenuItem>
-							</Link>
-							<MenuItem
-								onClick={() => handleDelete(row.id)}
-								disabled={deleteLocationMutation.isLoading}
-								icon={<Trash className="text-red-500 hover:text-red-600" />}>
-								Hapus
-							</MenuItem>
-						</MenuList>
-					</Portal>
-				</Menu>
-			),
+							</MenuList>
+						</Portal>
+					</Menu>
+				);
+			},
 			width: "140px",
 		},
 	];
@@ -174,30 +209,52 @@ export default function AdminLocation() {
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="bg-white rounded-lg shadow p-6">
 					<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
-						<h2 className="text-lg font-semibold">
+						<h2 className="text-base md:text-lg font-semibold">
 							{locationsRefetching ? (
 								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
 							) : (
 								"Daftar Lokasi"
 							)}
 						</h2>
-						<LinkButton
-							to="/admin/locations/create"
-							variant="success"
-							size="sm"
-							className="w-full md:w-auto">
-							<Plus className="w-4 h-4 mr-2" /> Tambah Lokasi
-						</LinkButton>
+						<div className="flex gap-2 w-full md:w-auto">
+							<LinkButton
+								to="/admin/locations/create"
+								variant="success"
+								size="sm"
+								className="w-full md:w-auto">
+								<Plus className="w-4 h-4 mr-2" /> Tambah Lokasi
+							</LinkButton>
+						</div>
 					</div>
 
-					<div className="w-80 mb-4">
+					<div className="w-full mb-4 flex flex-col md:flex-row md:items-center gap-2">
 						<input
 							type="text"
 							placeholder="Cari lokasi, kota, atau provinsi..."
 							value={searchLocation}
 							onChange={(e) => setSearchLocation(e.target.value)}
-							className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
+							className="border border-gray-300 rounded-md px-3 py-2 text-sm md:text-sm w-full md:w-80 focus:outline-none focus:ring-2 focus:ring-emerald-500"
 						/>
+						{selectedRows && selectedRows.length > 0 && (
+							<div className="flex w-full md:w-auto">
+								<Button
+									variant="danger"
+									size="sm"
+									loading={isLoading}
+									onClick={handleBulkDelete}
+									disabled={
+										!selectedRows || selectedRows.length === 0 || bulkDeleteMutation.isLoading
+									}
+									className="w-full md:w-auto">
+									{isLoading ? null : (
+										<>
+											<Trash className="w-4 h-4 mr-2" />
+										</>
+									)}
+									Hapus Terpilih ({selectedRows.length})
+								</Button>
+							</div>
+						)}
 					</div>
 					{locationsLoading ? (
 						<div className="flex h-96 justify-center py-20">
@@ -207,6 +264,9 @@ export default function AdminLocation() {
 						<DataTable
 							columns={columns}
 							data={locations}
+							selectableRows={true}
+							onSelectedRowsChange={handleSelectedRowsChange}
+							clearSelectedRows={clearSelectedRows}
 							pagination
 							paginationServer
 							paginationTotalRows={pagination.total || 0}

@@ -9,15 +9,22 @@ import {
 	EditIcon,
 	AlertCircle,
 } from "lucide-react";
-import { LinkButton } from "@/components/ui/Button";
+import Button, { LinkButton } from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
-import { useAdminCategory, useAdminDeleteCategory } from "@/_hooks/useCategories";
+import {
+	useAdminCategory,
+	useAdminDeleteCategory,
+	useAdminBulkDeleteCategory,
+} from "@/_hooks/useCategories";
 import { swalDelete } from "@/components/ui/Swal";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import FetchLoader from "@/components/ui/FetchLoader";
 import { useDebounce } from "@/_hooks/utils/useDebounce";
+import { parseApiError } from "@/utils";
+import { showToast } from "@/components/ui/Toast";
+import { useAuthStore } from "@/_hooks/useAuth";
 
 export default function AdminCategory() {
 	const [searchCategory, setSearchCategory] = useState("");
@@ -41,6 +48,13 @@ export default function AdminCategory() {
 	} = useAdminCategory(currentPage, rowsPerPage, debouncedSearch);
 
 	const deleteCategoryMutation = useAdminDeleteCategory();
+
+	// bulk delete mutation + selected rows
+	const bulkDeleteMutation = useAdminBulkDeleteCategory();
+	const { isLoading } = useAuthStore();
+
+	const [selectedRows, setSelectedRows] = useState([]);
+	const [clearSelectedRows, setClearSelectedRows] = useState(false);
 
 	// Fungsi untuk menangani penghapusan kursus
 	const handleDelete = (id) => {
@@ -77,6 +91,27 @@ export default function AdminCategory() {
 	const handlePerRowsChange = (newPerPage, page) => {
 		setRowsPerPage(newPerPage);
 		setCurrentPage(page);
+	};
+
+	const handleSelectedRowsChange = ({ selectedRows }) => {
+		setSelectedRows(selectedRows || []);
+	};
+
+	const handleBulkDelete = () => {
+		if (!selectedRows || selectedRows.length === 0) return;
+
+		swalDelete().then((result) => {
+			if (result.isConfirmed) {
+				const ids = selectedRows.map((r) => r.id);
+				bulkDeleteMutation.mutateAsync(ids, {
+					onSuccess: () => {
+						// clear selection and refetch handled by onSuccess invalidation
+						setSelectedRows([]);
+						setClearSelectedRows((s) => !s);
+					},
+				});
+			}
+		});
 	};
 
 	const columns = [
@@ -184,23 +219,45 @@ export default function AdminCategory() {
 								"Daftar Kategori"
 							)}{" "}
 						</h2>
-						<LinkButton
-							to="/admin/categories/create"
-							variant="success"
-							size="sm"
-							className="w-full md:w-auto">
-							<Plus className="w-4 h-4 mr-2" /> Tambah Kategori
-						</LinkButton>
+						<div className="flex gap-2 w-full md:w-auto">
+							<LinkButton
+								to="/admin/categories/create"
+								variant="success"
+								size="sm"
+								className="w-full md:w-auto">
+								<Plus className="w-4 h-4 mr-2" /> Tambah Kategori
+							</LinkButton>
+						</div>
 					</div>
 
-					<div className="w-full md:w-80 mb-4">
+					<div className="w-full mb-4 flex flex-col md:flex-row md:items-center gap-2">
 						<input
 							type="text"
 							placeholder="Cari jenis kategori, atau deskripsi..."
 							value={searchCategory}
 							onChange={(e) => setSearchCategory(e.target.value)}
-							className="border border-gray-300 rounded-md px-3 py-2 text-sm md:text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
+							className="border border-gray-300 rounded-md px-3 py-2 text-sm md:text-sm w-full md:w-80 focus:outline-none focus:ring-2 focus:ring-emerald-500"
 						/>
+						{selectedRows && selectedRows.length > 0 && (
+							<div className="flex w-full md:w-auto">
+								<Button
+									variant="danger"
+									size="sm"
+									loading={isLoading}
+									onClick={handleBulkDelete}
+									disabled={
+										!selectedRows || selectedRows.length === 0 || bulkDeleteMutation.isLoading
+									}
+									className="w-full md:w-auto">
+									{isLoading ? null : (
+										<>
+											<Trash className="w-4 h-4 mr-2" />
+										</>
+									)}
+									Hapus Terpilih ({selectedRows.length})
+								</Button>
+							</div>
+						)}
 					</div>
 					{categoriesLoading ? (
 						<div className="flex h-72 md:h-96 justify-center py-20">
@@ -210,6 +267,9 @@ export default function AdminCategory() {
 						<DataTable
 							columns={columns}
 							data={categories}
+							selectableRows={true}
+							onSelectedRowsChange={handleSelectedRowsChange}
+							clearSelectedRows={clearSelectedRows}
 							pagination
 							paginationServer
 							paginationTotalRows={pagination.total || 0}

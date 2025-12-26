@@ -98,11 +98,17 @@ export const adminUpdateCategory = async (id, data) => {
  * @returns {Promise<any>} Data category baru
  */
 export const adminDeleteCategory = async (id) => {
-	const token = localStorage.getItem("authToken");
-	const response = await api.delete(`/admin/categories/${id}`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
+	const response = await api.delete(`/admin/categories/${id}`);
 	return response.data.data || response.data;
+};
+
+/** Bulk delete categories
+ * @async
+ * @function adminBulkDeleteCategories
+ * @endpoint POST /admin/categories/bulk-delete
+ * @param {Array<number>} ids - Array of category IDs to delete
+ */
+export const adminBulkDeleteCategories = async (ids = []) => {
+	const response = await api.post(`/admin/categories/bulk-delete`, { ids });
+	return response.data;
 };

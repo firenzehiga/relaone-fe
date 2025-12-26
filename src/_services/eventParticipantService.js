@@ -182,6 +182,22 @@ export const adminDeleteParticipant = async (id) => {
 	}
 };
 
+/** Bulk delete participants (admin)
+ * @async
+ * @function adminBulkDeleteParticipants
+ * @endpoint POST /admin/event-participants/bulk-delete
+ * @param {Array<number>} ids - Array of participant IDs to delete
+ */
+export const adminBulkDeleteParticipants = async (ids = []) => {
+	try {
+		const response = await api.post(`/admin/event-participants/bulk-delete`, { ids });
+		return response.data;
+	} catch (error) {
+		console.log("Error bulk deleting participants:", error);
+		throw error;
+	}
+};
+
 // ORGANIZATION SERVICES
 /** Mengambil semua event participants dengan optional filtering
  *

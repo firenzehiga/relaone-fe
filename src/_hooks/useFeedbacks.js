@@ -218,6 +218,52 @@ export const useAdminDeleteFeedbackMutation = () => {
 	});
 };
 
+/** Hook untuk bulk deleting feedbacks (admin) */
+export const useAdminBulkDeleteFeedbacks = () => {
+	const queryClient = useQueryClient();
+	const { setLoading, clearError, setError } = useAuthStore();
+
+	return useMutation({
+		mutationFn: (ids) => feedbackService.adminBulkDeleteFeedbacks(ids),
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: (data, variables) => {
+			queryClient.invalidateQueries(["adminFeedbacks"]);
+			setLoading(false);
+
+			const msg =
+				(data &&
+					(data.message ||
+						`Berhasil menghapus ${data.deleted_count ?? variables.length} feedback(s)`)) ||
+				"Berhasil menghapus feedbacks";
+
+			showToast({
+				type: "success",
+				title: "Berhasil!",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || "Delete bulk feedback failed";
+			if (setError) setError(msg);
+			showToast({
+				type: "error",
+				tipIcon: "💡",
+				tipText: "Periksa kembali atau coba lagi.",
+				message: msg,
+				duration: 3000,
+				position: "top-center",
+			});
+			console.error("Bulk delete feedback error:", error);
+		},
+	});
+};
+
 // === ORGANIZATION HOOKS ===
 /**
  * Hook untuk mengambil data feedbacks (organization)

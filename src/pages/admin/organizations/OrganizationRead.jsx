@@ -11,10 +11,11 @@ import {
 	Star,
 } from "lucide-react";
 import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
-import DynamicButton, { LinkButton } from "@/components/ui/Button";
+import Button, { LinkButton } from "@/components/ui/Button";
 import { swalDelete, swalWarning } from "@/components/ui/Swal";
 import { showToast } from "@/components/ui/Toast";
 import {
+	useAdminBulkDeleteOrganizations,
 	useAdminDeleteOrganizationMutation,
 	useAdminOrganizations,
 } from "@/_hooks/useOrganizations";
@@ -52,8 +53,14 @@ export default function AdminOrganization() {
 	} = useAdminOrganizations(currentPage, rowsPerPage, debouncedSearch);
 
 	const deleteOrganizationMutation = useAdminDeleteOrganizationMutation();
-	const updateOrganizationRatingsMutation = useAdminUpdateOrganizationRatingsMutation();
+	// bulk delete
+	const bulkDeleteMutation = useAdminBulkDeleteOrganizations();
+	const [selectedRows, setSelectedRows] = useState([]);
+	const [clearSelectedRows, setClearSelectedRows] = useState(false);
+
 	const { isLoading } = useAuthStore();
+
+	const updateOrganizationRatingsMutation = useAdminUpdateOrganizationRatingsMutation();
 
 	// Fungsi untuk menangani penghapusan kursus
 	const handleDelete = (id) => {
@@ -90,6 +97,24 @@ export default function AdminOrganization() {
 	const handlePerRowsChange = (newPerPage, page) => {
 		setRowsPerPage(newPerPage);
 		setCurrentPage(page);
+	};
+
+	const handleSelectedRowsChange = ({ selectedRows }) => {
+		setSelectedRows(selectedRows || []);
+	};
+
+	const handleBulkDelete = async () => {
+		if (!selectedRows || selectedRows.length === 0) return;
+
+		swalDelete().then(async (result) => {
+			if (!result.isConfirmed) return;
+			const ids = selectedRows.map((r) => r.id);
+			if (result.isConfirmed) {
+				bulkDeleteMutation.mutateAsync(ids);
+				setSelectedRows([]);
+				setClearSelectedRows((s) => !s);
+			}
+		});
 	};
 
 	// Fungsi untuk menangani pembaruan rating organisasi
@@ -174,31 +199,37 @@ export default function AdminOrganization() {
 		},
 		{
 			name: "Aksi",
-			cell: (row) => (
-				<Menu>
-					<MenuButton
-						as={IconButton}
-						aria-label="Options"
-						icon={<EllipsisVerticalIcon />}
-						variant="ghost"
-					/>
-					<Portal>
-						<MenuList className="font-semibold">
-							<Link to={`/admin/organizations/edit/${row.id}`}>
-								<MenuItem icon={<EditIcon className="text-yellow-500 hover:text-yellow-600" />}>
-									Edit
+			cell: (row) => {
+				if (isLoading) {
+					return <Loader2 className="animate-spin h-5 w-5 text-emerald-600" />;
+				}
+
+				return (
+					<Menu>
+						<MenuButton
+							as={IconButton}
+							aria-label="Options"
+							icon={<EllipsisVerticalIcon />}
+							variant="ghost"
+						/>
+						<Portal>
+							<MenuList className="font-semibold">
+								<Link to={`/admin/organizations/edit/${row.id}`}>
+									<MenuItem icon={<EditIcon className="text-yellow-500 hover:text-yellow-600" />}>
+										Edit
+									</MenuItem>
+								</Link>
+								<MenuItem
+									onClick={() => handleDelete(row.id)}
+									disabled={deleteOrganizationMutation.isLoading}
+									icon={<Trash className="text-red-500 hover:text-red-600" />}>
+									Hapus
 								</MenuItem>
-							</Link>
-							<MenuItem
-								onClick={() => handleDelete(row.id)}
-								disabled={deleteOrganizationMutation.isLoading}
-								icon={<Trash className="text-red-500 hover:text-red-600" />}>
-								Hapus
-							</MenuItem>
-						</MenuList>
-					</Portal>
-				</Menu>
-			),
+							</MenuList>
+						</Portal>
+					</Menu>
+				);
+			},
 			width: "140px",
 		},
 	];
@@ -232,7 +263,7 @@ export default function AdminOrganization() {
 							)}
 						</h2>
 						<div className="flex gap-2 md:gap-4 w-full md:w-auto sm:flex-row flex-col">
-							<DynamicButton
+							<Button
 								type="button"
 								variant="warning"
 								onClick={handleUpdateRatings}
@@ -241,7 +272,7 @@ export default function AdminOrganization() {
 								className="w-full md:w-auto">
 								{isLoading ? null : <Star className="w-4 h-4 mr-2" />}
 								Perbarui Rating
-							</DynamicButton>
+							</Button>
 							<LinkButton
 								to="/admin/organizations/create"
 								variant="success"
@@ -261,6 +292,26 @@ export default function AdminOrganization() {
 							onChange={(e) => setSearchOrganization(e.target.value)}
 							className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
 						/>
+						{selectedRows && selectedRows.length > 0 && (
+							<div className="flex w-full md:w-auto">
+								<Button
+									variant="danger"
+									size="sm"
+									loading={isLoading}
+									onClick={handleBulkDelete}
+									disabled={
+										!selectedRows || selectedRows.length === 0 || bulkDeleteMutation.isLoading
+									}
+									className="w-full md:w-auto">
+									{isLoading ? null : (
+										<>
+											<Trash className="w-4 h-4 mr-2" />
+										</>
+									)}
+									Hapus Terpilih ({selectedRows.length})
+								</Button>
+							</div>
+						)}
 					</div>
 
 					{organizationsLoading ? (
@@ -272,6 +323,9 @@ export default function AdminOrganization() {
 						<DataTable
 							columns={columns}
 							data={organizations}
+							selectableRows={true}
+							onSelectedRowsChange={handleSelectedRowsChange}
+							clearSelectedRows={clearSelectedRows}
 							pagination
 							paginationServer
 							paginationTotalRows={pagination.total || 0}
