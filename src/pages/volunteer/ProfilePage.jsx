@@ -4,11 +4,12 @@ import { Shield } from "lucide-react";
 import { useUserProfile } from "@/_hooks/useUsers";
 import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
-import ProfileCard from "@/components/common/ProfileCard";
-import ProfileDetails from "@/components/common/ProfileDetails";
+const ProfileCard = lazy(() => import("@/components/common/ProfileCard")); // "@/components/common/ProfileCard";
+const ProfileDetails = lazy(() => import("@/components/common/ProfileDetails")); //  "@/components/common/ProfileDetails";
 import Skeleton from "@/components/ui/Skeleton";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
+import { lazy } from "react";
 
 /**
  * Profile volunteer (light wrapper)

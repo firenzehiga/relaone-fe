@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Activity } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 // UI Libraries
@@ -221,7 +221,7 @@ export default function EventsPage() {
 					</div>
 
 					{/* Filters */}
-					{showFilters && (
+					<Activity mode={showFilters ? "visible" : "hidden"}>
 						<motion.div
 							initial={{ opacity: 0, height: 0 }}
 							animate={{ opacity: 1, height: "auto" }}
@@ -277,7 +277,7 @@ export default function EventsPage() {
 								{/* status filter removed by design - public listing should not expose status filter */}
 							</div>
 						</motion.div>
-					)}
+					</Activity>
 				</div>
 
 				{/* Active Filters */}

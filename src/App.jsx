@@ -16,11 +16,11 @@ import React, { lazy, Suspense } from "react";
 
 // Volunteer/Public Pages
 import LandingPage from "@/pages/LandingPage";
-import EventsPage from "@/pages/EventsPage";
-import OrganizationsPage from "@/pages/OrganizationsPage";
+const EventsPage = lazy(() => import("@/pages/EventsPage")); // "@/pages/EventsPage";
+const OrganizationsPage = lazy(() => import("@/pages/OrganizationsPage")); // "@/pages/OrganizationsPage";
 const AboutPage = lazy(() => import("@/pages/AboutPage"));
-import DetailEventPage from "@/pages/DetailEventPage";
-import DetailOrganizationPage from "@/pages/DetailOrganizationPage";
+const DetailEventPage = lazy(() => import("@/pages/DetailEventPage"));
+const DetailOrganizationPage = lazy(() => import("@/pages/DetailOrganizationPage"));
 const { PrivacyPolicyPage, TermsOfServicePage } = {
 	PrivacyPolicyPage: lazy(() =>
 		import("./pages/PrivacyTerms").then((m) => ({ default: m.PrivacyPolicyPage }))
@@ -54,7 +54,7 @@ import OnboardingModal from "@/components/volunteer/OnboardingModal";
 
 // Fallback Components
 import SuspenseFallback from "@/components/fallback/SuspenseFallback";
-import NotFound from "@/components/fallback/NotFound";
+const NotFound = lazy(() => import("@/components/fallback/NotFound")); // "@/components/fallback/NotFound";
 
 // Admin Pages (lazy loaded)
 const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));

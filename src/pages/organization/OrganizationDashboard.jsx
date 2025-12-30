@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { lazy, useState } from "react";
 
 // Hooks / Stores
-import OrganizationAnalytics from "@/components/organization/OrganizationAnalytics";
-import OrganizationPending from "@/components/fallback/OrganizationPending";
+const OrganizationAnalytics = lazy(() => import("@/components/organization/OrganizationAnalytics")); // "@/components/organization/OrganizationAnalytics";
+const OrganizationPending = lazy(() => import("@/components/fallback/OrganizationPending")); // "@/components/fallback/OrganizationPending";
 import { useOrgAnalytics } from "@/_hooks/useUsers";
 import { useOrgEvents } from "@/_hooks/useEvents";
 import { useAuthStore } from "@/_hooks/useAuth";
