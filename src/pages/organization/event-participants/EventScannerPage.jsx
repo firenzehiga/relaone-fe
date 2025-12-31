@@ -15,10 +15,10 @@ import {
 import { formatTime } from "@/utils/dateFormatter";
 
 // UI Components
-const AttendanceStats = lazy(() => import("@/components/organization/AttendanceStats")); // "@/components/organization/AttendanceStats";
-const RecentCheckIns = lazy(() => import("@/components/organization/RecentCheckIns")); // "@/components/organization/RecentCheckIns";
-const QrScanner = lazy(() => import("@/components/organization/QrScanner")); // "@/components/organization/QrScanner";
-const Skeleton = lazy(() => import("@/components/ui/Skeleton")); // "@/components/ui/Skeleton";
+import AttendanceStats from "@/components/organization/AttendanceStats";
+import RecentCheckIns from "@/components/organization/RecentCheckIns";
+import QrScanner from "@/components/organization/QrScanner";
+import Skeleton from "@/components/ui/Skeleton";
 
 /**
  * Halaman Scanner QR untuk check-in volunteer di event

@@ -11,30 +11,33 @@ import { useAdminCreateEventMutation } from "@/_hooks/useEvents";
 import { Loader2, UserCircle2, Image } from "lucide-react";
 import { useAdminCategory } from "@/_hooks/useCategories";
 import Skeleton from "@/components/ui/Skeleton";
+import { useForm } from "react-hook-form";
 export default function AdminEventCreate() {
 	const navigate = useNavigate();
 	const { user } = useAuthStore();
-	const [formData, setFormData] = useState({
-		judul: "",
-		deskripsi: "",
-		deskripsi_singkat: "",
-		tanggal_mulai: "",
-		tanggal_selesai: "",
-		waktu_mulai: "",
-		waktu_selesai: "",
-		maks_peserta: "",
-		gambar: null,
-		status: "draft",
-		persyaratan: [],
-		manfaat: [],
-		nama_kontak: "",
-		telepon_kontak: "",
-		email_kontak: "",
-		batas_pendaftaran: "",
-		category_id: "",
-		organization_id: "",
-		location_id: "",
-		created_by_user_id: user.id,
+	const { register, handleSubmit, setValue, watch, reset, getValues, formState } = useForm({
+		defaultValues: {
+			judul: "",
+			deskripsi: "",
+			deskripsi_singkat: "",
+			tanggal_mulai: "",
+			tanggal_selesai: "",
+			waktu_mulai: "",
+			waktu_selesai: "",
+			maks_peserta: "",
+			gambar: null,
+			status: "draft",
+			persyaratan: [],
+			manfaat: [],
+			nama_kontak: "",
+			telepon_kontak: "",
+			email_kontak: "",
+			batas_pendaftaran: "",
+			category_id: "",
+			organization_id: "",
+			location_id: "",
+			created_by_user_id: user.id,
+		},
 	});
 
 	const { isLoading } = useAuthStore();
@@ -47,25 +50,29 @@ export default function AdminEventCreate() {
 	const createEventMutation = useAdminCreateEventMutation();
 	const { locations, isLoading: locationsLoading, error: locationsError } = useAdminLocations();
 
+	const organization_id = watch("organization_id");
+	const gambar = watch("gambar");
+	const persyaratan = watch("persyaratan");
+	const manfaat = watch("manfaat");
+
 	// Lokasi yang difilter berdasarkan organisasi yang dipilih di form
 	const filteredLocations = locations.filter((loc) =>
-		formData.organization_id
-			? String(loc.organization_id) === String(formData.organization_id)
-			: false
+		organization_id ? String(loc.organization_id) === String(organization_id) : false
 	);
 
 	// Jika organisasi berubah dan lokasi saat ini tidak cocok, kosongkan lokasi
 	useEffect(() => {
-		if (!formData.organization_id) return;
+		if (!organization_id) return;
 		const ok = locations.some(
 			(loc) =>
-				String(loc.organization_id) === String(formData.organization_id) &&
-				String(loc.id) === String(formData.location_id)
+				String(loc.organization_id) === String(organization_id) &&
+				String(loc.id) === String(getValues("location_id"))
 		);
-		if (!ok && formData.location_id) {
-			setFormData((s) => ({ ...s, location_id: "" }));
+		if (!ok && getValues("location_id")) {
+			setValue("location_id", "", { shouldDirty: true });
 		}
-	}, [formData.organization_id, locations]);
+	}, [organization_id, locations]);
+
 	const {
 		organizations,
 		isLoading: organizationsLoading,
@@ -74,87 +81,90 @@ export default function AdminEventCreate() {
 
 	const { categories, isLoading: categoriesLoading, error: categoriesError } = useAdminCategory();
 
-	const handleChange = (e) => {
-		const { name, value, files } = e.target;
-		// file input validation
-		if (name === "gambar") {
-			const file = files && files[0];
-			if (!file) return;
+	const handleFileChange = (e) => {
+		const file = e.target.files && e.target.files[0];
+		if (!file) return;
 
-			// allowed mime types and max size (2MB)
-			const allowed = ["image/jpeg", "image/png", "image/jpg"];
-			const maxSize = 2 * 1024 * 1024; // 2MB
+		const allowed = ["image/jpeg", "image/png", "image/jpg"];
+		const maxSize = 2 * 1024 * 1024; // 2MB
 
-			if (!allowed.includes(file.type)) {
-				toast.error("File harus berupa gambar JPEG/PNG/JPG (webp tidak diperbolehkan).", {
-					position: "top-center",
-				});
-				return;
-			}
-			if (file.size > maxSize) {
-				toast.error("Ukuran file maksimal 2MB.", {
-					position: "top-center",
-				});
-				return;
-			}
-
-			setError("");
-			setFormData((s) => ({ ...s, [name]: file }));
-		} else {
-			setFormData((s) => ({ ...s, [name]: value }));
+		if (!allowed.includes(file.type)) {
+			toast.error("File harus berupa gambar JPEG/PNG/JPG (webp tidak diperbolehkan).", {
+				position: "top-center",
+			});
+			return;
 		}
+		if (file.size > maxSize) {
+			toast.error("Ukuran file maksimal 2MB.", {
+				position: "top-center",
+			});
+			return;
+		}
+
+		setError("");
+		setValue("gambar", file, { shouldDirty: true });
 	};
 
 	// buat preview gambar saat file diubah
 	useEffect(() => {
 		let url;
-		if (formData.gambar instanceof File) {
-			url = URL.createObjectURL(formData.gambar);
+		if (gambar instanceof File) {
+			url = URL.createObjectURL(gambar);
 			setImagePreview(url);
 		} else setImagePreview("");
 		return () => {
 			if (url) URL.revokeObjectURL(url);
 		};
-	}, [formData.gambar]);
+	}, [gambar]);
 
 	// persyaratan handlers (array)
 	const addPersyaratan = () => {
 		const v = persyaratanInput && persyaratanInput.trim();
 		if (!v) return;
-		setFormData((s) => ({ ...s, persyaratan: [...s.persyaratan, v] }));
+		const current = getValues("persyaratan") || [];
+		setValue("persyaratan", [...current, v], { shouldDirty: true });
 		setPersyaratanInput("");
 	};
 	const updatePersyaratan = (idx, value) => {
-		setFormData((s) => ({
-			...s,
-			persyaratan: s.persyaratan.map((p, i) => (i === idx ? value : p)),
-		}));
+		const current = getValues("persyaratan") || [];
+		setValue(
+			"persyaratan",
+			current.map((p, i) => (i === idx ? value : p)),
+			{ shouldDirty: true }
+		);
 	};
 	const removePersyaratan = (idx) => {
-		setFormData((s) => ({
-			...s,
-			persyaratan: s.persyaratan.filter((_, i) => i !== idx),
-		}));
+		const current = getValues("persyaratan") || [];
+		setValue(
+			"persyaratan",
+			current.filter((_, i) => i !== idx),
+			{ shouldDirty: true }
+		);
 	};
 
 	// manfaat handlers (array)
 	const addManfaat = () => {
 		const v = manfaatInput && manfaatInput.trim();
 		if (!v) return;
-		setFormData((s) => ({ ...s, manfaat: [...s.manfaat, v] }));
+		const current = getValues("manfaat") || [];
+		setValue("manfaat", [...current, v], { shouldDirty: true });
 		setManfaatInput("");
 	};
 	const updateManfaat = (idx, value) => {
-		setFormData((s) => ({
-			...s,
-			manfaat: s.manfaat.map((m, i) => (i === idx ? value : m)),
-		}));
+		const current = getValues("manfaat") || [];
+		setValue(
+			"manfaat",
+			current.map((m, i) => (i === idx ? value : m)),
+			{ shouldDirty: true }
+		);
 	};
 	const removeManfaat = (idx) => {
-		setFormData((s) => ({
-			...s,
-			manfaat: s.manfaat.filter((_, i) => i !== idx),
-		}));
+		const current = getValues("manfaat") || [];
+		setValue(
+			"manfaat",
+			current.filter((_, i) => i !== idx),
+			{ shouldDirty: true }
+		);
 	};
 
 	const handleDrop = (e) => {
@@ -178,29 +188,28 @@ export default function AdminEventCreate() {
 		}
 
 		setError("");
-		setFormData((s) => ({ ...s, gambar: file }));
+		setValue("gambar", file, { shouldDirty: true });
 	};
 
 	const handleDragOver = (e) => {
 		e.preventDefault();
 	};
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
+	const onSubmit = (data) => {
 		setError("");
 
-		// ensure gambar is present (support drag-drop which sets formData.gambar)
-		if (!(formData.gambar instanceof File)) {
+		if (!(data.gambar instanceof File)) {
 			setError("Gambar event wajib diunggah.");
 			return;
 		}
 
 		const payload = new FormData();
-		for (const key in formData) {
-			if (Array.isArray(formData[key])) {
-				payload.append(key, JSON.stringify(formData[key])); // Kondisi khusus untuk persyaratan dan manfaat agar backend dapat menguraikannya kembali ke array
+		for (const key in data) {
+			const val = data[key];
+			if (Array.isArray(val)) {
+				payload.append(key, JSON.stringify(val));
 			} else {
-				payload.append(key, formData[key] ?? "");
+				payload.append(key, val ?? "");
 			}
 		}
 
@@ -229,7 +238,7 @@ export default function AdminEventCreate() {
 					</p>
 				</header>
 
-				<form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
+				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6 flex flex-col">
 					{error && <div className="text-sm text-red-600 bg-red-50 p-2 rounded">{error}</div>}
 
 					<Tabs variant="enclosed" colorScheme="green" isFitted>
@@ -256,11 +265,8 @@ export default function AdminEventCreate() {
 									</label>
 									<input
 										id="judul"
-										name="judul"
-										value={formData.judul}
-										onChange={handleChange}
+										{...register("judul", { required: true })}
 										type="text"
-										required
 										placeholder="Contoh: Bersih Pantai"
 										className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 									/>
@@ -274,10 +280,7 @@ export default function AdminEventCreate() {
 									</label>
 									<textarea
 										id="deskripsi"
-										name="deskripsi"
-										value={formData.deskripsi}
-										onChange={handleChange}
-										required
+										{...register("deskripsi", { required: true })}
 										rows={4}
 										placeholder="Tulis deskripsi lengkap mengenai event ini..."
 										className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -292,11 +295,8 @@ export default function AdminEventCreate() {
 										</label>
 										<input
 											id="deskripsi_singkat"
-											name="deskripsi_singkat"
-											value={formData.deskripsi_singkat}
-											onChange={handleChange}
+											{...register("deskripsi_singkat", { required: true })}
 											type="text"
-											required
 											placeholder="Contoh: Bersih Pantai"
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
@@ -309,10 +309,7 @@ export default function AdminEventCreate() {
 										</label>
 										<select
 											id="category_id"
-											name="category_id"
-											value={formData.category_id}
-											onChange={handleChange}
-											required
+											{...register("category_id", { required: true })}
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 											<option value="">Pilih Kategori</option>
 											{categories.map((category) => (
@@ -324,7 +321,9 @@ export default function AdminEventCreate() {
 									</div>
 								</div>
 								<div className="mb-4">
-									<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+									<label
+										htmlFor="gambar"
+										className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 										Gambar Event <span className="text-red-500">*</span>
 									</label>
 									<div className="mt-2" onDrop={handleDrop} onDragOver={handleDragOver}>
@@ -352,7 +351,7 @@ export default function AdminEventCreate() {
 														id="gambar"
 														name="gambar"
 														accept="image/jpeg,image/jpg,image/png"
-														onChange={handleChange}
+														onChange={handleFileChange}
 														className="hidden"
 													/>
 													<label
@@ -367,9 +366,9 @@ export default function AdminEventCreate() {
 													Format: JPEG, JPG, PNG. Maksimal 2MB.
 												</p>
 
-												{formData.gambar && (
+												{gambar && gambar.name && (
 													<p className="text-xs text-gray-700 break-all text-center sm:text-left">
-														{formData.gambar.name}
+														{gambar.name}
 													</p>
 												)}
 											</div>
@@ -391,11 +390,8 @@ export default function AdminEventCreate() {
 										</label>
 										<input
 											id="tanggal_mulai"
-											name="tanggal_mulai"
+											{...register("tanggal_mulai", { required: true })}
 											type="date"
-											value={formData.tanggal_mulai}
-											onChange={handleChange}
-											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
@@ -407,11 +403,8 @@ export default function AdminEventCreate() {
 										</label>
 										<input
 											id="tanggal_selesai"
-											name="tanggal_selesai"
+											{...register("tanggal_selesai", { required: true })}
 											type="date"
-											value={formData.tanggal_selesai}
-											onChange={handleChange}
-											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
@@ -427,11 +420,8 @@ export default function AdminEventCreate() {
 										</label>
 										<input
 											id="waktu_mulai"
-											name="waktu_mulai"
+											{...register("waktu_mulai", { required: true })}
 											type="time"
-											value={formData.waktu_mulai}
-											onChange={handleChange}
-											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
@@ -443,11 +433,8 @@ export default function AdminEventCreate() {
 										</label>
 										<input
 											id="waktu_selesai"
-											name="waktu_selesai"
+											{...register("waktu_selesai", { required: true })}
 											type="time"
-											value={formData.waktu_selesai}
-											onChange={handleChange}
-											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
@@ -462,11 +449,8 @@ export default function AdminEventCreate() {
 										</label>
 										<input
 											id="batas_pendaftaran"
-											name="batas_pendaftaran"
+											{...register("batas_pendaftaran", { required: true })}
 											type="date"
-											value={formData.batas_pendaftaran}
-											onChange={handleChange}
-											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
@@ -478,12 +462,9 @@ export default function AdminEventCreate() {
 										</label>
 										<input
 											id="maks_peserta"
-											name="maks_peserta"
+											{...register("maks_peserta", { required: true })}
 											type="number"
 											min="0"
-											value={formData.maks_peserta}
-											onChange={handleChange}
-											required
 											placeholder="Misal: 50"
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
@@ -496,10 +477,7 @@ export default function AdminEventCreate() {
 										</label>
 										<select
 											id="location_id"
-											name="location_id"
-											value={formData.location_id}
-											onChange={handleChange}
-											required
+											{...register("location_id", { required: true })}
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 											<option value="">Pilih Lokasi</option>
 											{filteredLocations.map((location) => (
@@ -518,8 +496,8 @@ export default function AdminEventCreate() {
 											Persyaratan
 										</label>
 										<div className="mt-2 space-y-2">
-											{formData.persyaratan && formData.persyaratan.length > 0 ? (
-												formData.persyaratan.map((p, idx) => (
+											{persyaratan && persyaratan.length > 0 ? (
+												persyaratan.map((p, idx) => (
 													<div
 														key={idx}
 														className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
@@ -544,7 +522,11 @@ export default function AdminEventCreate() {
 											)}
 
 											<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+												<label htmlFor="persyaratan-input" className="sr-only">
+													Tambahkan persyaratan
+												</label>
 												<input
+													id="persyaratan-input"
 													type="text"
 													placeholder="Tambahkan persyaratan"
 													className="flex-1 rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -574,8 +556,8 @@ export default function AdminEventCreate() {
 											Manfaat
 										</label>
 										<div className="mt-2 space-y-2">
-											{formData.manfaat && formData.manfaat.length > 0 ? (
-												formData.manfaat.map((m, idx) => (
+											{manfaat && manfaat.length > 0 ? (
+												manfaat.map((m, idx) => (
 													<div
 														key={idx}
 														className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
@@ -600,7 +582,11 @@ export default function AdminEventCreate() {
 											)}
 
 											<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+												<label htmlFor="manfaat-input" className="sr-only">
+													Tambahkan manfaat
+												</label>
 												<input
+													id="manfaat-input"
 													type="text"
 													placeholder="Tambahkan manfaat"
 													className="flex-1 rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -637,11 +623,8 @@ export default function AdminEventCreate() {
 										</label>
 										<input
 											id="nama_kontak"
-											name="nama_kontak"
+											{...register("nama_kontak", { required: true })}
 											type="text"
-											value={formData.nama_kontak}
-											onChange={handleChange}
-											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
@@ -654,12 +637,9 @@ export default function AdminEventCreate() {
 										</label>
 										<input
 											id="telepon_kontak"
-											name="telepon_kontak"
+											{...register("telepon_kontak", { required: true })}
 											type="text"
-											value={formData.telepon_kontak}
-											onChange={handleChange}
 											placeholder="08xxxxxxxxxx"
-											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
@@ -673,11 +653,8 @@ export default function AdminEventCreate() {
 										</label>
 										<input
 											id="email_kontak"
-											name="email_kontak"
+											{...register("email_kontak", { required: true })}
 											type="email"
-											value={formData.email_kontak}
-											onChange={handleChange}
-											required
 											placeholder="nama@contoh.com"
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
@@ -690,10 +667,7 @@ export default function AdminEventCreate() {
 										</label>
 										<select
 											id="organization_id"
-											name="organization_id"
-											value={formData.organization_id}
-											onChange={handleChange}
-											required
+											{...register("organization_id", { required: true })}
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 											<option value="">Pilih Organisasi</option>
 											{organizations.map((organization) => (
@@ -714,10 +688,7 @@ export default function AdminEventCreate() {
 										</label>
 										<select
 											id="status"
-											name="status"
-											value={formData.status}
-											onChange={handleChange}
-											required
+											{...register("status", { required: true })}
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 											<option value="draft">Draft</option>
 											<option value="published">Published</option>

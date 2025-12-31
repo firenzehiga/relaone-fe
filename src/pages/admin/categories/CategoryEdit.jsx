@@ -1,8 +1,7 @@
 import { useAdminCategoryById, useAdminUpdateCategoryMutation } from "@/_hooks/useCategories";
-import DynamicButton from "@/components/ui/Button";
-import { parseApiError } from "@/utils";
 import { Activity, Heart, Leaf, Users, BookOpen, Stethoscope } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import Skeleton from "@/components/ui/Skeleton";
 import Button from "@/components/ui/Button";
@@ -11,12 +10,17 @@ import { useAuthStore } from "@/_hooks/useAuth";
 export default function AdminCategoryEdit() {
 	const { id } = useParams();
 	const navigate = useNavigate();
-	const [formData, setFormData] = useState({
-		nama: "",
-		deskripsi: "",
-		icon: "",
-		warna: "",
-		is_active: "1",
+	const {
+		register,
+		handleSubmit,
+		setValue,
+		watch,
+		reset,
+		getValues,
+		formState: { errors, isSubmitting, isSubmitted, isValid },
+	} = useForm({
+		mode: "onChange",
+		defaultValues: { nama: "", deskripsi: "", icon: "", warna: "#000000", is_active: "1" },
 	});
 	const { isLoading } = useAuthStore();
 
@@ -27,35 +31,31 @@ export default function AdminCategoryEdit() {
 	useEffect(() => {
 		if (!showCategory) return;
 
-		// hanya isi dengan data dari backend jika form lokal belum berisi nama (tidak menimpa edit user)
-		setFormData((prev) => {
-			if (prev.nama) return prev; // sudah diisi user, jangan timpa
-			return {
-				nama: showCategory.nama,
-				deskripsi: showCategory.deskripsi,
-				icon: showCategory.icon,
-				warna: showCategory.warna,
-				/// normalisasi ke string agar cocok dengan <option value="1"> / "0"
-				is_active: showCategory.is_active === true ? "1" : "0",
-			};
-		});
-	}, [showCategory]);
-	// Generic change handler
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setFormData((s) => ({ ...s, [name]: value }));
-	};
+		// only populate when user hasn't started editing (preserve local edits)
+		if (getValues("nama")) return;
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
+		reset({
+			nama: showCategory.nama,
+			deskripsi: showCategory.deskripsi,
+			icon: showCategory.icon,
+			warna: showCategory.warna || "#000000",
+			is_active: showCategory.is_active === true ? "1" : "0",
+		});
+	}, [showCategory, reset, getValues]);
+	const warna = watch("warna");
+	const iconValue = watch("icon");
+
+	const onSubmit = async (values) => {
 		const payload = new FormData();
 		payload.append("_method", "PUT");
 
-		for (const key in formData) {
-			payload.append(key, formData[key]);
+		for (const key in values) {
+			let val = values[key];
+			if (key === "is_active") val = String(val);
+			payload.append(key, val ?? "");
 		}
 
-		updateCategoryMutation.mutateAsync({ id, data: payload });
+		await updateCategoryMutation.mutateAsync({ id, data: payload });
 	};
 
 	if (showCategoryLoading) return <Skeleton.FormSkeleton title="Loading..." />;
@@ -68,33 +68,39 @@ export default function AdminCategoryEdit() {
 					<p className="text-xs sm:text-sm text-gray-500 mt-1">Isi detail kategori.</p>
 				</header>
 
-				<form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
+				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6 flex flex-col">
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="nama"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Nama Kategori <span className="text-red-500">*</span>
 							</label>
 							<input
-								name="nama"
-								value={formData.nama}
-								onChange={handleChange}
+								id="nama"
 								type="text"
-								required
 								placeholder="Contoh:Pendidikan"
-								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+								{...register("nama", { required: "Nama kategori wajib diisi" })}
+								className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+									isSubmitted && errors.nama ? "border-red-500" : "border-gray-200"
+								}`}
 							/>
 						</div>
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="warna"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Warna <span className="text-red-500">*</span>
 							</label>
 							<div className="mt-1 flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3">
 								{/* native color input */}
 								<input
 									type="color"
-									name="warna"
-									value={formData.warna || "#000000"}
-									onChange={handleChange}
+									id="warna_color"
+									value={warna || "#000000"}
+									onChange={(e) =>
+										setValue("warna", e.target.value, { shouldValidate: false, shouldDirty: true })
+									}
 									required
 									className="w-12 h-10 p-0 rounded-md border border-gray-200 cursor-pointer"
 									aria-label="Pilih warna"
@@ -102,79 +108,82 @@ export default function AdminCategoryEdit() {
 								{/* hex input so user can type exact code */}
 								<input
 									type="text"
-									name="warna"
-									value={formData.warna}
-									onChange={handleChange}
+									id="warna"
 									placeholder="#10B981"
+									{...register("warna", {
+										required: "Warna wajib diisi",
+										pattern: {
+											value: /^#?[0-9A-Fa-f]{6}$/,
+											message: "Format hex tidak valid",
+										},
+									})}
 									className="flex-1 min-w-[120px] rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 								/>
 								{/* live swatch */}
 								<div
 									className="w-10 h-10 rounded-md border"
-									style={{ backgroundColor: formData.warna || "transparent" }}
+									style={{ backgroundColor: warna || "transparent" }}
 									aria-hidden
 								/>
 							</div>
 						</div>
 					</div>
 					<div>
-						<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+						<label
+							htmlFor="deskripsi"
+							className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 							Deskripsi Singkat
 						</label>
 						<textarea
-							name="deskripsi"
-							value={formData.deskripsi}
-							onChange={handleChange}
-							required
+							id="deskripsi"
 							placeholder="Contoh: Aksi Peduli Lingkungan"
+							{...register("deskripsi", { required: "Deskripsi wajib diisi" })}
 							className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 						/>
 					</div>
 
 					{/* Icon picker (lucide-react) */}
 					<div>
-						<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
-							Icon Kategori <span className="text-red-500">*</span>
+						<label
+							htmlFor="icon"
+							className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
+							Icon Kategori
 						</label>
 						{/* quick picks */}
 						<div className="flex flex-wrap gap-2 mb-3">
-							{Object.entries({
-								Activity,
-								Heart,
-								Leaf,
-								Users,
-								BookOpen,
-								Stethoscope,
-							}).map(([key, IconComp]) => {
-								const selected = formData.icon === key;
-								return (
-									<button
-										type="button"
-										key={key}
-										onClick={() => setFormData((s) => ({ ...s, icon: key }))}
-										className={`flex items-center gap-2 px-2 sm:px-3 py-2 border rounded-md text-xs sm:text-sm ${
-											selected ? "border-indigo-600 bg-indigo-50" : "border-gray-200 bg-white"
-										}`}>
-										<IconComp size={16} />
-										<span className="capitalize">{key}</span>
-									</button>
-								);
-							})}
+							{Object.entries({ Activity, Heart, Leaf, Users, BookOpen, Stethoscope }).map(
+								([key, IconComp]) => {
+									const selected = iconValue === key;
+									return (
+										<button
+											type="button"
+											key={key}
+											onClick={() =>
+												setValue("icon", key, { shouldValidate: false, shouldDirty: true })
+											}
+											className={`flex items-center gap-2 px-2 sm:px-3 py-2 border rounded-md text-xs sm:text-sm ${
+												selected ? "border-indigo-600 bg-indigo-50" : "border-gray-200 bg-white"
+											}`}>
+											<IconComp size={16} />
+											<span className="capitalize">{key}</span>
+										</button>
+									);
+								}
+							)}
 						</div>
 
 						{/* free-text Lucide icon name */}
 						<div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center mb-2">
 							<input
+								id="icon"
 								type="text"
-								name="icon"
-								value={formData.icon}
-								onChange={(e) => setFormData((s) => ({ ...s, icon: e.target.value }))}
 								placeholder="Ketik nama icon Lucide, mis. Camera"
+								{...register("icon")}
 								className="flex-1 rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 							/>
 							<button
 								type="button"
-								onClick={() => setFormData((s) => ({ ...s, icon: "" }))}
+								onClick={() => setValue("icon", "", { shouldValidate: false, shouldDirty: true })}
 								className="w-full sm:w-auto px-3 py-2 bg-gray-100 rounded-md text-xs sm:text-sm">
 								Clear
 							</button>
@@ -197,21 +206,12 @@ export default function AdminCategoryEdit() {
 							</p>
 						</div>
 
-						{formData.icon && (
+						{iconValue && (
 							<div className="mt-3 flex items-center gap-3">
 								<span className="text-xs sm:text-sm font-medium">Preview:</span>
 								{(() => {
-									// sekarang gak pakai import * lagi. ambil dari object di atas
-									const categoriesIcons = {
-										Activity,
-										Heart,
-										Leaf,
-										Users,
-										BookOpen,
-										Stethoscope,
-									};
-									const Comp = categoriesIcons[formData.icon];
-									// const Comp = Lucide[formData.icon];
+									const categoriesIcons = { Activity, Heart, Leaf, Users, BookOpen, Stethoscope };
+									const Comp = categoriesIcons[iconValue];
 									return Comp ? (
 										<Comp size={24} />
 									) : (
@@ -226,16 +226,13 @@ export default function AdminCategoryEdit() {
 
 					<div className="mb-4">
 						<label
-							htmlFor="category_id"
+							htmlFor="is_active"
 							className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 							Status Kategori <span className="text-red-500">*</span>
 						</label>
 						<select
 							id="is_active"
-							name="is_active"
-							value={formData.is_active}
-							onChange={handleChange}
-							required
+							{...register("is_active", { required: "Status kategori wajib dipilih" })}
 							className="mt-1 block w-full sm:w-1/4 rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 							<option value="">Status Kategori</option>
 							<option value="1">Aktif</option>
@@ -256,10 +253,10 @@ export default function AdminCategoryEdit() {
 							<Button
 								type="submit"
 								variant="success"
-								disabled={isLoading}
-								loading={isLoading}
+								disabled={isLoading || isSubmitting || !isValid}
+								loading={isLoading || isSubmitting}
 								className="w-full sm:w-auto order-1 sm:order-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500">
-								{isLoading ? "Menyimpan..." : "Simpan Kategori"}
+								{isLoading || isSubmitting ? "Menyimpan..." : "Simpan Kategori"}
 							</Button>
 						</div>
 					</div>

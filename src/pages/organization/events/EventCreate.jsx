@@ -11,6 +11,7 @@ import { useOrgCreateEventMutation } from "@/_hooks/useEvents";
 import { useOrgLocations } from "@/_hooks/useLocations";
 import { useCategory } from "@/_hooks/useCategories";
 import { useAuthStore } from "@/_hooks/useAuth";
+import { useForm } from "react-hook-form";
 
 // UI Components
 import Button from "@/components/ui/Button";
@@ -18,26 +19,28 @@ import Skeleton from "@/components/ui/Skeleton";
 
 export default function OrganizationEventCreate() {
 	const navigate = useNavigate();
-	const [formData, setFormData] = useState({
-		judul: "",
-		deskripsi: "",
-		deskripsi_singkat: "",
-		tanggal_mulai: "",
-		tanggal_selesai: "",
-		waktu_mulai: "",
-		waktu_selesai: "",
-		maks_peserta: "",
-		gambar: null,
-		status: "draft",
-		persyaratan: [],
-		manfaat: [],
-		nama_kontak: "",
-		telepon_kontak: "",
-		email_kontak: "",
-		batas_pendaftaran: "",
-		category_id: "",
-		organization_id: "",
-		location_id: "",
+	const { register, handleSubmit, setValue, watch, getValues } = useForm({
+		defaultValues: {
+			judul: "",
+			deskripsi: "",
+			deskripsi_singkat: "",
+			tanggal_mulai: "",
+			tanggal_selesai: "",
+			waktu_mulai: "",
+			waktu_selesai: "",
+			maks_peserta: "",
+			gambar: null,
+			status: "draft",
+			persyaratan: [],
+			manfaat: [],
+			nama_kontak: "",
+			telepon_kontak: "",
+			email_kontak: "",
+			batas_pendaftaran: "",
+			category_id: "",
+			organization_id: "",
+			location_id: "",
+		},
 	});
 
 	const { isLoading } = useAuthStore();
@@ -56,87 +59,87 @@ export default function OrganizationEventCreate() {
 		error: categoriesError,
 	} = useCategory();
 
-	const handleChange = (e) => {
-		const { name, value, files } = e.target;
-		// file input validation
-		if (name === "gambar") {
-			const file = files && files[0];
-			if (!file) return;
-
-			// allowed mime types and max size (2MB)
-			const allowed = ["image/jpeg", "image/png", "image/jpg"];
-			const maxSize = 2 * 1024 * 1024; // 2MB
-
-			if (!allowed.includes(file.type)) {
-				toast.error("File harus berupa gambar JPEG/PNG/JPG (webp tidak diperbolehkan).", {
-					position: "top-center",
-				});
-				return;
-			}
-			if (file.size > maxSize) {
-				toast.error("Ukuran file maksimal 2MB.", {
-					position: "top-center",
-				});
-				return;
-			}
-
-			setError("");
-			setFormData((s) => ({ ...s, [name]: file }));
-		} else {
-			setFormData((s) => ({ ...s, [name]: value }));
+	const handleFileChange = (file) => {
+		const allowed = ["image/jpeg", "image/png", "image/jpg"];
+		const maxSize = 2 * 1024 * 1024; // 2MB
+		if (!file) return;
+		if (!allowed.includes(file.type)) {
+			toast.error("File harus berupa gambar JPEG/PNG/JPG (webp tidak diperbolehkan).", {
+				position: "top-center",
+			});
+			return;
 		}
+		if (file.size > maxSize) {
+			toast.error("Ukuran file maksimal 2MB.", {
+				position: "top-center",
+			});
+			return;
+		}
+		setError("");
+		setValue("gambar", file, { shouldDirty: true });
 	};
 
 	// buat preview gambar saat file diubah
+	const watchedGambar = watch("gambar");
 	useEffect(() => {
 		let url;
-		if (formData.gambar instanceof File) {
-			url = URL.createObjectURL(formData.gambar);
+		if (watchedGambar instanceof File) {
+			url = URL.createObjectURL(watchedGambar);
 			setImagePreview(url);
 		} else setImagePreview("");
 		return () => {
 			if (url) URL.revokeObjectURL(url);
 		};
-	}, [formData.gambar]);
+	}, [watchedGambar]);
 
 	// persyaratan handlers (array)
 	const addPersyaratan = () => {
 		const v = persyaratanInput && persyaratanInput.trim();
 		if (!v) return;
-		setFormData((s) => ({ ...s, persyaratan: [...s.persyaratan, v] }));
+		const cur = getValues("persyaratan") || [];
+		setValue("persyaratan", [...cur, v], { shouldDirty: true });
 		setPersyaratanInput("");
 	};
 	const updatePersyaratan = (idx, value) => {
-		setFormData((s) => ({
-			...s,
-			persyaratan: s.persyaratan.map((p, i) => (i === idx ? value : p)),
-		}));
+		const cur = getValues("persyaratan") || [];
+		setValue(
+			"persyaratan",
+			cur.map((p, i) => (i === idx ? value : p)),
+			{ shouldDirty: true }
+		);
 	};
 	const removePersyaratan = (idx) => {
-		setFormData((s) => ({
-			...s,
-			persyaratan: s.persyaratan.filter((_, i) => i !== idx),
-		}));
+		const cur = getValues("persyaratan") || [];
+		setValue(
+			"persyaratan",
+			cur.filter((_, i) => i !== idx),
+			{ shouldDirty: true }
+		);
 	};
 
 	// manfaat handlers (array)
 	const addManfaat = () => {
 		const v = manfaatInput && manfaatInput.trim();
 		if (!v) return;
-		setFormData((s) => ({ ...s, manfaat: [...s.manfaat, v] }));
+		const cur = getValues("manfaat") || [];
+		setValue("manfaat", [...cur, v], { shouldDirty: true });
 		setManfaatInput("");
 	};
 	const updateManfaat = (idx, value) => {
-		setFormData((s) => ({
-			...s,
-			manfaat: s.manfaat.map((m, i) => (i === idx ? value : m)),
-		}));
+		const cur = getValues("manfaat") || [];
+		setValue(
+			"manfaat",
+			cur.map((m, i) => (i === idx ? value : m)),
+			{ shouldDirty: true }
+		);
 	};
 	const removeManfaat = (idx) => {
-		setFormData((s) => ({
-			...s,
-			manfaat: s.manfaat.filter((_, i) => i !== idx),
-		}));
+		const cur = getValues("manfaat") || [];
+		setValue(
+			"manfaat",
+			cur.filter((_, i) => i !== idx),
+			{ shouldDirty: true }
+		);
 	};
 
 	const handleDrop = (e) => {
@@ -145,41 +148,23 @@ export default function OrganizationEventCreate() {
 		const dt = e.dataTransfer;
 		if (!dt?.files?.length) return;
 		const file = dt.files[0];
-
-		const allowed = ["image/jpeg", "image/png", "image/jpg"];
-		const maxSize = 2 * 1024 * 1024;
-		if (!allowed.includes(file.type)) {
-			toast.error("File harus berupa gambar JPEG/PNG/JPG.", {
-				position: "top-center",
-			});
-			return;
-		}
-		if (file.size > maxSize) {
-			toast.error("Ukuran file maksimal 2MB.", { position: "top-center" });
-			return;
-		}
-
-		setError("");
-		setFormData((s) => ({ ...s, gambar: file }));
+		handleFileChange(file);
 	};
 
 	const handleDragOver = (e) => {
 		e.preventDefault();
 	};
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
+	const onSubmit = (data) => {
 		setError("");
-
 		const payload = new FormData();
-		for (const key in formData) {
-			if (Array.isArray(formData[key])) {
-				payload.append(key, JSON.stringify(formData[key])); // Kondisi khusus untuk persyaratan dan manfaat agar backend dapat menguraikannya kembali ke array
+		for (const key in data) {
+			if (Array.isArray(data[key])) {
+				payload.append(key, JSON.stringify(data[key]));
 			} else {
-				payload.append(key, formData[key] ?? "");
+				payload.append(key, data[key] ?? "");
 			}
 		}
-
 		createEventMutation.mutateAsync(payload);
 	};
 
@@ -201,7 +186,7 @@ export default function OrganizationEventCreate() {
 					</p>
 				</header>
 
-				<form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
+				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6 flex flex-col">
 					{error && <div className="text-sm text-red-600 bg-red-50 p-2 rounded">{error}</div>}
 
 					<Tabs variant="enclosed" colorScheme="green" isFitted>
@@ -228,11 +213,8 @@ export default function OrganizationEventCreate() {
 									</label>
 									<input
 										id="judul"
-										name="judul"
-										value={formData.judul}
-										onChange={handleChange}
+										{...register("judul", { required: true })}
 										type="text"
-										required
 										placeholder="Contoh: Bersih Pantai"
 										className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 									/>
@@ -246,10 +228,7 @@ export default function OrganizationEventCreate() {
 									</label>
 									<textarea
 										id="deskripsi"
-										name="deskripsi"
-										value={formData.deskripsi}
-										onChange={handleChange}
-										required
+										{...register("deskripsi", { required: true })}
 										rows={4}
 										placeholder="Tulis deskripsi lengkap mengenai event ini..."
 										className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -264,11 +243,8 @@ export default function OrganizationEventCreate() {
 										</label>
 										<input
 											id="deskripsi_singkat"
-											name="deskripsi_singkat"
-											value={formData.deskripsi_singkat}
-											onChange={handleChange}
+											{...register("deskripsi_singkat", { required: true })}
 											type="text"
-											required
 											placeholder="Contoh: Bersih Pantai"
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
@@ -281,10 +257,7 @@ export default function OrganizationEventCreate() {
 										</label>
 										<select
 											id="category_id"
-											name="category_id"
-											value={formData.category_id}
-											onChange={handleChange}
-											required
+											{...register("category_id", { required: true })}
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 											<option value="">Pilih Kategori</option>
 											{categories.map((category) => (
@@ -322,9 +295,8 @@ export default function OrganizationEventCreate() {
 													<input
 														type="file"
 														id="gambar"
-														name="gambar"
 														accept="image/jpeg,image/jpg,image/png"
-														onChange={handleChange}
+														onChange={(e) => handleFileChange(e.target.files && e.target.files[0])}
 														className="hidden"
 													/>
 													<label
@@ -339,9 +311,9 @@ export default function OrganizationEventCreate() {
 													Format: JPEG, JPG, PNG. Maksimal 2MB.
 												</p>
 
-												{formData.gambar && (
+												{watchedGambar && (
 													<p className="text-xs text-gray-700 break-all text-center sm:text-left">
-														{formData.gambar.name}
+														{watchedGambar.name}
 													</p>
 												)}
 											</div>
@@ -363,11 +335,8 @@ export default function OrganizationEventCreate() {
 										</label>
 										<input
 											id="tanggal_mulai"
-											name="tanggal_mulai"
+											{...register("tanggal_mulai", { required: true })}
 											type="date"
-											value={formData.tanggal_mulai}
-											onChange={handleChange}
-											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
@@ -379,11 +348,8 @@ export default function OrganizationEventCreate() {
 										</label>
 										<input
 											id="tanggal_selesai"
-											name="tanggal_selesai"
+											{...register("tanggal_selesai", { required: true })}
 											type="date"
-											value={formData.tanggal_selesai}
-											onChange={handleChange}
-											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
@@ -399,11 +365,8 @@ export default function OrganizationEventCreate() {
 										</label>
 										<input
 											id="waktu_mulai"
-											name="waktu_mulai"
+											{...register("waktu_mulai", { required: true })}
 											type="time"
-											value={formData.waktu_mulai}
-											onChange={handleChange}
-											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
@@ -415,11 +378,8 @@ export default function OrganizationEventCreate() {
 										</label>
 										<input
 											id="waktu_selesai"
-											name="waktu_selesai"
+											{...register("waktu_selesai", { required: true })}
 											type="time"
-											value={formData.waktu_selesai}
-											onChange={handleChange}
-											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
@@ -434,11 +394,8 @@ export default function OrganizationEventCreate() {
 										</label>
 										<input
 											id="batas_pendaftaran"
-											name="batas_pendaftaran"
+											{...register("batas_pendaftaran", { required: true })}
 											type="date"
-											value={formData.batas_pendaftaran}
-											onChange={handleChange}
-											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
@@ -450,12 +407,9 @@ export default function OrganizationEventCreate() {
 										</label>
 										<input
 											id="maks_peserta"
-											name="maks_peserta"
+											{...register("maks_peserta", { valueAsNumber: true })}
 											type="number"
 											min="0"
-											value={formData.maks_peserta}
-											onChange={handleChange}
-											required
 											placeholder="Misal: 50"
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
@@ -468,10 +422,7 @@ export default function OrganizationEventCreate() {
 										</label>
 										<select
 											id="location_id"
-											name="location_id"
-											value={formData.location_id}
-											onChange={handleChange}
-											required
+											{...register("location_id", { required: true })}
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 											<option value="">Pilih Lokasi</option>
 											{locations.map((location) => (
@@ -490,8 +441,8 @@ export default function OrganizationEventCreate() {
 											Persyaratan
 										</label>
 										<div className="mt-2 space-y-2">
-											{formData.persyaratan && formData.persyaratan.length > 0 ? (
-												formData.persyaratan.map((p, idx) => (
+											{watch("persyaratan") && watch("persyaratan").length > 0 ? (
+												watch("persyaratan").map((p, idx) => (
 													<div
 														key={idx}
 														className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
@@ -546,8 +497,8 @@ export default function OrganizationEventCreate() {
 											Manfaat
 										</label>
 										<div className="mt-2 space-y-2">
-											{formData.manfaat && formData.manfaat.length > 0 ? (
-												formData.manfaat.map((m, idx) => (
+											{watch("manfaat") && watch("manfaat").length > 0 ? (
+												watch("manfaat").map((m, idx) => (
 													<div
 														key={idx}
 														className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
@@ -609,11 +560,8 @@ export default function OrganizationEventCreate() {
 										</label>
 										<input
 											id="nama_kontak"
-											name="nama_kontak"
+											{...register("nama_kontak", { required: true })}
 											type="text"
-											value={formData.nama_kontak}
-											onChange={handleChange}
-											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
@@ -626,12 +574,9 @@ export default function OrganizationEventCreate() {
 										</label>
 										<input
 											id="telepon_kontak"
-											name="telepon_kontak"
+											{...register("telepon_kontak", { required: true })}
 											type="text"
-											value={formData.telepon_kontak}
-											onChange={handleChange}
 											placeholder="08xxxxxxxxxx"
-											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
@@ -644,11 +589,8 @@ export default function OrganizationEventCreate() {
 										</label>
 										<input
 											id="email_kontak"
-											name="email_kontak"
+											{...register("email_kontak", { required: true })}
 											type="email"
-											value={formData.email_kontak}
-											onChange={handleChange}
-											required
 											placeholder="nama@contoh.com"
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
@@ -664,10 +606,7 @@ export default function OrganizationEventCreate() {
 										</label>
 										<select
 											id="status"
-											name="status"
-											value={formData.status}
-											onChange={handleChange}
-											required
+											{...register("status", { required: true })}
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 											<option value="draft">Draft</option>
 											<option value="published">Published</option>

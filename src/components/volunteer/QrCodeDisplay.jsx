@@ -25,6 +25,23 @@ function QrCodeDisplay({ participationId, eventData }) {
 	// QR Code value adalah encrypted data dari backend
 	const qrData = qrCodeData?.qr_data;
 
+	// Sesuaikan ukuran dan level QR berdasarkan panjang data agar modul (dot)
+	// tidak terlalu kecil ketika data panjang -> membuat QR lebih mudah discan
+	const qrLength = qrData ? qrData.length : 0;
+	let qrSize = 256;
+	let qrLevel = "H"; // default tinggi untuk redundansi
+
+	if (qrLength > 400) {
+		qrSize = 1024;
+		qrLevel = "M"; // turunkan level error correction untuk mengurangi kompleksitas
+	} else if (qrLength > 200) {
+		qrSize = 512;
+		qrLevel = "M";
+	} else if (qrLength > 80) {
+		qrSize = 384;
+		qrLevel = "Q";
+	}
+
 	// Handler untuk generate dan tampilkan QR Code
 	const handleShowQR = () => {
 		// Ensure we have an event id to bind the QR to — backend requires it
@@ -179,9 +196,10 @@ function QrCodeDisplay({ participationId, eventData }) {
 						<QRCodeCanvas
 							id="volunteer-qr-canvas"
 							value={qrData}
-							size={256}
-							level="H"
+							size={qrSize}
+							level={qrLevel}
 							includeMargin={true}
+							style={{ width: 256, height: 256 }}
 						/>
 					</div>
 				</div>

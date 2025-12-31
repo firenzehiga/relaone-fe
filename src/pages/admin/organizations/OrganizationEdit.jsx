@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import {
 	useAdminOrganizationById,
 	useAdminUpdateOrganizationMutation,
@@ -16,16 +17,18 @@ import { getImageUrl } from "@/utils";
 export default function AdminOrganizationEdit() {
 	const { id } = useParams();
 	const navigate = useNavigate();
-	const [formData, setFormData] = useState({
-		nama: "",
-		deskripsi: "",
-		alamat: "",
-		telepon: "",
-		email: "",
-		website: "",
-		logo: null,
-		status_verifikasi: "pending",
-		user_id: "",
+	const { register, handleSubmit, reset, setValue, getValues } = useForm({
+		defaultValues: {
+			nama: "",
+			deskripsi: "",
+			alamat: "",
+			telepon: "",
+			email: "",
+			website: "",
+			logo: null,
+			status_verifikasi: "pending",
+			user_id: "",
+		},
 	});
 	const { isLoading } = useAuthStore();
 	const [imagePreview, setImagePreview] = useState(null);
@@ -41,22 +44,18 @@ export default function AdminOrganizationEdit() {
 
 	useEffect(() => {
 		if (!showOrganization) return;
-		setFormData((prev) => {
-			// if user already started typing title, don't overwrite
-			if (prev.nama) return prev;
-			return {
-				nama: showOrganization.nama || "",
-				deskripsi: showOrganization.deskripsi || "",
-				alamat: showOrganization.alamat || "",
-				telepon: showOrganization.telepon || "",
-				email: showOrganization.email || "",
-				website: showOrganization.website || "",
-				logo: showOrganization.logo || "",
-				status_verifikasi: showOrganization.status_verifikasi || "",
-			};
+		if (getValues("nama")) return; // don't overwrite user edits
+		reset({
+			nama: showOrganization.nama || "",
+			deskripsi: showOrganization.deskripsi || "",
+			alamat: showOrganization.alamat || "",
+			telepon: showOrganization.telepon || "",
+			email: showOrganization.email || "",
+			website: showOrganization.website || "",
+			logo: showOrganization.logo || "",
+			status_verifikasi: showOrganization.status_verifikasi || "",
 		});
 
-		// Set image preview jika ada logo existing
 		if (showOrganization.logo) {
 			setImagePreview(getImageUrl(`organizations/${showOrganization.logo}`));
 		}
@@ -65,57 +64,46 @@ export default function AdminOrganizationEdit() {
 	// buat preview logo saat file diubah
 	useEffect(() => {
 		let url;
-		if (formData.logo instanceof File) {
-			url = URL.createObjectURL(formData.logo);
+		const logoVal = getValues("logo");
+		if (logoVal instanceof File) {
+			url = URL.createObjectURL(logoVal);
 			setImagePreview(url);
 		}
 		return () => {
 			if (url) URL.revokeObjectURL(url);
 		};
-	}, [formData.logo]);
+	}, [getValues("logo")]);
 
-	const handleChange = (e) => {
-		const { name, value, files } = e.target;
-		if (name === "logo") {
-			const file = files && files[0];
-			if (!file) return;
+	const handleFileChange = (e) => {
+		const file = e.target.files && e.target.files[0];
+		if (!file) return;
 
-			// allowed mime types and max size (2MB)
-			const allowed = ["image/jpeg", "image/png", "image/jpg"];
-			const maxSize = 2 * 1024 * 1024; // 2MB
+		const allowed = ["image/jpeg", "image/png", "image/jpg"];
+		const maxSize = 2 * 1024 * 1024; // 2MB
 
-			if (!allowed.includes(file.type)) {
-				toast.error("File harus berupa gambar JPEG/PNG/JPG (selain itu tidak diperbolehkan).", {
-					position: "top-center",
-				});
-				return;
-			}
-			if (file.size > maxSize) {
-				toast.error("Ukuran file maksimal 2MB.", {
-					position: "top-center",
-				});
-				return;
-			}
-			// store actual File object (no object URL preview)
-			setFormData((s) => ({ ...s, [name]: file }));
-		} else {
-			setFormData((s) => ({ ...s, [name]: value }));
+		if (!allowed.includes(file.type)) {
+			toast.error("File harus berupa gambar JPEG/PNG/JPG (selain itu tidak diperbolehkan).", {
+				position: "top-center",
+			});
+			return;
 		}
+		if (file.size > maxSize) {
+			toast.error("Ukuran file maksimal 2MB.", {
+				position: "top-center",
+			});
+			return;
+		}
+		setValue("logo", file, { shouldDirty: true });
 	};
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
+	const onSubmit = (data) => {
 		const payload = new FormData();
 		payload.append("_method", "PUT");
-		// append form values
-		for (const key in formData) {
+		for (const key in data) {
 			if (key === "logo") {
-				// only append logo when user selected a new File
-				if (formData.logo instanceof File) {
-					payload.append("logo", formData.logo);
-				}
+				if (data.logo instanceof File) payload.append("logo", data.logo);
 			} else {
-				payload.append(key, formData[key]);
+				payload.append(key, data[key]);
 			}
 		}
 
@@ -138,16 +126,17 @@ export default function AdminOrganizationEdit() {
 					</p>
 				</header>
 
-				<form onSubmit={handleSubmit} className="space-y-6">
+				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="nama"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Nama Organisasi <span className="text-red-500">*</span>
 							</label>
 							<input
-								name="nama"
-								value={formData.nama}
-								onChange={handleChange}
+								id="nama"
+								{...register("nama", { required: true })}
 								type="text"
 								placeholder="Contoh: Komunitas Bersih Pantai"
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -155,17 +144,18 @@ export default function AdminOrganizationEdit() {
 						</div>
 
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="website"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Website / Company Profile
 							</label>
 							<div className="mt-1">
 								<InputGroup>
 									<Input
+										id="website"
+										{...register("website")}
 										name="website"
 										type="url"
-										required
-										value={formData.website}
-										onChange={handleChange}
 										placeholder="diawali dengan https://"
 									/>
 								</InputGroup>
@@ -175,26 +165,27 @@ export default function AdminOrganizationEdit() {
 
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="email"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Email Organisasi<span className="text-red-500">*</span>
 							</label>
 							<input
-								name="email"
-								value={formData.email}
-								onChange={handleChange}
+								id="email"
+								{...register("email", { required: true })}
 								placeholder="contoh@organisasi.id"
-								required
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 							/>
 						</div>
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="telepon"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Telepon Organisasi <span className="text-red-500">*</span>
 							</label>
 							<input
-								name="telepon"
-								value={formData.telepon}
-								onChange={handleChange}
+								id="telepon"
+								{...register("telepon")}
 								placeholder="0812xxxx"
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 							/>
@@ -202,29 +193,29 @@ export default function AdminOrganizationEdit() {
 					</div>
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="alamat"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Alamat <span className="text-red-500">*</span>
 							</label>
 							<textarea
-								name="alamat"
-								value={formData.alamat}
-								onChange={handleChange}
+								id="alamat"
+								{...register("alamat", { required: true })}
 								rows={4}
-								required
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 								placeholder="Alamat lengkap organisasi"
 							/>
 						</div>
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="deskripsi"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Deskripsi
 							</label>
 							<textarea
-								name="deskripsi"
-								value={formData.deskripsi}
-								onChange={handleChange}
+								id="deskripsi"
+								{...register("deskripsi")}
 								rows={4}
-								required
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 								placeholder="Deskripsi singkat organisasi"
 							/>
@@ -232,14 +223,15 @@ export default function AdminOrganizationEdit() {
 					</div>
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="status_verifikasi"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Status Akun
 							</label>
 							<select
-								name="status_verifikasi"
-								value={formData.status_verifikasi}
+								id="status_verifikasi"
+								{...register("status_verifikasi")}
 								required
-								onChange={handleChange}
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 								<option value="">Pilih status</option>
 								<option value="pending">Pending</option>
@@ -278,7 +270,7 @@ export default function AdminOrganizationEdit() {
 												id="logo"
 												name="logo"
 												accept="image/jpeg,image/jpg,image/png"
-												onChange={handleChange}
+												onChange={handleFileChange}
 												className="hidden"
 											/>
 											<label
@@ -291,10 +283,10 @@ export default function AdminOrganizationEdit() {
 
 										<p className="text-xs text-gray-500">Format: JPEG, JPG, PNG. Maksimal 2MB.</p>
 
-										{formData.logo && (
+										{getValues("logo") && (
 											<p className="text-xs text-gray-700">
-												{formData.logo instanceof File
-													? formData.logo.name
+												{getValues("logo") instanceof File
+													? getValues("logo").name
 													: "Logo organisasi saat ini"}
 											</p>
 										)}

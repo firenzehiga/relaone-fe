@@ -1,13 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUpdateUserMutation, useUserProfile } from "@/_hooks/useUsers";
-import {
-	getImageUrl,
-	parseSkillsArray,
-	addSkill,
-	updateSkill,
-	removeSkill,
-} from "@/utils";
+import { getImageUrl, parseSkillsArray, addSkill, updateSkill, removeSkill } from "@/utils";
 import { toInputDate } from "@/utils/dateFormatter";
 import { useAuthStore } from "@/_hooks/useAuth";
 import { motion } from "framer-motion";
@@ -26,6 +20,7 @@ import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import toast from "react-hot-toast";
 import Skeleton from "@/components/ui/Skeleton";
+import { useForm } from "react-hook-form";
 
 /**
  * Halaman Edit Profile Volunteer
@@ -38,190 +33,143 @@ import Skeleton from "@/components/ui/Skeleton";
  */
 export default function AdminEditProfilePage() {
 	const navigate = useNavigate();
-	// State untuk form data
-	const [formData, setFormData] = useState({
-		nama: "",
-		telepon: "",
-		alamat: "",
-		tanggal_lahir: "",
-		jenis_kelamin: "",
-		bio: "",
-		keahlian: [],
-		foto_profil: null,
-	});
-	const [imagePreview, setImagePreview] = useState(null);
 
+	const {
+		register,
+		handleSubmit: rhfHandleSubmit,
+		setValue,
+		watch,
+		reset,
+		getValues,
+	} = useForm({
+		defaultValues: {
+			nama: "",
+			email: "",
+			telepon: "",
+			alamat: "",
+			tanggal_lahir: "",
+			jenis_kelamin: "",
+			bio: "",
+			keahlian: [],
+			foto_profil: null,
+		},
+	});
+
+	const [imagePreview, setImagePreview] = useState(null);
 	const [keahlianInput, setKeahlianInput] = useState("");
-	// State untuk validation errors
 	const [errors, setErrors] = useState({});
 	const { isLoading } = useAuthStore();
 
-	const {
-		data: profileData,
-		isLoading: isLoadingProfile,
-		error,
-	} = useUserProfile();
-	// Mutation untuk update profile
+	const { data: profileData, isLoading: isLoadingProfile, error } = useUserProfile();
 	const updateProfileMutation = useUpdateUserMutation();
 
 	useEffect(() => {
 		if (!profileData) return;
-		setFormData((prev) => {
-			// if user already started typing, don't overwrite
-			if (prev.nama) return prev;
-			return {
-				nama: profileData.nama,
-				email: profileData.email,
-				telepon: profileData.telepon || "",
-				alamat: profileData.alamat || "",
-				tanggal_lahir: toInputDate(profileData.tanggal_lahir) || "",
-				jenis_kelamin: profileData.jenis_kelamin || "",
-				bio: profileData.bio || "",
-				keahlian: parseSkillsArray(profileData.keahlian) || [],
-				foto_profil: profileData.foto_profil,
-			};
+		if (getValues("nama")) return; // don't overwrite user edits
+		reset({
+			nama: profileData.nama || "",
+			email: profileData.email || "",
+			telepon: profileData.telepon || "",
+			alamat: profileData.alamat || "",
+			tanggal_lahir: toInputDate(profileData.tanggal_lahir) || "",
+			jenis_kelamin: profileData.jenis_kelamin || "",
+			bio: profileData.bio || "",
+			keahlian: parseSkillsArray(profileData.keahlian) || [],
+			foto_profil: profileData.foto_profil || null,
 		});
 
-		// Set image preview jika ada foto profil existing
 		if (profileData.foto_profil) {
 			setImagePreview(getImageUrl(`foto_profil/${profileData.foto_profil}`));
 		}
 	}, [profileData]);
 
-	// Handle change - gabungan untuk input biasa dan file
-	const handleChange = (e) => {
-		const { name, value, files } = e.target;
+	const foto = watch("foto_profil");
+	const keahlian = watch("keahlian") || [];
 
-		if (name === "foto_profil") {
-			const file = files && files[0];
-			if (!file) return;
-
-			// Validasi tipe file
-			const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
-			if (!allowedTypes.includes(file.type)) {
-				toast.error("Format file tidak didukung. Gunakan JPEG, JPG, atau PNG.");
-				return;
-			}
-
-			// Validasi ukuran file (max 2MB)
-			const maxSize = 2 * 1024 * 1024; // 2MB dalam bytes
-			if (file.size > maxSize) {
-				toast.error("Ukuran file terlalu besar. Maksimal 2MB.");
-				return;
-			}
-
-			// Store actual File object
-			setFormData((prev) => ({
-				...prev,
-				foto_profil: file,
-			}));
-
-			// Buat preview image
-			const reader = new FileReader();
-			reader.onloadend = () => {
-				setImagePreview(reader.result);
-			};
-			reader.readAsDataURL(file);
-
-			// Clear error jika ada
-			if (errors.foto_profil) {
-				setErrors((prev) => ({
-					...prev,
-					foto_profil: "",
-				}));
-			}
-		} else {
-			// Handle input biasa
-			setFormData((prev) => ({
-				...prev,
-				[name]: value,
-			}));
-
-			// Clear error ketika user mulai mengetik
-			if (errors[name]) {
-				setErrors((prev) => ({
-					...prev,
-					[name]: "",
-				}));
-			}
+	useEffect(() => {
+		let url;
+		if (foto instanceof File) {
+			url = URL.createObjectURL(foto);
+			setImagePreview(url);
 		}
+		return () => {
+			if (url) URL.revokeObjectURL(url);
+		};
+	}, [foto]);
+
+	const handleFileChange = (e) => {
+		const file = e.target.files && e.target.files[0];
+		if (!file) return;
+		const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+		const maxSize = 2 * 1024 * 1024;
+		if (!allowedTypes.includes(file.type)) {
+			toast.error("Format file tidak didukung. Gunakan JPEG, JPG, atau PNG.");
+			return;
+		}
+		if (file.size > maxSize) {
+			toast.error("Ukuran file terlalu besar. Maksimal 2MB.");
+			return;
+		}
+		setValue("foto_profil", file, { shouldDirty: true });
 	};
 
-	// keahlian handlers (array) - using utils
 	const addKeahlianHandler = () => {
-		const trimmedInput = keahlianInput.trim();
-		if (!trimmedInput) return;
-
-		const newSkills = addSkill(formData.keahlian, trimmedInput);
-		if (newSkills.length === formData.keahlian.length) {
-			// Skill already exists or invalid
+		const trimmed = keahlianInput.trim();
+		if (!trimmed) return;
+		const current = getValues("keahlian") || [];
+		const newSkills = addSkill(current, trimmed);
+		if (newSkills.length === current.length) {
 			toast.error("Keahlian sudah ada atau tidak valid");
 			return;
 		}
-
-		setFormData((prev) => ({ ...prev, keahlian: newSkills }));
+		setValue("keahlian", newSkills, { shouldDirty: true });
 		setKeahlianInput("");
 	};
 
 	const updateKeahlianHandler = (idx, value) => {
-		const updatedSkills = updateSkill(formData.keahlian, idx, value);
-		setFormData((prev) => ({ ...prev, keahlian: updatedSkills }));
+		const current = getValues("keahlian") || [];
+		const updated = updateSkill(current, idx, value);
+		setValue("keahlian", updated, { shouldDirty: true });
 	};
 
 	const removeKeahlianHandler = (idx) => {
-		const updatedSkills = removeSkill(formData.keahlian, idx);
-		setFormData((prev) => ({ ...prev, keahlian: updatedSkills }));
+		const current = getValues("keahlian") || [];
+		const updated = removeSkill(current, idx);
+		setValue("keahlian", updated, { shouldDirty: true });
 	};
-	// Validate form
+
 	const validateForm = () => {
+		const values = getValues();
 		const newErrors = {};
-
-		if (!formData.nama.trim()) {
-			newErrors.nama = "Nama harus diisi";
-		} else if (formData.nama.length < 2) {
-			newErrors.nama = "Nama minimal 2 karakter";
-		}
-
-		if (!formData.email.trim()) {
-			newErrors.email = "Email harus diisi";
-		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+		if (!values.nama || !values.nama.trim()) newErrors.nama = "Nama harus diisi";
+		else if (values.nama.length < 2) newErrors.nama = "Nama minimal 2 karakter";
+		if (!values.email || !values.email.trim()) newErrors.email = "Email harus diisi";
+		else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email))
 			newErrors.email = "Format email tidak valid";
-		}
-
-		if (formData.telepon && !/^[\d\s\-\+\(\)]+$/.test(formData.telepon)) {
+		if (values.telepon && !/^[\d\s\-\+\(\)]+$/.test(values.telepon))
 			newErrors.telepon = "Format nomor telefon tidak valid";
-		}
-
 		setErrors(newErrors);
 		return Object.keys(newErrors).length === 0;
 	};
 
-	// Handle form submit
-	const handleSubmit = (e) => {
-		e.preventDefault();
-
-		// Validate form terlebih dahulu
+	const onFormSubmit = () => {
 		if (!validateForm()) {
 			toast.error("Mohon perbaiki kesalahan pada form");
 			return;
 		}
-
+		const values = getValues();
 		const payload = new FormData();
 		payload.append("_method", "PUT");
-
-		for (const key in formData) {
+		for (const key in values) {
+			const val = values[key];
 			if (key === "foto_profil") {
-				// Only append foto_profil when user selected a new File
-				if (formData.foto_profil instanceof File) {
-					payload.append("foto_profil", formData.foto_profil);
-				}
-			} else if (Array.isArray(formData[key])) {
-				payload.append(key, JSON.stringify(formData[key]));
+				if (val instanceof File) payload.append("foto_profil", val);
+			} else if (Array.isArray(val)) {
+				payload.append(key, JSON.stringify(val));
 			} else {
-				payload.append(key, formData[key]);
+				payload.append(key, val ?? "");
 			}
 		}
-
 		updateProfileMutation.mutateAsync({ userData: payload });
 	};
 
@@ -242,13 +190,9 @@ export default function AdminEditProfilePage() {
 					<div className="text-red-500 mb-4">
 						<User className="w-16 h-16 mx-auto mb-4" />
 					</div>
-					<h2 className="text-xl font-bold text-gray-900 mb-2">
-						Gagal Memuat Data
-					</h2>
-					<p className="text-gray-600 mb-4">
-						Terjadi kesalahan saat memuat data profile
-					</p>
-					<Button onClick={() => navigate("/profile")} variant="primary">
+					<h2 className="text-xl font-bold text-gray-900 mb-2">Gagal Memuat Data</h2>
+					<p className="text-gray-600 mb-4">Terjadi kesalahan saat memuat data profile</p>
+					<Button onClick={() => navigate("/admin/profile")} variant="primary">
 						Kembali ke Profile
 					</Button>
 				</Card>
@@ -281,16 +225,10 @@ export default function AdminEditProfilePage() {
 				initial="hidden"
 				animate="visible">
 				{/* Header Section - Compact */}
-				<motion.div
-					variants={itemVariants}
-					className="flex items-center justify-between mb-6">
+				<motion.div variants={itemVariants} className="flex items-center justify-between mb-6">
 					<div>
-						<h1 className="text-2xl font-bold text-gray-900 mb-1">
-							Edit Profile
-						</h1>
-						<p className="text-gray-600 text-sm">
-							Perbarui informasi profile Anda
-						</p>
+						<h1 className="text-2xl font-bold text-gray-900 mb-1">Edit Profile</h1>
+						<p className="text-gray-600 text-sm">Perbarui informasi profile Anda</p>
 					</div>
 					<Button
 						variant="outline"
@@ -302,7 +240,7 @@ export default function AdminEditProfilePage() {
 					</Button>
 				</motion.div>
 
-				<form onSubmit={handleSubmit}>
+				<form onSubmit={rhfHandleSubmit(onFormSubmit)}>
 					{/* Single Combined Card */}
 					<motion.div variants={itemVariants}>
 						<Card>
@@ -312,9 +250,7 @@ export default function AdminEditProfilePage() {
 									<div className="flex-1">
 										<div className="flex items-center mb-4">
 											<UserCircle2 className="w-5 h-5 text-blue-500 mr-2" />
-											<h3 className="text-lg font-bold text-gray-900">
-												Foto Profil
-											</h3>
+											<h3 className="text-lg font-bold text-gray-900">Foto Profil</h3>
 										</div>
 										<div className="flex items-center space-x-6">
 											{/* Image Preview */}
@@ -338,9 +274,8 @@ export default function AdminEditProfilePage() {
 													<input
 														type="file"
 														id="foto_profil"
-														name="foto_profil"
 														accept="image/jpeg,image/jpg,image/png"
-														onChange={handleChange}
+														onChange={handleFileChange}
 														className="hidden"
 													/>
 													<label
@@ -356,9 +291,7 @@ export default function AdminEditProfilePage() {
 												</p>
 
 												{errors.foto_profil && (
-													<p className="text-xs text-red-600">
-														{errors.foto_profil}
-													</p>
+													<p className="text-xs text-red-600">{errors.foto_profil}</p>
 												)}
 											</div>
 										</div>
@@ -371,98 +304,89 @@ export default function AdminEditProfilePage() {
 								<div>
 									<div className="flex items-center mb-4">
 										<User className="w-5 h-5 text-blue-500 mr-2" />
-										<h3 className="text-lg font-bold text-gray-900">
-											Informasi Dasar
-										</h3>
+										<h3 className="text-lg font-bold text-gray-900">Informasi Dasar</h3>
 									</div>
 
 									<div className="space-y-4">
 										{/* Nama */}
 										<div>
-											<label className="block text-sm font-medium text-gray-700 mb-1">
+											<label
+												htmlFor="nama"
+												className="block text-sm font-medium text-gray-700 mb-1">
 												Nama Lengkap <span className="text-red-500">*</span>
 											</label>
 											<div className="relative">
 												<User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
 												<input
+													id="nama"
+													{...register("nama")}
 													type="text"
-													name="nama"
-													value={formData.nama}
-													onChange={handleChange}
 													className={`w-full pl-9 pr-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm ${
 														errors.nama ? "border-red-500" : "border-gray-300"
 													}`}
 													placeholder="Masukkan nama lengkap"
 												/>
 											</div>
-											{errors.nama && (
-												<p className="mt-1 text-xs text-red-600">
-													{errors.nama}
-												</p>
-											)}
+											{errors.nama && <p className="mt-1 text-xs text-red-600">{errors.nama}</p>}
 										</div>
 
 										{/* Email */}
 										<div>
-											<label className="block text-sm font-medium text-gray-700 mb-1">
+											<label
+												htmlFor="email"
+												className="block text-sm font-medium text-gray-700 mb-1">
 												Email <span className="text-red-500">*</span>
 											</label>
 											<div className="relative">
 												<Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
 												<input
+													id="email"
+													{...register("email")}
 													type="email"
-													name="email"
-													value={formData.email}
 													disabled
 													className="w-full pl-9 pr-3 py-2 border bg-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm border-gray-300"
 													placeholder="Masukkan email"
 												/>
 											</div>
-											{errors.email && (
-												<p className="mt-1 text-xs text-red-600">
-													{errors.email}
-												</p>
-											)}
+											{errors.email && <p className="mt-1 text-xs text-red-600">{errors.email}</p>}
 										</div>
 
 										{/* Phone */}
 										<div>
-											<label className="block text-sm font-medium text-gray-700 mb-1">
+											<label
+												htmlFor="telepon"
+												className="block text-sm font-medium text-gray-700 mb-1">
 												Nomor Telefon
 											</label>
 											<div className="relative">
 												<Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
 												<input
+													id="telepon"
+													{...register("telepon")}
 													type="tel"
-													name="telepon"
-													value={formData.telepon}
-													onChange={handleChange}
 													className={`w-full pl-9 pr-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm ${
-														errors.telepon
-															? "border-red-500"
-															: "border-gray-300"
+														errors.telepon ? "border-red-500" : "border-gray-300"
 													}`}
 													placeholder="Masukkan nomor telefon"
 												/>
 											</div>
 											{errors.telepon && (
-												<p className="mt-1 text-xs text-red-600">
-													{errors.telepon}
-												</p>
+												<p className="mt-1 text-xs text-red-600">{errors.telepon}</p>
 											)}
 										</div>
 
 										{/* Tanggal Lahir */}
 										<div>
-											<label className="block text-sm font-medium text-gray-700 mb-1">
+											<label
+												htmlFor="tanggal_lahir"
+												className="block text-sm font-medium text-gray-700 mb-1">
 												Tanggal Lahir
 											</label>
 											<div className="relative">
 												<input
+													id="tanggal_lahir"
+													{...register("tanggal_lahir")}
 													type="date"
-													name="tanggal_lahir"
-													value={formData.tanggal_lahir}
-													onChange={handleChange}
 													className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
 												/>
 											</div>
@@ -470,13 +394,14 @@ export default function AdminEditProfilePage() {
 
 										{/* Jenis Kelamin */}
 										<div>
-											<label className="block text-sm font-medium text-gray-700 mb-1">
+											<label
+												htmlFor="jenis_kelamin"
+												className="block text-sm font-medium text-gray-700 mb-1">
 												Jenis Kelamin
 											</label>
 											<select
-												name="jenis_kelamin"
-												value={formData.jenis_kelamin}
-												onChange={handleChange}
+												id="jenis_kelamin"
+												{...register("jenis_kelamin")}
 												className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm bg-white">
 												<option value="">Pilih jenis kelamin</option>
 												<option value="laki-laki">Laki-laki</option>
@@ -486,15 +411,16 @@ export default function AdminEditProfilePage() {
 
 										{/* Address */}
 										<div>
-											<label className="block text-sm font-medium text-gray-700 mb-1">
+											<label
+												htmlFor="alamat"
+												className="block text-sm font-medium text-gray-700 mb-1">
 												Alamat
 											</label>
 											<div className="relative">
 												<MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
 												<textarea
-													name="alamat"
-													value={formData.alamat}
-													onChange={handleChange}
+													id="alamat"
+													{...register("alamat")}
 													rows={3}
 													className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none text-sm"
 													placeholder="Masukkan alamat lengkap"
@@ -508,23 +434,20 @@ export default function AdminEditProfilePage() {
 								<div>
 									<div className="flex items-center mb-4">
 										<Award className="w-5 h-5 text-purple-500 mr-2" />
-										<h3 className="text-lg font-bold text-gray-900">
-											Informasi Tambahan
-										</h3>
+										<h3 className="text-lg font-bold text-gray-900">Informasi Tambahan</h3>
 									</div>
 
 									<div className="space-y-4">
 										{/* Bio */}
 										<div>
-											<label className="block text-sm font-medium text-gray-700 mb-1">
+											<label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">
 												Bio
 											</label>
 											<div className="relative">
 												<FileText className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
 												<textarea
-													name="bio"
-													value={formData.bio}
-													onChange={handleChange}
+													id="bio"
+													{...register("bio")}
 													rows={3}
 													className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none text-sm"
 													placeholder="Ceritakan tentang diri Anda..."
@@ -533,20 +456,20 @@ export default function AdminEditProfilePage() {
 										</div>
 										{/* Keahlian (Skills) */}
 										<div>
-											<label className="block text-sm font-medium text-gray-700">
+											<label
+												htmlFor="keahlian_input"
+												className="block text-sm font-medium text-gray-700">
 												Keahlian
 											</label>
 											<div className="mt-2 space-y-2">
-												{formData.keahlian && formData.keahlian.length > 0 ? (
-													formData.keahlian.map((p, idx) => (
+												{keahlian && keahlian.length > 0 ? (
+													keahlian.map((p, idx) => (
 														<div key={idx} className="flex items-center gap-2">
 															<input
 																type="text"
 																className="flex-1 rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 																value={p}
-																onChange={(e) =>
-																	updateKeahlianHandler(idx, e.target.value)
-																}
+																onChange={(e) => updateKeahlianHandler(idx, e.target.value)}
 															/>
 															<button
 																type="button"
@@ -564,6 +487,7 @@ export default function AdminEditProfilePage() {
 
 												<div className="flex items-center gap-2">
 													<input
+														id="keahlian_input"
 														type="text"
 														placeholder="Tambahkan keahlian, misal: Minimal lulusan SMA"
 														className="flex-1 rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -576,10 +500,7 @@ export default function AdminEditProfilePage() {
 															}
 														}}
 													/>
-													<Button
-														variant="success"
-														type="button"
-														onClick={addKeahlianHandler}>
+													<Button variant="success" type="button" onClick={addKeahlianHandler}>
 														Tambah
 													</Button>
 												</div>

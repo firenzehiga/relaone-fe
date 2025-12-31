@@ -22,7 +22,7 @@ export default function LoginPage() {
 	} = useForm({
 		defaultValues: { email: "", password: "" },
 		mode: "onChange",
-		reValidateMode: "onChange",
+		reValidateMode: "onSubmit",
 	});
 
 	const loginMutation = useLogin();
@@ -170,7 +170,7 @@ export default function LoginPage() {
 							<DynamicButton
 								type="submit"
 								variant="success"
-								disabled={isLoading || isSubmitting || !isValid}
+								disabled={isLoading || isSubmitting}
 								className="w-full text-white py-3 rounded-lg font-medium transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
 								{isLoading ? (
 									<div className="flex items-center justify-center space-x-2">
