@@ -231,13 +231,19 @@ export default function AdminCategory() {
 					</div>
 
 					<div className="w-full mb-4 flex flex-col md:flex-row md:items-center gap-2">
-						<input
-							type="text"
-							placeholder="Cari jenis kategori, atau deskripsi..."
-							value={searchCategory}
-							onChange={(e) => setSearchCategory(e.target.value)}
-							className="border border-gray-300 rounded-md px-3 py-2 text-sm md:text-sm w-full md:w-80 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-						/>
+						<div className="w-full md:w-80">
+							<label htmlFor="searchCategory" className="sr-only">
+								Cari kategori
+							</label>
+							<input
+								id="searchCategory"
+								type="text"
+								placeholder="Cari jenis kategori, atau deskripsi..."
+								value={searchCategory}
+								onChange={(e) => setSearchCategory(e.target.value)}
+								className="border border-gray-300 rounded-md px-3 py-2 text-sm md:text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
+							/>
+						</div>
 						{selectedRows && selectedRows.length > 0 && (
 							<div className="flex w-full md:w-auto">
 								<Button

@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Shield } from "lucide-react";
+import { lazy } from "react";
 
 import { useUserProfile } from "@/_hooks/useUsers";
 import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
@@ -9,7 +10,6 @@ const ProfileDetails = lazy(() => import("@/components/common/ProfileDetails"));
 import Skeleton from "@/components/ui/Skeleton";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
-import { lazy } from "react";
 
 /**
  * Profile volunteer (light wrapper)

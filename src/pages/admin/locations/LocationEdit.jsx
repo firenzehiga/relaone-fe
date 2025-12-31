@@ -5,23 +5,27 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuthStore } from "@/_hooks/useAuth";
 import { useAdminOrganizations } from "@/_hooks/useOrganizations";
+import { useForm } from "react-hook-form";
+import { AlertCircle } from "lucide-react";
 
 export default function AdminLocationEdit() {
 	const { id } = useParams();
 	const navigate = useNavigate();
-	const [formData, setFormData] = useState({
-		nama: "",
-		alamat: "",
-		latitude: "",
-		longitude: "",
-		place_id: "",
-		alamat_lengkap: "",
-		kota: "",
-		provinsi: "",
-		negara: "Indonesia",
-		zoom_level: 15,
-		tipe: "",
-		organization_id: "",
+	const { register, handleSubmit, reset, setValue, getValues, watch } = useForm({
+		defaultValues: {
+			nama: "",
+			alamat: "",
+			latitude: "",
+			longitude: "",
+			place_id: "",
+			alamat_lengkap: "",
+			kota: "",
+			provinsi: "",
+			negara: "Indonesia",
+			zoom_level: 15,
+			tipe: "",
+			organization_id: "",
+		},
 	});
 	const { isLoading } = useAuthStore();
 
@@ -43,46 +47,29 @@ export default function AdminLocationEdit() {
 
 	useEffect(() => {
 		if (!showLocation) return;
-
-		// hanya isi dengan data dari backend jika form lokal belum berisi nama (tidak menimpa edit user)
-		setFormData((prev) => {
-			if (prev.nama) return prev; // sudah diisi user, jangan timpa
-			return {
-				nama: showLocation.nama || "",
-				alamat: showLocation.alamat || "",
-				latitude: showLocation.latitude || "",
-				longitude: showLocation.longitude || "",
-				place_id: showLocation.place_id || "",
-				alamat_lengkap: showLocation.alamat_lengkap || "",
-				kota: showLocation.kota || "",
-				provinsi: showLocation.provinsi || "",
-				negara: showLocation.negara || "",
-				zoom_level: showLocation.zoom_level || 15,
-				tipe: showLocation.tipe || "",
-				organization_id: showLocation.organization_id || "",
-			};
+		// don't overwrite if user already typed nama
+		if (getValues("nama")) return;
+		reset({
+			nama: showLocation.nama || "",
+			alamat: showLocation.alamat || "",
+			latitude: showLocation.latitude || "",
+			longitude: showLocation.longitude || "",
+			place_id: showLocation.place_id || "",
+			alamat_lengkap: showLocation.alamat_lengkap || "",
+			kota: showLocation.kota || "",
+			provinsi: showLocation.provinsi || "",
+			negara: showLocation.negara || "",
+			zoom_level: showLocation.zoom_level || 15,
+			tipe: showLocation.tipe || "",
+			organization_id: showLocation.organization_id || "",
 		});
 	}, [showLocation]);
-	// Generic change handler
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		// keep numeric zoom as number
-		if (name === "zoom_level") {
-			setFormData((s) => ({ ...s, [name]: Number(value) }));
-		} else {
-			setFormData((s) => ({ ...s, [name]: value }));
-		}
-	};
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
+	const onSubmit = (data) => {
 		setParseError("");
-
 		const payload = new FormData();
 		payload.append("_method", "PUT");
-		for (const key in formData) {
-			payload.append(key, formData[key]);
-		}
+		for (const key in data) payload.append(key, data[key]);
 
 		updateLocationMutation.mutateAsync({ id, data: payload });
 	};
@@ -183,17 +170,12 @@ export default function AdminLocationEdit() {
 			return;
 		}
 
-		setFormData((s) => {
-			return {
-				...s,
-				latitude: result.latitude || s.latitude || "",
-				longitude: result.longitude || s.longitude || "",
-				zoom_level: result.zoom_level || s.zoom_level || "",
-				alamat: result.place || "",
-				// auto-fill nama hanya jika belum ada (user tetap bisa edit)
-				nama: result.place || "",
-			};
-		});
+		setValue("latitude", result.latitude || getValues("latitude"), { shouldDirty: true });
+		setValue("longitude", result.longitude || getValues("longitude"), { shouldDirty: true });
+		setValue("zoom_level", result.zoom_level ?? getValues("zoom_level"), { shouldDirty: true });
+		setValue("alamat", result.place || getValues("alamat"), { shouldDirty: true });
+		if (!getValues("nama"))
+			setValue("nama", result.place || getValues("nama"), { shouldDirty: true });
 	};
 
 	if (showLocationLoading || organizationsLoading) {
@@ -226,18 +208,18 @@ export default function AdminLocationEdit() {
 					</p>
 				</header>
 
-				<form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
+				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6 flex flex-col">
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="nama"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Nama Lokasi (bebas, hanya untuk pendataan) <span className="text-red-500">*</span>
 							</label>
 							<input
-								name="nama"
-								value={formData.nama}
-								onChange={handleChange}
+								id="nama"
+								{...register("nama", { required: true })}
 								type="text"
-								required
 								placeholder="Contoh: Lapangan RW 05"
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 							/>
@@ -248,11 +230,8 @@ export default function AdminLocationEdit() {
 								Tipe Lokasi <span className="text-red-500">*</span>
 							</label>
 							<select
-								name="tipe"
 								id="tipe"
-								value={formData.tipe}
-								onChange={handleChange}
-								required
+								{...register("tipe", { required: true })}
 								className="mt-1 block w-full rounded-md border border-gray-200 px-2 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
 								<option value="">Pilih tipe</option>
 								<option value="event">Kegiatan - (event)</option>
@@ -263,15 +242,15 @@ export default function AdminLocationEdit() {
 
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="alamat"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Alamat <span className="text-red-500">*</span>
 							</label>
 							<input
-								name="alamat"
-								value={formData.alamat}
-								onChange={handleChange}
+								id="alamat"
+								{...register("alamat", { required: true })}
 								type="text"
-								required
 								placeholder="Alamat (terisi otomatis dari Google Maps)"
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 							/>
@@ -284,10 +263,7 @@ export default function AdminLocationEdit() {
 							</label>
 							<select
 								id="organization_id"
-								name="organization_id"
-								value={formData.organization_id}
-								onChange={handleChange}
-								required
+								{...register("organization_id")}
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 								<option value="">Pilih Organisasi</option>
 								{organizations.map((organization) => (
@@ -299,13 +275,14 @@ export default function AdminLocationEdit() {
 						</div>
 					</div>
 					<div>
-						<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+						<label
+							htmlFor="alamat_lengkap"
+							className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 							Alamat Tambahan
 						</label>
 						<input
-							name="alamat_lengkap"
-							value={formData.alamat_lengkap}
-							onChange={handleChange}
+							id="alamat_lengkap"
+							{...register("alamat_lengkap")}
 							type="text"
 							placeholder="Alamat lengkap (opsional)"
 							className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -314,37 +291,40 @@ export default function AdminLocationEdit() {
 
 					<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="kota"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Kota (opsional)
 							</label>
 							<input
-								name="kota"
-								value={formData.kota}
-								onChange={handleChange}
+								id="kota"
+								{...register("kota")}
 								placeholder="Kota (opsional)"
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 							/>
 						</div>
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="provinsi"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Provinsi (opsional)
 							</label>
 							<input
-								name="provinsi"
-								value={formData.provinsi}
-								onChange={handleChange}
+								id="provinsi"
+								{...register("provinsi")}
 								placeholder="Provinsi (opsional)"
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 							/>
 						</div>
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="negara"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Negara <span className="text-red-500">*</span>
 							</label>
 							<input
-								name="negara"
-								value={formData.negara}
-								onChange={handleChange}
+								id="negara"
+								{...register("negara", { required: true })}
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 							/>
 						</div>
@@ -352,39 +332,40 @@ export default function AdminLocationEdit() {
 
 					<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="latitude"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Latitude (terisi otomatis)
 							</label>
 							<input
-								name="latitude"
-								value={formData.latitude}
-								onChange={handleChange}
-								required
+								id="latitude"
+								{...register("latitude", { required: true })}
 								placeholder="Latitude"
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 							/>
 						</div>
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="longitude"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Longitude (terisi otomatis)
 							</label>
 							<input
-								name="longitude"
-								value={formData.longitude}
-								onChange={handleChange}
-								required
+								id="longitude"
+								{...register("longitude", { required: true })}
 								placeholder="Longitude"
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 							/>
 						</div>
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="zoom_level"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Zoom <span className="text-red-500">*</span>
 							</label>
 							<input
-								name="zoom_level"
-								value={formData.zoom_level}
-								onChange={handleChange}
+								id="zoom_level"
+								{...register("zoom_level", { valueAsNumber: true })}
 								type="number"
 								min={0}
 								max={21}
@@ -394,13 +375,14 @@ export default function AdminLocationEdit() {
 					</div>
 
 					<div>
-						<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+						<label
+							htmlFor="place_id"
+							className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 							Place ID (opsional)
 						</label>
 						<input
-							name="place_id"
-							value={formData.place_id}
-							onChange={handleChange}
+							id="place_id"
+							{...register("place_id")}
 							placeholder="Place ID (jika ada)"
 							className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 						/>
@@ -426,6 +408,7 @@ export default function AdminLocationEdit() {
 						</p>
 						<div className="flex flex-col sm:flex-row gap-2 mt-2">
 							<input
+								id="gmap_url"
 								value={gmapUrl}
 								onChange={(e) => setGmapUrl(e.target.value)}
 								placeholder="https://www.google.com/maps/place/... (atau URL dari address bar)"

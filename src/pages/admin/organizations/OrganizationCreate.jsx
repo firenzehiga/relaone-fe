@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { useAdminCreateOrganizationMutation } from "@/_hooks/useOrganizations";
 import { useAuthStore } from "@/_hooks/useAuth";
 import { UserCircle2Icon, Building2 } from "lucide-react";
@@ -10,19 +11,20 @@ import Button from "@/components/ui/Button";
 
 export default function AdminOrganizationCreate() {
 	const navigate = useNavigate();
-	const [formData, setFormData] = useState({
-		nama: "",
-		deskripsi: "",
-		alamat: "",
-		telepon: "",
-		email: "",
-		website: "",
-		logo: null,
-		status_verifikasi: "pending",
-		// user fields for new account (backend expects user_nama,user_email,user_password when no user_id)
-		user_nama: "", // User's name
-		user_email: "", // User's email
-		user_password: "", // User's password
+	const { register, handleSubmit, setValue, getValues, reset } = useForm({
+		defaultValues: {
+			nama: "",
+			deskripsi: "",
+			alamat: "",
+			telepon: "",
+			email: "",
+			website: "",
+			logo: null,
+			status_verifikasi: "pending",
+			user_nama: "",
+			user_email: "",
+			user_password: "",
+		},
 	});
 	const { isLoading } = useAuthStore();
 
@@ -36,42 +38,37 @@ export default function AdminOrganizationCreate() {
 		};
 	}, [previewUrl]);
 
-	function handleChange(e) {
-		const { name, value, files } = e.target;
-		if (name === "logo" && files) {
-			const file = files[0];
-			if (!file) return;
+	const handleFileChange = (e) => {
+		const file = e.target.files && e.target.files[0];
+		if (!file) return;
 
-			const allowed = ["image/jpeg", "image/png", "image/jpg"];
-			const maxSize = 2 * 1024 * 1024;
-			if (!allowed.includes(file.type)) {
-				toast.error("Logo harus berupa gambar JPEG/PNG/JPG.", {
-					position: "top-center",
-				});
-				return;
-			}
-			if (file.size > maxSize) {
-				toast.error("Ukuran logo maksimal 2MB.", { position: "top-center" });
-				return;
-			}
-
-			if (previewUrl) URL.revokeObjectURL(previewUrl);
-			setFormData((s) => ({ ...s, [name]: file }));
-			setPreviewUrl(URL.createObjectURL(file));
-		} else {
-			setFormData((s) => ({ ...s, [name]: value }));
+		const allowed = ["image/jpeg", "image/png", "image/jpg"];
+		const maxSize = 2 * 1024 * 1024;
+		if (!allowed.includes(file.type)) {
+			toast.error("Logo harus berupa gambar JPEG/PNG/JPG.", { position: "top-center" });
+			return;
 		}
-	}
+		if (file.size > maxSize) {
+			toast.error("Ukuran logo maksimal 2MB.", { position: "top-center" });
+			return;
+		}
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
+		if (previewUrl) URL.revokeObjectURL(previewUrl);
+		setValue("logo", file, { shouldDirty: true });
+		setPreviewUrl(URL.createObjectURL(file));
+	};
 
+	const onSubmit = (data) => {
 		const payload = new FormData();
-		const dataToAppend = { ...formData };
-		for (const key in dataToAppend) {
-			const val = dataToAppend[key];
+		for (const key in data) {
+			const val = data[key];
 			if (val === null || val === undefined) continue;
-			payload.append(key, val);
+			// append file properly
+			if (key === "logo" && val instanceof File) {
+				payload.append("logo", val);
+			} else {
+				payload.append(key, val);
+			}
 		}
 
 		createOrganizationMutation.mutateAsync(payload);
@@ -87,16 +84,17 @@ export default function AdminOrganizationCreate() {
 					</p>
 				</header>
 
-				<form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
+				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6 flex flex-col">
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="nama"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Nama Organisasi <span className="text-red-500">*</span>
 							</label>
 							<input
-								name="nama"
-								value={formData.nama}
-								onChange={handleChange}
+								id="nama"
+								{...register("nama", { required: true })}
 								type="text"
 								placeholder="Contoh: Komunitas Bersih Pantai"
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -104,17 +102,18 @@ export default function AdminOrganizationCreate() {
 						</div>
 
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="website"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Website / Company Profile
 							</label>
 							<div className="mt-1">
 								<InputGroup>
 									<Input
+										id="website"
+										{...register("website")}
 										name="website"
 										type="url"
-										required
-										value={formData.website}
-										onChange={handleChange}
 										placeholder="diawali dengan https://"
 									/>
 								</InputGroup>
@@ -123,26 +122,27 @@ export default function AdminOrganizationCreate() {
 					</div>
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="email"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Email Organisasi <span className="text-red-500">*</span>
 							</label>
 							<input
-								name="email"
-								value={formData.email}
-								onChange={handleChange}
+								id="email"
+								{...register("email", { required: true })}
 								placeholder="contoh@organisasi.id"
-								required
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 							/>
 						</div>
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="telepon"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Telepon Organisasi <span className="text-red-500">*</span>
 							</label>
 							<input
-								name="telepon"
-								value={formData.telepon}
-								onChange={handleChange}
+								id="telepon"
+								{...register("telepon")}
 								placeholder="0812xxxx"
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 							/>
@@ -150,29 +150,29 @@ export default function AdminOrganizationCreate() {
 					</div>
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="alamat"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Alamat <span className="text-red-500">*</span>
 							</label>
 							<textarea
-								name="alamat"
-								value={formData.alamat}
-								onChange={handleChange}
+								id="alamat"
+								{...register("alamat", { required: true })}
 								rows={4}
-								required
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 								placeholder="Deskripsi singkat organisasi"
 							/>
 						</div>
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="deskripsi"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Deskripsi
 							</label>
 							<textarea
-								name="deskripsi"
-								value={formData.deskripsi}
-								onChange={handleChange}
+								id="deskripsi"
+								{...register("deskripsi")}
 								rows={4}
-								required
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 								placeholder="Deskripsi singkat organisasi"
 							/>
@@ -208,7 +208,7 @@ export default function AdminOrganizationCreate() {
 												id="logo"
 												name="logo"
 												accept="image/jpeg,image/jpg,image/png"
-												onChange={handleChange}
+												onChange={handleFileChange}
 												className="hidden"
 												required
 											/>
@@ -222,7 +222,9 @@ export default function AdminOrganizationCreate() {
 
 										<p className="text-xs text-gray-500">Format: JPEG, JPG, PNG. Maksimal 2MB.</p>
 
-										{formData.logo && <p className="text-xs text-gray-700">{formData.logo.name}</p>}
+										{getValues("logo") && getValues("logo") instanceof File && (
+											<p className="text-xs text-gray-700">{getValues("logo").name}</p>
+										)}
 									</div>
 								</div>
 							</div>
@@ -242,41 +244,44 @@ export default function AdminOrganizationCreate() {
 							</p>
 							<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 								<div>
-									<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+									<label
+										htmlFor="user_nama"
+										className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 										Nama Pengguna <span className="text-red-500">*</span>
 									</label>
 									<input
-										name="user_nama"
-										value={formData.user_nama}
-										onChange={handleChange}
+										id="user_nama"
+										{...register("user_nama", { required: true })}
 										required
 										className="mt-1 block w-full rounded-md border px-3 py-2"
 									/>
 								</div>
 
 								<div>
-									<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+									<label
+										htmlFor="user_email"
+										className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 										Email Pengguna <span className="text-red-500">*</span>
 									</label>
 									<input
-										name="user_email"
+										id="user_email"
+										{...register("user_email", { required: true })}
 										type="email"
-										value={formData.user_email}
-										onChange={handleChange}
 										required
 										className="mt-1 block w-full rounded-md border px-3 py-2"
 									/>
 								</div>
 
 								<div>
-									<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+									<label
+										htmlFor="user_password"
+										className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 										Password Akun <span className="text-red-500">*</span>
 									</label>
 									<input
-										name="user_password"
+										id="user_password"
+										{...register("user_password", { required: true })}
 										type="password"
-										value={formData.user_password}
-										onChange={handleChange}
 										required
 										className="mt-1 block w-full rounded-md border px-3 py-2"
 									/>

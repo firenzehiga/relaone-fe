@@ -31,6 +31,7 @@ import { getImageUrl } from "@/utils";
 import Skeleton from "@/components/ui/Skeleton";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
+import { useForm } from "react-hook-form";
 
 /**
  * Halaman Edit Profile Volunteer
@@ -45,204 +46,151 @@ export default function OrganizationEditProfilePage() {
 	useDocumentTitle("Edit Profile Page");
 
 	const navigate = useNavigate();
-	// State untuk form data
-	const [formData, setFormData] = useState({
-		nama: "",
-		telepon: "",
-		alamat: "",
-		tanggal_lahir: "",
-		jenis_kelamin: "",
-		bio: "",
-		foto_profil: null,
-		// Organization specific fields
-		organization_nama: "",
-		organization_deskripsi: "",
-		organization_telepon: "",
-		organization_website: "",
-		organization_logo: null,
+
+	const {
+		register,
+		handleSubmit: rhfHandleSubmit,
+		setValue,
+		watch,
+		reset,
+		getValues,
+	} = useForm({
+		defaultValues: {
+			nama: "",
+			email: "",
+			telepon: "",
+			alamat: "",
+			tanggal_lahir: "",
+			jenis_kelamin: "",
+			bio: "",
+			foto_profil: null,
+			// Organization specific fields
+			organization_nama: "",
+			organization_deskripsi: "",
+			organization_telepon: "",
+			organization_website: "",
+			organization_logo: null,
+		},
 	});
+
 	const [imagePreview, setImagePreview] = useState(null);
 	const [logoPreview, setLogoPreview] = useState(null);
-
-	// State untuk validation errors
 	const [errors, setErrors] = useState({});
 	const { isLoading } = useAuthStore();
 
 	const { data: profileData, isLoading: isLoadingProfile, error } = useUserProfile();
-	// Mutation untuk update profile
 	const updateProfileMutation = useUpdateUserMutation();
 
 	useEffect(() => {
 		if (!profileData) return;
-		setFormData((prev) => {
-			// if user already started typing, don't overwrite
-			if (prev.nama) return prev;
-			return {
-				nama: profileData.nama,
-				email: profileData.email,
-				telepon: profileData.telepon || "",
-				alamat: profileData.alamat || "",
-				tanggal_lahir: toInputDate(profileData.tanggal_lahir) || "",
-				jenis_kelamin: profileData.jenis_kelamin || "",
-				bio: profileData.bio || "",
-				foto_profil: profileData.foto_profil,
-				// Organization data
-				organization_nama: profileData.role_data?.nama || "",
-				organization_deskripsi: profileData.role_data?.deskripsi || "",
-				organization_telepon: profileData.role_data?.telepon || "",
-				organization_website: profileData.role_data?.website || "",
-				organization_logo: profileData.role_data?.logo,
-			};
+		if (getValues("nama")) return;
+		reset({
+			nama: profileData.nama || "",
+			email: profileData.email || "",
+			telepon: profileData.telepon || "",
+			alamat: profileData.alamat || "",
+			tanggal_lahir: toInputDate(profileData.tanggal_lahir) || "",
+			jenis_kelamin: profileData.jenis_kelamin || "",
+			bio: profileData.bio || "",
+			foto_profil: profileData.foto_profil || null,
+			organization_nama: profileData.role_data?.nama || "",
+			organization_deskripsi: profileData.role_data?.deskripsi || "",
+			organization_telepon: profileData.role_data?.telepon || "",
+			organization_website: profileData.role_data?.website || "",
+			organization_logo: profileData.role_data?.logo || null,
 		});
 
-		// Set image preview jika ada foto profil existing
 		if (profileData.foto_profil) {
 			setImagePreview(getImageUrl(`foto_profil/${profileData.foto_profil}`));
 		}
-
-		// Set logo preview jika ada logo organization existing
 		if (profileData.role_data?.logo) {
 			setLogoPreview(getImageUrl(`organizations/${profileData.role_data.logo}`));
 		}
 	}, [profileData]);
 
-	// Handle change - gabungan untuk input biasa dan file
-	const handleChange = (e) => {
-		const { name, value, files } = e.target;
+	const foto = watch("foto_profil");
+	const orgLogo = watch("organization_logo");
 
-		if (name === "foto_profil" || name === "organization_logo") {
-			const file = files && files[0];
-			if (!file) return;
-
-			// Validasi tipe file
-			const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
-			if (!allowedTypes.includes(file.type)) {
-				toast.error("Format file tidak didukung. Gunakan JPEG, JPG, atau PNG.");
-				return;
-			}
-
-			// Validasi ukuran file (max 2MB)
-			const maxSize = 2 * 1024 * 1024; // 2MB dalam bytes
-			if (file.size > maxSize) {
-				toast.error("Ukuran file terlalu besar. Maksimal 2MB.");
-				return;
-			}
-
-			// Store actual File object
-			setFormData((prev) => ({
-				...prev,
-				[name]: file,
-			}));
-
-			// Buat preview image
-			const reader = new FileReader();
-			reader.onloadend = () => {
-				if (name === "foto_profil") {
-					setImagePreview(reader.result);
-				} else if (name === "organization_logo") {
-					setLogoPreview(reader.result);
-				}
-			};
-			reader.readAsDataURL(file);
-
-			// Clear error jika ada
-			if (errors.foto_profil) {
-				setErrors((prev) => ({
-					...prev,
-					foto_profil: "",
-				}));
-			}
-
-			if (errors.organization_logo) {
-				setErrors((prev) => ({
-					...prev,
-					organization_logo: "",
-				}));
-			}
-		} else {
-			// Handle input biasa
-			setFormData((prev) => ({
-				...prev,
-				[name]: value,
-			}));
-
-			// Clear error ketika user mulai mengetik
-			if (errors[name]) {
-				setErrors((prev) => ({
-					...prev,
-					[name]: "",
-				}));
-			}
+	useEffect(() => {
+		let url;
+		if (foto instanceof File) {
+			url = URL.createObjectURL(foto);
+			setImagePreview(url);
 		}
+		return () => {
+			if (url) URL.revokeObjectURL(url);
+		};
+	}, [foto]);
+
+	useEffect(() => {
+		let url;
+		if (orgLogo instanceof File) {
+			url = URL.createObjectURL(orgLogo);
+			setLogoPreview(url);
+		}
+		return () => {
+			if (url) URL.revokeObjectURL(url);
+		};
+	}, [orgLogo]);
+
+	const handleFileChange = (e) => {
+		const { name, files } = e.target;
+		const file = files && files[0];
+		if (!file) return;
+		const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+		const maxSize = 2 * 1024 * 1024;
+		if (!allowedTypes.includes(file.type)) {
+			toast.error("Format file tidak didukung. Gunakan JPEG, JPG, atau PNG.");
+			return;
+		}
+		if (file.size > maxSize) {
+			toast.error("Ukuran file terlalu besar. Maksimal 2MB.");
+			return;
+		}
+		setValue(name, file, { shouldDirty: true });
 	};
 
-	// Validate form
 	const validateForm = () => {
+		const values = getValues();
 		const newErrors = {};
-
-		if (!formData.nama.trim()) {
-			newErrors.nama = "Nama harus diisi";
-		} else if (formData.nama.length < 2) {
-			newErrors.nama = "Nama minimal 2 karakter";
-		}
-
-		if (!formData.email.trim()) {
-			newErrors.email = "Email harus diisi";
-		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+		if (!values.nama || !values.nama.trim()) newErrors.nama = "Nama harus diisi";
+		else if (values.nama.length < 2) newErrors.nama = "Nama minimal 2 karakter";
+		if (!values.email || !values.email.trim()) newErrors.email = "Email harus diisi";
+		else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email))
 			newErrors.email = "Format email tidak valid";
-		}
-
-		if (formData.telepon && !/^[\d\s\-\+\(\)]+$/.test(formData.telepon)) {
+		if (values.telepon && !/^[\d\s\-\+\(\)]+$/.test(values.telepon))
 			newErrors.telepon = "Format nomor telefon tidak valid";
-		}
 
-		// Organization validation
-		if (!formData.organization_nama.trim()) {
+		if (!values.organization_nama || !values.organization_nama.trim())
 			newErrors.organization_nama = "Nama organisasi harus diisi";
-		}
-
-		if (formData.organization_telepon && !/^[\d\s\-\+\(\)]+$/.test(formData.organization_telepon)) {
+		if (values.organization_telepon && !/^[\d\s\-\+\(\)]+$/.test(values.organization_telepon))
 			newErrors.organization_telepon = "Format nomor telefon organisasi tidak valid";
-		}
-
-		if (formData.organization_website && !/^https?:\/\/.+/.test(formData.organization_website)) {
+		if (values.organization_website && !/^https?:\/\/.+/.test(values.organization_website))
 			newErrors.organization_website =
 				"Format website tidak valid (harus dimulai dengan http:// atau https://)";
-		}
 
 		setErrors(newErrors);
 		return Object.keys(newErrors).length === 0;
 	};
 
-	// Handle form submit
-	const handleSubmit = (e) => {
-		e.preventDefault();
-
-		// Validate form terlebih dahulu
+	const onFormSubmit = () => {
 		if (!validateForm()) {
 			toast.error("Mohon perbaiki kesalahan pada form");
 			return;
 		}
-
+		const values = getValues();
 		const payload = new FormData();
 		payload.append("_method", "PUT");
-
-		for (const key in formData) {
+		for (const key in values) {
+			const val = values[key];
 			if (key === "foto_profil") {
-				// Only append foto_profil when user selected a new File
-				if (formData.foto_profil instanceof File) {
-					payload.append("foto_profil", formData.foto_profil);
-				}
+				if (val instanceof File) payload.append("foto_profil", val);
 			} else if (key === "organization_logo") {
-				// Only append organization_logo when user selected a new File
-				if (formData.organization_logo instanceof File) {
-					payload.append("organization_logo", formData.organization_logo);
-				}
+				if (val instanceof File) payload.append("organization_logo", val);
 			} else {
-				payload.append(key, formData[key]);
+				payload.append(key, val ?? "");
 			}
 		}
-
 		updateProfileMutation.mutateAsync({ userData: payload });
 	};
 
@@ -313,7 +261,7 @@ export default function OrganizationEditProfilePage() {
 					</Button>
 				</motion.div>
 
-				<form onSubmit={handleSubmit}>
+				<form onSubmit={rhfHandleSubmit(onFormSubmit)}>
 					{/* Single Combined Card */}
 					<motion.div variants={itemVariants}>
 						<Card>
@@ -350,7 +298,7 @@ export default function OrganizationEditProfilePage() {
 														id="foto_profil"
 														name="foto_profil"
 														accept="image/jpeg,image/jpg,image/png"
-														onChange={handleChange}
+														onChange={handleFileChange}
 														className="hidden"
 													/>
 													<label
@@ -402,7 +350,7 @@ export default function OrganizationEditProfilePage() {
 														id="organization_logo"
 														name="organization_logo"
 														accept="image/jpeg,image/jpg,image/png"
-														onChange={handleChange}
+														onChange={handleFileChange}
 														className="hidden"
 													/>
 													<label
@@ -446,10 +394,9 @@ export default function OrganizationEditProfilePage() {
 											<div className="relative">
 												<User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
 												<input
+													id="nama"
+													{...register("nama")}
 													type="text"
-													name="nama"
-													value={formData.nama}
-													onChange={handleChange}
 													className={`w-full pl-9 pr-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm ${
 														errors.nama ? "border-red-500" : "border-gray-300"
 													}`}
@@ -467,9 +414,9 @@ export default function OrganizationEditProfilePage() {
 											<div className="relative">
 												<Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
 												<input
+													id="email"
+													{...register("email")}
 													type="email"
-													name="email"
-													value={formData.email}
 													disabled
 													className="w-full pl-9 pr-3 py-2 border bg-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm border-gray-300"
 													placeholder="Masukkan email"
@@ -486,10 +433,9 @@ export default function OrganizationEditProfilePage() {
 											<div className="relative">
 												<Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
 												<input
+													id="telepon"
+													{...register("telepon")}
 													type="tel"
-													name="telepon"
-													value={formData.telepon}
-													onChange={handleChange}
 													className={`w-full pl-9 pr-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm ${
 														errors.telepon ? "border-red-500" : "border-gray-300"
 													}`}
@@ -508,10 +454,9 @@ export default function OrganizationEditProfilePage() {
 											</label>
 											<div className="relative">
 												<input
+													id="tanggal_lahir"
+													{...register("tanggal_lahir")}
 													type="date"
-													name="tanggal_lahir"
-													value={formData.tanggal_lahir}
-													onChange={handleChange}
 													className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
 												/>
 											</div>
@@ -523,9 +468,8 @@ export default function OrganizationEditProfilePage() {
 												Jenis Kelamin
 											</label>
 											<select
-												name="jenis_kelamin"
-												value={formData.jenis_kelamin}
-												onChange={handleChange}
+												id="jenis_kelamin"
+												{...register("jenis_kelamin")}
 												className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm bg-white">
 												<option value="">Pilih jenis kelamin</option>
 												<option value="laki-laki">Laki-laki</option>
@@ -539,9 +483,8 @@ export default function OrganizationEditProfilePage() {
 											<div className="relative">
 												<MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
 												<textarea
-													name="alamat"
-													value={formData.alamat}
-													onChange={handleChange}
+													id="alamat"
+													{...register("alamat")}
 													rows={3}
 													className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none text-sm"
 													placeholder="Masukkan alamat lengkap"
@@ -567,10 +510,9 @@ export default function OrganizationEditProfilePage() {
 											<div className="relative">
 												<Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
 												<input
+													id="organization_nama"
+													{...register("organization_nama")}
 													type="text"
-													name="organization_nama"
-													value={formData.organization_nama}
-													onChange={handleChange}
 													className={`w-full pl-9 pr-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-sm ${
 														errors.organization_nama ? "border-red-500" : "border-gray-300"
 													}`}
@@ -590,9 +532,8 @@ export default function OrganizationEditProfilePage() {
 											<div className="relative">
 												<FileText className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
 												<textarea
-													name="organization_deskripsi"
-													value={formData.organization_deskripsi}
-													onChange={handleChange}
+													id="organization_deskripsi"
+													{...register("organization_deskripsi")}
 													rows={3}
 													className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 resize-none text-sm"
 													placeholder="Deskripsikan organisasi Anda..."
@@ -608,10 +549,9 @@ export default function OrganizationEditProfilePage() {
 											<div className="relative">
 												<Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
 												<input
+													id="organization_telepon"
+													{...register("organization_telepon")}
 													type="tel"
-													name="organization_telepon"
-													value={formData.organization_telepon}
-													onChange={handleChange}
 													className={`w-full pl-9 pr-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-sm ${
 														errors.organization_telepon ? "border-red-500" : "border-gray-300"
 													}`}
@@ -631,10 +571,9 @@ export default function OrganizationEditProfilePage() {
 											<div className="relative">
 												<Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
 												<input
+													id="organization_website"
+													{...register("organization_website")}
 													type="url"
-													name="organization_website"
-													value={formData.organization_website}
-													onChange={handleChange}
 													className={`w-full pl-9 pr-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-sm ${
 														errors.organization_website ? "border-red-500" : "border-gray-300"
 													}`}

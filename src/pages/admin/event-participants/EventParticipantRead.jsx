@@ -254,33 +254,31 @@ export default function AdminEventParticipant() {
 
 					{/* Stats Cards */}
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-						<div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
+						<div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-3 border border-blue-200">
 							<div className="flex items-center justify-between">
 								<div>
 									<p className="text-sm text-blue-600 font-medium">Total Kegiatan</p>
-									<p className="text-2xl font-bold text-blue-900">{eventsList.length}</p>
+									<p className="text-xl font-bold text-blue-900">{eventsList.length}</p>
 								</div>
-								<Calendar className="w-10 h-10 text-blue-500 opacity-70" />
+								<Calendar className="w-8 h-8 text-blue-500 opacity-70" />
 							</div>
 						</div>
-						<div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg p-4 border border-emerald-200">
+						<div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg p-3 border border-emerald-200">
 							<div className="flex items-center justify-between">
 								<div>
 									<p className="text-sm text-emerald-600 font-medium">Total Partisipan</p>
-									<p className="text-2xl font-bold text-emerald-900">{participants.length}</p>
+									<p className="text-xl font-bold text-emerald-900">{participants.length}</p>
 								</div>
-								<Users className="w-10 h-10 text-emerald-500 opacity-70" />
+								<Users className="w-8 h-8 text-emerald-500 opacity-70" />
 							</div>
 						</div>
-						<div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
+						<div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-3 border border-purple-200">
 							<div className="flex items-center justify-between">
 								<div>
 									<p className="text-sm text-purple-600 font-medium">Total Hasil Filter</p>
-									<p className="text-2xl font-bold text-purple-900">
-										{filteredParticipants.length}
-									</p>
+									<p className="text-xl font-bold text-purple-900">{filteredParticipants.length}</p>
 								</div>
-								<Filter className="w-10 h-10 text-purple-500 opacity-70" />
+								<Filter className="w-8 h-8 text-purple-500 opacity-70" />
 							</div>
 						</div>
 					</div>
@@ -288,10 +286,13 @@ export default function AdminEventParticipant() {
 					{/* Filters */}
 					<div className="flex flex-col md:flex-row gap-4 mb-4">
 						<div className="flex-1">
-							<label className="block text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="filter_event"
+								className="block text-sm font-medium text-gray-700 mb-1">
 								Filter berdasarkan Kegiatan
 							</label>
 							<select
+								id="filter_event"
 								value={selectedEventId}
 								onChange={(e) => setSelectedEventId(e.target.value)}
 								className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
@@ -304,13 +305,16 @@ export default function AdminEventParticipant() {
 							</select>
 						</div>
 						<div className="flex-1">
-							<label className="block text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="search_participant"
+								className="block text-sm font-medium text-gray-700 mb-1">
 								Cari Partisipan
 							</label>
 							<div className="relative w-full">
 								<div className="w-full flex flex-col md:flex-row gap-2">
 									<div className="flex-1 relative">
 										<input
+											id="search_participant"
 											type="text"
 											placeholder="Cari partisipan, kegiatan, status..."
 											value={searchParticipant}
@@ -484,7 +488,11 @@ export default function AdminEventParticipant() {
 											<div>
 												<div className="text-sm font-semibold text-gray-700 mb-1">Catatan</div>
 												<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
-													{data.catatan || "-"}
+													{data.catatan ? (
+														<span className="text-gray-900">{data.catatan}</span>
+													) : (
+														<span className="italic text-gray-500">tidak ada catatan</span>
+													)}
 												</div>
 											</div>
 										</div>

@@ -9,22 +9,27 @@ import { useOrgLocationById, useOrgUpdateLocationMutation } from "@/_hooks/useLo
 // UI Components
 import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
+import { useForm } from "react-hook-form";
+import { parseGoogleMapsUrl } from "@/utils";
+import { AlertCircle } from "lucide-react";
 
 export default function OrganizationLocationEdit() {
 	const { id } = useParams();
 	const navigate = useNavigate();
-	const [formData, setFormData] = useState({
-		nama: "",
-		alamat: "",
-		latitude: "",
-		longitude: "",
-		place_id: "",
-		alamat_lengkap: "",
-		kota: "",
-		provinsi: "",
-		negara: "Indonesia",
-		zoom_level: 15,
-		tipe: "",
+	const { register, handleSubmit, reset, setValue, getValues } = useForm({
+		defaultValues: {
+			nama: "",
+			alamat: "",
+			latitude: "",
+			longitude: "",
+			place_id: "",
+			alamat_lengkap: "",
+			kota: "",
+			provinsi: "",
+			negara: "Indonesia",
+			zoom_level: 15,
+			tipe: "",
+		},
 	});
 	const { isLoading } = useAuthStore();
 
@@ -40,135 +45,30 @@ export default function OrganizationLocationEdit() {
 
 	useEffect(() => {
 		if (!showLocation) return;
-
-		// hanya isi dengan data dari backend jika form lokal belum berisi nama (tidak menimpa edit user)
-		setFormData((prev) => {
-			if (prev.nama) return prev; // sudah diisi user, jangan timpa
-			return {
-				nama: showLocation.nama || "",
-				alamat: showLocation.alamat || "",
-				latitude: showLocation.latitude || "",
-				longitude: showLocation.longitude || "",
-				place_id: showLocation.place_id || "",
-				alamat_lengkap: showLocation.alamat_lengkap || "",
-				kota: showLocation.kota || "",
-				provinsi: showLocation.provinsi || "",
-				negara: showLocation.negara || "",
-				zoom_level: showLocation.zoom_level || 15,
-				tipe: showLocation.tipe || "",
-			};
+		if (getValues("nama")) return;
+		reset({
+			nama: showLocation.nama || "",
+			alamat: showLocation.alamat || "",
+			latitude: showLocation.latitude || "",
+			longitude: showLocation.longitude || "",
+			place_id: showLocation.place_id || "",
+			alamat_lengkap: showLocation.alamat_lengkap || "",
+			kota: showLocation.kota || "",
+			provinsi: showLocation.provinsi || "",
+			negara: showLocation.negara || "",
+			zoom_level: showLocation.zoom_level || 15,
+			tipe: showLocation.tipe || "",
 		});
 	}, [showLocation]);
-	// Generic change handler
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		// keep numeric zoom as number
-		if (name === "zoom_level") {
-			setFormData((s) => ({ ...s, [name]: Number(value) }));
-		} else {
-			setFormData((s) => ({ ...s, [name]: value }));
-		}
-	};
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
+	const onSubmit = (data) => {
 		setParseError("");
-
 		const payload = new FormData();
 		payload.append("_method", "PUT");
-		for (const key in formData) {
-			payload.append(key, formData[key]);
-		}
+		for (const key in data) payload.append(key, data[key]);
 
 		updateLocationMutation.mutateAsync({ id, data: payload });
 	};
-
-	// Try to parse common Google Maps url formats to extract lat,lng,zoom and a label
-	const parseGoogleMapsUrl = (url) => {
-		try {
-			if (!url || typeof url !== "string") return null;
-			const u = url.trim();
-
-			// Try to find @lat,lng,zoom pattern
-			const atMatch = u.match(/@(-?\d+\.\d+),(-?\d+\.\d+),(\d+(?:\.\d+)?)z/);
-			if (atMatch) {
-				return {
-					latitude: atMatch[1],
-					longitude: atMatch[2],
-					zoom_level: Math.round(Number(atMatch[3])),
-					place: extractPlaceFromPath(u),
-				};
-			}
-
-			// Try !3d<lat>!4d<long> pattern
-			const dMatch = u.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
-			if (dMatch) {
-				return {
-					latitude: dMatch[1],
-					longitude: dMatch[2],
-					zoom_level: 15,
-					place: extractPlaceFromPath(u),
-				};
-			}
-
-			// Try q=lat,lng or ?q=lat,lng
-			const qMatch = u.match(/[?&]q=\s*(-?\d+\.\d+),(-?\d+\.\d+)/);
-			if (qMatch) {
-				return {
-					latitude: qMatch[1],
-					longitude: qMatch[2],
-					zoom_level: 15,
-					place: extractPlaceFromPath(u),
-				};
-			}
-
-			// Try ll=lat,lng
-			const llMatch = u.match(/[?&]ll=\s*(-?\d+\.\d+),(-?\d+\.\d+)/);
-			if (llMatch) {
-				return {
-					latitude: llMatch[1],
-					longitude: llMatch[2],
-					zoom_level: 15,
-					place: extractPlaceFromPath(u),
-				};
-			}
-
-			// Last resort: search any lat,long pair anywhere in the URL
-			const anyMatch = u.match(/(-?\d+\.\d+),(-?\d+\.\d+)/);
-			if (anyMatch) {
-				return {
-					latitude: anyMatch[1],
-					longitude: anyMatch[2],
-					zoom_level: 15,
-					place: extractPlaceFromPath(u),
-				};
-			}
-
-			return null;
-		} catch (err) {
-			console.error("parseGoogleMapsUrl error", err);
-			return null;
-		}
-	};
-
-	// helper to extract a place label from a /place/<label>/ path segment (decoded)
-	const extractPlaceFromPath = (url) => {
-		try {
-			const m = url.match(/\/place\/([^\/]+)/);
-			if (m && m[1]) {
-				return decodeURIComponent(m[1].replace(/\+/g, " "));
-			}
-			// If nothing, try to extract after /maps/ and before @ or /data
-			const m2 = url.match(/\/maps\/(?:place\/)?([^@\/]*)/);
-			if (m2 && m2[1]) {
-				return decodeURIComponent(m2[1].replace(/\+/g, " "));
-			}
-		} catch (e) {
-			// ignore
-		}
-		return "";
-	};
-
 	const handleParse = () => {
 		setParseError("");
 		const result = parseGoogleMapsUrl(gmapUrl);
@@ -179,18 +79,12 @@ export default function OrganizationLocationEdit() {
 			return;
 		}
 
-		setFormData((s) => {
-			const place = result.place || "";
-			return {
-				...s,
-				latitude: result.latitude || s.latitude,
-				longitude: result.longitude || s.longitude,
-				zoom_level: result.zoom_level || s.zoom_level,
-				alamat: place || s.alamat,
-				// auto-fill nama hanya jika belum ada (user tetap bisa edit)
-				nama: s.nama,
-			};
-		});
+		const place = result.place || "";
+		setValue("latitude", result.latitude || getValues("latitude"), { shouldDirty: true });
+		setValue("longitude", result.longitude || getValues("longitude"), { shouldDirty: true });
+		setValue("zoom_level", result.zoom_level ?? getValues("zoom_level"), { shouldDirty: true });
+		setValue("alamat", place || getValues("alamat"), { shouldDirty: true });
+		if (!getValues("nama")) setValue("nama", place || getValues("nama"), { shouldDirty: true });
 	};
 
 	if (showLocationLoading) {
@@ -220,16 +114,17 @@ export default function OrganizationLocationEdit() {
 					</p>
 				</header>
 
-				<form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
+				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6 flex flex-col">
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="nama"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Nama Lokasi (bebas, hanya untuk pendataan) <span className="text-red-500">*</span>
 							</label>
 							<input
-								name="nama"
-								value={formData.nama}
-								onChange={handleChange}
+								id="nama"
+								{...register("nama")}
 								type="text"
 								required
 								placeholder="Contoh: Lapangan RW 05"
@@ -242,10 +137,8 @@ export default function OrganizationLocationEdit() {
 								Tipe Lokasi <span className="text-red-500">*</span>
 							</label>
 							<select
-								name="tipe"
+								{...register("tipe")}
 								id="tipe"
-								value={formData.tipe}
-								onChange={handleChange}
 								required
 								className="mt-1 block w-full rounded-md border border-gray-200 px-2 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
 								<option value="">Pilih tipe</option>
@@ -257,13 +150,14 @@ export default function OrganizationLocationEdit() {
 
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="alamat"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Alamat <span className="text-red-500">*</span>
 							</label>
 							<input
-								name="alamat"
-								value={formData.alamat}
-								onChange={handleChange}
+								id="alamat"
+								{...register("alamat")}
 								type="text"
 								required
 								placeholder="Alamat (terisi otomatis dari Google Maps)"
@@ -272,13 +166,14 @@ export default function OrganizationLocationEdit() {
 						</div>
 					</div>
 					<div>
-						<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+						<label
+							htmlFor="alamat_lengkap"
+							className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 							Alamat Tambahan
 						</label>
 						<input
-							name="alamat_lengkap"
-							value={formData.alamat_lengkap}
-							onChange={handleChange}
+							id="alamat_lengkap"
+							{...register("alamat_lengkap")}
 							type="text"
 							placeholder="Alamat lengkap (opsional)"
 							className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -287,37 +182,40 @@ export default function OrganizationLocationEdit() {
 
 					<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="kota"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Kota (opsional)
 							</label>
 							<input
-								name="kota"
-								value={formData.kota}
-								onChange={handleChange}
+								id="kota"
+								{...register("kota")}
 								placeholder="Kota (opsional)"
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 							/>
 						</div>
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="provinsi"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Provinsi (opsional)
 							</label>
 							<input
-								name="provinsi"
-								value={formData.provinsi}
-								onChange={handleChange}
+								id="provinsi"
+								{...register("provinsi")}
 								placeholder="Provinsi (opsional)"
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 							/>
 						</div>
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="negara"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Negara <span className="text-red-500">*</span>
 							</label>
 							<input
-								name="negara"
-								value={formData.negara}
-								onChange={handleChange}
+								id="negara"
+								{...register("negara")}
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 							/>
 						</div>
@@ -325,39 +223,45 @@ export default function OrganizationLocationEdit() {
 
 					<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="latitude"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Latitude (terisi otomatis)
 							</label>
 							<input
-								name="latitude"
-								value={formData.latitude}
-								onChange={handleChange}
+								id="latitude"
+								{...register("latitude")}
 								required
 								placeholder="Latitude"
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 							/>
 						</div>
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="longitude"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Longitude (terisi otomatis)
 							</label>
 							<input
-								name="longitude"
-								value={formData.longitude}
-								onChange={handleChange}
+								id="longitude"
+								{...register("longitude")}
 								required
 								placeholder="Longitude"
 								className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 							/>
 						</div>
 						<div>
-							<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor="zoom_level"
+								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 								Zoom <span className="text-red-500">*</span>
 							</label>
 							<input
-								name="zoom_level"
-								value={formData.zoom_level}
-								onChange={handleChange}
+								id="zoom_level"
+								{...register("zoom_level", {
+									onChange: (e) =>
+										setValue("zoom_level", Number(e.target.value), { shouldDirty: true }),
+								})}
 								type="number"
 								min={0}
 								max={21}
@@ -367,13 +271,14 @@ export default function OrganizationLocationEdit() {
 					</div>
 
 					<div>
-						<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+						<label
+							htmlFor="place_id"
+							className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 							Place ID (opsional)
 						</label>
 						<input
-							name="place_id"
-							value={formData.place_id}
-							onChange={handleChange}
+							id="place_id"
+							{...register("place_id")}
 							placeholder="Place ID (jika ada)"
 							className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2"
 						/>
@@ -399,6 +304,7 @@ export default function OrganizationLocationEdit() {
 						</p>
 						<div className="flex flex-col sm:flex-row gap-2 mt-2">
 							<input
+								id="gmap_url"
 								value={gmapUrl}
 								onChange={(e) => setGmapUrl(e.target.value)}
 								placeholder="https://www.google.com/maps/place/... (atau URL dari address bar)"

@@ -13,31 +13,34 @@ import { useAdminCategory } from "@/_hooks/useCategories";
 import Skeleton from "@/components/ui/Skeleton";
 import { toInputTime, toInputDate } from "@/utils/dateFormatter";
 import { AsyncImage } from "loadable-image";
+import { useForm } from "react-hook-form";
 export default function AdminEventEdit() {
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const { user } = useAuthStore();
-	const [formData, setFormData] = useState({
-		judul: "",
-		deskripsi: "",
-		deskripsi_singkat: "",
-		tanggal_mulai: "",
-		tanggal_selesai: "",
-		waktu_mulai: "",
-		waktu_selesai: "",
-		maks_peserta: "",
-		gambar: null,
-		status: "draft",
-		persyaratan: [],
-		manfaat: [],
-		nama_kontak: "",
-		telepon_kontak: "",
-		email_kontak: "",
-		batas_pendaftaran: "",
-		category_id: "",
-		organization_id: "",
-		location_id: "",
-		created_by_user_id: user.id,
+	const { register, handleSubmit, setValue, watch, reset, getValues, formState } = useForm({
+		defaultValues: {
+			judul: "",
+			deskripsi: "",
+			deskripsi_singkat: "",
+			tanggal_mulai: "",
+			tanggal_selesai: "",
+			waktu_mulai: "",
+			waktu_selesai: "",
+			maks_peserta: "",
+			gambar: null,
+			status: "draft",
+			persyaratan: [],
+			manfaat: [],
+			nama_kontak: "",
+			telepon_kontak: "",
+			email_kontak: "",
+			batas_pendaftaran: "",
+			category_id: "",
+			organization_id: "",
+			location_id: "",
+			created_by_user_id: user.id,
+		},
 	});
 
 	const { isLoading } = useAuthStore();
@@ -62,24 +65,23 @@ export default function AdminEventEdit() {
 	const { categories, isLoading: categoriesLoading, error: categoriesError } = useAdminCategory();
 
 	// Lokasi yang difilter berdasarkan organisasi yang dipilih di form
+	const organization_id = watch("organization_id");
 	const filteredLocations = locations.filter((loc) =>
-		formData.organization_id
-			? String(loc.organization_id) === String(formData.organization_id)
-			: false
+		organization_id ? String(loc.organization_id) === String(organization_id) : false
 	);
 
 	// Jika organisasi berubah dan lokasi saat ini tidak cocok, kosongkan lokasi
 	useEffect(() => {
-		if (!formData.organization_id) return;
+		if (!organization_id) return;
 		const ok = locations.some(
 			(loc) =>
-				String(loc.organization_id) === String(formData.organization_id) &&
-				String(loc.id) === String(formData.location_id)
+				String(loc.organization_id) === String(organization_id) &&
+				String(loc.id) === String(getValues("location_id"))
 		);
-		if (!ok && formData.location_id) {
-			setFormData((s) => ({ ...s, location_id: "" }));
+		if (!ok && getValues("location_id")) {
+			setValue("location_id", "", { shouldDirty: true });
 		}
-	}, [formData.organization_id, locations]);
+	}, [organization_id, locations]);
 
 	const handleChange = (e) => {
 		const { name, value, files } = e.target;
@@ -87,10 +89,8 @@ export default function AdminEventEdit() {
 			const file = files && files[0];
 			if (!file) return;
 
-			// allowed mime types and max size (2MB)
 			const allowed = ["image/jpeg", "image/png", "image/jpg"];
 			const maxSize = 2 * 1024 * 1024; // 2MB
-
 			if (!allowed.includes(file.type)) {
 				toast.error("File harus berupa gambar JPEG/PNG/JPG (selain itu tidak diperbolehkan).", {
 					position: "top-center",
@@ -105,9 +105,9 @@ export default function AdminEventEdit() {
 			}
 
 			setError("");
-			setFormData((s) => ({ ...s, [name]: file }));
+			setValue("gambar", file, { shouldDirty: true });
 		} else {
-			setFormData((s) => ({ ...s, [name]: value }));
+			setValue(name, value, { shouldDirty: true });
 		}
 	};
 	const parseArray = (v) => {
@@ -132,31 +132,29 @@ export default function AdminEventEdit() {
 	// populate form from showEvent once (don't overwrite user edits)
 	useEffect(() => {
 		if (!showEvent) return;
-		setFormData((prev) => {
-			// if user already started typing title, don't overwrite
-			if (prev.judul) return prev;
-			return {
-				judul: showEvent.judul || "",
-				deskripsi: showEvent.deskripsi || "",
-				deskripsi_singkat: showEvent.deskripsi_singkat || "",
-				tanggal_mulai: toInputDate(showEvent.tanggal_mulai) || "",
-				tanggal_selesai: toInputDate(showEvent.tanggal_selesai),
-				waktu_mulai: toInputTime(showEvent.waktu_mulai) || "", // ubah dari "HH:mm:ss" ke "HH:mm"
-				waktu_selesai: toInputTime(showEvent.waktu_selesai) || "",
-				maks_peserta: showEvent.maks_peserta || "",
-				gambar: showEvent.gambar || null,
-				status: showEvent.status || "",
-				persyaratan: parseArray(showEvent.persyaratan) || [],
-				manfaat: parseArray(showEvent.manfaat) || [],
-				nama_kontak: showEvent.nama_kontak || "",
-				telepon_kontak: showEvent.telepon_kontak || "",
-				email_kontak: showEvent.email_kontak || "",
-				batas_pendaftaran: toInputDate(showEvent.batas_pendaftaran) || "",
-				category_id: showEvent.category_id || "",
-				organization_id: showEvent.organization_id || "",
-				location_id: showEvent.location_id || "",
-				created_by_user_id: showEvent.created_by_user_id || user.id || "",
-			};
+		// if user already started typing title, don't overwrite
+		if (getValues("judul")) return;
+		reset({
+			judul: showEvent.judul || "",
+			deskripsi: showEvent.deskripsi || "",
+			deskripsi_singkat: showEvent.deskripsi_singkat || "",
+			tanggal_mulai: toInputDate(showEvent.tanggal_mulai) || "",
+			tanggal_selesai: toInputDate(showEvent.tanggal_selesai) || "",
+			waktu_mulai: toInputTime(showEvent.waktu_mulai) || "",
+			waktu_selesai: toInputTime(showEvent.waktu_selesai) || "",
+			maks_peserta: showEvent.maks_peserta || "",
+			gambar: showEvent.gambar || null,
+			status: showEvent.status || "",
+			persyaratan: parseArray(showEvent.persyaratan) || [],
+			manfaat: parseArray(showEvent.manfaat) || [],
+			nama_kontak: showEvent.nama_kontak || "",
+			telepon_kontak: showEvent.telepon_kontak || "",
+			email_kontak: showEvent.email_kontak || "",
+			batas_pendaftaran: toInputDate(showEvent.batas_pendaftaran) || "",
+			category_id: showEvent.category_id || "",
+			organization_id: showEvent.organization_id || "",
+			location_id: showEvent.location_id || "",
+			created_by_user_id: showEvent.created_by_user_id || user.id || "",
 		});
 
 		// Set image preview jika ada gambar existing
@@ -166,55 +164,70 @@ export default function AdminEventEdit() {
 	}, [showEvent]);
 
 	// buat preview gambar saat file diubah
+	const gambar = watch("gambar");
 	useEffect(() => {
 		let url;
-		if (formData.gambar instanceof File) {
-			url = URL.createObjectURL(formData.gambar);
+		if (gambar instanceof File) {
+			url = URL.createObjectURL(gambar);
 			setImagePreview(url);
 		}
 		return () => {
 			if (url) URL.revokeObjectURL(url);
 		};
-	}, [formData.gambar]);
+	}, [gambar]);
+
+	// watch array fields for rendering
+	const persyaratan = watch("persyaratan") || [];
+	const manfaat = watch("manfaat") || [];
 
 	// persyaratan handlers (array)
 	const addPersyaratan = () => {
 		const v = persyaratanInput && persyaratanInput.trim();
 		if (!v) return;
-		setFormData((s) => ({ ...s, persyaratan: [...s.persyaratan, v] }));
+		const current = getValues("persyaratan") || [];
+		setValue("persyaratan", [...current, v], { shouldDirty: true });
 		setPersyaratanInput("");
 	};
 	const updatePersyaratan = (idx, value) => {
-		setFormData((s) => ({
-			...s,
-			persyaratan: s.persyaratan.map((p, i) => (i === idx ? value : p)),
-		}));
+		const current = getValues("persyaratan") || [];
+		setValue(
+			"persyaratan",
+			current.map((p, i) => (i === idx ? value : p)),
+			{ shouldDirty: true }
+		);
 	};
 	const removePersyaratan = (idx) => {
-		setFormData((s) => ({
-			...s,
-			persyaratan: s.persyaratan.filter((_, i) => i !== idx),
-		}));
+		const current = getValues("persyaratan") || [];
+		setValue(
+			"persyaratan",
+			current.filter((_, i) => i !== idx),
+			{ shouldDirty: true }
+		);
 	};
 
 	// manfaat handlers (array)
 	const addManfaat = () => {
 		const v = manfaatInput && manfaatInput.trim();
 		if (!v) return;
-		setFormData((s) => ({ ...s, manfaat: [...s.manfaat, v] }));
+		const current = getValues("manfaat") || [];
+		setValue("manfaat", [...current, v], { shouldDirty: true });
 		setManfaatInput("");
 	};
 	const updateManfaat = (idx, value) => {
-		setFormData((s) => ({
-			...s,
-			manfaat: s.manfaat.map((m, i) => (i === idx ? value : m)),
-		}));
+		const current = getValues("manfaat") || [];
+		setValue(
+			"manfaat",
+			current.map((m, i) => (i === idx ? value : m)),
+			{ shouldDirty: true }
+		);
 	};
 	const removeManfaat = (idx) => {
-		setFormData((s) => ({
-			...s,
-			manfaat: s.manfaat.filter((_, i) => i !== idx),
-		}));
+		const current = getValues("manfaat") || [];
+		setValue(
+			"manfaat",
+			current.filter((_, i) => i !== idx),
+			{ shouldDirty: true }
+		);
 	};
 
 	const handleDrop = (e) => {
@@ -238,26 +251,23 @@ export default function AdminEventEdit() {
 		}
 
 		setError("");
-		setFormData((s) => ({ ...s, gambar: file }));
+		setValue("gambar", file, { shouldDirty: true });
 	};
 
 	const handleDragOver = (e) => {
 		e.preventDefault();
 	};
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
+	const onSubmit = (data) => {
 		setError("");
 
-		// build FormData (handle file + arrays)
 		const payload = new FormData();
 		payload.append("_method", "PUT");
-		for (const key in formData) {
-			const value = formData[key];
+		for (const key in data) {
+			const value = data[key];
 			if (key === "gambar") {
 				if (value instanceof File) payload.append("gambar", value);
 			} else if (Array.isArray(value)) {
-				// send arrays as JSON so backend can decode back to array
 				payload.append(key, JSON.stringify(value));
 			} else {
 				payload.append(key, value ?? "");
@@ -289,7 +299,7 @@ export default function AdminEventEdit() {
 					</p>
 				</header>
 
-				<form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
+				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6 flex flex-col">
 					{error && <div className="text-sm text-red-600 bg-red-50 p-2 rounded">{error}</div>}
 
 					<Tabs variant="enclosed" colorScheme="green" isFitted>
@@ -316,11 +326,8 @@ export default function AdminEventEdit() {
 									</label>
 									<input
 										id="judul"
-										name="judul"
-										value={formData.judul}
-										onChange={handleChange}
+										{...register("judul", { required: true })}
 										type="text"
-										required
 										placeholder="Contoh: Bersih Pantai"
 										className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 									/>
@@ -334,10 +341,7 @@ export default function AdminEventEdit() {
 									</label>
 									<textarea
 										id="deskripsi"
-										name="deskripsi"
-										value={formData.deskripsi}
-										onChange={handleChange}
-										required
+										{...register("deskripsi", { required: true })}
 										rows={4}
 										placeholder="Tulis deskripsi lengkap mengenai event ini..."
 										className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -352,11 +356,8 @@ export default function AdminEventEdit() {
 										</label>
 										<input
 											id="deskripsi_singkat"
-											name="deskripsi_singkat"
-											value={formData.deskripsi_singkat}
-											onChange={handleChange}
+											{...register("deskripsi_singkat", { required: true })}
 											type="text"
-											required
 											placeholder="Contoh: Bersih Pantai"
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
@@ -369,10 +370,7 @@ export default function AdminEventEdit() {
 										</label>
 										<select
 											id="category_id"
-											name="category_id"
-											value={formData.category_id}
-											onChange={handleChange}
-											required
+											{...register("category_id", { required: true })}
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 											<option value="">Pilih Kategori</option>
 											{categories.map((category) => (
@@ -384,7 +382,9 @@ export default function AdminEventEdit() {
 									</div>
 								</div>
 								<div className="mb-4">
-									<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+									<label
+										htmlFor="gambar"
+										className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 										Gambar Event <span className="text-red-500">*</span>
 									</label>
 									<div className="mt-2" onDrop={handleDrop} onDragOver={handleDragOver}>
@@ -412,7 +412,26 @@ export default function AdminEventEdit() {
 														id="gambar"
 														name="gambar"
 														accept="image/jpeg,image/jpg,image/png"
-														onChange={handleChange}
+														onChange={(e) => {
+															const file = e.target.files && e.target.files[0];
+															if (!file) return;
+															const allowed = ["image/jpeg", "image/png", "image/jpg"];
+															const maxSize = 2 * 1024 * 1024;
+															if (!allowed.includes(file.type)) {
+																toast.error(
+																	"File harus berupa gambar JPEG/PNG/JPG (selain itu tidak diperbolehkan).",
+																	{ position: "top-center" }
+																);
+																return;
+															}
+															if (file.size > maxSize) {
+																toast.error("Ukuran file maksimal 2MB.", {
+																	position: "top-center",
+																});
+																return;
+															}
+															setValue("gambar", file, { shouldDirty: true });
+														}}
 														className="hidden"
 													/>
 													<label
@@ -427,11 +446,9 @@ export default function AdminEventEdit() {
 													Format: JPEG, JPG, PNG. Maksimal 2MB.
 												</p>
 
-												{formData.gambar && (
+												{gambar && (
 													<p className="text-xs text-gray-700 break-all text-center sm:text-left">
-														{formData.gambar instanceof File
-															? formData.gambar.name
-															: "Gambar event saat ini"}
+														{gambar instanceof File ? gambar.name : "Gambar event saat ini"}
 													</p>
 												)}
 											</div>
@@ -453,11 +470,8 @@ export default function AdminEventEdit() {
 										</label>
 										<input
 											id="tanggal_mulai"
-											name="tanggal_mulai"
+											{...register("tanggal_mulai", { required: true })}
 											type="date"
-											value={formData.tanggal_mulai}
-											onChange={handleChange}
-											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
@@ -469,11 +483,8 @@ export default function AdminEventEdit() {
 										</label>
 										<input
 											id="tanggal_selesai"
-											name="tanggal_selesai"
+											{...register("tanggal_selesai", { required: true })}
 											type="date"
-											value={formData.tanggal_selesai}
-											onChange={handleChange}
-											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
@@ -489,11 +500,8 @@ export default function AdminEventEdit() {
 										</label>
 										<input
 											id="waktu_mulai"
-											name="waktu_mulai"
+											{...register("waktu_mulai", { required: true })}
 											type="time"
-											value={formData.waktu_mulai}
-											onChange={handleChange}
-											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
@@ -505,11 +513,8 @@ export default function AdminEventEdit() {
 										</label>
 										<input
 											id="waktu_selesai"
-											name="waktu_selesai"
+											{...register("waktu_selesai", { required: true })}
 											type="time"
-											value={formData.waktu_selesai}
-											onChange={handleChange}
-											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
@@ -524,11 +529,8 @@ export default function AdminEventEdit() {
 										</label>
 										<input
 											id="batas_pendaftaran"
-											name="batas_pendaftaran"
+											{...register("batas_pendaftaran", { required: true })}
 											type="date"
-											value={formData.batas_pendaftaran}
-											onChange={handleChange}
-											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
 									</div>
@@ -541,11 +543,9 @@ export default function AdminEventEdit() {
 										</label>
 										<input
 											id="maks_peserta"
-											name="maks_peserta"
+											{...register("maks_peserta")}
 											type="number"
 											min="0"
-											value={formData.maks_peserta}
-											onChange={handleChange}
 											required
 											placeholder="Misal: 50"
 											className="mt-1 block w-full  rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -560,10 +560,7 @@ export default function AdminEventEdit() {
 										</label>
 										<select
 											id="location_id"
-											name="location_id"
-											value={formData.location_id}
-											onChange={handleChange}
-											required
+											{...register("location_id", { required: true })}
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 											<option value="">Pilih Lokasi</option>
 											{filteredLocations.map((location) => (
@@ -582,8 +579,8 @@ export default function AdminEventEdit() {
 											Persyaratan
 										</label>
 										<div className="mt-2 space-y-2">
-											{formData.persyaratan && formData.persyaratan.length > 0 ? (
-												formData.persyaratan.map((p, idx) => (
+											{persyaratan && persyaratan.length > 0 ? (
+												persyaratan.map((p, idx) => (
 													<div
 														key={idx}
 														className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
@@ -608,7 +605,11 @@ export default function AdminEventEdit() {
 											)}
 
 											<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+												<label htmlFor="persyaratan-input" className="sr-only">
+													Tambahkan persyaratan
+												</label>
 												<input
+													id="persyaratan-input"
 													type="text"
 													placeholder="Tambahkan persyaratan"
 													className="flex-1 rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -638,8 +639,8 @@ export default function AdminEventEdit() {
 											Manfaat
 										</label>
 										<div className="mt-2 space-y-2">
-											{formData.manfaat && formData.manfaat.length > 0 ? (
-												formData.manfaat.map((m, idx) => (
+											{manfaat && manfaat.length > 0 ? (
+												manfaat.map((m, idx) => (
 													<div
 														key={idx}
 														className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
@@ -664,7 +665,11 @@ export default function AdminEventEdit() {
 											)}
 
 											<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+												<label htmlFor="manfaat-input" className="sr-only">
+													Tambahkan manfaat
+												</label>
 												<input
+													id="manfaat-input"
 													type="text"
 													placeholder="Tambahkan manfaat"
 													className="flex-1 rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -701,10 +706,8 @@ export default function AdminEventEdit() {
 										</label>
 										<input
 											id="nama_kontak"
-											name="nama_kontak"
+											{...register("nama_kontak")}
 											type="text"
-											value={formData.nama_kontak}
-											onChange={handleChange}
 											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 										/>
@@ -718,10 +721,8 @@ export default function AdminEventEdit() {
 										</label>
 										<input
 											id="telepon_kontak"
-											name="telepon_kontak"
+											{...register("telepon_kontak")}
 											type="text"
-											value={formData.telepon_kontak}
-											onChange={handleChange}
 											placeholder="08xxxxxxxxxx"
 											required
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -737,10 +738,8 @@ export default function AdminEventEdit() {
 										</label>
 										<input
 											id="email_kontak"
-											name="email_kontak"
+											{...register("email_kontak")}
 											type="email"
-											value={formData.email_kontak}
-											onChange={handleChange}
 											required
 											placeholder="nama@contoh.com"
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -754,10 +753,7 @@ export default function AdminEventEdit() {
 										</label>
 										<select
 											id="organization_id"
-											name="organization_id"
-											value={formData.organization_id}
-											onChange={handleChange}
-											required
+											{...register("organization_id", { required: true })}
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 											<option value="">Pilih Organisasi</option>
 											{organizations.map((organization) => (
@@ -778,10 +774,7 @@ export default function AdminEventEdit() {
 										</label>
 										<select
 											id="status"
-											name="status"
-											value={formData.status}
-											onChange={handleChange}
-											required
+											{...register("status", { required: true })}
 											className="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 											<option value="draft">Draft</option>
 											<option value="published">Published</option>
