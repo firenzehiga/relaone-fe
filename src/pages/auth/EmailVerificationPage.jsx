@@ -14,8 +14,8 @@ export default function EmailVerificationPage() {
 	const navigate = useNavigate();
 	const { mutate, isSuccess, isError, error, isPending, data } = useVerifyEmail();
 	const [localError, setLocalError] = useState("");
-	const [alreadyVerified, setAlreadyVerified] = useState(false);
 	const [shouldRender, setShouldRender] = useState(false);
+	const [hasCalledApi, setHasCalledApi] = useState(false); // 🔒 Prevent multiple API calls
 
 	useEffect(() => {
 		// Ambil parameter dari URL
@@ -30,18 +30,6 @@ export default function EmailVerificationPage() {
 			return;
 		}
 
-		// 🔒 Cek apakah user sudah pernah verifikasi (pendingUser tidak ada = sudah verifikasi)
-		try {
-			const pendingUser = localStorage.getItem("pendingUser");
-			if (!pendingUser) {
-				setAlreadyVerified(true);
-				setShouldRender(true);
-				return;
-			}
-		} catch (e) {
-			// ignore storage errors
-		}
-
 		// 🔒 Validasi expires SEBELUM hit backend
 		const expiresTimestamp = parseInt(expires, 10);
 		const currentTimestamp = Math.floor(Date.now() / 1000);
@@ -52,10 +40,16 @@ export default function EmailVerificationPage() {
 			return;
 		}
 
+		// 🔒 Prevent spam: Only call API once per session
+		if (hasCalledApi) {
+			return;
+		}
+
 		// Izinkan render dan panggil mutation
 		setShouldRender(true);
+		setHasCalledApi(true);
 		mutate({ id, hash, expires, signature });
-	}, [mutate, searchParams, navigate]);
+	}, [mutate, searchParams, navigate, hasCalledApi]);
 
 	// Jangan render apapun sampai validasi selesai
 	if (!shouldRender) {
@@ -63,15 +57,7 @@ export default function EmailVerificationPage() {
 	}
 
 	// Determine status for illustration
-	const status = alreadyVerified
-		? "success"
-		: localError
-		? "error"
-		: isSuccess
-		? "success"
-		: isError
-		? "error"
-		: "verifying";
+	const status = localError ? "error" : isSuccess ? "success" : isError ? "error" : "verifying";
 
 	return (
 		<div className="min-h-screen flex">
@@ -113,35 +99,6 @@ export default function EmailVerificationPage() {
 
 					{/* Already Verified State */}
 					{alreadyVerified && (
-						<motion.div
-							initial={{ opacity: 0, scale: 0.9 }}
-							animate={{ opacity: 1, scale: 1 }}
-							transition={{ duration: 0.5 }}
-							className="text-center">
-							<motion.div
-								initial={{ scale: 0 }}
-								animate={{ scale: 1 }}
-								transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-								className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-								<CheckCircle className="w-10 h-10 text-green-600" />
-							</motion.div>
-
-							<h2 className="text-3xl font-bold text-gray-900 mb-4">Email Sudah Terverifikasi</h2>
-							<p className="text-gray-600 mb-6">
-								Email Anda sudah berhasil diverifikasi sebelumnya. Silakan login untuk melanjutkan.
-							</p>
-
-							<DynamicButton
-								variant="success"
-								onClick={() => navigate("/login")}
-								className="w-full py-3 rounded-lg font-medium transition-all transform hover:scale-105">
-								Kembali ke Halaman Login
-							</DynamicButton>
-						</motion.div>
-					)}
-
-					{/* Success State */}
-					{isSuccess && (
 						<motion.div
 							initial={{ opacity: 0, scale: 0.9 }}
 							animate={{ opacity: 1, scale: 1 }}
