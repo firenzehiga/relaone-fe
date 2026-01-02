@@ -37,7 +37,7 @@ const ActivityDetailPage = lazy(() => import("@/pages/volunteer/ActivityDetailPa
 
 // Auth Pages
 import LoginPage from "@/pages/auth/LoginPage";
-const RegisterPage = lazy(() => import("@/pages/auth/RegisterPage"));
+import RegisterPage from "@/pages/auth/RegisterPage";
 const ForgotPasswordPage = lazy(() => import("@/pages/auth/ForgotPassword"));
 const ResetPasswordPage = lazy(() => import("@/pages/auth/ResetPassword"));
 const ChangePasswordPage = lazy(() => import("@/pages/auth/ChangePasswordPage"));

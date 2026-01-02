@@ -12,12 +12,12 @@ import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 // Feature components / pages
 import Hero from "@/components/Hero";
-const VideoShowcase = lazy(() => import("@/components/VideoShowcase"));
-const StatsSection = lazy(() => import("@/components/landing/StatsSection"));
-const FeaturesSection = lazy(() => import("@/components/landing/FeaturesSection"));
-const FeaturedEventsSection = lazy(() => import("@/components/landing/FeaturedEventsSection"));
-const CTASection = lazy(() => import("@/components/landing/CTASection"));
-const CategoriesSection = lazy(() => import("@/components/landing/CategoriesSection"));
+import VideoShowcase from "@/components/VideoShowcase";
+import StatsSection from "@/components/landing/StatsSection";
+import FeaturesSection from "@/components/landing/FeaturesSection";
+import FeaturedEventsSection from "@/components/landing/FeaturedEventsSection";
+import CTASection from "@/components/landing/CTASection";
+import CategoriesSection from "@/components/landing/CategoriesSection";
 
 export default function LandingPage() {
 	useDocumentTitle("Mari Bersama-sama Membuat Perubahan Positif");

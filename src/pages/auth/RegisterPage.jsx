@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Link, useSearchParams } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
@@ -50,6 +50,7 @@ export default function RegisterPage() {
 		getValues,
 		trigger,
 		control,
+		setValue,
 		formState: { errors, isSubmitting, isSubmitted, isValid },
 	} = useForm({
 		defaultValues: {
@@ -76,6 +77,12 @@ export default function RegisterPage() {
 
 	const registerMutation = useRegister();
 	const { isLoading } = useAuthStore();
+
+	// 🔧 FIX: Update role ketika URL berubah (saat klik CTA banner organization)
+	useEffect(() => {
+		const newRole = isOrganizationRegistration ? "organization" : "volunteer";
+		setValue("role", newRole);
+	}, [isOrganizationRegistration, setValue]);
 
 	const [apiErrors, setApiErrors] = useState(null);
 
