@@ -9,7 +9,7 @@ import {
 	EditIcon,
 	AlertCircle,
 } from "lucide-react";
-import Button, { LinkButton } from "@/components/ui/Button";
+import Button, { LinkButton } from "@/components/ui/DynamicButton";
 import Badge from "@/components/ui/Badge";
 import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
 import {

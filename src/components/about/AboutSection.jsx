@@ -1,4 +1,4 @@
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 
 export default function AboutSection({ navigate }) {
 	return (

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 // UI Libraries
@@ -13,6 +13,8 @@ import {
 	EditIcon,
 	EllipsisVerticalIcon,
 	AlertCircle,
+	Table,
+	MapIcon,
 } from "lucide-react";
 import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
 
@@ -24,15 +26,17 @@ import { getGoogleMapsUrl, parseApiError } from "@/utils";
 
 // UI Components
 import FetchLoader from "@/components/ui/FetchLoader";
-import { LinkButton } from "@/components/ui/Button";
+import { LinkButton } from "@/components/ui/DynamicButton";
 import { showToast } from "@/components/ui/Toast";
 import Badge from "@/components/ui/Badge";
 import { useDebounce } from "@/_hooks/utils/useDebounce";
+import LocationMapView from "@/components/organization/LocationMapView";
 
 export default function OrganizationLocation() {
 	const [searchLocation, setSearchLocation] = useState("");
 	const [currentPage, setCurrentPage] = useState(1);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
+	const [viewMode, setViewMode] = useState("table"); // 'table' or 'map'
 
 	// Debounce search menggunakan custom hook
 	const debouncedSearch = useDebounce(searchLocation, 500);
@@ -52,7 +56,7 @@ export default function OrganizationLocation() {
 
 	const deleteLocationMutation = useOrgDeleteLocationMutation();
 
-	// Fungsi untuk menangani penghapusan kursus
+	// Fungsi untuk menangani penghapusan location
 	const handleDelete = (id) => {
 		swalDelete().then((result) => {
 			if (result.isConfirmed) {
@@ -63,7 +67,6 @@ export default function OrganizationLocation() {
 						});
 					},
 					onError: (err) => {
-						// ambil pesan backend kalau ada, fallback ke err.message
 						const msg = parseApiError(err) || "Gagal menghapus location.";
 						showToast({
 							type: "error",
@@ -74,7 +77,7 @@ export default function OrganizationLocation() {
 							position: "top-center",
 						});
 					},
-				}); // Panggil fungsi deleteMutation dengan ID event
+				});
 			}
 		});
 	};
@@ -100,18 +103,11 @@ export default function OrganizationLocation() {
 			name: "Lokasi",
 			selector: (row) => row.nama || "-",
 			sortable: true,
-			wrap: true,
+			width: "500px",
 		},
 		{
 			name: "Kota",
 			selector: (row) => row.kota || "-",
-			sortable: false,
-			wrap: true,
-			width: "200px",
-		},
-		{
-			name: "Provinsi",
-			selector: (row) => row.provinsi || "-",
 			sortable: false,
 			wrap: true,
 			width: "200px",
@@ -187,29 +183,61 @@ export default function OrganizationLocation() {
 							) : (
 								"Daftar Lokasi"
 							)}
-						</h2>{" "}
-						<LinkButton
-							to="/organization/locations/create"
-							variant="success"
-							size="sm"
-							className="w-full md:w-auto">
-							<Plus className="w-4 h-4 mr-2" /> Tambah Lokasi
-						</LinkButton>
+						</h2>
+						<div className="flex gap-2 w-full md:w-auto">
+							{/* View Toggle Buttons */}
+							<div className="flex bg-gray-100 rounded-lg p-1">
+								<button
+									onClick={() => setViewMode("table")}
+									className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+										viewMode === "table"
+											? "bg-white text-emerald-600 shadow-sm"
+											: "text-gray-600 hover:text-gray-900"
+									}`}>
+									<Table className="w-4 h-4" />
+									Table
+								</button>
+								<button
+									onClick={() => setViewMode("map")}
+									className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+										viewMode === "map"
+											? "bg-white text-emerald-600 shadow-sm"
+											: "text-gray-600 hover:text-gray-900"
+									}`}>
+									<MapIcon className="w-4 h-4" />
+									Map
+								</button>
+							</div>
+
+							<LinkButton
+								to="/organization/locations/create"
+								variant="success"
+								size="sm"
+								className="w-full md:w-auto">
+								<Plus className="w-4 h-4 mr-2" /> Tambah Lokasi
+							</LinkButton>
+						</div>
 					</div>
-					<div className="w-80 mb-4">
-						<input
-							type="text"
-							placeholder="Cari lokasi, kota, atau provinsi..."
-							value={searchLocation}
-							onChange={(e) => setSearchLocation(e.target.value)}
-							className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
-						/>
-					</div>
+
+					{/* Search Bar - Only show in table view */}
+					{viewMode === "table" && (
+						<div className="w-80 mb-4">
+							<input
+								type="text"
+								placeholder="Cari lokasi, kota, atau provinsi..."
+								value={searchLocation}
+								onChange={(e) => setSearchLocation(e.target.value)}
+								className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
+							/>
+						</div>
+					)}
+
 					{locationsLoading ? (
 						<div className="flex h-96 justify-center py-20">
 							<Loader2 className="animate-spin h-7 w-7 text-emerald-600" />
 						</div>
-					) : (
+					) : viewMode === "table" ? (
+						// TABLE VIEW
 						<DataTable
 							columns={columns}
 							data={locations}
@@ -299,6 +327,9 @@ export default function OrganizationLocation() {
 								</div>
 							}
 						/>
+					) : (
+						// MAP VIEW - Using separate component
+						<LocationMapView locations={locations} />
 					)}
 				</div>
 			</div>

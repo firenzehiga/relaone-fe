@@ -3,7 +3,7 @@ import {
 	useAdminDeleteLocationMutation,
 	useAdminLocations,
 } from "@/_hooks/useLocations";
-import Button, { LinkButton } from "@/components/ui/Button";
+import Button, { LinkButton } from "@/components/ui/DynamicButton";
 import { swalDelete } from "@/components/ui/Swal";
 import { showToast } from "@/components/ui/Toast";
 import {

@@ -3,7 +3,7 @@ import { useAdminCreateCategoryMutation } from "@/_hooks/useCategories";
 import { Activity, Heart, Leaf, Users, BookOpen, Stethoscope } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/DynamicButton";
 import { useAuthStore } from "@/_hooks/useAuth";
 
 export default function AdminCategoryCreate() {

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Check, Calendar, MapPin, Users, Clock, NotepadText, Gift } from "lucide-react";
 import Modal from "@/components/ui/Modal";
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 import Badge from "@/components/ui/Badge";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/_hooks/useAuth";

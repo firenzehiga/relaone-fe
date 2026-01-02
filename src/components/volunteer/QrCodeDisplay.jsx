@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { Download, QrCode as QrCodeIcon, CheckCircle, Loader2, AlertCircle } from "lucide-react";
-import DynamicButton from "../ui/Button";
+import DynamicButton from "../ui/DynamicButton";
 import { useVolunteerGenerateQrCodeMutation } from "@/_hooks/useParticipants";
 import FetchLoader from "../ui/FetchLoader";
 

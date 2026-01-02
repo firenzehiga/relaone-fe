@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { User, Edit3, Building2 } from "lucide-react";
 
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/DynamicButton";
 import Card from "@/components/ui/Card";
 import {
 	getImageUrl,

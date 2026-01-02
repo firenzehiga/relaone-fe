@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Shield } from "lucide-react";
 import Card from "@/components/ui/Card";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/DynamicButton";
 import { useUserProfile } from "@/_hooks/useUsers";
 import Skeleton from "@/components/ui/Skeleton";
 import ProfileDetails from "@/components/common/ProfileDetails";

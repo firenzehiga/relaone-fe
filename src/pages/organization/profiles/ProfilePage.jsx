@@ -8,7 +8,7 @@ import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 // UI Components
 import Skeleton from "@/components/ui/Skeleton";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/DynamicButton";
 import Card from "@/components/ui/Card";
 import { lazy } from "react";
 const ProfileCard = lazy(() => import("@/components/common/ProfileCard")); // "@/components/common/ProfileCard";

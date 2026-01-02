@@ -16,7 +16,6 @@ import {
 } from "@/_hooks/useUsers";
 import { useDebounce } from "@/_hooks/utils/useDebounce";
 import FetchLoader from "@/components/ui/FetchLoader";
-import { getImageUrl } from "@/utils";
 import { formatDate } from "@/utils/dateFormatter";
 import Swal from "sweetalert2";
 import { useAuthStore } from "@/_hooks/useAuth";
@@ -171,29 +170,43 @@ export default function AdminUser() {
 			wrap: true,
 			width: "220px",
 		},
-		{
-			name: "Foto Profil",
-			selector: (row) => (
-				<div className="flex items-center space-x-2 mt-1 mb-1">
-					{row.foto_profil ? (
-						<img
-							src={getImageUrl(`foto_profil/${row.foto_profil}`)}
-							alt={row.nama || "logo"}
-							className="w-16 h-16 rounded-md object-cover border border-gray-200"
-						/>
-					) : (
-						<div className="w-16 h-16 rounded-md bg-gray-100 flex items-center justify-center text-xs text-gray-500 border border-gray-200">
-							No Image
-						</div>
-					)}
-				</div>
-			),
-			sortable: true,
-			width: "130px",
-		},
+		// {
+		// 	name: "Foto Profil",
+		// 	selector: (row) => (
+		// 		<div className="flex items-center space-x-2 mt-1 mb-1">
+		// 			{row.foto_profil ? (
+		// 				<img
+		// 					src={getImageUrl(`foto_profil/${row.foto_profil}`)}
+		// 					alt={row.nama || "logo"}
+		// 					className="w-16 h-16 rounded-md object-cover border border-gray-200"
+		// 				/>
+		// 			) : (
+		// 				<div className="w-16 h-16 rounded-md bg-gray-100 flex items-center justify-center text-xs text-gray-500 border border-gray-200">
+		// 					No Image
+		// 				</div>
+		// 			)}
+		// 		</div>
+		// 	),
+		// 	sortable: true,
+		// 	width: "130px",
+		// },
 		{
 			name: "Email",
 			selector: (row) => row.email || "-",
+			sortable: true,
+			width: "200px",
+		},
+		{
+			name: "Email Verified At",
+			selector: (row) => (
+				<>
+					{row.email_verified_at ? (
+						<Badge variant={"info"}>{formatDate(row.email_verified_at)}</Badge>
+					) : (
+						<Badge variant={"secondary"}>Belum verifikasi akun</Badge>
+					)}
+				</>
+			),
 			sortable: true,
 			width: "200px",
 		},

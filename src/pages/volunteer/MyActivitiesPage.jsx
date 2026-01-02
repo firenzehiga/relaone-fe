@@ -20,7 +20,7 @@ import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 // UI Components
 import ActivityCard from "@/components/volunteer/ActivityCard";
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 import Skeleton from "@/components/ui/Skeleton";
 import Card from "@/components/ui/Card";
 

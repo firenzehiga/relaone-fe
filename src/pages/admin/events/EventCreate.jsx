@@ -3,7 +3,7 @@ import { parseApiError } from "@/utils";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/DynamicButton";
 import { useAdminLocations } from "@/_hooks/useLocations";
 import { useAdminOrganizations } from "@/_hooks/useOrganizations";
 import { useAuthStore } from "@/_hooks/useAuth";

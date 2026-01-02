@@ -11,7 +11,7 @@ import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 import { useInView } from "react-intersection-observer";
 
 // UI Components
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 import Skeleton from "@/components/ui/Skeleton";
 import Card from "@/components/ui/Card";
 import OrganizationCard from "@/components/OrganizationCard";

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 import { useAuthStore } from "@/_hooks/useAuth";
 import GradientText from "./ui/GradientText";
 export default function Hero() {

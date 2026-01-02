@@ -4,7 +4,7 @@ import { CheckCircle, MapPin, Mail, Phone, Globe, Star } from "lucide-react";
 import Badge from "./ui/Badge";
 import Card from "./ui/Card";
 import { getImageUrl } from "@/utils";
-import DynamicButton from "./ui/Button";
+import DynamicButton from "./ui/DynamicButton";
 
 export default function OrganizationCard({ organization, onClick, className = "" }) {
 	if (!organization) return null;

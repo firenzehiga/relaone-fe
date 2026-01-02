@@ -33,7 +33,7 @@ import { getImageUrl } from "@/utils";
 import { formatDate, formatTime } from "@/utils/dateFormatter";
 
 // UI Components
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 import Skeleton from "@/components/ui/Skeleton";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";

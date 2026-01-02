@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 import EventCard from "@/components/EventCard";
 import Skeleton from "@/components/ui/Skeleton";
 import { ArrowRight } from "lucide-react";

@@ -3,7 +3,7 @@ import {
 	useAdminDeleteFeedbackMutation,
 	useAdminFeedbacks,
 } from "@/_hooks/useFeedbacks";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/DynamicButton";
 import {
 	ChevronDown,
 	Plus,

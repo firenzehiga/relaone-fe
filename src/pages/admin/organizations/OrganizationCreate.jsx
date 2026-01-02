@@ -7,7 +7,7 @@ import { Input, InputGroup, InputLeftAddon } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Skeleton from "@/components/ui/Skeleton";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/DynamicButton";
 
 export default function AdminOrganizationCreate() {
 	const navigate = useNavigate();

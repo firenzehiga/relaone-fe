@@ -7,7 +7,7 @@ import { showToast } from "@/components/ui/Toast";
 import { useChangePassword, useAuthStore } from "@/_hooks/useAuth";
 import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/DynamicButton";
 
 export default function ChangePasswordPage() {
 	useDocumentTitle("Change Password");

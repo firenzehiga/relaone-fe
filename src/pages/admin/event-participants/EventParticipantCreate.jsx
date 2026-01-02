@@ -7,7 +7,7 @@ import { useAdminEvents } from "@/_hooks/useEvents";
 import { useAdminVolunteerUsers } from "@/_hooks/useUsers";
 import { useAdminCreateParticipantMutation } from "@/_hooks/useParticipants";
 import { toInputDate } from "@/utils/dateFormatter";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/DynamicButton";
 import Skeleton from "@/components/ui/Skeleton";
 import { showToast } from "@/components/ui/Toast";
 import { useAuthStore } from "@/_hooks/useAuth";

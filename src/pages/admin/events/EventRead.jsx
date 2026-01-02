@@ -19,7 +19,7 @@ import {
 	XCircle,
 } from "lucide-react";
 import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
-import Button, { LinkButton } from "@/components/ui/Button";
+import Button, { LinkButton } from "@/components/ui/DynamicButton";
 import { Link } from "react-router-dom";
 import { getImageUrl, parseApiError } from "@/utils";
 import { formatDate, formatTime } from "@/utils/dateFormatter";

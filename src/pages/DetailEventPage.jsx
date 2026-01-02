@@ -20,7 +20,7 @@ import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 import { getImageUrl } from "@/utils";
 import { formatTime, formatDate } from "@/utils/dateFormatter";
 
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 import Skeleton from "@/components/ui/Skeleton";
 import Avatar from "@/components/ui/Avatar";
 import Badge from "@/components/ui/Badge";

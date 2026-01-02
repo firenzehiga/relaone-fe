@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Mail, CheckCircle, RotateCcw, Clock, ArrowLeft, Inbox, Loader2 } from "lucide-react";
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 import { useResendVerification, useAuthStore } from "@/_hooks/useAuth";
 import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 import { EmailPendingIllustration } from "@/components/common/Illustration";

@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
 import { ChakraProvider } from "@chakra-ui/react";
+import { ThemeProvider } from "next-themes";
 import "@/index.css";
 import App from "@/App.jsx";
 import { BrowserRouter } from "react-router-dom";
@@ -37,9 +38,11 @@ createRoot(document.getElementById("root")).render(
 	<StrictMode>
 		<QueryClientProvider client={queryClient}>
 			<BrowserRouter>
-				<ChakraProvider>
-					<App />
-				</ChakraProvider>
+				<ThemeProvider attribute="class" defaultTheme="light">
+					<ChakraProvider>
+						<App />
+					</ChakraProvider>
+				</ThemeProvider>
 				<Toaster position="top-right" reverseOrder={false} gutter={8} />
 			</BrowserRouter>
 			<ReactQueryDevtools initialIsOpen={false} />
