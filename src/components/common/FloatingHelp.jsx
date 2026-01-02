@@ -24,7 +24,7 @@ export default function FloatingHelp({
 					aria-label="Bantuan"
 					className="w-14 h-14 rounded-full bg-gradient-to-r from-emerald-500 via-emerald-600  to-emerald-500 hover:bg-emerald-700 text-white shadow-2xl flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-emerald-300">
 					<svg
-						className="w-8 h-8 text-gray-800 dark:text-white"
+						className="w-8 h-8 text-white"
 						aria-hidden="true"
 						xmlns="http://www.w3.org/2000/svg"
 						width="24"
@@ -61,7 +61,7 @@ export default function FloatingHelp({
 						className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-2.5 py-1.5 rounded-lg shadow-lg text-xs whitespace-nowrap">
 						<span className="p-1.5 bg-white bg-opacity-10 rounded-full">
 							<svg
-								className="w-5 h-5 text-gray-800 dark:text-white"
+								className="w-5 h-5 text-white"
 								aria-hidden="true"
 								xmlns="http://www.w3.org/2000/svg"
 								width="24"

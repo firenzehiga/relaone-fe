@@ -37,7 +37,7 @@ import { formatDate, formatDateTime } from "@/utils/dateFormatter";
 
 // UI Components
 import FetchLoader from "@/components/ui/FetchLoader";
-import DynamicButton, { LinkButton } from "@/components/ui/Button";
+import DynamicButton, { LinkButton } from "@/components/ui/DynamicButton";
 import Badge from "@/components/ui/Badge";
 import { useDebounce } from "@/_hooks/utils/useDebounce";
 

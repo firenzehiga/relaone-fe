@@ -26,10 +26,11 @@ import { getImageUrl, parseSkillsArray, addSkill, updateSkill, removeSkill } fro
 
 // UI elements
 import Card from "@/components/ui/Card";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/DynamicButton";
+import { DatePicker } from "@/components/ui/date-picker";
 import toast from "react-hot-toast";
 import Skeleton from "@/components/ui/Skeleton";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 
 export default function EditProfilePage() {
 	useDocumentTitle("Edit Profile Page");
@@ -43,6 +44,7 @@ export default function EditProfilePage() {
 		watch,
 		reset,
 		getValues,
+		control,
 	} = useForm({
 		defaultValues: {
 			nama: "",
@@ -355,14 +357,29 @@ export default function EditProfilePage() {
 											<label className="block text-sm font-medium text-gray-700 mb-1">
 												Tanggal Lahir
 											</label>
-											<div className="relative">
-												<input
-													id="tanggal_lahir"
-													{...register("tanggal_lahir")}
-													type="date"
-													className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
-												/>
-											</div>
+											<Controller
+												control={control}
+												name="tanggal_lahir"
+												render={({ field }) => (
+													<DatePicker
+														value={field.value ? new Date(field.value) : null}
+														onChange={(date) => {
+															if (date) {
+																const year = date.getFullYear();
+																const month = String(date.getMonth() + 1).padStart(2, "0");
+																const day = String(date.getDate()).padStart(2, "0");
+																field.onChange(`${year}-${month}-${day}`);
+															} else {
+																field.onChange(null);
+															}
+														}}
+														placeholder="Pilih tanggal lahir"
+														disabled={isLoading}
+														id="tanggal_lahir"
+														buttonClassName="px-3 py-2"
+													/>
+												)}
+											/>
 										</div>
 
 										<div>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { CheckCircle, AlertCircle, Loader2, Mail } from "lucide-react";
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 import { useVerifyEmail } from "@/_hooks/useAuth";
 import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 import { EmailVerificationIllustration } from "@/components/common/Illustration";

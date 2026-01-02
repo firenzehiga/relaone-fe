@@ -1,15 +1,16 @@
 import { useAuthStore } from "@/_hooks/useAuth";
 import { useAdminCreateLocationMutation } from "@/_hooks/useLocations";
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 import { parseApiError, parseGoogleMapsUrl } from "@/utils";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/DynamicButton";
 import { useAdminOrganizations } from "@/_hooks/useOrganizations";
 import Skeleton from "@/components/ui/Skeleton";
 import { useForm } from "react-hook-form";
+import MapCoordinatePicker from "@/components/common/MapCoordinatePicker";
 
 export default function AdminLocationCreate() {
 	const navigate = useNavigate();
@@ -84,8 +85,8 @@ export default function AdminLocationCreate() {
 				</header>
 
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6 flex flex-col">
-					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-						<div>
+					<div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+						<div className="sm:col-span-2">
 							<label
 								htmlFor="nama"
 								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
@@ -114,8 +115,8 @@ export default function AdminLocationCreate() {
 							</select>
 						</div>
 					</div>
-					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-						<div>
+					<div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+						<div className="sm:col-span-2">
 							<label
 								htmlFor="alamat"
 								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
@@ -263,9 +264,10 @@ export default function AdminLocationCreate() {
 						/>
 					</div>
 
+					{/* Google Maps Link Parser */}
 					<div className="bg-gray-50 border border-gray-100 p-4 rounded">
 						<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
-							Masukkan link Google Maps
+							📍 Opsi 1: Masukkan link Google Maps
 						</label>
 						<p className="text-xs text-gray-500 mt-1">
 							Cara cepat: buka Google Maps, cari lokasi, lalu salin URL dari address bar (bukan
@@ -307,6 +309,41 @@ export default function AdminLocationCreate() {
 						{parseError && (
 							<p className="text-sm text-red-600 mt-2 whitespace-pre-wrap">{parseError}</p>
 						)}
+					</div>
+
+					{/* Interactive Map Picker */}
+					<div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 p-4 rounded-lg">
+						<label className="block text-xs sm:text-sm font-medium text-gray-900 mb-2">
+							🗺️ Opsi 2: Pilih lokasi di peta
+						</label>
+						<p className="text-xs text-gray-600 mb-3">
+							Klik peta untuk menempatkan marker atau drag marker untuk menyesuaikan posisi.
+							Koordinat akan otomatis diperbarui.
+						</p>
+						<MapCoordinatePicker
+							latitude={watch("latitude") || -6.2088}
+							longitude={watch("longitude") || 106.8456}
+							zoom={watch("zoom_level") || 15}
+							onChange={(lat, lng, zoom, locationData) => {
+								setValue("latitude", lat, { shouldDirty: true });
+								setValue("longitude", lng, { shouldDirty: true });
+								setValue("zoom_level", zoom, { shouldDirty: true });
+
+								// Auto-fill location details from search result
+								if (locationData) {
+									// Always overwrite when selecting from search
+									setValue("nama", locationData.name, { shouldDirty: true });
+									setValue("alamat", locationData.address, { shouldDirty: true });
+									if (locationData.city) {
+										setValue("kota", locationData.city, { shouldDirty: true });
+									}
+									if (locationData.province) {
+										setValue("provinsi", locationData.province, { shouldDirty: true });
+									}
+								}
+							}}
+							className="h-[450px]"
+						/>
 					</div>
 
 					<div className="mt-auto pt-6">

@@ -1,6 +1,6 @@
 import GridShape from "@/components/common/GridShape";
 import { useNavigate } from "react-router-dom";
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 import { ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
@@ -16,11 +16,7 @@ export default function NotFound() {
 					</h1>
 
 					<img src="/images/error/404.svg" alt="404" className="dark:hidden" />
-					<img
-						src="/images/error/404-dark.svg"
-						alt="404"
-						className="hidden dark:block"
-					/>
+					<img src="/images/error/404-dark.svg" alt="404" className="hidden dark:block" />
 
 					<p className="mt-10 mb-6 text-base text-gray-700 dark:text-gray-400 sm:text-lg">
 						We can’t seem to find the page you are looking for!
@@ -31,10 +27,7 @@ export default function NotFound() {
 						variant="success"
 						onClick={() => navigate("/")}
 						className="group">
-						<ArrowLeft
-							size={20}
-							className="mr-2 group-hover:-translate-x-1 transition-transform"
-						/>
+						<ArrowLeft size={20} className="mr-2 group-hover:-translate-x-1 transition-transform" />
 						Kembali
 					</DynamicButton>
 				</div>

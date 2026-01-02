@@ -4,7 +4,7 @@ import {
 	useAdminBulkDeleteParticipant,
 } from "@/_hooks/useParticipants";
 import { swalDelete } from "@/components/ui/Swal";
-import Button, { LinkButton } from "@/components/ui/Button";
+import Button, { LinkButton } from "@/components/ui/DynamicButton";
 import {
 	ChevronDown,
 	Plus,

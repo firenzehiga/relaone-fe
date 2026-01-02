@@ -2,13 +2,13 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, EyeOff, Mail, Lock, ArrowLeft, Heart } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, ArrowLeft, Heart, Building2, UserSearch } from "lucide-react";
 
 import { useAuthStore, useLogin } from "@/_hooks/useAuth";
 import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 import { LoginIllustration } from "@/components/common/Illustration";
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 
 export default function LoginPage() {
 	useDocumentTitle("Login Page");
@@ -194,15 +194,31 @@ export default function LoginPage() {
 								Daftar
 							</Link>
 						</motion.p>
-
-						{/* Footer Text */}
-						<motion.p
+						{/* CTA Banner - Organization Registration */}
+						<motion.div
 							initial={{ y: 20, opacity: 0 }}
 							animate={{ y: 0, opacity: 1 }}
-							transition={{ delay: 0.8, duration: 0.5 }}
-							className="text-center text-gray-500 text-sm mt-4 flex items-center justify-center">
-							Made with <Heart className="w-4 h-4 mx-1 text-red-500" /> for volunteers
-						</motion.p>
+							transition={{ delay: 0.7, duration: 0.5 }}
+							className="mt-6">
+							<Link
+								to="/register?type=organization"
+								className="block p-4 bg-gradient-to-r from-blue-600 via-blue-600 to-blue-600 hover:from-blue-700 hover:to-blue-700 rounded-lg transition-all transform hover:scale-[1.02] shadow-md">
+								<div className="flex items-center justify-between text-white">
+									<div className="flex items-center gap-3">
+										<div className="p-2 bg-white/20 rounded-lg">
+											<Building2 className="w-5 h-5" />
+										</div>
+										<div>
+											<p className="font-semibold">Bagian Dari Organisasi?</p>
+											<p className="text-sm text-white/90">
+												Daftarkan dan mari ciptakan dampak positif bersama kami!
+											</p>
+										</div>
+									</div>
+									<ArrowLeft className="w-5 h-5 rotate-180" />
+								</div>
+							</Link>
+						</motion.div>
 					</div>
 				</div>
 			</div>

@@ -17,7 +17,7 @@ import { getImageUrl } from "@/utils";
 import { toInputTime, toInputDate } from "@/utils/dateFormatter";
 
 // UI Components
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/DynamicButton";
 import Skeleton from "@/components/ui/Skeleton";
 import { useOrgLocations } from "@/_hooks/useLocations";
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Modal from "@/components/ui/Modal";
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 import Card from "@/components/ui/Card";
 import RatingStars from "@/components/ui/RatingStars";
 import { useModalStore } from "@/stores/useAppStore";
@@ -9,11 +9,7 @@ import { useVolunteerSendFeedbackMutation } from "@/_hooks/useFeedbacks";
 import { useAuthStore } from "@/_hooks/useAuth";
 
 export default function FeedbackModal() {
-	const {
-		isFeedbackModalOpen,
-		selectedFeedbackParticipant,
-		closeFeedbackModal,
-	} = useModalStore();
+	const { isFeedbackModalOpen, selectedFeedbackParticipant, closeFeedbackModal } = useModalStore();
 
 	const [formData, setFormData] = useState({
 		rating: 5,
@@ -32,8 +28,7 @@ export default function FeedbackModal() {
 		}
 	}, [isFeedbackModalOpen, selectedFeedbackParticipant, setLoading]);
 
-	const handleRatingChange = (value) =>
-		setFormData((s) => ({ ...s, rating: value }));
+	const handleRatingChange = (value) => setFormData((s) => ({ ...s, rating: value }));
 	const handleChange = (e) => {
 		const { name, value, type, checked } = e.target;
 		if (type === "checkbox") setFormData((s) => ({ ...s, [name]: checked }));
@@ -42,9 +37,7 @@ export default function FeedbackModal() {
 
 	const handleSubmit = async (e) => {
 		e?.preventDefault();
-		const eventId =
-			selectedFeedbackParticipant?.event?.id ||
-			selectedFeedbackParticipant?.event_id;
+		const eventId = selectedFeedbackParticipant?.event?.id || selectedFeedbackParticipant?.event_id;
 		if (!eventId) return;
 
 		if (!isAuthenticated) {
@@ -85,11 +78,7 @@ export default function FeedbackModal() {
 	if (!selectedFeedbackParticipant) return null;
 
 	return (
-		<Modal
-			isOpen={isFeedbackModalOpen}
-			onClose={handleClose}
-			title="Kirim Feedback"
-			size="md">
+		<Modal isOpen={isFeedbackModalOpen} onClose={handleClose} title="Kirim Feedback" size="md">
 			{success ? (
 				<motion.div
 					initial={{ opacity: 0, scale: 0.8 }}
@@ -109,9 +98,7 @@ export default function FeedbackModal() {
 							/>
 						</svg>
 					</div>
-					<h3 className="text-2xl font-bold text-gray-900 mb-3">
-						Feedback Terkirim
-					</h3>
+					<h3 className="text-2xl font-bold text-gray-900 mb-3">Feedback Terkirim</h3>
 					<p className="text-gray-600 text-lg leading-relaxed">
 						Terima kasih telah memberikan feedback untuk event <br />
 						<span className="font-semibold text-blue-600">

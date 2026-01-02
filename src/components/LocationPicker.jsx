@@ -1,15 +1,6 @@
 import { useState, useEffect } from "react";
-import {
-	MapPin,
-	Search,
-	Star,
-	ExternalLink,
-	Navigation,
-	Link,
-	Copy,
-	Eye,
-} from "lucide-react";
-import DynamicButton from "@/components/ui/Button";
+import { MapPin, Search, Star, ExternalLink, Navigation, Link, Copy, Eye } from "lucide-react";
+import DynamicButton from "@/components/ui/DynamicButton";
 import Badge from "@/components/ui/Badge";
 
 export default function LocationPicker({
@@ -32,9 +23,7 @@ export default function LocationPicker({
 			fetch("/src/mock/saved_locations.json")
 				.then((res) => res.json())
 				.then((data) => {
-					const orgLocations = data.filter(
-						(loc) => loc.organization_id === organizationId
-					);
+					const orgLocations = data.filter((loc) => loc.organization_id === organizationId);
 					setSavedLocations(orgLocations);
 				})
 				.catch(console.error);
@@ -206,9 +195,7 @@ export default function LocationPicker({
 		const coordinates = extractCoordinatesFromLink(mapLink);
 
 		if (!coordinates) {
-			setLinkError(
-				"Link tidak valid. Coba format lain atau salin link dari Google Maps"
-			);
+			setLinkError("Link tidak valid. Coba format lain atau salin link dari Google Maps");
 			return;
 		}
 
@@ -281,9 +268,7 @@ export default function LocationPicker({
 							<div className="text-center py-8">
 								<MapPin className="mx-auto text-gray-400 mb-2" size={24} />
 								<p className="text-gray-600">Belum ada lokasi tersimpan</p>
-								<p className="text-sm text-gray-500">
-									Tambahkan lokasi di pengaturan organisasi
-								</p>
+								<p className="text-sm text-gray-500">Tambahkan lokasi di pengaturan organisasi</p>
 							</div>
 						) : (
 							<div className="space-y-3 max-h-60 overflow-y-auto">
@@ -299,9 +284,7 @@ export default function LocationPicker({
 										<div className="flex items-start justify-between">
 											<div className="flex-1">
 												<div className="flex items-center gap-2 mb-1">
-													<h4 className="font-medium text-gray-900">
-														{location.name}
-													</h4>
+													<h4 className="font-medium text-gray-900">{location.name}</h4>
 													{location.is_default && (
 														<Badge variant="warning" size="sm">
 															<Star size={10} className="mr-1" />
@@ -309,9 +292,7 @@ export default function LocationPicker({
 														</Badge>
 													)}
 												</div>
-												<p className="text-sm text-gray-600 line-clamp-2">
-													{location.address}
-												</p>
+												<p className="text-sm text-gray-600 line-clamp-2">{location.address}</p>
 												<p className="text-xs text-gray-500">
 													{location.city}, {location.province}
 												</p>
@@ -349,17 +330,13 @@ export default function LocationPicker({
 									value={mapLink}
 									onChange={(e) => setMapLink(e.target.value)}
 									onKeyPress={(e) =>
-										e.key === "Enter" &&
-										e.shiftKey === false &&
-										handleProcessMapLink()
+										e.key === "Enter" && e.shiftKey === false && handleProcessMapLink()
 									}
 									className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 									rows="3"
 									placeholder="Paste link dari Google Maps atau masukkan koordinat manual..."
 								/>
-								{linkError && (
-									<p className="text-red-600 text-sm mt-1">{linkError}</p>
-								)}
+								{linkError && <p className="text-red-600 text-sm mt-1">{linkError}</p>}
 							</div>
 
 							<DynamicButton
@@ -372,9 +349,7 @@ export default function LocationPicker({
 							</DynamicButton>
 
 							<div className="bg-blue-50 rounded-lg p-4">
-								<h4 className="font-medium text-blue-900 mb-2">
-									� Cara Paling Mudah:
-								</h4>
+								<h4 className="font-medium text-blue-900 mb-2">� Cara Paling Mudah:</h4>
 								<div className="space-y-2 text-sm text-blue-800">
 									<div className="flex items-start gap-2">
 										<span className="font-medium">1.</span>
@@ -396,22 +371,16 @@ export default function LocationPicker({
 									</div>
 									<div className="flex items-start gap-2">
 										<span className="font-medium">3.</span>
-										<span>
-											Copy link dari address bar atau klik "Share" → "Copy link"
-										</span>
+										<span>Copy link dari address bar atau klik "Share" → "Copy link"</span>
 									</div>
 									<div className="flex items-start gap-2">
 										<span className="font-medium">4.</span>
-										<span>
-											Paste link di atas → koordinat otomatis ter-extract! ✨
-										</span>
+										<span>Paste link di atas → koordinat otomatis ter-extract! ✨</span>
 									</div>
 								</div>
 
 								<div className="mt-3 pt-3 border-t border-blue-200">
-									<h5 className="font-medium text-blue-900 mb-1">
-										✅ Format yang Didukung:
-									</h5>
+									<h5 className="font-medium text-blue-900 mb-1">✅ Format yang Didukung:</h5>
 									<div className="text-xs text-blue-700 space-y-1">
 										<div>• Link dari address bar Google Maps</div>
 										<div>• Link dari tombol "Share" → "Copy link"</div>
@@ -421,9 +390,7 @@ export default function LocationPicker({
 								</div>
 
 								<div className="mt-3 pt-3 border-t border-blue-200">
-									<h5 className="font-medium text-blue-900 mb-1">
-										💡 Pro Tips:
-									</h5>
+									<h5 className="font-medium text-blue-900 mb-1">💡 Pro Tips:</h5>
 									<div className="text-xs text-blue-700 space-y-1">
 										<div>• Zoom in detail sebelum copy link untuk akurasi</div>
 										<div>• Klik tepat di entrance/pintu masuk gedung</div>
@@ -455,9 +422,7 @@ export default function LocationPicker({
 								<DynamicButton
 									variant="outline"
 									size="sm"
-									onClick={() =>
-										window.open("https://maps.google.com", "_blank")
-									}
+									onClick={() => window.open("https://maps.google.com", "_blank")}
 									className="flex items-center justify-center gap-1">
 									<ExternalLink size={14} />
 									Buka Google Maps
@@ -472,9 +437,7 @@ export default function LocationPicker({
 					<div className="space-y-4">
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1">
-									Nama Lokasi
-								</label>
+								<label className="block text-sm font-medium text-gray-700 mb-1">Nama Lokasi</label>
 								<input
 									type="text"
 									value={selectedLocation?.name || ""}
@@ -490,9 +453,7 @@ export default function LocationPicker({
 							</div>
 
 							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1">
-									Kota
-								</label>
+								<label className="block text-sm font-medium text-gray-700 mb-1">Kota</label>
 								<input
 									type="text"
 									value={selectedLocation?.city || ""}
@@ -509,9 +470,7 @@ export default function LocationPicker({
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium text-gray-700 mb-1">
-								Alamat Lengkap
-							</label>
+							<label className="block text-sm font-medium text-gray-700 mb-1">Alamat Lengkap</label>
 							<textarea
 								value={selectedLocation?.address || ""}
 								onChange={(e) =>
@@ -528,9 +487,7 @@ export default function LocationPicker({
 
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1">
-									Latitude
-								</label>
+								<label className="block text-sm font-medium text-gray-700 mb-1">Latitude</label>
 								<input
 									type="number"
 									step="any"
@@ -547,9 +504,7 @@ export default function LocationPicker({
 							</div>
 
 							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1">
-									Longitude
-								</label>
+								<label className="block text-sm font-medium text-gray-700 mb-1">Longitude</label>
 								<input
 									type="number"
 									step="any"
@@ -567,38 +522,32 @@ export default function LocationPicker({
 						</div>
 
 						<div className="text-xs text-gray-500">
-							💡 Tip: Anda bisa mendapatkan koordinat dengan klik kanan di
-							Google Maps dan pilih koordinat yang muncul
+							💡 Tip: Anda bisa mendapatkan koordinat dengan klik kanan di Google Maps dan pilih
+							koordinat yang muncul
 						</div>
 					</div>
 				)}
 			</div>
 
 			{/* Selected Location Preview */}
-			{selectedLocation &&
-				selectedLocation.latitude &&
-				selectedLocation.longitude && (
-					<div className="border-t border-gray-200 p-4">
-						<h4 className="text-sm font-medium text-gray-700 mb-2">
-							Preview Lokasi Terpilih
-						</h4>
-						<div className="bg-gray-100 rounded-lg overflow-hidden h-32">
-							<iframe
-								width="100%"
-								height="100%"
-								style={{ border: 0 }}
-								loading="lazy"
-								allowFullScreen
-								referrerPolicy="no-referrer-when-downgrade"
-								src={`https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${
-									selectedLocation.latitude
-								},${selectedLocation.longitude}&zoom=${
-									selectedLocation.map_zoom_level || 15
-								}`}
-							/>
-						</div>
+			{selectedLocation && selectedLocation.latitude && selectedLocation.longitude && (
+				<div className="border-t border-gray-200 p-4">
+					<h4 className="text-sm font-medium text-gray-700 mb-2">Preview Lokasi Terpilih</h4>
+					<div className="bg-gray-100 rounded-lg overflow-hidden h-32">
+						<iframe
+							width="100%"
+							height="100%"
+							style={{ border: 0 }}
+							loading="lazy"
+							allowFullScreen
+							referrerPolicy="no-referrer-when-downgrade"
+							src={`https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${
+								selectedLocation.latitude
+							},${selectedLocation.longitude}&zoom=${selectedLocation.map_zoom_level || 15}`}
+						/>
 					</div>
-				)}
+				</div>
+			)}
 		</div>
 	);
 }

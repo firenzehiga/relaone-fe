@@ -11,7 +11,7 @@ import {
 	Star,
 } from "lucide-react";
 import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
-import Button, { LinkButton } from "@/components/ui/Button";
+import Button, { LinkButton } from "@/components/ui/DynamicButton";
 import { swalDelete, swalWarning } from "@/components/ui/Swal";
 import { showToast } from "@/components/ui/Toast";
 import {

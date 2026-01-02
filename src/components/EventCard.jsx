@@ -1,6 +1,6 @@
 import { Calendar, MapPin, Users, Navigation, ExternalLink } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 import Badge from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
 import { cn, getImageUrl, getGoogleMapsUrl, getDirectionsUrl, getStaticMapUrl } from "@/utils";

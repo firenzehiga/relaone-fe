@@ -8,7 +8,7 @@ import {
 	useAdminUpdateParticipantMutation,
 } from "@/_hooks/useParticipants";
 import { toInputDate, toInputDatetime } from "@/utils/dateFormatter";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/DynamicButton";
 import Skeleton from "@/components/ui/Skeleton";
 import { useAuthStore } from "@/_hooks/useAuth";
 

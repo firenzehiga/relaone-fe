@@ -99,7 +99,7 @@ export const toQueryBuilderParams = (
 export const getGoogleMapsUrl = (event = {}, { preferAddress = true } = {}) => {
 	// prefer address when available (default)
 	const address =
-		event.location?.alamat ||
+		event.location?.nama ||
 		event.address ||
 		(typeof event.location === "string" ? event.location : "");
 	if (preferAddress && address) {

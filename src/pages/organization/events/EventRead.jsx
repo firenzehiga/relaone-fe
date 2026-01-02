@@ -38,7 +38,7 @@ import { getImageUrl, parseApiError } from "@/utils";
 
 // UI Components
 import FetchLoader from "@/components/ui/FetchLoader";
-import { LinkButton } from "@/components/ui/Button";
+import { LinkButton } from "@/components/ui/DynamicButton";
 import Badge from "@/components/ui/Badge";
 import { useDebounce } from "@/_hooks/utils/useDebounce";
 

@@ -1,12 +1,13 @@
 import { useAdminLocationById, useAdminUpdateLocationMutation } from "@/_hooks/useLocations";
 import Skeleton from "@/components/ui/Skeleton";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/DynamicButton";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuthStore } from "@/_hooks/useAuth";
 import { useAdminOrganizations } from "@/_hooks/useOrganizations";
 import { useForm } from "react-hook-form";
 import { AlertCircle } from "lucide-react";
+import MapCoordinatePicker from "@/components/common/MapCoordinatePicker";
 
 export default function AdminLocationEdit() {
 	const { id } = useParams();
@@ -209,8 +210,8 @@ export default function AdminLocationEdit() {
 				</header>
 
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6 flex flex-col">
-					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-						<div>
+					<div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+						<div className="sm:col-span-2">
 							<label
 								htmlFor="nama"
 								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
@@ -240,8 +241,8 @@ export default function AdminLocationEdit() {
 						</div>
 					</div>
 
-					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-						<div>
+					<div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+						<div className="sm:col-span-2">
 							<label
 								htmlFor="alamat"
 								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
@@ -432,6 +433,41 @@ export default function AdminLocationEdit() {
 						{parseError && (
 							<p className="text-sm text-red-600 mt-2 whitespace-pre-wrap">{parseError}</p>
 						)}
+					</div>
+
+					{/* Interactive Map Picker */}
+					<div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 p-4 rounded-lg">
+						<label className="block text-xs sm:text-sm font-medium text-gray-900 mb-2">
+							🗺️ Opsi 2: Pilih lokasi di peta
+						</label>
+						<p className="text-xs text-gray-600 mb-3">
+							Cari lokasi, klik peta, atau drag marker untuk menyesuaikan posisi. Koordinat akan
+							otomatis diperbarui.
+						</p>
+						<MapCoordinatePicker
+							latitude={watch("latitude") || -6.2088}
+							longitude={watch("longitude") || 106.8456}
+							zoom={watch("zoom_level") || 15}
+							onChange={(lat, lng, zoom, locationData) => {
+								setValue("latitude", lat, { shouldDirty: true });
+								setValue("longitude", lng, { shouldDirty: true });
+								setValue("zoom_level", zoom, { shouldDirty: true });
+
+								// Auto-fill location details from search result
+								if (locationData) {
+									// Always overwrite when selecting from search
+									setValue("nama", locationData.name, { shouldDirty: true });
+									setValue("alamat", locationData.address, { shouldDirty: true });
+									if (locationData.city) {
+										setValue("kota", locationData.city, { shouldDirty: true });
+									}
+									if (locationData.province) {
+										setValue("provinsi", locationData.province, { shouldDirty: true });
+									}
+								}
+							}}
+							className="h-[450px]"
+						/>
 					</div>
 
 					<div className="mt-auto pt-6">

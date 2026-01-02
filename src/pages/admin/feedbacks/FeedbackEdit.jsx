@@ -8,7 +8,7 @@ import {
 } from "@/_hooks/useFeedbacks";
 import RatingStars from "@/components/ui/RatingStars";
 import Skeleton from "@/components/ui/Skeleton";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/DynamicButton";
 import NotFound from "@/components/fallback/NotFound";
 import { useAuthStore } from "@/_hooks/useAuth";
 import { useForm } from "react-hook-form";

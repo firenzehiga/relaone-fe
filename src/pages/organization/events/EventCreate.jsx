@@ -14,7 +14,7 @@ import { useAuthStore } from "@/_hooks/useAuth";
 import { useForm } from "react-hook-form";
 
 // UI Components
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/DynamicButton";
 import Skeleton from "@/components/ui/Skeleton";
 
 export default function OrganizationEventCreate() {

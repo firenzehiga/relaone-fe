@@ -7,11 +7,12 @@ import { useOrgLocationById, useOrgUpdateLocationMutation } from "@/_hooks/useLo
 // import { useAdminOrganizations } from "@/_hooks/useOrganizations";
 
 // UI Components
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/DynamicButton";
 import Skeleton from "@/components/ui/Skeleton";
 import { useForm } from "react-hook-form";
 import { parseGoogleMapsUrl } from "@/utils";
 import { AlertCircle } from "lucide-react";
+import MapCoordinatePicker from "@/components/common/MapCoordinatePicker";
 
 export default function OrganizationLocationEdit() {
 	const { id } = useParams();
@@ -115,8 +116,8 @@ export default function OrganizationLocationEdit() {
 				</header>
 
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6 flex flex-col">
-					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-						<div>
+					<div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+						<div className="sm:col-span-2">
 							<label
 								htmlFor="nama"
 								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
@@ -148,8 +149,8 @@ export default function OrganizationLocationEdit() {
 						</div>
 					</div>
 
-					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-						<div>
+					<div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+						<div className="sm:col-span-2">
 							<label
 								htmlFor="alamat"
 								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
@@ -284,9 +285,10 @@ export default function OrganizationLocationEdit() {
 						/>
 					</div>
 
+					{/* Google Maps Link Parser */}
 					<div className="bg-gray-50 border border-gray-100 p-4 rounded">
 						<label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
-							Masukkan link Google Maps
+							📍 Opsi 1: Masukkan link Google Maps
 						</label>
 						<p className="text-xs text-gray-500 mt-1">
 							Cara cepat: buka Google Maps, cari lokasi, lalu salin URL dari address bar (bukan
@@ -328,6 +330,41 @@ export default function OrganizationLocationEdit() {
 						{parseError && (
 							<p className="text-sm text-red-600 mt-2 whitespace-pre-wrap">{parseError}</p>
 						)}
+					</div>
+
+					{/* Interactive Map Picker */}
+					<div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 p-4 rounded-lg">
+						<label className="block text-xs sm:text-sm font-medium text-gray-900 mb-2">
+							🗺️ Opsi 2: Pilih lokasi di peta
+						</label>
+						<p className="text-xs text-gray-600 mb-3">
+							Cari lokasi, klik peta, atau drag marker untuk menyesuaikan posisi. Koordinat akan
+							otomatis diperbarui.
+						</p>
+						<MapCoordinatePicker
+							latitude={getValues("latitude") || -6.2088}
+							longitude={getValues("longitude") || 106.8456}
+							zoom={getValues("zoom_level") || 15}
+							onChange={(lat, lng, zoom, locationData) => {
+								setValue("latitude", lat, { shouldDirty: true });
+								setValue("longitude", lng, { shouldDirty: true });
+								setValue("zoom_level", zoom, { shouldDirty: true });
+
+								// Auto-fill location details from search result
+								if (locationData) {
+									// Always overwrite when selecting from search
+									setValue("nama", locationData.name, { shouldDirty: true });
+									setValue("alamat", locationData.address, { shouldDirty: true });
+									if (locationData.city) {
+										setValue("kota", locationData.city, { shouldDirty: true });
+									}
+									if (locationData.province) {
+										setValue("provinsi", locationData.province, { shouldDirty: true });
+									}
+								}
+							}}
+							className="h-[450px]"
+						/>
 					</div>
 
 					<div className="mt-auto pt-6">

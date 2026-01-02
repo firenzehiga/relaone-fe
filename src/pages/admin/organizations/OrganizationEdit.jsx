@@ -10,7 +10,7 @@ import { Input, InputGroup, InputLeftAddon } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Skeleton from "@/components/ui/Skeleton";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/DynamicButton";
 // contact selection removed — no longer using useAdminOrganizationUsers
 import { getImageUrl } from "@/utils";
 

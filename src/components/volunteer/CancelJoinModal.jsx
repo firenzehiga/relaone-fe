@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { AlertTriangle } from "lucide-react";
 import Modal from "@/components/ui/Modal";
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 import Card from "@/components/ui/Card";
 import { useModalStore } from "@/stores/useAppStore";
 import { useVolunteerCancelJoinMutation } from "@/_hooks/useParticipants";
@@ -15,8 +15,7 @@ import { useAuthStore } from "@/_hooks/useAuth";
  * @returns {JSX.Element} Modal untuk pembatalan pendaftaran event
  */
 export default function CancelJoinModal() {
-	const { isCancelModalOpen, selectedCancelParticipant, closeCancelModal } =
-		useModalStore();
+	const { isCancelModalOpen, selectedCancelParticipant, closeCancelModal } = useModalStore();
 
 	const [formData, setFormData] = useState({ catatan: "" });
 	const [success, setSuccess] = useState(false);
@@ -38,9 +37,7 @@ export default function CancelJoinModal() {
 
 	const handleSubmit = async (e) => {
 		e?.preventDefault();
-		const eventId =
-			selectedCancelParticipant?.event?.id ||
-			selectedCancelParticipant?.event_id;
+		const eventId = selectedCancelParticipant?.event?.id || selectedCancelParticipant?.event_id;
 		if (!eventId) return;
 
 		if (!isAuthenticated) {
@@ -80,20 +77,13 @@ export default function CancelJoinModal() {
 	if (!selectedCancelParticipant) return null;
 
 	return (
-		<Modal
-			isOpen={isCancelModalOpen}
-			onClose={handleClose}
-			title="Batalkan Pendaftaran"
-			size="md">
+		<Modal isOpen={isCancelModalOpen} onClose={handleClose} title="Batalkan Pendaftaran" size="md">
 			{/* Warning banner: informs user this action may affect acceptance rates */}
 			<div className="mb-4 p-3 bg-amber-50 border-l-4 border-amber-300 rounded-md flex items-start gap-3">
-				<AlertTriangle
-					size={18}
-					className="text-amber-600 flex-shrink-0 mt-0.5"
-				/>
+				<AlertTriangle size={18} className="text-amber-600 flex-shrink-0 mt-0.5" />
 				<div className="text-sm text-amber-800">
-					Tindakan ini dapat memengaruhi tingkat penerimaan pendaftaran kamu
-					pada event lain. Pastikan kamu yakin sebelum melanjutkan.
+					Tindakan ini dapat memengaruhi tingkat penerimaan pendaftaran kamu pada event lain.
+					Pastikan kamu yakin sebelum melanjutkan.
 				</div>
 			</div>
 
@@ -116,9 +106,7 @@ export default function CancelJoinModal() {
 							/>
 						</svg>
 					</div>
-					<h3 className="text-2xl font-bold text-gray-900 mb-3">
-						Pembatalan Berhasil
-					</h3>
+					<h3 className="text-2xl font-bold text-gray-900 mb-3">Pembatalan Berhasil</h3>
 					<p className="text-gray-600 text-lg leading-relaxed">
 						Pendaftaran untuk event <br />
 						<span className="font-semibold text-blue-600">

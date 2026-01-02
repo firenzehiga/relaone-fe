@@ -16,7 +16,7 @@ import {
 	MapPin,
 	Info,
 } from "lucide-react";
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 import Avatar from "@/components/ui/Avatar";
 import { useAuthStore, useLogout } from "@/_hooks/useAuth";
 import { getImageUrl } from "@/utils";

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import Skeleton from "@/components/ui/Skeleton";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/DynamicButton";
 import { useAuthStore } from "@/_hooks/useAuth";
 
 export default function AdminCategoryEdit() {

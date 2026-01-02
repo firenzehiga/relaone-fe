@@ -36,7 +36,7 @@ import { formatDate, formatDateTime, formatTime } from "@/utils/dateFormatter";
 
 // UI Components
 import QrCodeDisplay from "@/components/volunteer/QrCodeDisplay";
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 import Skeleton from "@/components/ui/Skeleton";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";

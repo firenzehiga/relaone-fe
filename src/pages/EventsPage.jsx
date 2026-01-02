@@ -17,7 +17,7 @@ import { useDebounce } from "@/_hooks/utils/useDebounce";
 import { toInputDate } from "@/utils/dateFormatter";
 
 // UI Components
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 import Skeleton from "@/components/ui/Skeleton";
 import EventCard from "@/components/EventCard";
 import Badge from "@/components/ui/Badge";

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Lock, Eye, EyeOff, ArrowLeft, CheckCircle, AlertCircle, Mail, Shield } from "lucide-react";
-import DynamicButton from "@/components/ui/Button";
+import DynamicButton from "@/components/ui/DynamicButton";
 import { useResetPassword, useAuthStore } from "@/_hooks/useAuth";
 import { showToast } from "@/components/ui/Toast";
 import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
