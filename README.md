@@ -39,26 +39,6 @@
 
 ---
 
-## 🚀 **Teknologi yang Digunakan**
-
-### Frontend Stack
-- **React 19** - Library Javascript modern dengan hooks
-- **Axios** - Library JavaScript berbasis promise untuk membuat permintaan HTTP dari browser
-- **DayJs** - Library Javascript minimalis yang memanipulasi, dan menampilkan tanggal dan waktu
-- **Vite** - Build tool yang super cepat
-- **Tailwind CSS 3** - Utility-first CSS framework
-- **Chakra UI** - Library UI modern
-- **React Hot Toast** - Library Push Notification ringan
-- **React Datatable Component** - Library komponen untuk visualisasi data dalam bentuk tabel
-- **Sweet Alert** - Library Popup Notification dengan tampilan menarik
-- **QR Code React** - Library untuk membuat dan menampilkan kode QR
-- **HTML5 QR Code** - Library untuk memproses gambar dari kamera dan membaca kode QR
-- **ReCharts** - Library grafi berbasis JavaScript yang digunakan untuk membuat visualisasi data     
-- **Framer Motion** - Animasi yang smooth dan engaging
-- **React Query** - Data fetching dan state management
-- **Zustand** - Lightweight state management
-- **React Router** - Navigation dan routing
-
 ### UI/UX Features
 - **Responsive Design** - Tampil sempurna di semua device
 - **Loading Animations** - Interactive loading states
@@ -74,11 +54,6 @@ Aplikasi ini dikembangkan sebagai bagian dari project kolaboratif pendidikan.
 Pengembangan utama frontend, desain, dan user experience dilakukan oleh:
 
 - [**Firenze Higa**](https://github.com/firenzehiga)
-
-Kontributor pendukung yang turut membantu dalam proses pengembangan:
-
-- [**Miftah Adz**](https://github.com/miftahadzdzaudanislam) – Contributor  
-- [**Wahyu Andrianto**](https://github.com/Wahyu2204) – Contributor
 
 📧 **Contact**: firenzehiga@gmail.com  
 🐙 **GitHub**: [@firenzehiga](https://github.com/firenzehiga)
