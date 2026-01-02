@@ -1,15 +1,4 @@
 /**
- * Helper utilities for exporting table data.
- *
- * Notes about security: the widely-used `xlsx` package (SheetJS) has had
- * vulnerability advisories in some versions. To avoid pulling an unsafe
- * dependency into the client bundle by default, this module provides a
- * CSV-only export as the default and keeps the XLSX export optional via
- * dynamic import. If you want XLSX export, install `xlsx` yourself and
- * understand the security posture for your project.
- */
-
-/**
  * Export array of objects as CSV and trigger download in browser.
  * - `options.headers` (Array) can specify column order/keys.
  */

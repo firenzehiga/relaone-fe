@@ -720,16 +720,16 @@ export default function RegisterPage() {
 								className="mt-6">
 								<Link
 									to="/register?type=organization"
-									className="block p-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all transform hover:scale-[1.02] shadow-md">
+									className="block p-4 bg-gradient-to-r from-blue-600 via-blue-600 to-blue-600 hover:from-blue-700 hover:to-blue-700 rounded-lg transition-all transform hover:scale-[1.02] shadow-md">
 									<div className="flex items-center justify-between text-white">
 										<div className="flex items-center gap-3">
 											<div className="p-2 bg-white/20 rounded-lg">
 												<Building2 className="w-5 h-5" />
 											</div>
 											<div>
-												<p className="font-semibold">Punya Organisasi?</p>
+												<p className="font-semibold">Bagian Dari Organisasi?</p>
 												<p className="text-sm text-white/90">
-													Daftar dan kelola event volunteer Anda
+													Daftarkan dan mari ciptakan dampak positif bersama kami!
 												</p>
 											</div>
 										</div>
