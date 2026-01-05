@@ -6,7 +6,11 @@ import Card from "./ui/Card";
 import { getImageUrl } from "@/utils";
 import DynamicButton from "./ui/DynamicButton";
 
-export default function OrganizationCard({ organization, onClick, className = "" }) {
+export default function OrganizationCard({
+	organization,
+	onClick,
+	className = "",
+}) {
 	if (!organization) return null;
 
 	return (
@@ -79,12 +83,14 @@ export default function OrganizationCard({ organization, onClick, className = ""
 				{organization.kota && (
 					<div className="flex items-center text-gray-600 mb-3">
 						<MapPin className="w-3 h-3 mr-1 text-emerald-500" />
-						<span className="text-xs font-medium truncate">{organization.kota}</span>
+						<span className="text-xs font-medium truncate">
+							{organization.kota}
+						</span>
 					</div>
 				)}
 
 				{organization.deskripsi && (
-					<p className="text-gray-700 text-sm mb-3 line-clamp-3 leading-relaxed flex-1">
+					<p className="text-gray-700 text-sm mb-3 line-clamp-3 leading-relaxed flex-1 text-justify">
 						{organization.deskripsi}
 					</p>
 				)}
@@ -100,7 +106,9 @@ export default function OrganizationCard({ organization, onClick, className = ""
 				)}
 
 				<div className="space-y-2 mb-3">
-					<p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Kontak</p>
+					<p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+						Kontak
+					</p>
 					<div className="flex items-center gap-2 flex-wrap">
 						{organization.email && (
 							<a
@@ -143,7 +151,9 @@ export default function OrganizationCard({ organization, onClick, className = ""
 				<div className="mt-2">
 					<DynamicButton
 						variant="success"
-						onClick={() => navigate(`/organizations/details/${organization.id}`)}
+						onClick={() =>
+							navigate(`/organizations/details/${organization.id}`)
+						}
 						className="w-full py-2 text-sm font-semibold">
 						Pelajari Lebih Lanjut
 					</DynamicButton>

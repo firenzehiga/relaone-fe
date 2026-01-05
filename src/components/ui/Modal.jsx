@@ -47,7 +47,7 @@ export default function Modal({
 							animate={{ opacity: 1, scale: 1, y: 0 }}
 							transition={{ duration: 0.2, ease: "easeOut" }}
 							className={cn(
-								"relative w-full max-h-[90vh] overflow-y-auto bg-white border border-gray-200 rounded-2xl shadow-2xl my-4 sm:my-8",
+								"relative w-full max-h-[90vh] overflow-y-auto bg-white border border-gray-200 rounded-lg shadow-2xl my-4 sm:my-8",
 								sizes[size],
 								className
 							)}>

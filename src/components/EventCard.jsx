@@ -1,9 +1,21 @@
-import { Calendar, MapPin, Users, Navigation, ExternalLink } from "lucide-react";
+import {
+	Calendar,
+	MapPin,
+	Users,
+	Navigation,
+	ExternalLink,
+} from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import DynamicButton from "@/components/ui/DynamicButton";
 import Badge from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
-import { cn, getImageUrl, getGoogleMapsUrl, getDirectionsUrl, getStaticMapUrl } from "@/utils";
+import {
+	cn,
+	getImageUrl,
+	getGoogleMapsUrl,
+	getDirectionsUrl,
+	getStaticMapUrl,
+} from "@/utils";
 import { formatDate, formatTime } from "@/utils/dateFormatter";
 import { AsyncImage } from "loadable-image";
 import { Fade } from "transitions-kit";
@@ -11,7 +23,12 @@ import { Fade } from "transitions-kit";
  * Komponen EventCard untuk menampilkan informasi singkat suatu event volunteer
  * Menampilkan informasi seperti judul, tanggal, lokasi, peserta, dan tombol aksi
  */
-export default function EventCard({ event, onJoin, className, showOrganizer = false }) {
+export default function EventCard({
+	event,
+	onJoin,
+	className,
+	showOrganizer = false,
+}) {
 	if (!event) return null;
 
 	const navigate = useNavigate();
@@ -52,7 +69,8 @@ export default function EventCard({ event, onJoin, className, showOrganizer = fa
 	const isStarted = now >= eventStart || event.status === "ongoing";
 	const isFinished = now >= eventEnd || event.status === "completed";
 
-	const isRegistrationEnded = isCancelled || isFull || isStarted || isRegistrationClosed;
+	const isRegistrationEnded =
+		isCancelled || isFull || isStarted || isRegistrationClosed;
 
 	// Alur penutupan tombol pendaftaran:
 	// - event cancelled  -> ditutup
@@ -63,8 +81,8 @@ export default function EventCard({ event, onJoin, className, showOrganizer = fa
 	let actionLabel = "Daftar";
 	if (isCancelled) actionLabel = "Dibatalkan";
 	else if (isFull) actionLabel = "Penuh";
-	else if (isFinished) actionLabel = "Sudah Selesai";
-	else if (isStarted) actionLabel = "Sudah Dimulai";
+	else if (isFinished) actionLabel = "Berakhir";
+	else if (isStarted) actionLabel = "Berlangsung";
 	else if (isRegistrationClosed) actionLabel = "Pendaftaran Ditutup";
 
 	return (
@@ -75,7 +93,9 @@ export default function EventCard({ event, onJoin, className, showOrganizer = fa
 			)}>
 			{/* Event Banner */}
 			<div className="relative h-48 overflow-hidden">
-				<Link to={`/events/details/${event.id}`} aria-label={`Lihat detail event ${event.judul}`}>
+				<Link
+					to={`/events/details/${event.id}`}
+					aria-label={`Lihat detail event ${event.judul}`}>
 					<AsyncImage
 						loading="lazy"
 						transition={Fade}
@@ -88,35 +108,46 @@ export default function EventCard({ event, onJoin, className, showOrganizer = fa
 						<Badge variant={statusBadge.variant}>{statusBadge.text}</Badge>
 					</div>
 					<div className="absolute top-3 right-3">
-						<Badge color={event.category?.warna}>{event.category?.nama || "undefined"}</Badge>
+						<Badge color={event.category?.warna}>
+							{event.category?.nama || "undefined"}
+						</Badge>
 					</div>
 				</Link>
 			</div>
 
 			{/* Event Content */}
 			<div className="p-6">
-				<h3 className="font-bold text-gray-900 text-md mb-3 line-clamp-2 leading-tight">
+				<h3 className="font-bold text-gray-900 text-sm mb-3 line-clamp-2 leading-tight">
 					{event.judul}
 				</h3>
 
-				<p className="text-gray-600 text-sm mb-4 line-clamp-1 leading-relaxed">
+				<p className="text-gray-600 text-xs mb-4 line-clamp-1 leading-relaxed">
 					{event.deskripsi_singkat}
 				</p>
 
 				{/* Event Details */}
 				<div className="space-y-3 mb-6">
-					<div className="flex items-center text-gray-700 text-sm">
-						<Calendar size={16} className="mr-3 text-emerald-600 flex-shrink-0" />
+					<div className="flex items-center text-gray-700 text-xs">
+						<Calendar
+							size={16}
+							className="mr-3 text-emerald-600 flex-shrink-0"
+						/>
 						<span className="font-semibold">
-							{formatDate(event.tanggal_mulai)} • {formatTime(event.waktu_mulai)} -{" "}
+							{formatDate(event.tanggal_mulai)} • Jam{" "}
+							{formatTime(event.waktu_mulai)} -{" "}
 							{formatTime(event.waktu_selesai, "WIB")}
 						</span>
 					</div>
-					<div className="flex items-start text-gray-700 text-sm">
-						<MapPin size={16} className="mr-3 text-emerald-600 flex-shrink-0 mt-0.5" />
+					<div className="flex items-start text-gray-700 text-xs">
+						<MapPin
+							size={16}
+							className="mr-3 text-emerald-600 flex-shrink-0 mt-0.5"
+						/>
 						<div className="flex-1">
 							<div className="font-semibold mb-1">{event.location?.nama}</div>
-							<div className="text-gray-500 text-xs line-clamp-2">{event.location?.alamat}</div>
+							<div className="text-gray-500 text-xs line-clamp-2">
+								{event.location?.alamat}
+							</div>
 							{event.location?.kota && event.location?.provinsi && (
 								<div className="text-gray-500 text-xs mt-1">
 									{event.location?.kota}, {event.location?.provinsi}
@@ -145,12 +176,12 @@ export default function EventCard({ event, onJoin, className, showOrganizer = fa
 
 					<div className="flex items-center text-gray-700 text-sm">
 						<Users size={16} className="mr-3 text-green-600 flex-shrink-0" />
-						<span className="font-semibold">
+						<span className="font-semibold text-xs">
 							{event.peserta_saat_ini || 0} / {event.maks_peserta} peserta
 						</span>
 						{slotsRemaining > 0 && !isRegistrationEnded && (
-							<span className="text-green-700 ml-2 font-bold text-xs bg-green-50 px-2 py-1 rounded-full">
-								{slotsRemaining} slot tersisa
+							<span className="text-green-700 ml-2 font-semibold text-xs bg-green-50 px-2 py-1 rounded-full">
+								{slotsRemaining} kuota tersisa
 							</span>
 						)}
 						{isFull && (
@@ -164,7 +195,11 @@ export default function EventCard({ event, onJoin, className, showOrganizer = fa
 				{/* Organizer */}
 				{showOrganizer && event.organization && (
 					<div className="flex items-center mb-6 pb-4 border-b border-gray-100">
-						<Avatar src={event.organization.logo} fallback={event.organization.nama} size="sm" />
+						<Avatar
+							src={event.organization.logo}
+							fallback={event.organization.nama}
+							size="sm"
+						/>
 						<span className="text-gray-700 text-sm ml-3 font-semibold">
 							oleh {event.organization.nama}
 						</span>
