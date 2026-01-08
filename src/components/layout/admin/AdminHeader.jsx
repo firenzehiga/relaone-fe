@@ -139,11 +139,10 @@ export default function AdminHeader() {
 										onMouseEnter={() => setDesktopSubmenuOpen(item.name)}
 										onMouseLeave={() => setDesktopSubmenuOpen(null)}>
 										<button
-											className={`transition-all duration-200 flex items-center space-x-2 px-3 py-2 rounded-lg group ${
-												active
+											className={`transition-all duration-200 flex items-center space-x-2 px-3 py-2 rounded-lg group ${active
 													? "text-emerald-600 bg-emerald-50 font-semibold"
 													: "text-gray-700 hover:text-emerald-600 hover:bg-emerald-50"
-											}`}
+												}`}
 											onClick={() =>
 												setDesktopSubmenuOpen(desktopSubmenuOpen === item.name ? null : item.name)
 											}
@@ -163,11 +162,10 @@ export default function AdminHeader() {
 														<Link
 															key={s.href}
 															to={s.href}
-															className={`flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 ${
-																isActive(s.href)
+															className={`flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 ${isActive(s.href)
 																	? "text-emerald-600 bg-emerald-50 font-semibold"
 																	: ""
-															}`}>
+																}`}>
 															<s.icon size={14} className="text-gray-500" />
 															<span>{s.name}</span>
 														</Link>
@@ -182,11 +180,10 @@ export default function AdminHeader() {
 								<Link
 									key={item.name}
 									to={item.href}
-									className={`transition-all duration-200 flex items-center space-x-2 px-3 py-2 rounded-lg group ${
-										active
+									className={`transition-all duration-200 flex items-center space-x-2 px-3 py-2 rounded-lg group ${active
 											? "text-emerald-600 bg-emerald-50 font-semibold"
 											: "text-gray-700 hover:text-emerald-600 hover:bg-emerald-50"
-									}`}>
+										}`}>
 									<item.icon size={16} className={active ? "text-emerald-600" : ""} />
 									<span className="font-medium">{item.name}</span>
 								</Link>
@@ -203,7 +200,7 @@ export default function AdminHeader() {
 									onClick={() => setUserMenuOpen(!userMenuOpen)}
 									className="flex items-center space-x-2 p-2 rounded-xl hover:bg-emerald-50 transition-colors">
 									<Avatar
-										src={getImageUrl(`foto_profil/${user?.foto_profil}`)}
+										src={getImageUrl(user?.foto_profil)}
 										fallback={user?.nama}
 										size="sm"
 									/>
@@ -291,11 +288,10 @@ export default function AdminHeader() {
 													animate={{ opacity: 1, x: 0 }}
 													transition={{ delay: index * 0.05, duration: 0.2 }}>
 													<button
-														className={`flex items-center justify-between w-full space-x-3 px-3 py-3 rounded-lg transition-colors duration-200 ${
-															active
+														className={`flex items-center justify-between w-full space-x-3 px-3 py-3 rounded-lg transition-colors duration-200 ${active
 																? "text-emerald-600 bg-emerald-50 font-semibold"
 																: "text-gray-700 hover:text-emerald-600 hover:bg-emerald-50"
-														}`}
+															}`}
 														onClick={() => toggleMobileSubmenu(item.name)}>
 														<div className="flex items-center space-x-3">
 															<item.icon
@@ -312,11 +308,10 @@ export default function AdminHeader() {
 																<Link
 																	key={s.href}
 																	to={s.href}
-																	className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors duration-200 ${
-																		isActive(s.href)
+																	className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors duration-200 ${isActive(s.href)
 																			? "text-emerald-600 bg-emerald-50 font-semibold"
 																			: "text-gray-700 hover:text-emerald-600 hover:bg-emerald-50"
-																	}`}
+																		}`}
 																	onClick={() => setMobileMenuOpen(false)}>
 																	<s.icon
 																		size={18}
@@ -340,11 +335,10 @@ export default function AdminHeader() {
 												transition={{ delay: index * 0.05, duration: 0.2 }}>
 												<Link
 													to={item.href}
-													className={`flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors duration-200 ${
-														active
+													className={`flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors duration-200 ${active
 															? "text-emerald-600 bg-emerald-50 font-semibold"
 															: "text-gray-700 hover:text-emerald-600 hover:bg-emerald-50"
-													}`}
+														}`}
 													onClick={() => setMobileMenuOpen(false)}>
 													<item.icon
 														size={20}

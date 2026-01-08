@@ -28,8 +28,15 @@ export const cn = (...classes) => {
  * Digunakan di berbagai tempat untuk menggabungkan URL gambar
  */
 export const getImageUrl = (path) => {
-	const baseUrl = import.meta.env.VITE_IMG_STORAGE_URL;
 	if (!path) return "";
+
+	// Jika sudah absolute URL (Google avatar), return as-is
+	if (path.startsWith('http://') || path.startsWith('https://')) {
+		return path;
+	}
+
+	// Jika relative path (local upload), build URL
+	const baseUrl = import.meta.env.VITE_IMG_STORAGE_URL;
 	return `${baseUrl}${path}`;
 };
 
@@ -49,8 +56,8 @@ export const parseApiError = (err) => {
 		(Array.isArray(v)
 			? v.flat(Infinity)
 			: typeof v === "object"
-			? Object.values(v).flat(Infinity)
-			: [v]
+				? Object.values(v).flat(Infinity)
+				: [v]
 		)
 			.filter(Boolean)
 			.join(" ");

@@ -212,3 +212,29 @@ export const resendVerification = async (email) => {
 		throw error;
 	}
 };
+
+/**
+ * Login dengan Google OAuth
+ */
+export const loginWithGoogle = async (credential, role = null) => {
+	try {
+		const response = await api.post('/auth/google', {
+			credential,
+			role // untuk first-time user organization
+		});
+
+		if (response.data.success) {
+			localStorage.setItem('authToken', response.data.data.token);
+			return response.data;
+		} else {
+			throw new Error(response.data.message || 'Google login failed');
+		}
+	} catch (error) {
+		// Jika ada response dari server, lempar data (mengandung message & errors)
+		if (error.response?.data) {
+			throw error.response.data;
+		}
+		// Jika tidak ada response (network/CORS), lempar error asli
+		throw error;
+	}
+};

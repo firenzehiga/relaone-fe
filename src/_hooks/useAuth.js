@@ -107,7 +107,7 @@ const useAuthStore = create((set, get) => ({
 			const merged = { ...(state.user || {}), ...userData };
 			try {
 				localStorage.setItem("authUser", JSON.stringify(merged));
-			} catch (e) {}
+			} catch (e) { }
 			return { user: merged };
 		});
 	},
@@ -543,6 +543,61 @@ export const useResendVerification = () => {
 				position: "top-center",
 			});
 			console.error("Resend verification error:", error);
+		},
+	});
+};
+
+export const useGoogleLogin = () => {
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
+	const { setAuth, setLoading, setError, clearError } = useAuthStore();
+
+	return useMutation({
+		mutationKey: ['googleLogin'],
+		mutationFn: ({ credential, role }) => authService.loginWithGoogle(credential, role),
+		onMutate: () => {
+			setLoading(true);
+			clearError();
+		},
+		onSuccess: (data) => {
+			setAuth(data.data.user, data.data.token);
+			setLoading(false);
+
+			showToast({
+				type: 'success',
+				title: 'Login Berhasil',
+				message: `Selamat datang, ${data.data.user.nama}!`,
+				duration: 2000,
+				position: 'top-right',
+			});
+
+			queryClient.invalidateQueries(['auth', 'profile']);
+
+			// Navigate based on role
+			const userRole = data.data.user.role;
+			switch (userRole) {
+				case 'admin':
+					navigate('/admin/dashboard');
+					break;
+				case 'organization':
+					navigate('/organization/dashboard');
+					break;
+				case 'volunteer':
+				default:
+					navigate('/');
+					break;
+			}
+		},
+		onError: (error) => {
+			setLoading(false);
+			const msg = parseApiError(error) || 'Google login failed';
+			setError(msg);
+			showToast({
+				type: 'error',
+				message: msg,
+				duration: 3000,
+				position: 'top-center',
+			});
 		},
 	});
 };

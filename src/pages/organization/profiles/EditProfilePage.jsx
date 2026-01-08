@@ -80,7 +80,11 @@ export default function OrganizationEditProfilePage() {
 	const [errors, setErrors] = useState({});
 	const { isLoading } = useAuthStore();
 
-	const { data: profileData, isLoading: isLoadingProfile, error } = useUserProfile();
+	const {
+		data: profileData,
+		isLoading: isLoadingProfile,
+		error,
+	} = useUserProfile();
 	const updateProfileMutation = useUpdateUserMutation();
 
 	useEffect(() => {
@@ -103,10 +107,12 @@ export default function OrganizationEditProfilePage() {
 		});
 
 		if (profileData.foto_profil) {
-			setImagePreview(getImageUrl(`foto_profil/${profileData.foto_profil}`));
+			setImagePreview(getImageUrl(profileData.foto_profil));
 		}
 		if (profileData.role_data?.logo) {
-			setLogoPreview(getImageUrl(`organizations/${profileData.role_data.logo}`));
+			setLogoPreview(
+				getImageUrl(`organizations/${profileData.role_data.logo}`)
+			);
 		}
 	}, [profileData]);
 
@@ -155,9 +161,11 @@ export default function OrganizationEditProfilePage() {
 	const validateForm = () => {
 		const values = getValues();
 		const newErrors = {};
-		if (!values.nama || !values.nama.trim()) newErrors.nama = "Nama harus diisi";
+		if (!values.nama || !values.nama.trim())
+			newErrors.nama = "Nama harus diisi";
 		else if (values.nama.length < 2) newErrors.nama = "Nama minimal 2 karakter";
-		if (!values.email || !values.email.trim()) newErrors.email = "Email harus diisi";
+		if (!values.email || !values.email.trim())
+			newErrors.email = "Email harus diisi";
 		else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email))
 			newErrors.email = "Format email tidak valid";
 		if (values.telepon && !/^[\d\s\-\+\(\)]+$/.test(values.telepon))
@@ -165,9 +173,16 @@ export default function OrganizationEditProfilePage() {
 
 		if (!values.organization_nama || !values.organization_nama.trim())
 			newErrors.organization_nama = "Nama organisasi harus diisi";
-		if (values.organization_telepon && !/^[\d\s\-\+\(\)]+$/.test(values.organization_telepon))
-			newErrors.organization_telepon = "Format nomor telefon organisasi tidak valid";
-		if (values.organization_website && !/^https?:\/\/.+/.test(values.organization_website))
+		if (
+			values.organization_telepon &&
+			!/^[\d\s\-\+\(\)]+$/.test(values.organization_telepon)
+		)
+			newErrors.organization_telepon =
+				"Format nomor telefon organisasi tidak valid";
+		if (
+			values.organization_website &&
+			!/^https?:\/\/.+/.test(values.organization_website)
+		)
 			newErrors.organization_website =
 				"Format website tidak valid (harus dimulai dengan http:// atau https://)";
 
@@ -213,9 +228,15 @@ export default function OrganizationEditProfilePage() {
 					<div className="text-red-500 mb-4">
 						<User className="w-16 h-16 mx-auto mb-4" />
 					</div>
-					<h2 className="text-xl font-bold text-gray-900 mb-2">Gagal Memuat Data</h2>
-					<p className="text-gray-600 mb-4">Terjadi kesalahan saat memuat data profile</p>
-					<Button onClick={() => navigate("/organization/profile")} variant="primary">
+					<h2 className="text-xl font-bold text-gray-900 mb-2">
+						Gagal Memuat Data
+					</h2>
+					<p className="text-gray-600 mb-4">
+						Terjadi kesalahan saat memuat data profile
+					</p>
+					<Button
+						onClick={() => navigate("/organization/profile")}
+						variant="primary">
 						Kembali ke Profile
 					</Button>
 				</Card>
@@ -248,10 +269,16 @@ export default function OrganizationEditProfilePage() {
 				initial="hidden"
 				animate="visible">
 				{/* Header Section - Compact */}
-				<motion.div variants={itemVariants} className="flex items-center justify-between mb-6">
+				<motion.div
+					variants={itemVariants}
+					className="flex items-center justify-between mb-6">
 					<div>
-						<h1 className="text-2xl font-bold text-gray-900 mb-1">Edit Profile Organisasi</h1>
-						<p className="text-gray-600 text-sm">Perbarui informasi profile dan organisasi Anda</p>
+						<h1 className="text-2xl font-bold text-gray-900 mb-1">
+							Edit Profile Organisasi
+						</h1>
+						<p className="text-gray-600 text-sm">
+							Perbarui informasi profile dan organisasi Anda
+						</p>
 					</div>
 					<Button
 						variant="outline"
@@ -274,7 +301,9 @@ export default function OrganizationEditProfilePage() {
 									<div>
 										<div className="flex items-center mb-4">
 											<UserCircle2 className="w-5 h-5 text-blue-500 mr-2" />
-											<h3 className="text-lg font-bold text-gray-900">Foto Profil Pengguna</h3>
+											<h3 className="text-lg font-bold text-gray-900">
+												Foto Profil Pengguna
+											</h3>
 										</div>
 										<div className="flex items-center space-x-6">
 											{/* Image Preview */}
@@ -316,7 +345,9 @@ export default function OrganizationEditProfilePage() {
 												</p>
 
 												{errors.foto_profil && (
-													<p className="text-xs text-red-600">{errors.foto_profil}</p>
+													<p className="text-xs text-red-600">
+														{errors.foto_profil}
+													</p>
 												)}
 											</div>
 										</div>
@@ -326,7 +357,9 @@ export default function OrganizationEditProfilePage() {
 									<div>
 										<div className="flex items-center mb-4">
 											<Building2 className="w-5 h-5 text-purple-500 mr-2" />
-											<h3 className="text-lg font-bold text-gray-900">Logo Organisasi</h3>
+											<h3 className="text-lg font-bold text-gray-900">
+												Logo Organisasi
+											</h3>
 										</div>
 										<div className="flex items-center space-x-6">
 											{/* Logo Preview */}
@@ -368,7 +401,9 @@ export default function OrganizationEditProfilePage() {
 												</p>
 
 												{errors.organization_logo && (
-													<p className="text-xs text-red-600">{errors.organization_logo}</p>
+													<p className="text-xs text-red-600">
+														{errors.organization_logo}
+													</p>
 												)}
 											</div>
 										</div>
@@ -381,7 +416,9 @@ export default function OrganizationEditProfilePage() {
 								<div>
 									<div className="flex items-center mb-4">
 										<User className="w-5 h-5 text-blue-500 mr-2" />
-										<h3 className="text-lg font-bold text-gray-900">Informasi Perwakilan</h3>
+										<h3 className="text-lg font-bold text-gray-900">
+											Informasi Perwakilan
+										</h3>
 										<span className="text-xs text-gray-500 ml-2">
 											(Pengguna yang mewakili organisasi)
 										</span>
@@ -405,7 +442,11 @@ export default function OrganizationEditProfilePage() {
 													placeholder="Masukkan nama lengkap"
 												/>
 											</div>
-											{errors.nama && <p className="mt-1 text-xs text-red-600">{errors.nama}</p>}
+											{errors.nama && (
+												<p className="mt-1 text-xs text-red-600">
+													{errors.nama}
+												</p>
+											)}
 										</div>
 
 										{/* Email */}
@@ -424,13 +465,17 @@ export default function OrganizationEditProfilePage() {
 													placeholder="Masukkan email"
 												/>
 											</div>
-											{errors.email && <p className="mt-1 text-xs text-red-600">{errors.email}</p>}
+											{errors.email && (
+												<p className="mt-1 text-xs text-red-600">
+													{errors.email}
+												</p>
+											)}
 										</div>
 
 										{/* Phone */}
 										<div>
 											<label className="block text-sm font-medium text-gray-700 mb-1">
-												Nomor Telefon
+												Nomor Telepon
 											</label>
 											<div className="relative">
 												<Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -439,13 +484,17 @@ export default function OrganizationEditProfilePage() {
 													{...register("telepon")}
 													type="tel"
 													className={`w-full pl-9 pr-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm ${
-														errors.telepon ? "border-red-500" : "border-gray-300"
+														errors.telepon
+															? "border-red-500"
+															: "border-gray-300"
 													}`}
 													placeholder="Masukkan nomor telefon"
 												/>
 											</div>
 											{errors.telepon && (
-												<p className="mt-1 text-xs text-red-600">{errors.telepon}</p>
+												<p className="mt-1 text-xs text-red-600">
+													{errors.telepon}
+												</p>
 											)}
 										</div>
 
@@ -463,8 +512,13 @@ export default function OrganizationEditProfilePage() {
 														onChange={(date) => {
 															if (date) {
 																const year = date.getFullYear();
-																const month = String(date.getMonth() + 1).padStart(2, "0");
-																const day = String(date.getDate()).padStart(2, "0");
+																const month = String(
+																	date.getMonth() + 1
+																).padStart(2, "0");
+																const day = String(date.getDate()).padStart(
+																	2,
+																	"0"
+																);
 																field.onChange(`${year}-${month}-${day}`);
 															} else {
 																field.onChange(null);
@@ -495,7 +549,9 @@ export default function OrganizationEditProfilePage() {
 
 										{/* Address */}
 										<div>
-											<label className="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+											<label className="block text-sm font-medium text-gray-700 mb-1">
+												Alamat
+											</label>
 											<div className="relative">
 												<MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
 												<textarea
@@ -514,7 +570,9 @@ export default function OrganizationEditProfilePage() {
 								<div>
 									<div className="flex items-center mb-4">
 										<Building2 className="w-5 h-5 text-purple-500 mr-2" />
-										<h3 className="text-lg font-bold text-gray-900">Informasi Organisasi</h3>
+										<h3 className="text-lg font-bold text-gray-900">
+											Informasi Organisasi
+										</h3>
 									</div>
 
 									<div className="space-y-4">
@@ -530,13 +588,17 @@ export default function OrganizationEditProfilePage() {
 													{...register("organization_nama")}
 													type="text"
 													className={`w-full pl-9 pr-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-sm ${
-														errors.organization_nama ? "border-red-500" : "border-gray-300"
+														errors.organization_nama
+															? "border-red-500"
+															: "border-gray-300"
 													}`}
 													placeholder="Masukkan nama organisasi"
 												/>
 											</div>
 											{errors.organization_nama && (
-												<p className="mt-1 text-xs text-red-600">{errors.organization_nama}</p>
+												<p className="mt-1 text-xs text-red-600">
+													{errors.organization_nama}
+												</p>
 											)}
 										</div>
 
@@ -569,13 +631,17 @@ export default function OrganizationEditProfilePage() {
 													{...register("organization_telepon")}
 													type="tel"
 													className={`w-full pl-9 pr-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-sm ${
-														errors.organization_telepon ? "border-red-500" : "border-gray-300"
+														errors.organization_telepon
+															? "border-red-500"
+															: "border-gray-300"
 													}`}
 													placeholder="Masukkan nomor telepon organisasi"
 												/>
 											</div>
 											{errors.organization_telepon && (
-												<p className="mt-1 text-xs text-red-600">{errors.organization_telepon}</p>
+												<p className="mt-1 text-xs text-red-600">
+													{errors.organization_telepon}
+												</p>
 											)}
 										</div>
 
@@ -591,13 +657,17 @@ export default function OrganizationEditProfilePage() {
 													{...register("organization_website")}
 													type="url"
 													className={`w-full pl-9 pr-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-sm ${
-														errors.organization_website ? "border-red-500" : "border-gray-300"
+														errors.organization_website
+															? "border-red-500"
+															: "border-gray-300"
 													}`}
 													placeholder="Diawali dengan https://"
 												/>
 											</div>
 											{errors.organization_website && (
-												<p className="mt-1 text-xs text-red-600">{errors.organization_website}</p>
+												<p className="mt-1 text-xs text-red-600">
+													{errors.organization_website}
+												</p>
 											)}
 										</div>
 									</div>
@@ -621,7 +691,7 @@ export default function OrganizationEditProfilePage() {
 									disabled={isLoading}
 									size="sm"
 									className="min-w-[100px]">
-									<Save className="w-3 h-3 mr-2" />
+									<Save className="w-4 h-4 mr-2" />
 									Simpan
 								</Button>
 							</div>

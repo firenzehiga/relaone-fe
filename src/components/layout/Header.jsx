@@ -132,16 +132,14 @@ export default function Header() {
 								<Link
 									key={item.name}
 									to={item.href}
-									className={`transition-all duration-200 flex items-center space-x-2 px-3 py-2 rounded-lg group ${
-										active
+									className={`transition-all duration-200 flex items-center space-x-2 px-3 py-2 rounded-lg group ${active
 											? "text-emerald-600 bg-emerald-50 font-semibold"
 											: "text-gray-700 hover:text-emerald-600 hover:bg-emerald-50"
-									}`}>
+										}`}>
 									<item.icon
 										size={16}
-										className={`group-hover:scale-110 transition-transform duration-200 ${
-											active ? "text-emerald-600" : ""
-										}`}
+										className={`group-hover:scale-110 transition-transform duration-200 ${active ? "text-emerald-600" : ""
+											}`}
 									/>
 									<span className="font-medium">{item.name}</span>
 								</Link>
@@ -158,7 +156,7 @@ export default function Header() {
 									onClick={() => setUserMenuOpen(!userMenuOpen)}
 									className="flex items-center space-x-2 p-2 rounded-xl hover:bg-emerald-50 transition-colors">
 									<Avatar
-										src={user?.foto_profil ? getImageUrl(`foto_profil/${user?.foto_profil}`) : null}
+										src={user?.foto_profil ? getImageUrl(user.foto_profil) : null}
 										fallback={user?.nama}
 										size="sm"
 									/>
@@ -254,11 +252,10 @@ export default function Header() {
 												transition={{ delay: index * 0.05, duration: 0.2 }}>
 												<Link
 													to={item.href}
-													className={`flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors duration-200 ${
-														active
+													className={`flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors duration-200 ${active
 															? "text-emerald-600 bg-emerald-50 font-semibold"
 															: "text-gray-700 hover:text-emerald-600 hover:bg-emerald-50"
-													}`}
+														}`}
 													onClick={() => setMobileMenuOpen(false)}>
 													<item.icon
 														size={20}
