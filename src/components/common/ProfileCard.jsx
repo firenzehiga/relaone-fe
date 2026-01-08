@@ -123,7 +123,7 @@ export default function ProfileCard({ profile, role = "volunteer" }) {
 					<div className="relative mb-4">
 						{profile?.foto_profil ? (
 							<img
-								src={getImageUrl(`foto_profil/${profile?.foto_profil}`)}
+								src={getImageUrl(profile?.foto_profil)}
 								alt="Avatar"
 								className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-lg"
 							/>
@@ -165,7 +165,7 @@ export default function ProfileCard({ profile, role = "volunteer" }) {
 					<div className="relative mb-4">
 						{profile?.foto_profil ? (
 							<img
-								src={getImageUrl(`foto_profil/${profile?.foto_profil}`)}
+								src={getImageUrl(profile?.foto_profil)}
 								alt="Avatar"
 								className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-lg"
 							/>

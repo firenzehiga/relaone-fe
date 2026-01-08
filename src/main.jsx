@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
 import { ChakraProvider } from "@chakra-ui/react";
 import { ThemeProvider } from "next-themes";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import "@/index.css";
 import App from "@/App.jsx";
 import { BrowserRouter } from "react-router-dom";
@@ -37,14 +38,16 @@ init();
 createRoot(document.getElementById("root")).render(
 	<StrictMode>
 		<QueryClientProvider client={queryClient}>
-			<BrowserRouter>
-				<ThemeProvider attribute="class" defaultTheme="light">
-					<ChakraProvider>
-						<App />
-					</ChakraProvider>
-				</ThemeProvider>
-				<Toaster position="top-right" reverseOrder={false} gutter={8} />
-			</BrowserRouter>
+			<GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+				<BrowserRouter>
+					<ThemeProvider attribute="class" defaultTheme="light">
+						<ChakraProvider>
+							<App />
+						</ChakraProvider>
+					</ThemeProvider>
+					<Toaster position="top-right" reverseOrder={false} gutter={8} />
+				</BrowserRouter>
+			</GoogleOAuthProvider>
 			<ReactQueryDevtools initialIsOpen={false} />
 		</QueryClientProvider>
 	</StrictMode>

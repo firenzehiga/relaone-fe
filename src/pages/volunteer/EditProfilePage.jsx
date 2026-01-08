@@ -22,7 +22,13 @@ import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 // Helpers
 import { toInputDate } from "@/utils/dateFormatter";
-import { getImageUrl, parseSkillsArray, addSkill, updateSkill, removeSkill } from "@/utils";
+import {
+	getImageUrl,
+	parseSkillsArray,
+	addSkill,
+	updateSkill,
+	removeSkill,
+} from "@/utils";
 
 // UI elements
 import Card from "@/components/ui/Card";
@@ -66,7 +72,11 @@ export default function EditProfilePage() {
 	const [errors, setErrors] = useState({});
 	const { isLoading } = useAuthStore();
 
-	const { data: profileData, isLoading: isLoadingProfile, error } = useUserProfile();
+	const {
+		data: profileData,
+		isLoading: isLoadingProfile,
+		error,
+	} = useUserProfile();
 	const updateProfileMutation = useUpdateUserMutation();
 
 	useEffect(() => {
@@ -87,7 +97,7 @@ export default function EditProfilePage() {
 		});
 
 		if (profileData.foto_profil) {
-			setImagePreview(getImageUrl(`foto_profil/${profileData.foto_profil}`));
+			setImagePreview(getImageUrl(profileData.foto_profil));
 		}
 	}, [profileData]);
 
@@ -151,9 +161,11 @@ export default function EditProfilePage() {
 	const validateForm = () => {
 		const values = getValues();
 		const newErrors = {};
-		if (!values.nama || !values.nama.trim()) newErrors.nama = "Nama harus diisi";
+		if (!values.nama || !values.nama.trim())
+			newErrors.nama = "Nama harus diisi";
 		else if (values.nama.length < 2) newErrors.nama = "Nama minimal 2 karakter";
-		if (!values.email || !values.email.trim()) newErrors.email = "Email harus diisi";
+		if (!values.email || !values.email.trim())
+			newErrors.email = "Email harus diisi";
 		else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email))
 			newErrors.email = "Format email tidak valid";
 		if (values.telepon && !/^[\d\s\-\+\(\)]+$/.test(values.telepon))
@@ -198,9 +210,15 @@ export default function EditProfilePage() {
 					<div className="text-red-500 mb-4">
 						<User className="w-16 h-16 mx-auto mb-4" />
 					</div>
-					<h2 className="text-xl font-bold text-gray-900 mb-2">Gagal Memuat Data</h2>
-					<p className="text-gray-600 mb-4">Terjadi kesalahan saat memuat data profile</p>
-					<Button onClick={() => navigate("/volunteer/profile")} variant="primary">
+					<h2 className="text-xl font-bold text-gray-900 mb-2">
+						Gagal Memuat Data
+					</h2>
+					<p className="text-gray-600 mb-4">
+						Terjadi kesalahan saat memuat data profile
+					</p>
+					<Button
+						onClick={() => navigate("/volunteer/profile")}
+						variant="primary">
 						Kembali ke Profile
 					</Button>
 				</Card>
@@ -210,18 +228,31 @@ export default function EditProfilePage() {
 
 	const containerVariants = {
 		hidden: { opacity: 0, y: 20 },
-		visible: { opacity: 1, y: 0, transition: { duration: 0.6, staggerChildren: 0.1 } },
+		visible: {
+			opacity: 1,
+			y: 0,
+			transition: { duration: 0.6, staggerChildren: 0.1 },
+		},
 	};
 
-	const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
+	const itemVariants = {
+		hidden: { opacity: 0, y: 20 },
+		visible: { opacity: 1, y: 0 },
+	};
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-4 px-4">
 			<motion.div className="max-w-7xl mx-auto">
-				<motion.div variants={itemVariants} className="flex items-center justify-between mb-6">
+				<motion.div
+					variants={itemVariants}
+					className="flex items-center justify-between mb-6">
 					<div>
-						<h1 className="text-2xl font-bold text-gray-900 mb-1">Edit Profile</h1>
-						<p className="text-gray-600 text-sm">Perbarui informasi profile Anda</p>
+						<h1 className="text-2xl font-bold text-gray-900 mb-1">
+							Edit Profile
+						</h1>
+						<p className="text-gray-600 text-sm">
+							Perbarui informasi profile Anda
+						</p>
 					</div>
 					<Button
 						variant="outline"
@@ -241,7 +272,9 @@ export default function EditProfilePage() {
 									<div className="flex-1">
 										<div className="flex items-center mb-4">
 											<UserCircle2 className="w-5 h-5 text-blue-500 mr-2" />
-											<h3 className="text-lg font-bold text-gray-900">Foto Profil</h3>
+											<h3 className="text-lg font-bold text-gray-900">
+												Foto Profil
+											</h3>
 										</div>
 										<div className="flex items-center space-x-6">
 											<div className="relative">
@@ -279,7 +312,9 @@ export default function EditProfilePage() {
 													Format: JPEG, JPG, PNG. Maksimal 2MB.
 												</p>
 												{errors.foto_profil && (
-													<p className="text-xs text-red-600">{errors.foto_profil}</p>
+													<p className="text-xs text-red-600">
+														{errors.foto_profil}
+													</p>
 												)}
 											</div>
 										</div>
@@ -291,7 +326,9 @@ export default function EditProfilePage() {
 								<div>
 									<div className="flex items-center mb-4">
 										<User className="w-5 h-5 text-blue-500 mr-2" />
-										<h3 className="text-lg font-bold text-gray-900">Informasi Dasar</h3>
+										<h3 className="text-lg font-bold text-gray-900">
+											Informasi Dasar
+										</h3>
 									</div>
 
 									<div className="space-y-4">
@@ -311,7 +348,11 @@ export default function EditProfilePage() {
 													placeholder="Masukkan nama lengkap"
 												/>
 											</div>
-											{errors.nama && <p className="mt-1 text-xs text-red-600">{errors.nama}</p>}
+											{errors.nama && (
+												<p className="mt-1 text-xs text-red-600">
+													{errors.nama}
+												</p>
+											)}
 										</div>
 
 										<div>
@@ -329,12 +370,16 @@ export default function EditProfilePage() {
 													placeholder="Masukkan email"
 												/>
 											</div>
-											{errors.email && <p className="mt-1 text-xs text-red-600">{errors.email}</p>}
+											{errors.email && (
+												<p className="mt-1 text-xs text-red-600">
+													{errors.email}
+												</p>
+											)}
 										</div>
 
 										<div>
 											<label className="block text-sm font-medium text-gray-700 mb-1">
-												Nomor Telefon
+												Nomor Telepon
 											</label>
 											<div className="relative">
 												<Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -343,13 +388,17 @@ export default function EditProfilePage() {
 													{...register("telepon")}
 													type="tel"
 													className={`w-full pl-9 pr-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm ${
-														errors.telepon ? "border-red-500" : "border-gray-300"
+														errors.telepon
+															? "border-red-500"
+															: "border-gray-300"
 													}`}
 													placeholder="Masukkan nomor telefon"
 												/>
 											</div>
 											{errors.telepon && (
-												<p className="mt-1 text-xs text-red-600">{errors.telepon}</p>
+												<p className="mt-1 text-xs text-red-600">
+													{errors.telepon}
+												</p>
 											)}
 										</div>
 
@@ -366,8 +415,13 @@ export default function EditProfilePage() {
 														onChange={(date) => {
 															if (date) {
 																const year = date.getFullYear();
-																const month = String(date.getMonth() + 1).padStart(2, "0");
-																const day = String(date.getDate()).padStart(2, "0");
+																const month = String(
+																	date.getMonth() + 1
+																).padStart(2, "0");
+																const day = String(date.getDate()).padStart(
+																	2,
+																	"0"
+																);
 																field.onChange(`${year}-${month}-${day}`);
 															} else {
 																field.onChange(null);
@@ -376,7 +430,6 @@ export default function EditProfilePage() {
 														placeholder="Pilih tanggal lahir"
 														disabled={isLoading}
 														id="tanggal_lahir"
-														buttonClassName="px-3 py-2"
 													/>
 												)}
 											/>
@@ -397,7 +450,9 @@ export default function EditProfilePage() {
 										</div>
 
 										<div>
-											<label className="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+											<label className="block text-sm font-medium text-gray-700 mb-1">
+												Alamat
+											</label>
 											<div className="relative">
 												<MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
 												<textarea
@@ -415,12 +470,16 @@ export default function EditProfilePage() {
 								<div>
 									<div className="flex items-center mb-4">
 										<Award className="w-5 h-5 text-purple-500 mr-2" />
-										<h3 className="text-lg font-bold text-gray-900">Informasi Tambahan</h3>
+										<h3 className="text-lg font-bold text-gray-900">
+											Informasi Tambahan
+										</h3>
 									</div>
 
 									<div className="space-y-4">
 										<div>
-											<label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+											<label className="block text-sm font-medium text-gray-700 mb-1">
+												Bio
+											</label>
 											<div className="relative">
 												<FileText className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
 												<textarea
@@ -434,7 +493,9 @@ export default function EditProfilePage() {
 										</div>
 
 										<div>
-											<label className="block text-sm font-medium text-gray-700">Keahlian</label>
+											<label className="block text-sm font-medium text-gray-700">
+												Keahlian
+											</label>
 											<div className="mt-2 space-y-2">
 												{keahlian && keahlian.length > 0 ? (
 													keahlian.map((p, idx) => (
@@ -443,7 +504,9 @@ export default function EditProfilePage() {
 																type="text"
 																className="flex-1 rounded-md border border-gray-200 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 																value={p}
-																onChange={(e) => updateKeahlianHandler(idx, e.target.value)}
+																onChange={(e) =>
+																	updateKeahlianHandler(idx, e.target.value)
+																}
 															/>
 															<button
 																type="button"
@@ -474,7 +537,10 @@ export default function EditProfilePage() {
 															}
 														}}
 													/>
-													<Button variant="success" type="button" onClick={addKeahlianHandler}>
+													<Button
+														variant="success"
+														type="button"
+														onClick={addKeahlianHandler}>
 														Tambah
 													</Button>
 												</div>
@@ -500,7 +566,7 @@ export default function EditProfilePage() {
 									disabled={isLoading}
 									size="sm"
 									className="min-w-[100px]">
-									<Save className="w-3 h-3 mr-2" />
+									<Save className="w-4 h-4 mr-2" />
 									Simpan
 								</Button>
 							</div>
