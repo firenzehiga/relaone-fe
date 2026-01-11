@@ -99,7 +99,7 @@ export default function OrganizationsPage() {
 	}
 
 	return (
-		<div className="page-transition min-h-screen py-8 bg-gradient-to-br from-blue-50 via-green-50 to-purple-50">
+		<div className="min-h-screen py-8 bg-gradient-to-br from-blue-50 via-green-50 to-purple-50">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Hero Header */}
 				<div className="mb-8 text-center">
@@ -123,7 +123,7 @@ export default function OrganizationsPage() {
 								value={filters.search}
 								disabled={isLoading}
 								onChange={(e) => handleFilterChange("search", e.target.value)}
-								className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+								className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all bg-slate-50"
 							/>
 						</div>
 					</Card>

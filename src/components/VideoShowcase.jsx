@@ -10,22 +10,25 @@ export default function VideoShowcase() {
 	return (
 		<section className="w-full py-20 bg-white">
 			<div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.6 }}>
+				<div>
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-						<div>
+						<motion.div
+							initial={{ opacity: 0, x: -50 }}
+							animate={{ opacity: 1, x: 0 }}
+							transition={{ duration: 0.5 }}
+							exit={{ opacity: 0 }}>
 							<h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
 								Lihat Kegiatan Kami
 							</h2>
 							<p className="text-xl text-gray-600 mb-6">
-								Tonton cuplikan kegiatan para relawan untuk mendapatkan gambaran bagaimana acara
-								berjalan dan peran yang dapat Anda ambil.
+								Tonton cuplikan kegiatan para relawan untuk mendapatkan gambaran
+								bagaimana acara berjalan dan peran yang dapat Anda ambil.
 							</p>
 
 							<div className="flex flex-col sm:flex-row gap-4">
-								<DynamicButton variant="success" onClick={() => navigate("/events")}>
+								<DynamicButton
+									variant="success"
+									onClick={() => navigate("/events")}>
 									Jelajahi Event
 								</DynamicButton>
 								<DynamicButton
@@ -38,9 +41,14 @@ export default function VideoShowcase() {
 									Lihat Video Penuh
 								</DynamicButton>
 							</div>
-						</div>
+						</motion.div>
 
-						<div className="w-full">
+						<motion.div
+							initial={{ opacity: 0, x: 50 }}
+							animate={{ opacity: 1, x: 0 }}
+							transition={{ duration: 0.5 }}
+							exit={{ opacity: 0 }}
+							className="w-full">
 							<div className="relative rounded-lg overflow-hidden shadow-lg">
 								<video
 									src={videoSrc}
@@ -51,9 +59,9 @@ export default function VideoShowcase() {
 									playsInline
 								/>
 							</div>
-						</div>
+						</motion.div>
 					</div>
-				</motion.div>
+				</div>
 			</div>
 		</section>
 	);
