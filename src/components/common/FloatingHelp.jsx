@@ -1,4 +1,5 @@
 import { Mail, BookOpen } from "lucide-react";
+import { CircleHelpIcon } from "../ui/circle-help";
 
 /**
  * FloatingHelp
@@ -23,22 +24,7 @@ export default function FloatingHelp({
 				<button
 					aria-label="Bantuan"
 					className="w-14 h-14 rounded-full bg-gradient-to-r from-emerald-500 via-emerald-600  to-emerald-500 hover:bg-emerald-700 text-white shadow-2xl flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-emerald-300">
-					<svg
-						className="w-8 h-8 text-white"
-						aria-hidden="true"
-						xmlns="http://www.w3.org/2000/svg"
-						width="24"
-						height="24"
-						fill="none"
-						viewBox="0 0 24 24">
-						<path
-							stroke="currentColor"
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth="2"
-							d="M9.529 9.988a2.502 2.502 0 1 1 5 .191A2.441 2.441 0 0 1 12 12.582V14m-.01 3.008H12M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-						/>
-					</svg>
+					<CircleHelpIcon />
 				</button>
 
 				{/* Hidden action buttons, appear on hover (to the right of the button) */}

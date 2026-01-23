@@ -20,6 +20,7 @@ import DynamicButton from "@/components/ui/DynamicButton";
 import Avatar from "@/components/ui/Avatar";
 import { useAuthStore, useLogout } from "@/_hooks/useAuth";
 import { getImageUrl } from "@/utils";
+import { HomeIcon } from "../ui/home";
 
 /**
  * Komponen Header navigasi utama aplikasi
@@ -37,7 +38,7 @@ export default function Header() {
 	const logoutMutation = useLogout();
 
 	const baseNav = [
-		{ name: "Home", href: "/", icon: Home },
+		{ name: "Home", href: "/", icon: HomeIcon },
 		{ name: "Event", href: "/events", icon: Calendar },
 		{ name: "Organization", href: "/organizations", icon: Building },
 		{ name: "About Us", href: "/about-us", icon: Info },
@@ -112,7 +113,7 @@ export default function Header() {
 				<div className="flex items-center justify-between h-16 max-w-7xl mx-auto">
 					{/* Logo */}
 					<Link to="/" className="flex items-center space-x-2 group">
-						<div className="p-1 group-hover:scale-110 transition-transform duration-300">
+						<div className="p-1 group-hover:scale-110  group-hover:-rotate-12 transition-transform duration-300">
 							<img src="/images/logo_fe.png" alt="RelaOne Logo" className="w-10 h-10" />
 						</div>
 						<span className="text-xl font-bold bg-black bg-clip-text text-transparent">
@@ -132,14 +133,16 @@ export default function Header() {
 								<Link
 									key={item.name}
 									to={item.href}
-									className={`transition-all duration-200 flex items-center space-x-2 px-3 py-2 rounded-lg group ${active
+									className={`transition-all duration-200 flex items-center space-x-2 px-3 py-2 rounded-lg group ${
+										active
 											? "text-emerald-600 bg-emerald-50 font-semibold"
 											: "text-gray-700 hover:text-emerald-600 hover:bg-emerald-50"
-										}`}>
+									}`}>
 									<item.icon
-										size={16}
-										className={`group-hover:scale-110 transition-transform duration-200 ${active ? "text-emerald-600" : ""
-											}`}
+										size={20}
+										className={`group-hover:scale-105 group-hover:-rotate-12 transition-transform duration-200 ${
+											active ? "text-emerald-600" : ""
+										}`}
 									/>
 									<span className="font-medium">{item.name}</span>
 								</Link>
@@ -252,10 +255,11 @@ export default function Header() {
 												transition={{ delay: index * 0.05, duration: 0.2 }}>
 												<Link
 													to={item.href}
-													className={`flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors duration-200 ${active
+													className={`flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors duration-200 ${
+														active
 															? "text-emerald-600 bg-emerald-50 font-semibold"
 															: "text-gray-700 hover:text-emerald-600 hover:bg-emerald-50"
-														}`}
+													}`}
 													onClick={() => setMobileMenuOpen(false)}>
 													<item.icon
 														size={20}

@@ -10,6 +10,8 @@ import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 import { LoginIllustration } from "@/components/common/Illustration";
 import DynamicButton from "@/components/ui/DynamicButton";
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
+import { EyeOffIcon } from "@/components/ui/eye-off";
+import { EyeIcon } from "@/components/ui/eye";
 
 export default function LoginPage() {
 	useDocumentTitle("Login Page");
@@ -92,10 +94,11 @@ export default function LoginPage() {
 										})}
 										aria-invalid={!!errors.email}
 										aria-describedby={errors.email ? "email-error" : undefined}
-										className={`w-full pl-10 pr-4 py-3 border rounded-lg outline-none transition-all disabled:bg-gray-50 disabled:cursor-not-allowed ${isSubmitted && errors.email
-											? "border-red-500 focus:ring-1 focus:ring-red-500"
-											: "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-											}`}
+										className={`w-full pl-10 pr-4 py-3 border rounded-lg outline-none transition-all disabled:bg-gray-50 disabled:cursor-not-allowed ${
+											isSubmitted && errors.email
+												? "border-red-500 focus:ring-1 focus:ring-red-500"
+												: "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+										}`}
 										placeholder="your@example.com"
 										disabled={isLoading || isSubmitting}
 									/>
@@ -123,10 +126,11 @@ export default function LoginPage() {
 										})}
 										aria-invalid={!!errors.password}
 										aria-describedby={errors.password ? "password-error" : undefined}
-										className={`w-full pl-10 pr-12 py-3 border rounded-lg outline-none transition-all disabled:bg-gray-50 disabled:cursor-not-allowed ${isSubmitted && errors.password
-											? "border-red-500 focus:ring-1 focus:ring-red-500"
-											: "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-											}`}
+										className={`w-full pl-10 pr-12 py-3 border rounded-lg outline-none transition-all disabled:bg-gray-50 disabled:cursor-not-allowed ${
+											isSubmitted && errors.password
+												? "border-red-500 focus:ring-1 focus:ring-red-500"
+												: "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+										}`}
 										placeholder="••••••••"
 										disabled={isLoading || isSubmitting}
 									/>
@@ -135,7 +139,7 @@ export default function LoginPage() {
 										onClick={() => setShowPassword(!showPassword)}
 										disabled={isLoading}
 										className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed">
-										{showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+										{showPassword ? <EyeOffIcon size={20} /> : <EyeIcon size={20} />}
 									</button>
 								</div>
 								{isSubmitted && errors.password && (
@@ -187,9 +191,7 @@ export default function LoginPage() {
 									<div className="w-full border-t border-gray-300"></div>
 								</div>
 								<div className="relative flex justify-center text-sm">
-									<span className="px-2 bg-white text-gray-500">
-										Atau lanjutkan dengan
-									</span>
+									<span className="px-2 bg-white text-gray-500">Atau lanjutkan dengan</span>
 								</div>
 							</div>
 

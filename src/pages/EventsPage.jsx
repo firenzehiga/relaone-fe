@@ -21,6 +21,7 @@ import DynamicButton from "@/components/ui/DynamicButton";
 import Skeleton from "@/components/ui/Skeleton";
 import EventCard from "@/components/EventCard";
 import Badge from "@/components/ui/Badge";
+import { SlidersHorizontalIcon } from "@/components/ui/sliders-horizontal";
 
 /**
  * Halaman Events untuk menampilkan daftar event volunteer
@@ -134,7 +135,7 @@ export default function EventsPage() {
 
 	// Apakah ada filter yang yg lagi aktif (digunakan untuk menampilkan tombol Hapus Filter dan perilaku empty-state)
 	const hasActiveFilters = Boolean(
-		filters.search || filters.category || filters.tanggal_mulai || filters.city
+		filters.search || filters.category || filters.tanggal_mulai || filters.city,
 	);
 
 	/**
@@ -207,7 +208,7 @@ export default function EventsPage() {
 							variant="ghost"
 							onClick={() => setShowFilters(!showFilters)}
 							className="flex items-center text-gray-700">
-							<Filter size={16} className="mr-2" />
+							<SlidersHorizontalIcon size={18} className="mr-2" />
 							Filter {showFilters ? "▲" : "▼"}
 						</DynamicButton>
 
