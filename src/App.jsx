@@ -322,11 +322,7 @@ function App() {
 					/>
 					<Route
 						path="email-verification-pending"
-						element={
-							<GuestRoute>
-								<EmailVerificationPendingPage />
-							</GuestRoute>
-						}
+						element={<EmailVerificationPendingPage />}
 					/>
 					{/* Fallback Route */}
 					<Route path="*" element={<NotFound />} />

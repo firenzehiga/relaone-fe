@@ -8,8 +8,7 @@ export const login = async (credentials) => {
 		const response = await api.post("/login", credentials);
 
 		if (response.data.success) {
-			// Store token in localStorage
-			localStorage.setItem("authToken", response.data.data.token);
+			// Token automatically set in HTTP-only cookie by backend
 			return response.data;
 		} else {
 			throw new Error(response.data.message || "Login failed");
@@ -32,8 +31,7 @@ export const register = async (userData) => {
 		const response = await api.post("/register", userData);
 
 		if (response.data.success) {
-			// Store token in localStorage
-			localStorage.setItem("authToken", response.data.data.token);
+			// Register tidak return token (email verification required)
 			return response.data;
 		} else {
 			throw new Error(response.data.message || "Registration failed");
@@ -53,12 +51,11 @@ export const register = async (userData) => {
  */
 export const logout = async () => {
 	try {
-		const response = await api.post("/logout"); // Remove token from localStorage
-		localStorage.removeItem("authToken");
+		const response = await api.post("/logout");
+		// Cookie cleared by backend
 		return response.data;
 	} catch (error) {
-		// Even if logout fails on server, clear local token
-		localStorage.removeItem("authToken");
+		// Even if logout fails on server, cookie will expire or be cleared by backend
 		// Jika ada response dari server, lempar data (mengandung message & errors)
 		if (error.response?.data) {
 			throw error.response.data;
@@ -76,8 +73,7 @@ export const refreshToken = async () => {
 		const response = await api.post("/refresh");
 
 		if (response.data.success) {
-			// Update token in localStorage
-			localStorage.setItem("authToken", response.data.data.token);
+			// New token automatically set in HTTP-only cookie by backend
 			return response.data;
 		} else {
 			throw new Error(response.data.message || "Token refresh failed");
@@ -224,7 +220,7 @@ export const loginWithGoogle = async (credential, role = null) => {
 		});
 
 		if (response.data.success) {
-			localStorage.setItem('authToken', response.data.data.token);
+			// Token automatically set in HTTP-only cookie by backend
 			return response.data;
 		} else {
 			throw new Error(response.data.message || 'Google login failed');

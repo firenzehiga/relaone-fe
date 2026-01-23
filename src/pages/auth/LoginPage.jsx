@@ -6,6 +6,7 @@ import { Eye, EyeOff, Mail, Lock, ArrowLeft, Heart, Building2, UserSearch } from
 
 import { useAuthStore, useLogin } from "@/_hooks/useAuth";
 import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
+import { useRateLimit } from "@/_hooks/useRateLimit";
 
 import { LoginIllustration } from "@/components/common/Illustration";
 import DynamicButton from "@/components/ui/DynamicButton";
@@ -28,6 +29,7 @@ export default function LoginPage() {
 
 	const loginMutation = useLogin();
 	const { isLoading } = useAuthStore();
+	const { isRateLimited, retryAfter } = useRateLimit();
 
 	const onSubmit = async (data) => {
 		try {
@@ -169,9 +171,13 @@ export default function LoginPage() {
 							<DynamicButton
 								type="submit"
 								variant="success"
-								disabled={isLoading || isSubmitting}
+								disabled={isLoading || isSubmitting || isRateLimited}
 								className="w-full text-white py-3 rounded-lg font-medium transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
-								{isLoading ? (
+								{isRateLimited ? (
+									<div className="flex items-center justify-center space-x-2">
+										<span>🔒 Tunggu {retryAfter} detik</span>
+									</div>
+								) : isLoading ? (
 									<div className="flex items-center justify-center space-x-2">
 										<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
 										<span>Logging In...</span>

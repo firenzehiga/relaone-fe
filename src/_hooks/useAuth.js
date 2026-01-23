@@ -24,19 +24,8 @@ const rehydratedUser = (() => {
 	}
 })();
 
-// Helper untuk mengambil token dari localStorage dengan sanitasi
-const getStoredToken = () => {
-	try {
-		const t = localStorage.getItem("authToken");
-		if (!t) return null;
-		// localStorage bisa berisi string "undefined" atau "null" jika
-		// sesuatu menulis nilai tidak valid — anggap itu sebagai tidak ada token
-		if (t === "undefined" || t === "null") return null;
-		return t;
-	} catch (e) {
-		return null;
-	}
-};
+// NOTE: Token is now stored in HTTP-only cookie, not localStorage
+// getStoredToken is no longer used
 
 /**
  * Helper untuk mengambil status verifikasi organisasi tanpa memodifikasi objek user.
@@ -61,17 +50,15 @@ export function getOrgVerificationStatus(user) {
 const useAuthStore = create((set, get) => ({
 	// data yang diisi dari localStorage apabila ada (rehydrated pada startup)
 	user: rehydratedUser,
-	token: getStoredToken(),
-	isAuthenticated: !!getStoredToken(),
+	isAuthenticated: false, // Will be set by initializeAuth
 	isLoading: false,
 	error: null,
 	// flag untuk menandakan inisialisasi store selesai (dipakai oleh AuthInitializer)
 	initialized: false,
 
-	// setAuth: persist ke localStorage juga supaya header/UX tidak nge-flash setelah refresh
-	setAuth: (userData, token) => {
+	// setAuth: persist user data ke localStorage (not token - that's in cookie)
+	setAuth: (userData) => {
 		try {
-			if (token) localStorage.setItem("authToken", token);
 			if (userData) localStorage.setItem("authUser", JSON.stringify(userData));
 		} catch (e) {
 			// ignore storage errors
@@ -79,16 +66,14 @@ const useAuthStore = create((set, get) => ({
 
 		set({
 			user: userData,
-			token,
 			isAuthenticated: true,
 			error: null,
 		});
 	},
 
-	// clearAuth: hapus dari localStorage juga
+	// clearAuth: hapus dari localStorage (cookie will be cleared by backend)
 	clearAuth: () => {
 		try {
-			localStorage.removeItem("authToken");
 			localStorage.removeItem("authUser");
 		} catch (e) {
 			// ignore
@@ -96,7 +81,6 @@ const useAuthStore = create((set, get) => ({
 
 		set({
 			user: null,
-			token: null,
 			isAuthenticated: false,
 			error: null,
 		});
@@ -120,34 +104,12 @@ const useAuthStore = create((set, get) => ({
 
 	/**
 	 * initializeAuth: inisialisasi auth saat aplikasi diload
-	 * - Membaca token + user dari localStorage secara sinkron sehingga UI (header) punya data
-	 * - Melakukan verifikasi token di background dengan memanggil API profile
-	 * - Jika verifikasi gagal, akan meng-clear auth
-	 *
-	 * Fungsi ini bisa dipanggil sekali di entrypoint (mis. main.jsx) untuk menghindari "flash"
+	 * - Rehydrate user from localStorage (synchronous)
+	 * - Set isAuthenticated based on presence of user data
+	 * - Cookie validation happens automatically via API calls from components
 	 */
 	initializeAuth: async () => {
-		const token = getStoredToken();
-
-		// jika tidak ada token, pastikan kita tidak menampilkan data user yang kadaluarsa
-		if (!token) {
-			try {
-				localStorage.removeItem("authUser");
-			} catch (e) {
-				// ignore storage errors
-			}
-
-			// set state untuk memastikan UI tidak menggunakan role/user lama
-			set({
-				initialized: true,
-				user: null,
-				token: null,
-				isAuthenticated: false,
-			});
-			return;
-		}
-
-		// jika token ada, set state dari localStorage (synchronous)
+		// Rehydrate user from localStorage
 		const rawUser = (() => {
 			try {
 				return localStorage.getItem("authUser");
@@ -157,12 +119,23 @@ const useAuthStore = create((set, get) => ({
 		})();
 
 		const parsedUser = rawUser ? JSON.parse(rawUser) : null;
-		// set initialized langsung agar UI (header dll) tidak ter-block
-		set({ token, isAuthenticated: true, user: parsedUser, initialized: true });
 
-		// TIDAK perlu panggil getUserProfile() di sini!
-		// Biar component yang butuh (ProtectedRoute, Dashboard, dll) yang panggil sendiri.
-		// initializeAuth() cukup restore state dari localStorage saja.
+		// If we have user data in localStorage, assume authenticated
+		// Cookie will be validated automatically when components make API calls
+		if (parsedUser) {
+			set({
+				user: parsedUser,
+				isAuthenticated: true,
+				initialized: true,
+			});
+		} else {
+			// No user data - clear state
+			set({
+				user: null,
+				isAuthenticated: false,
+				initialized: true,
+			});
+		}
 	},
 }));
 
@@ -182,7 +155,8 @@ export const useLogin = () => {
 			clearError();
 		},
 		onSuccess: (data) => {
-			setAuth(data.data.user, data.data.token);
+			// Token automatically set in HTTP-only cookie by backend
+			setAuth(data.data.user);
 			setLoading(false);
 
 			// Show success toast
@@ -270,7 +244,7 @@ export const useRegister = () => {
 				});
 			} else {
 				// Flow lama: langsung login (jika backend tidak require verification)
-				setAuth(data.data.user, data.data.token);
+				setAuth(data.data.user);
 
 				if (data.data.user.role === "organization") {
 					showToast({
@@ -560,7 +534,8 @@ export const useGoogleLogin = () => {
 			clearError();
 		},
 		onSuccess: (data) => {
-			setAuth(data.data.user, data.data.token);
+			// Token automatically set in HTTP-only cookie by backend
+			setAuth(data.data.user);
 			setLoading(false);
 
 			showToast({

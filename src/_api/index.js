@@ -16,11 +16,125 @@ const processQueue = (error, token = null) => {
 	failedQueue = [];
 };
 
+const queueFailedRequest = (originalRequest) => {
+	return new Promise((resolve, reject) => {
+		failedQueue.push({ resolve, reject });
+	})
+		.then(() => api(originalRequest))
+		.catch((err) => Promise.reject(err));
+};
+
+// ============================================================================
+// 401 UNAUTHORIZED HANDLER
+// ============================================================================
+
+/**
+ * Handle 401 Unauthorized dengan refresh token flow
+ * Improvements:
+ * - Better guards for public pages
+ * - Proper error handling
+ * - Cookie-based refresh support
+ */
+async function handleUnauthorizedError(error) {
+	const originalRequest = error.config;
+
+	// Guard 1: Skip refresh on public/guest pages
+	const publicPaths = ['/login', '/register', '/forgot-password', '/reset-password', '/verify-email'];
+	const currentPath = window.location.pathname;
+	const isPublicPage = publicPaths.some(path => currentPath.startsWith(path));
+
+	if (isPublicPage) {
+		return Promise.reject(error);
+	}
+
+	// Guard 2: Skip if already retried
+	if (!originalRequest || originalRequest._retry) {
+		handleRefreshTokenFailure();
+		return Promise.reject(error);
+	}
+
+	// Guard 3: Skip if refresh endpoint itself failed
+	if (originalRequest.url?.includes('/refresh')) {
+		handleRefreshTokenFailure();
+		return Promise.reject(error);
+	}
+
+	// Mark as retried
+	originalRequest._retry = true;
+
+	// If already refreshing, queue this request
+	if (isRefreshing) {
+		return queueFailedRequest(originalRequest);
+	}
+
+	// Start refresh flow
+	return refreshTokenAndRetry(originalRequest);
+}
+
+/**
+ * Refresh token and retry failed request
+ */
+async function refreshTokenAndRetry(originalRequest) {
+	isRefreshing = true;
+
+	try {
+		// Call refresh endpoint - new token will be set in cookie by backend
+		const response = await api.post('/refresh');
+
+		if (response.data.success) {
+			// Process queued requests
+			processQueue(null);
+
+			// Retry original request
+			// Cookie with new token automatically sent by browser
+			return api(originalRequest);
+		} else {
+			throw new Error('Refresh failed');
+		}
+	} catch (refreshError) {
+		// Clear queue with error
+		processQueue(refreshError, null);
+
+		// Handle failure
+		handleRefreshTokenFailure();
+
+		return Promise.reject(refreshError);
+	} finally {
+		isRefreshing = false;
+	}
+}
+
+/**
+ * Handle ketika refresh token gagal
+ * Improvements:
+ * - Only redirect if not already on login
+ * - Clear auth state
+ * - Show user-friendly message
+ */
+function handleRefreshTokenFailure() {
+	// Clear any stored user data
+	try {
+		localStorage.removeItem('authUser');
+	} catch (e) {
+		// ignore
+	}
+
+	// Only redirect if not already on login page
+	if (window.location.pathname !== '/login') {
+		// Optional: Show toast message
+		console.log('Session expired. Please login again.');
+
+		// Redirect to login
+		window.location.href = '/login';
+	}
+}
+
 // ============================================================================
 // AXIOS INSTANCE
 // ============================================================================
 const api = axios.create({
 	baseURL: BASE_URL,
+	withCredentials: true,  // Enable cookies for CORS requests
 });
 
 // ============================================================================
@@ -28,26 +142,8 @@ const api = axios.create({
 // ============================================================================
 api.interceptors.request.use(
 	(config) => {
-		// Skip Authorization header untuk public endpoints
-		// Usage: api.get('/endpoint', { withoutAuth: true })
-		if (config.withoutAuth) {
-			return config;
-		}
-
-		const token = (() => {
-			try {
-				const t = localStorage.getItem("authToken");
-				if (!t) return null;
-				if (t === "undefined" || t === "null") return null;
-				return t;
-			} catch (e) {
-				return null;
-			}
-		})();
-
-		if (token) {
-			config.headers.Authorization = `Bearer ${token}`;
-		}
+		// Cookie automatically sent by browser with withCredentials: true
+		// No need to manually add Authorization header
 		return config;
 	},
 	(error) => Promise.reject(error)
@@ -64,6 +160,11 @@ api.interceptors.response.use(
 			return handleUnauthorizedError(error);
 		}
 
+		// Handle 429 Rate Limit
+		if (error.response?.status === 429) {
+			handleRateLimitError(error);
+		}
+
 		// Log errors untuk debugging
 		logError(error);
 
@@ -72,144 +173,40 @@ api.interceptors.response.use(
 );
 
 // ============================================================================
-// ERROR HANDLERS
+// RATE LIMIT HANDLER
 // ============================================================================
+function handleRateLimitError(error) {
+	const retryAfter = error.response?.headers['retry-after'] || 60;
+	const message = error.response?.data?.message || `Terlalu banyak permintaan. Coba lagi dalam ${retryAfter} detik.`;
 
-/**
- * Log errors berdasarkan tipe error
- */
-function logError(error) {
-	if (error.response) {
-		// Error dari server
-		const { status, data } = error.response;
-		const message = data?.message || "Unknown error";
-
-		switch (status) {
-			case 403:
-				console.error("Forbidden access");
-				break;
-			case 500:
-				console.error("Server error");
-				break;
-			default:
-				console.error(`API Error: ${status} - ${message}`);
-		}
-	} else if (error.request) {
-		// Request dibuat tapi tidak ada response
-		if (error.code === "ECONNABORTED") {
-			console.error("Request timeout");
-		} else if (error.message === "Network Error") {
-			console.error("Network error - periksa koneksi");
-		} else {
-			console.error("No response from server");
-		}
-	} else {
-		// Error saat setup request
-		console.error("Request setup error:", error.message);
-	}
-}
-
-/**
- * Handle 401 Unauthorized dengan refresh token flow
- */
-async function handleUnauthorizedError(error) {
-	const originalRequest = error.config;
-	const oldToken = (() => {
-		try {
-			const t = localStorage.getItem("authToken");
-			if (!t) return null;
-			if (t === "undefined" || t === "null") return null;
-			return t;
-		} catch (e) {
-			return null;
-		}
-	})();
-
-	// Guard clauses
-	if (!originalRequest || originalRequest._retry) {
-		return Promise.reject(error);
-	}
-
-	if (!oldToken) {
-		return Promise.reject(error);
-	}
-
-	// Tandai request sudah di-retry
-	originalRequest._retry = true;
-
-	// Queue request jika sedang refresh
-	if (isRefreshing) {
-		return queueFailedRequest(originalRequest);
-	}
-
-	// Mulai refresh token
-	return refreshTokenAndRetry(originalRequest, oldToken);
-}
-
-/**
- * Queue request yang gagal saat refresh sedang berlangsung
- */
-function queueFailedRequest(originalRequest) {
-	return new Promise((resolve, reject) => {
-		failedQueue.push({ resolve, reject });
-	}).then((token) => {
-		originalRequest.headers.Authorization = `Bearer ${token}`;
-		return api(originalRequest);
-	});
-}
-
-/**
- * Refresh token dan retry original request
- */
-async function refreshTokenAndRetry(originalRequest, oldToken) {
-	isRefreshing = true;
-
-	try {
-		const newToken = await refreshToken(oldToken);
-
-		// Update token (hanya jika ada nilai valid)
-		if (newToken) {
-			localStorage.setItem("authToken", newToken);
-		}
-		processQueue(null, newToken);
-
-		// Retry original request dengan token baru
-		originalRequest.headers.Authorization = `Bearer ${newToken}`;
-		return api(originalRequest);
-	} catch (refreshError) {
-		processQueue(refreshError, null);
-		handleRefreshTokenFailure(originalRequest);
-		return Promise.reject(refreshError);
-	} finally {
-		isRefreshing = false;
-	}
-}
-
-/**
- * Call API refresh token
- */
-async function refreshToken(oldToken) {
-	const refreshClient = axios.create({ baseURL: BASE_URL });
-	const response = await refreshClient.post(
-		"/refresh-token",
-		{},
-		{ headers: { Authorization: `Bearer ${oldToken}` } }
+	// Dispatch custom event untuk UI feedback
+	window.dispatchEvent(
+		new CustomEvent('rate-limit-error', {
+			detail: {
+				retryAfter: parseInt(retryAfter),
+				message: message,
+			},
+		})
 	);
 
-	const newToken = response.data?.data?.token;
-	if (!newToken) {
-		throw new Error("No token returned from refresh endpoint");
+	// Show toast (react-hot-toast)
+	if (typeof toast !== 'undefined') {
+		toast.error(message, { duration: 5000 });
 	}
-
-	return newToken;
 }
 
-/**
- * Handle ketika refresh token gagal
- */
-function handleRefreshTokenFailure() {
-	localStorage.removeItem("authToken");
-	window.location.href = "/login";
+// ============================================================================
+// ERROR LOGGER
+// ============================================================================
+function logError(error) {
+	if (import.meta.env.DEV) {
+		console.group('🔴 API Error');
+		console.error('URL:', error.config?.url);
+		console.error('Method:', error.config?.method?.toUpperCase());
+		console.error('Status:', error.response?.status);
+		console.error('Message:', error.response?.data?.message || error.message);
+		console.groupEnd();
+	}
 }
 
 export default api;

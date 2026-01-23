@@ -58,7 +58,8 @@ export default function EmailVerificationPendingPage() {
 		// PROTEKSI: Jika tidak ada email sama sekali (tidak ada pendingUser),
 		// berarti user tidak punya akses ke halaman ini
 		if (!foundEmail) {
-			navigate("/login", { replace: true });
+			// Kembali ke halaman sebelumnya instead of forcing to login
+			navigate(-1, { replace: true });
 		}
 	}, [location.state, navigate]);
 

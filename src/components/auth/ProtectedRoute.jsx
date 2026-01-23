@@ -11,27 +11,30 @@ import { useAuthStore } from "@/_hooks/useAuth";
  * @returns {React.ReactNode} Children component atau Navigate ke login page
  */
 export default function ProtectedRoute({ children, allowedRoles = [], redirectTo = "/login" }) {
-	const { isAuthenticated, user, token } = useAuthStore();
+	const { isAuthenticated, user, initialized } = useAuthStore();
 	const location = useLocation();
+
+	// Wait for auth initialization to complete
+	if (!initialized) {
+		return null; // or <SuspenseFallback /> if you have one
+	}
 
 	// Apakah kita mengizinkan guest/public? (gunakan string kosong "" untuk publik)
 	const allowGuest = allowedRoles.includes("");
 
 	// Jika guest diizinkan dan user belum login, izinkan akses publik
-	if (allowGuest && (!token || !isAuthenticated)) {
+	if (allowGuest && !isAuthenticated) {
 		return children;
 	}
 
-	// Jika tidak ada token atau belum authenticated => redirect ke login
-	if (!token || !isAuthenticated) {
+	// Jika belum authenticated => redirect ke login
+	if (!isAuthenticated) {
 		return <Navigate to={redirectTo} replace />;
 	}
 
-	// Jika ada token tapi user belum dimuat, kita tidak lagi menampilkan
-	// loading di sini — treat missing `user` sebagai tidak authenticated
-	// sehingga route akan redirect ke login. Ini menyederhanakan perilaku
-	// dan mencegah tampilan yang jarang terlihat menjadi membingungkan.
-	if (token && isAuthenticated && !user) {
+	// Jika authenticated tapi user belum dimuat (should not happen with new cookie auth)
+	// treat as not authenticated untuk safety
+	if (isAuthenticated && !user) {
 		return <Navigate to={redirectTo} replace />;
 	}
 

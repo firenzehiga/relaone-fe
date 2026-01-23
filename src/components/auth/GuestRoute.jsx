@@ -12,19 +12,17 @@ import { getUserDashboard } from "./ProtectedRoute";
  * @returns {React.ReactNode} Children component atau Navigate ke dashboard
  */
 export default function GuestRoute({ children, redirectTo }) {
-	const { isAuthenticated, user, initialized, token } = useAuthStore();
+	const { isAuthenticated, user, initialized } = useAuthStore();
 	const location = useLocation();
 
-	// Tidak menunggu `initialized` di sini — jika store menandakan
-	// authenticated tetapi `user` belum ada, kita anggap sebagai tidak
-	// authenticated dan arahkan ke dashboard/login sesuai kondisi.
+	// Wait for auth initialization to complete
+	if (!initialized) {
+		return null; // or <SuspenseFallback /> if you have one
+	}
 
-	// Jika sudah authenticated, ada user, dan token masih ada di storage,
-	// redirect ke dashboard sesuai role. Memastikan token hadir mencegah
-	// mutual redirect ketika store masih menandakan authenticated tetapi
-	// `authToken` sudah dihapus (mis. oleh user/manual), yang menyebabkan
-	// loop antara ProtectedRoute -> /login dan GuestRoute -> / (dashboard).
-	if (isAuthenticated && user && token) {
+	// Cookie-based auth: if authenticated and user loaded, redirect to dashboard
+	// No need to check token - isAuthenticated is set by API call in initializeAuth
+	if (isAuthenticated && user) {
 		// Cek apakah ada state.from untuk redirect ke halaman sebelumnya
 		const from = location.state?.from?.pathname;
 
