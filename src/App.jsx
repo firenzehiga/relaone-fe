@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 // Layout Components
 import MainLayout from "@/layout/MainLayout";
 import AdminLayout from "@/layout/AdminLayout";
+import OrganizationLayout from "@/layout/OrganizationLayout";
 
 // Auth Components
 import GuestRoute from "@/components/auth/GuestRoute";
@@ -20,31 +21,45 @@ const EventsPage = lazy(() => import("@/pages/EventsPage")); // "@/pages/EventsP
 const OrganizationsPage = lazy(() => import("@/pages/OrganizationsPage")); // "@/pages/OrganizationsPage";
 const AboutPage = lazy(() => import("@/pages/AboutPage"));
 const DetailEventPage = lazy(() => import("@/pages/DetailEventPage"));
-const DetailOrganizationPage = lazy(() => import("@/pages/DetailOrganizationPage"));
+const DetailOrganizationPage = lazy(
+	() => import("@/pages/DetailOrganizationPage"),
+);
 const { PrivacyPolicyPage, TermsOfServicePage } = {
 	PrivacyPolicyPage: lazy(() =>
-		import("./pages/PrivacyTerms").then((m) => ({ default: m.PrivacyPolicyPage }))
+		import("./pages/PrivacyTerms").then((m) => ({
+			default: m.PrivacyPolicyPage,
+		})),
 	),
 	TermsOfServicePage: lazy(() =>
-		import("./pages/PrivacyTerms").then((m) => ({ default: m.TermsOfServicePage }))
+		import("./pages/PrivacyTerms").then((m) => ({
+			default: m.TermsOfServicePage,
+		})),
 	),
 };
 // Volunteer
 const ProfilePage = lazy(() => import("@/pages/volunteer/ProfilePage"));
 const EditProfilePage = lazy(() => import("@/pages/volunteer/EditProfilePage"));
-const MyActivitiesPage = lazy(() => import("@/pages/volunteer/MyActivitiesPage"));
-const ActivityDetailPage = lazy(() => import("@/pages/volunteer/ActivityDetailPage"));
+const MyActivitiesPage = lazy(
+	() => import("@/pages/volunteer/MyActivitiesPage"),
+);
+const ActivityDetailPage = lazy(
+	() => import("@/pages/volunteer/ActivityDetailPage"),
+);
 
 // Auth Pages
 import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
 const ForgotPasswordPage = lazy(() => import("@/pages/auth/ForgotPassword"));
 const ResetPasswordPage = lazy(() => import("@/pages/auth/ResetPassword"));
-const ChangePasswordPage = lazy(() => import("@/pages/auth/ChangePasswordPage"));
-const EmailVerificationPendingPage = lazy(() =>
-	import("@/pages/auth/EmailPendingVerificationPage")
+const ChangePasswordPage = lazy(
+	() => import("@/pages/auth/ChangePasswordPage"),
 );
-const VerifyEmailPage = lazy(() => import("@/pages/auth/EmailVerificationPage"));
+const EmailVerificationPendingPage = lazy(
+	() => import("@/pages/auth/EmailPendingVerificationPage"),
+);
+const VerifyEmailPage = lazy(
+	() => import("@/pages/auth/EmailVerificationPage"),
+);
 
 // Modals
 import JoinEventModal from "@/components/volunteer/JoinEventModal";
@@ -58,67 +73,107 @@ const NotFound = lazy(() => import("@/components/fallback/NotFound")); // "@/com
 
 // Admin Pages (lazy loaded)
 const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));
-const AdminProfilePage = lazy(() => import("@/pages/admin/profiles/ProfilePage"));
-const AdminEditProfilePage = lazy(() => import("@/pages/admin/profiles/EditProfilePage"));
+const AdminProfilePage = lazy(
+	() => import("@/pages/admin/profiles/ProfilePage"),
+);
+const AdminEditProfilePage = lazy(
+	() => import("@/pages/admin/profiles/EditProfilePage"),
+);
 
 const AdminUser = lazy(() => import("@/pages/admin/users/UserRead"));
 
-const AdminOrganization = lazy(() => import("@/pages/admin/organizations/OrganizationRead"));
-const AdminOrganizationCreate = lazy(() =>
-	import("@/pages/admin/organizations/OrganizationCreate")
+const AdminOrganization = lazy(
+	() => import("@/pages/admin/organizations/OrganizationRead"),
 );
-const AdminOrganizationEdit = lazy(() => import("@/pages/admin/organizations/OrganizationEdit"));
+const AdminOrganizationCreate = lazy(
+	() => import("@/pages/admin/organizations/OrganizationCreate"),
+);
+const AdminOrganizationEdit = lazy(
+	() => import("@/pages/admin/organizations/OrganizationEdit"),
+);
 
 const AdminEvent = lazy(() => import("@/pages/admin/events/EventRead"));
 const AdminEventCreate = lazy(() => import("@/pages/admin/events/EventCreate"));
 const AdminEventEdit = lazy(() => import("@/pages/admin/events/EventEdit"));
 
-const AdminEventParticipant = lazy(() =>
-	import("@/pages/admin/event-participants/EventParticipantRead")
+const AdminEventParticipant = lazy(
+	() => import("@/pages/admin/event-participants/EventParticipantRead"),
 );
-const AdminEventParticipantCreate = lazy(() =>
-	import("@/pages/admin/event-participants/EventParticipantCreate")
+const AdminEventParticipantCreate = lazy(
+	() => import("@/pages/admin/event-participants/EventParticipantCreate"),
 );
-const AdminEventParticipantEdit = lazy(() =>
-	import("@/pages/admin/event-participants/EventParticipantEdit")
+const AdminEventParticipantEdit = lazy(
+	() => import("@/pages/admin/event-participants/EventParticipantEdit"),
 );
 
-const AdminLocation = lazy(() => import("@/pages/admin/locations/LocationRead"));
-const AdminLocationCreate = lazy(() => import("@/pages/admin/locations/LocationCreate"));
-const AdminLocationEdit = lazy(() => import("@/pages/admin/locations/LocationEdit"));
+const AdminLocation = lazy(
+	() => import("@/pages/admin/locations/LocationRead"),
+);
+const AdminLocationCreate = lazy(
+	() => import("@/pages/admin/locations/LocationCreate"),
+);
+const AdminLocationEdit = lazy(
+	() => import("@/pages/admin/locations/LocationEdit"),
+);
 
-const AdminCategory = lazy(() => import("@/pages/admin/categories/CategoryRead"));
-const AdminCategoryCreate = lazy(() => import("@/pages/admin/categories/CategoryCreate"));
-const AdminCategoryEdit = lazy(() => import("@/pages/admin/categories/CategoryEdit"));
+const AdminCategory = lazy(
+	() => import("@/pages/admin/categories/CategoryRead"),
+);
+const AdminCategoryCreate = lazy(
+	() => import("@/pages/admin/categories/CategoryCreate"),
+);
+const AdminCategoryEdit = lazy(
+	() => import("@/pages/admin/categories/CategoryEdit"),
+);
 
-const AdminFeedback = lazy(() => import("@/pages/admin/feedbacks/FeedbackRead"));
-const AdminFeedbackEdit = lazy(() => import("@/pages/admin/feedbacks/FeedbackEdit"));
+const AdminFeedback = lazy(
+	() => import("@/pages/admin/feedbacks/FeedbackRead"),
+);
+const AdminFeedbackEdit = lazy(
+	() => import("@/pages/admin/feedbacks/FeedbackEdit"),
+);
 
 // Organization Pages (lazy loaded)
-const OrganizationsDashboard = lazy(() => import("@/pages/organization/OrganizationDashboard"));
-const OrganizationProfilePage = lazy(() => import("@/pages/organization/profiles/ProfilePage"));
-const OrganizationEditProfilePage = lazy(() =>
-	import("@/pages/organization/profiles/EditProfilePage")
+const OrganizationsDashboard = lazy(
+	() => import("@/pages/organization/OrganizationDashboard"),
+);
+const OrganizationProfilePage = lazy(
+	() => import("@/pages/organization/profiles/ProfilePage"),
+);
+const OrganizationEditProfilePage = lazy(
+	() => import("@/pages/organization/profiles/EditProfilePage"),
 );
 
-const OrganizationEvent = lazy(() => import("@/pages/organization/events/EventRead"));
-const OrganizationEventCreate = lazy(() => import("@/pages/organization/events/EventCreate"));
-const OrganizationEventEdit = lazy(() => import("@/pages/organization/events/EventEdit"));
-
-const OrganizationEventParticipant = lazy(() =>
-	import("@/pages/organization/event-participants/EventParticipantRead")
+const OrganizationEvent = lazy(
+	() => import("@/pages/organization/events/EventRead"),
 );
-const EventScannerPage = lazy(() =>
-	import("@/pages/organization/event-participants/EventScannerPage")
+const OrganizationEventCreate = lazy(
+	() => import("@/pages/organization/events/EventCreate"),
+);
+const OrganizationEventEdit = lazy(
+	() => import("@/pages/organization/events/EventEdit"),
 );
 
-const OrganizationFeedback = lazy(() => import("@/pages/organization/feedbacks/FeedbackRead"));
-
-const OrganizationLocation = lazy(() => import("@/pages/organization/locations/LocationRead"));
-const OrganizationLocationCreate = lazy(() =>
-	import("@/pages/organization/locations/LocationCreate")
+const OrganizationEventParticipant = lazy(
+	() => import("@/pages/organization/event-participants/EventParticipantRead"),
 );
-const OrganizationLocationEdit = lazy(() => import("@/pages/organization/locations/LocationEdit"));
+const EventScannerPage = lazy(
+	() => import("@/pages/organization/event-participants/EventScannerPage"),
+);
+
+const OrganizationFeedback = lazy(
+	() => import("@/pages/organization/feedbacks/FeedbackRead"),
+);
+
+const OrganizationLocation = lazy(
+	() => import("@/pages/organization/locations/LocationRead"),
+);
+const OrganizationLocationCreate = lazy(
+	() => import("@/pages/organization/locations/LocationCreate"),
+);
+const OrganizationLocationEdit = lazy(
+	() => import("@/pages/organization/locations/LocationEdit"),
+);
 
 import { ScrollToTop } from "@/components/common/ScrollToTop";
 import FloatingHelp from "@/components/common/FloatingHelp";
@@ -152,7 +207,10 @@ function App() {
 						</Route>
 						<Route path="organizations">
 							<Route index element={<OrganizationsPage />} />
-							<Route path="details/:organizationId" element={<DetailOrganizationPage />} />
+							<Route
+								path="details/:organizationId"
+								element={<DetailOrganizationPage />}
+							/>
 						</Route>
 						<Route path="about-us" element={<AboutPage />} />
 					</Route>
@@ -232,7 +290,7 @@ function App() {
 						path="organization"
 						element={
 							<OrganizationRoute>
-								<MainLayout />
+								<OrganizationLayout />
 							</OrganizationRoute>
 						}>
 						<Route path="dashboard" element={<OrganizationsDashboard />} />
@@ -278,7 +336,10 @@ function App() {
 								<AdminLayout />
 							</ProtectedRoute>
 						}>
-						<Route path="admin/change-password" element={<ChangePasswordPage />} />
+						<Route
+							path="admin/change-password"
+							element={<ChangePasswordPage />}
+						/>
 					</Route>
 					<Route
 						element={
@@ -340,15 +401,20 @@ function App() {
 			{currentRole && currentRole !== "admin" && (
 				<>
 					{/* Floating help button */}
-					<FloatingHelp whatsapp={"6285894310722"} email={"relaonevolunteer@gmail.com"} />
+					<FloatingHelp
+						whatsapp={"6285894310722"}
+						email={"relaonevolunteer@gmail.com"}
+					/>
 				</>
 			)}
-			{currentRole && currentRole !== "admin" && currentRole !== "organization" && (
-				<>
-					{/* Floating FAQ button */}
-					<FloatingFaQ />
-				</>
-			)}
+			{currentRole &&
+				currentRole !== "admin" &&
+				currentRole !== "organization" && (
+					<>
+						{/* Floating FAQ button */}
+						<FloatingFaQ />
+					</>
+				)}
 		</>
 	);
 }

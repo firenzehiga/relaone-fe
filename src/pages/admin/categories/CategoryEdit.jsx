@@ -3,7 +3,7 @@ import { Activity, Heart, Leaf, Users, BookOpen, Stethoscope } from "lucide-reac
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
-import Skeleton from "@/components/ui/Skeleton";
+import CustomSkeleton from "@/components/ui/CustomSkeleton";
 import Button from "@/components/ui/DynamicButton";
 import { useAuthStore } from "@/_hooks/useAuth";
 
@@ -58,7 +58,7 @@ export default function AdminCategoryEdit() {
 		await updateCategoryMutation.mutateAsync({ id, data: payload });
 	};
 
-	if (showCategoryLoading) return <Skeleton.FormSkeleton title="Loading..." />;
+	if (showCategoryLoading) return <CustomSkeleton.FormSkeleton title="Loading..." />;
 
 	return (
 		<div className="w-full mx-auto p-4 sm:p-6 max-w-6xl min-h-[calc(100vh-4rem)]">

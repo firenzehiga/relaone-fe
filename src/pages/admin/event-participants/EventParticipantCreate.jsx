@@ -8,7 +8,7 @@ import { useAdminVolunteerUsers } from "@/_hooks/useUsers";
 import { useAdminCreateParticipantMutation } from "@/_hooks/useParticipants";
 import { toInputDate } from "@/utils/dateFormatter";
 import Button from "@/components/ui/DynamicButton";
-import Skeleton from "@/components/ui/Skeleton";
+import CustomSkeleton from "@/components/ui/CustomSkeleton";
 import { showToast } from "@/components/ui/Toast";
 import { useAuthStore } from "@/_hooks/useAuth";
 
@@ -76,7 +76,7 @@ export default function AdminEventParticipantCreate() {
 		await createMutation.mutateAsync(payload);
 	};
 
-	if (eventsLoading || volunteersLoading) return <Skeleton.FormSkeleton title="Loading..." />;
+	if (eventsLoading || volunteersLoading) return <CustomSkeleton.FormSkeleton title="Loading..." />;
 
 	if (eventsError || volunteersError) {
 		return <p>Error: {eventsError?.message || volunteersError?.message}</p>;

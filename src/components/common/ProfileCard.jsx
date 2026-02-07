@@ -17,7 +17,9 @@ const itemVariants = {
 };
 
 export default function ProfileCard({ profile, role = "volunteer" }) {
-	const badgeVol = getVolunteerEventBadge(profile?.analytics?.events_participated_count);
+	const badgeVol = getVolunteerEventBadge(
+		profile?.analytics?.events_participated_count,
+	);
 	const BadgeIconVol = badgeVol.icon;
 
 	return (
@@ -40,7 +42,9 @@ export default function ProfileCard({ profile, role = "volunteer" }) {
 
 						{/* Event Badge - Top Right */}
 						{(() => {
-							const badgeOrg = getOrganizationEventBadge(profile?.analytics?.events_created_count);
+							const badgeOrg = getOrganizationEventBadge(
+								profile?.analytics?.events_created_count,
+							);
 							const BadgeIconOrg = badgeOrg.icon;
 							return (
 								<div className="absolute -top-2 -right-2">
@@ -65,7 +69,7 @@ export default function ProfileCard({ profile, role = "volunteer" }) {
 						{/* Verification Badge - Top Left */}
 						{(() => {
 							const verificationBadge = getOrganizationVerificationBadge(
-								profile?.role_data?.status_verifikasi
+								profile?.role_data?.status_verifikasi,
 							);
 							const VerificationIcon = verificationBadge.icon;
 							return (
@@ -77,8 +81,12 @@ export default function ProfileCard({ profile, role = "volunteer" }) {
 										{/* Tooltip */}
 										<div className="absolute bottom-full left-0 mb-2 w-36 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
 											<div className="bg-gray-900 text-white text-xs rounded-lg py-2 px-3 shadow-lg">
-												<div className="font-semibold">{verificationBadge.title}</div>
-												<div className="text-gray-300">{verificationBadge.description}</div>
+												<div className="font-semibold">
+													{verificationBadge.title}
+												</div>
+												<div className="text-gray-300">
+													{verificationBadge.description}
+												</div>
 												{/* Arrow */}
 												<div className="absolute top-full left-3 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
 											</div>
@@ -100,7 +108,9 @@ export default function ProfileCard({ profile, role = "volunteer" }) {
 					<h2 className="text-lg font-bold text-gray-900 mb-1">
 						{profile?.role_data?.nama || profile?.nama || "Nama tidak tersedia"}
 					</h2>
-					<p className="text-gray-600 mb-3 text-sm">{profile?.email || "Email tidak tersedia"}</p>
+					<p className="text-gray-600 mb-3 text-sm">
+						{profile?.email || "Email tidak tersedia"}
+					</p>
 
 					{/* Edit Button */}
 					<Link to="/organization/profile/edit">
@@ -123,7 +133,7 @@ export default function ProfileCard({ profile, role = "volunteer" }) {
 					<div className="relative mb-4">
 						{profile?.foto_profil ? (
 							<img
-								src={getImageUrl(profile?.foto_profil)}
+								src={getImageUrl(`foto_profil/${profile?.foto_profil}`)}
 								alt="Avatar"
 								className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-lg"
 							/>
@@ -143,7 +153,9 @@ export default function ProfileCard({ profile, role = "volunteer" }) {
 					<h2 className="text-lg font-bold text-gray-900 mb-1">
 						{profile?.nama || "Nama tidak tersedia"}
 					</h2>
-					<p className="text-gray-600 mb-3 text-sm">{profile?.email || "Email tidak tersedia"}</p>
+					<p className="text-gray-600 mb-3 text-sm">
+						{profile?.email || "Email tidak tersedia"}
+					</p>
 
 					{/* Edit Button */}
 					<Link to="/admin/profile/edit">
@@ -200,7 +212,9 @@ export default function ProfileCard({ profile, role = "volunteer" }) {
 					<h2 className="text-lg font-bold text-gray-900 mb-1">
 						{profile?.nama || "Nama tidak tersedia"}
 					</h2>
-					<p className="text-gray-600 mb-3 text-sm">{profile?.email || "Email tidak tersedia"}</p>
+					<p className="text-gray-600 mb-3 text-sm">
+						{profile?.email || "Email tidak tersedia"}
+					</p>
 
 					<Link to="/volunteer/profile/edit">
 						<Button variant="success" className="w-full" size="sm">

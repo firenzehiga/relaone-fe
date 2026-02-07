@@ -8,6 +8,7 @@ html {
 }
 
 body {
+	font-family: 'Poppins', 'ui-sans-serif', 'system-ui', 'sans-serif';
 	font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 	font-variant-ligatures: normal;
 	-webkit-font-smoothing: antialiased;
@@ -219,7 +220,7 @@ textarea {
 }
 
 @layer base {
-  :root {
+	:root {
 		--background: 0 0% 100%;
 		--foreground: 0 0% 3.9%;
 		--card: 0 0% 100%;
@@ -245,8 +246,17 @@ textarea {
 		--chart-4: 43 74% 66%;
 		--chart-5: 27 87% 67%;
 		--radius: 0.5rem;
+		--sidebar-background: 0 0% 100%;
+		--sidebar-foreground: 240 5.3% 26.1%;
+		--sidebar-primary: 240 5.9% 10%;
+		--sidebar-primary-foreground: 0 0% 98%;
+		--sidebar-accent: 0 0% 96.1%;
+		--sidebar-accent-foreground: 240 5.9% 10%;
+		--sidebar-border: 0 0% 89.8%;
+		--sidebar-ring: 217.2 91.2% 59.8%;
 	}
-  .dark {
+
+	.dark {
 		--background: 0 0% 3.9%;
 		--foreground: 0 0% 98%;
 		--card: 0 0% 3.9%;
@@ -271,20 +281,106 @@ textarea {
 		--chart-3: 30 80% 55%;
 		--chart-4: 280 65% 60%;
 		--chart-5: 340 75% 55%;
+		--sidebar-background: 240 5.9% 10%;
+		--sidebar-foreground: 240 4.8% 95.9%;
+		--sidebar-primary: 224.3 76.3% 48%;
+		--sidebar-primary-foreground: 0 0% 100%;
+		--sidebar-accent: 240 3.7% 15.9%;
+		--sidebar-accent-foreground: 240 4.8% 95.9%;
+		--sidebar-border: 240 3.7% 15.9%;
+		--sidebar-ring: 217.2 91.2% 59.8%;
 	}
-  .maplibregl-popup-content {
-    @apply bg-transparent! shadow-none! p-0! rounded-none!;
+
+	.maplibregl-popup-content {
+		@apply bg-transparent ! shadow-none ! p-0 ! rounded-none !;
 	}
-  .maplibregl-popup-tip {
-    @apply hidden!;
+
+	.maplibregl-popup-tip {
+		@apply hidden !;
+	}
+
+	/* Ensure sidebar background is solid on mobile */
+	[data-sidebar="sidebar"][data-mobile="true"] {
+		background-color: hsl(var(--sidebar-background)) !important;
+	}
+
+	/* Ensure sidebar content is properly styled */
+	[data-sidebar="sidebar"] {
+		background-color: hsl(var(--sidebar-background));
+	}
+
+	/* Ensure UserMenu dropdown is always on top */
+	.user-menu-dropdown {
+		z-index: 99999 !important;
+		position: fixed !important;
+	}
+
+	/* Z-index management for proper layering */
+	.sidebar-header-sticky {
+		z-index: 40 !important;
+	}
+
+	/* Ensure cards and containers don't interfere with header */
+	[class*="bg-emerald"], [class*="bg-teal"], [class*="bg-blue"] {
+		position: relative;
+		z-index: 1;
+	}
+
+	/* Ensure all cards respect header z-index */
+	.card, [data-card], .bg-white {
+		position: relative;
+		z-index: 1;
+	}
+
+	/* Override any z-index conflicts */
+	.sticky {
+		z-index: 10;
+	}
+
+	header.sticky {
+		z-index: 40 !important;
+	}
+
+	/* Ensure modal and dropdown components are always on top */
+	.modal, .dropdown, .popover, .tooltip {
+		z-index: 1000;
+	}
+
+	/* Special case for UserMenu */
+	.user-menu-dropdown {
+		z-index: 99999 !important;
+	}
+
+	/* Mobile responsive adjustments */
+	@media (max-width: 768px) {
+		.user-menu-dropdown {
+			right: 1rem !important;
+			left: auto !important;
+			width: 12rem !important;
+		}
+
+		header.sticky {
+			z-index: 50 !important;
+		}
+	}
+
+	/* Ensure content doesn't overlap with sticky header */
+	.sidebar-content {
+		padding-top: 1rem;
+	}
+
+	/* Fix for scroll behavior */
+	.sidebar-inset {
+		overflow-x: hidden;
 	}
 }
 
 @layer base {
-  * {
-    @apply border-border;
+	* {
+		@apply border-border;
 	}
-  body {
-    @apply bg-background text-foreground;
+
+	body {
+		@apply bg-background text-foreground;
 	}
 }

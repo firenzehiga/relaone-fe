@@ -35,7 +35,7 @@ import Card from "@/components/ui/Card";
 import Button from "@/components/ui/DynamicButton";
 import { DatePicker } from "@/components/ui/date-picker";
 import toast from "react-hot-toast";
-import Skeleton from "@/components/ui/Skeleton";
+import CustomSkeleton from "@/components/ui/CustomSkeleton";
 import { useForm, Controller } from "react-hook-form";
 
 export default function EditProfilePage() {
@@ -97,7 +97,7 @@ export default function EditProfilePage() {
 		});
 
 		if (profileData.foto_profil) {
-			setImagePreview(getImageUrl(profileData.foto_profil));
+			setImagePreview(getImageUrl(`foto_profil/${profileData.foto_profil}`));
 		}
 	}, [profileData]);
 
@@ -198,7 +198,7 @@ export default function EditProfilePage() {
 	if (isLoadingProfile) {
 		return (
 			<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
-				<Skeleton.FormSkeleton />
+				<CustomSkeleton.FormSkeleton />
 			</div>
 		);
 	}
@@ -416,11 +416,11 @@ export default function EditProfilePage() {
 															if (date) {
 																const year = date.getFullYear();
 																const month = String(
-																	date.getMonth() + 1
+																	date.getMonth() + 1,
 																).padStart(2, "0");
 																const day = String(date.getDate()).padStart(
 																	2,
-																	"0"
+																	"0",
 																);
 																field.onChange(`${year}-${month}-${day}`);
 															} else {

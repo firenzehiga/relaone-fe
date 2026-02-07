@@ -3,7 +3,13 @@ import { Link } from "react-router-dom";
 
 // UI Libraries
 import DataTable from "react-data-table-component";
-import { EllipsisVerticalIcon, AlertCircle, ChevronDown, Loader2, Eye } from "lucide-react";
+import {
+	EllipsisVerticalIcon,
+	AlertCircle,
+	ChevronDown,
+	Loader2,
+	Eye,
+} from "lucide-react";
 
 // Hooks
 import { useOrgFeedbacks } from "@/_hooks/useFeedbacks";
@@ -59,7 +65,9 @@ export default function OrganizationFeedback() {
 
 		// Filter by event
 		if (eventFilter !== "all") {
-			filtered = filtered.filter((feedback) => feedback.event?.id === parseInt(eventFilter));
+			filtered = filtered.filter(
+				(feedback) => feedback.event?.id === parseInt(eventFilter),
+			);
 		}
 
 		return filtered;
@@ -105,7 +113,14 @@ export default function OrganizationFeedback() {
 			name: "Rating",
 			cell: (row) => {
 				const rating = Math.max(0, Math.min(5, Number(row.rating) || 0));
-				return <RatingStars rating={rating} maxRating={5} size="sm" interactive={false} />;
+				return (
+					<RatingStars
+						rating={rating}
+						maxRating={5}
+						size="sm"
+						interactive={false}
+					/>
+				);
 			},
 			sortable: false,
 			width: "220px",
@@ -114,25 +129,32 @@ export default function OrganizationFeedback() {
 
 	if (feedbacksError) {
 		return (
-			<div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+			<div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
 				<div className="flex flex-col items-center justify-center  text-gray-600">
 					<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 					<h3 className="text-lg font-semibold mb-2">Error</h3>
-					<p className="text-gray-500 mb-4 text-center">Gagal mengambil data feedback.</p>
-					<p className="text-red-500 mb-4 text-center font-semibold">{feedbacksError.message}</p>
+					<p className="text-gray-500 mb-4 text-center">
+						Gagal mengambil data feedback.
+					</p>
+					<p className="text-red-500 mb-4 text-center font-semibold">
+						{feedbacksError.message}
+					</p>
 				</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="py-8 bg-emerald-100 page-transition min-h-screen">
+		<div className="py-8page-transition min-h-screen">
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="bg-white rounded-lg shadow p-6">
 					<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
 						<h2 className="text-lg font-semibold">
 							{feedbacksRefetching ? (
-								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
+								<FetchLoader
+									variant="inline"
+									text="Mengambil Data Terbaru..."
+								/>
 							) : (
 								"Daftar Feedback"
 							)}
@@ -209,7 +231,9 @@ export default function OrganizationFeedback() {
 								<div className="flex flex-col items-center justify-center h-64 text-gray-600">
 									<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 									<h3 className="text-lg font-semibold mb-2">
-										{searchFeedback ? "No Matching Feedback Found" : "No Feedback Available"}
+										{searchFeedback
+											? "No Matching Feedback Found"
+											: "No Feedback Available"}
 									</h3>
 									<p className="text-gray-500 mb-4 text-center">
 										{searchFeedback

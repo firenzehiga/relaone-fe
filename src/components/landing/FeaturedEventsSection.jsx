@@ -1,11 +1,15 @@
 import { motion } from "framer-motion";
 import DynamicButton from "@/components/ui/DynamicButton";
 import EventCard from "@/components/EventCard";
-import Skeleton from "@/components/ui/Skeleton";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import CustomSkeleton from "../ui/CustomSkeleton";
 
-export default function FeaturedEventsSection({ eventsLoading, featuredEvents = [], onJoin }) {
+export default function FeaturedEventsSection({
+	eventsLoading,
+	featuredEvents = [],
+	onJoin,
+}) {
 	const navigate = useNavigate();
 
 	return (
@@ -13,7 +17,9 @@ export default function FeaturedEventsSection({ eventsLoading, featuredEvents = 
 			<div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="flex items-center justify-between mb-12">
 					<div>
-						<h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Kegiatan Terbaru</h2>
+						<h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+							Kegiatan Terbaru
+						</h2>
 						<p className="text-xl text-gray-600">
 							Kegiatan sosial yang sedang dibuka untuk pendaftaran
 						</p>
@@ -27,7 +33,7 @@ export default function FeaturedEventsSection({ eventsLoading, featuredEvents = 
 				{eventsLoading ? (
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 						{Array.from({ length: 3 }).map((_, i) => (
-							<Skeleton.EventCard key={i} />
+							<CustomSkeleton.EventCard key={i} />
 						))}
 					</div>
 				) : (

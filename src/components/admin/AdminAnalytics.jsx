@@ -17,10 +17,10 @@ import {
 } from "recharts";
 import StatsCard from "./StatsCard";
 import Card from "../ui/Card";
-import Skeleton from "../ui/Skeleton";
 import { formatRelativeTime } from "@/utils/dateFormatter";
 import Badge from "../ui/Badge";
 import { AlertCircle } from "lucide-react";
+import CustomSkeleton from "../ui/CustomSkeleton";
 /**
  * AdminAnalytics Component
  * Component untuk menampilkan analytics dashboard dengan berbagai statistik dan charts
@@ -161,7 +161,8 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 				<div className="bg-white px-4 py-2 border border-gray-200 rounded-lg shadow-lg">
 					<p className="text-sm font-medium text-gray-900">{label}</p>
 					<p className="text-sm text-gray-600">
-						{payload[0].name}: <span className="font-bold">{payload[0].value}</span>
+						{payload[0].name}:{" "}
+						<span className="font-bold">{payload[0].value}</span>
 					</p>
 				</div>
 			);
@@ -170,7 +171,7 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 	};
 
 	if (isLoading) {
-		return <Skeleton.AnalyticsSkeleton />;
+		return <CustomSkeleton.AnalyticsSkeleton />;
 	}
 
 	if (error) {
@@ -178,9 +179,15 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 			<div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
 				<div className="flex flex-col items-center justify-center  text-gray-600">
 					<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
-					<h3 className="text-lg font-semibold mb-2">Error loading analytics data</h3>
-					<p className="text-gray-500 mb-4 text-center">Gagal mengambil data analytics.</p>
-					<p className="text-red-500 mb-4 text-center font-semibold">{error?.message}</p>
+					<h3 className="text-lg font-semibold mb-2">
+						Error loading analytics data
+					</h3>
+					<p className="text-gray-500 mb-4 text-center">
+						Gagal mengambil data analytics.
+					</p>
+					<p className="text-red-500 mb-4 text-center font-semibold">
+						{error?.message}
+					</p>
 				</div>
 			</div>
 		);
@@ -195,17 +202,23 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 	}
 
 	return (
-		<div className="space-y-8">
+		<div className="space-y-8 pb-12">
 			{/* Key Metrics Overview - Reduced to 6 most important cards */}
 			<div>
-				<h2 className="text-2xl font-bold text-gray-900 mb-4">📊 Ringkasan Informasi</h2>
+				<h2 className="text-2xl font-bold text-gray-900 mb-4">
+					Ringkasan Informasi
+				</h2>
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 					{/* Users */}
 					<StatsCard
 						title="Total Pengguna"
 						value={data.users?.total_users || 0}
 						icon={
-							<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<svg
+								className="w-6 h-6"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24">
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
@@ -225,7 +238,11 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 						title="Total Kegiatan"
 						value={data.events?.total_events || 0}
 						icon={
-							<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<svg
+								className="w-6 h-6"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24">
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
@@ -245,7 +262,11 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 						title="Total Partisipan"
 						value={data.participants?.total_participants || 0}
 						icon={
-							<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<svg
+								className="w-6 h-6"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24">
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
@@ -265,9 +286,15 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 					{/* Login Activity */}
 					<StatsCard
 						title="Total Aktivitas Login"
-						value={loginTrendData.reduce((sum, item) => sum + item.count, 0) || 0}
+						value={
+							loginTrendData.reduce((sum, item) => sum + item.count, 0) || 0
+						}
 						icon={
-							<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<svg
+								className="w-6 h-6"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24">
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
@@ -285,7 +312,11 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 						title="Total Kegiatan Selesai"
 						value={data.events?.completed_events || 0}
 						icon={
-							<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<svg
+								className="w-6 h-6"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24">
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
@@ -303,7 +334,11 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 						title="Tingkat Kehadiran"
 						value={`${data.participants?.attendance_rate || 0}%`}
 						icon={
-							<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<svg
+								className="w-6 h-6"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24">
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
@@ -322,9 +357,13 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 				{/* Users by Role - Pie Chart */}
 				<Card>
-					<h3 className="text-lg font-bold text-gray-900 mb-4">Pengguna Berdasarkan Role</h3>
+					<h3 className="text-lg font-bold text-gray-900 mb-4">
+						Pengguna Berdasarkan Role
+					</h3>
 					{usersByRoleData.length === 0 ? (
-						<div className="py-16 text-center text-gray-500">Belum ada data role pengguna</div>
+						<div className="py-16 text-center text-gray-500">
+							Belum ada data role pengguna
+						</div>
 					) : (
 						<ResponsiveContainer width="100%" height={300}>
 							<PieChart>
@@ -333,12 +372,17 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 									cx="50%"
 									cy="50%"
 									labelLine={false}
-									label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+									label={({ name, percent }) =>
+										`${name}: ${(percent * 100).toFixed(0)}%`
+									}
 									outerRadius={80}
 									fill="#8884d8"
 									dataKey="value">
 									{usersByRoleData.map((entry, index) => (
-										<Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+										<Cell
+											key={`cell-${index}`}
+											fill={PIE_COLORS[index % PIE_COLORS.length]}
+										/>
 									))}
 								</Pie>
 								<Tooltip />
@@ -350,9 +394,13 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 
 				{/* Users by Status - Pie Chart */}
 				<Card>
-					<h3 className="text-lg font-bold text-gray-900 mb-4">Pengguna Berdasarkan Status</h3>
+					<h3 className="text-lg font-bold text-gray-900 mb-4">
+						Pengguna Berdasarkan Status
+					</h3>
 					{usersByStatusData.length === 0 ? (
-						<div className="py-16 text-center text-gray-500">Belum ada data status pengguna</div>
+						<div className="py-16 text-center text-gray-500">
+							Belum ada data status pengguna
+						</div>
 					) : (
 						<ResponsiveContainer width="100%" height={300}>
 							<PieChart>
@@ -361,12 +409,17 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 									cx="50%"
 									cy="50%"
 									labelLine={false}
-									label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+									label={({ name, percent }) =>
+										`${name}: ${(percent * 100).toFixed(0)}%`
+									}
 									outerRadius={80}
 									fill="#8884d8"
 									dataKey="value">
 									{usersByStatusData.map((entry, index) => (
-										<Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+										<Cell
+											key={`cell-${index}`}
+											fill={PIE_COLORS[index % PIE_COLORS.length]}
+										/>
 									))}
 								</Pie>
 								<Tooltip />
@@ -381,7 +434,9 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 				{/* Login Trend */}
 				<Card>
-					<h3 className="text-lg font-bold text-gray-900 mb-4">Tren Login (7 Hari Terakhir)</h3>
+					<h3 className="text-lg font-bold text-gray-900 mb-4">
+						Tren Login (7 Hari Terakhir)
+					</h3>
 					<ResponsiveContainer width="100%" height={300}>
 						<LineChart data={loginTrendData}>
 							<CartesianGrid strokeDasharray="3 3" />
@@ -407,7 +462,9 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 
 				{/* Registration Trend */}
 				<Card>
-					<h3 className="text-lg font-bold text-gray-900 mb-4">Tren Pendaftaran Partisipan</h3>
+					<h3 className="text-lg font-bold text-gray-900 mb-4">
+						Tren Pendaftaran Partisipan
+					</h3>
 					<ResponsiveContainer width="100%" height={300}>
 						<LineChart data={registrationTrendData}>
 							<CartesianGrid strokeDasharray="3 3" />
@@ -434,7 +491,9 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 
 			{/* Participants by Status - Bar Chart */}
 			<Card>
-				<h3 className="text-lg font-bold text-gray-900 mb-4">Partisipan Berdasarkan Status</h3>
+				<h3 className="text-lg font-bold text-gray-900 mb-4">
+					Partisipan Berdasarkan Status
+				</h3>
 				{participantsByStatusData.length === 0 ? (
 					<div className="py-16 text-center text-gray-500">
 						Belum ada data partisipan berdasarkan status
@@ -450,8 +509,16 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 							/>
 							<Tooltip content={<CustomTooltip />} />
 							<Legend />
-							<Bar dataKey="value" name="Count" fill={COLORS.primary} radius={[8, 8, 0, 0]}>
-								<LabelList dataKey="value" position="top" formatter={(v) => Math.round(v)} />
+							<Bar
+								dataKey="value"
+								name="Count"
+								fill={COLORS.primary}
+								radius={[8, 8, 0, 0]}>
+								<LabelList
+									dataKey="value"
+									position="top"
+									formatter={(v) => Math.round(v)}
+								/>
 							</Bar>
 						</BarChart>
 					</ResponsiveContainer>
@@ -459,10 +526,12 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 			</Card>
 
 			{/* Recent Logins & Most Active Users */}
-			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 ">
 				{/* Recent Logins */}
 				<Card>
-					<h3 className="text-lg font-bold text-gray-900 mb-4">Login Terbaru</h3>
+					<h3 className="text-lg font-bold text-gray-900 mb-4">
+						Login Terbaru
+					</h3>
 					<div className="space-y-3">
 						{data.users?.recent_logins?.length > 0 ? (
 							data.users.recent_logins.slice(0, 5).map((user) => (
@@ -482,27 +551,31 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 												user.role === "admin"
 													? "orange"
 													: user.role === "organization"
-													? "success"
-													: "primary"
+														? "success"
+														: "primary"
 											}>
 											{user.role === "admin"
 												? "Admin"
 												: user.role === "organization"
-												? "Organization"
-												: "Volunteer"}
+													? "Organization"
+													: "Volunteer"}
 										</Badge>
 									</div>
 								</div>
 							))
 						) : (
-							<p className="text-gray-500 text-center py-4">Belum ada login terbaru</p>
+							<p className="text-gray-500 text-center py-4">
+								Belum ada login terbaru
+							</p>
 						)}
 					</div>
 				</Card>
 
 				{/* Most Active Users */}
 				<Card>
-					<h3 className="text-lg font-bold text-gray-900 mb-4">Pengguna Paling Aktif</h3>
+					<h3 className="text-lg font-bold text-gray-900 mb-4">
+						Pengguna Paling Aktif
+					</h3>
 					<div className="space-y-3">
 						{data.users?.most_active_users?.length > 0 ? (
 							data.users.most_active_users.slice(0, 5).map((user) => (
@@ -514,13 +587,17 @@ export default function AdminAnalytics({ data, isLoading, error }) {
 										<p className="text-sm text-gray-600">{user.email}</p>
 									</div>
 									<div className="ml-4 text-right">
-										<p className="text-lg font-bold text-blue-600">{user.login_count}</p>
+										<p className="text-lg font-bold text-blue-600">
+											{user.login_count}
+										</p>
 										<p className="text-xs text-gray-500">logins</p>
 									</div>
 								</div>
 							))
 						) : (
-							<p className="text-gray-500 text-center py-4">Belum ada data pengguna aktif</p>
+							<p className="text-gray-500 text-center py-4">
+								Belum ada data pengguna aktif
+							</p>
 						)}
 					</div>
 				</Card>

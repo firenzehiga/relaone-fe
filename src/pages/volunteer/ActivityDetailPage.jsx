@@ -37,7 +37,7 @@ import { formatDate, formatDateTime, formatTime } from "@/utils/dateFormatter";
 // UI Components
 import QrCodeDisplay from "@/components/volunteer/QrCodeDisplay";
 import DynamicButton from "@/components/ui/DynamicButton";
-import Skeleton from "@/components/ui/Skeleton";
+import CustomSkeleton from "@/components/ui/CustomSkeleton";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 
@@ -49,7 +49,7 @@ export default function ActivityDetailPage() {
 	const { data, isLoading, error } = userVolunteerHistoryById(id);
 
 	if (isLoading) {
-		return <Skeleton.ActivityDetailSkeleton />;
+		return <CustomSkeleton.ActivityDetailSkeleton />;
 	}
 
 	if (error || !data) {
@@ -59,7 +59,9 @@ export default function ActivityDetailPage() {
 					<div className="mx-auto w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-6">
 						<AlertCircle className="text-red-600" size={48} />
 					</div>
-					<h2 className="text-2xl font-bold text-gray-900 mb-3">Aktivitas Tidak Ditemukan</h2>
+					<h2 className="text-2xl font-bold text-gray-900 mb-3">
+						Aktivitas Tidak Ditemukan
+					</h2>
 					<p className="text-gray-600 text-lg mb-6">
 						Maaf, aktivitas yang Anda cari tidak dapat ditemukan
 					</p>
@@ -84,7 +86,8 @@ export default function ActivityDetailPage() {
 				label: "Dikonfirmasi",
 				variant: "info",
 				icon: "✓",
-				description: "Pendaftaran Anda telah dikonfirmasi. Siap-siap ikut event!",
+				description:
+					"Pendaftaran Anda telah dikonfirmasi. Siap-siap ikut event!",
 			},
 			attended: {
 				label: "Hadir",
@@ -189,10 +192,10 @@ export default function ActivityDetailPage() {
 										statusConfig.variant === "success"
 											? "bg-green-100"
 											: statusConfig.variant === "danger"
-											? "bg-red-100"
-											: statusConfig.variant === "warning"
-											? "bg-amber-100"
-											: "bg-blue-100"
+												? "bg-red-100"
+												: statusConfig.variant === "warning"
+													? "bg-amber-100"
+													: "bg-blue-100"
 									}`}>
 									<StatusIcon
 										size={28}
@@ -200,21 +203,25 @@ export default function ActivityDetailPage() {
 											statusConfig.variant === "success"
 												? "text-green-600"
 												: statusConfig.variant === "danger"
-												? "text-red-600"
-												: statusConfig.variant === "warning"
-												? "text-amber-600"
-												: "text-blue-600"
+													? "text-red-600"
+													: statusConfig.variant === "warning"
+														? "text-amber-600"
+														: "text-blue-600"
 										}
 									/>
 								</div>
 								<div className="flex-1">
-									<p className="text-sm text-gray-600 mb-2 font-medium">Status Partisipasi</p>
+									<p className="text-sm text-gray-600 mb-2 font-medium">
+										Status Partisipasi
+									</p>
 									<Badge variant={statusConfig.variant} className="text-sm">
 										{statusConfig.label}
 									</Badge>
 								</div>
 							</div>
-							<p className="text-sm text-gray-600 leading-relaxed">{statusConfig.description}</p>
+							<p className="text-sm text-gray-600 leading-relaxed">
+								{statusConfig.description}
+							</p>
 						</Card>
 					</motion.div>
 
@@ -226,10 +233,15 @@ export default function ActivityDetailPage() {
 						<Card className="p-6 bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-shadow">
 							<div className="flex items-center gap-4 mb-3">
 								<div className={`p-3 rounded-xl ${timelineConfig.bg}`}>
-									<timelineConfig.Icon size={28} className={timelineConfig.color} />
+									<timelineConfig.Icon
+										size={28}
+										className={timelineConfig.color}
+									/>
 								</div>
 								<div className="flex-1">
-									<p className="text-sm text-gray-600 mb-2 font-medium">Status Kegiatan</p>
+									<p className="text-sm text-gray-600 mb-2 font-medium">
+										Status Kegiatan
+									</p>
 									<span
 										className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold ${timelineConfig.bg} ${timelineConfig.color}`}>
 										{timelineConfig.label}
@@ -237,9 +249,12 @@ export default function ActivityDetailPage() {
 								</div>
 							</div>
 							<p className="text-sm text-gray-600 leading-relaxed">
-								{data.timeline_status === "upcoming" && "Kegiatan belum dimulai"}
-								{data.timeline_status === "ongoing" && "Kegiatan sedang berlangsung"}
-								{data.timeline_status === "finished" && "Kegiatan telah selesai"}
+								{data.timeline_status === "upcoming" &&
+									"Kegiatan belum dimulai"}
+								{data.timeline_status === "ongoing" &&
+									"Kegiatan sedang berlangsung"}
+								{data.timeline_status === "finished" &&
+									"Kegiatan telah selesai"}
 							</p>
 						</Card>
 					</motion.div>
@@ -265,9 +280,13 @@ export default function ActivityDetailPage() {
 							<div className="absolute bottom-0 left-0 right-0 p-6 text-white">
 								<div className="flex items-center gap-2 mb-2">
 									{data.event?.category && (
-										<Badge color={data.event.category.warna}>{data.event.category.nama}</Badge>
+										<Badge color={data.event.category.warna}>
+											{data.event.category.nama}
+										</Badge>
 									)}
-									<Badge variant={statusConfig.variant}>{statusConfig.label}</Badge>
+									<Badge variant={statusConfig.variant}>
+										{statusConfig.label}
+									</Badge>
 								</div>
 							</div>
 						</div>
@@ -311,7 +330,9 @@ export default function ActivityDetailPage() {
 											<AsyncImage
 												loading="lazy"
 												transition={Fade}
-												src={getImageUrl(`organizations/${data.event.organization.logo}`)}
+												src={getImageUrl(
+													`organizations/${data.event.organization.logo}`,
+												)}
 												alt={data.event.organization.nama}
 												className="w-16 h-16 rounded-full object-cover border-2 border-white shadow"
 											/>
@@ -329,7 +350,9 @@ export default function ActivityDetailPage() {
 													<div className="flex items-center gap-1 text-yellow-500 mt-1">
 														<span>⭐</span>
 														<span className="text-sm font-semibold">
-															{parseFloat(data.event.organization.rating).toFixed(1)}
+															{parseFloat(
+																data.event.organization.rating,
+															).toFixed(1)}
 														</span>
 													</div>
 												)}
@@ -349,7 +372,9 @@ export default function ActivityDetailPage() {
 										<p className="font-bold text-gray-900 mb-2 text-base">
 											{data.event.location.nama}
 										</p>
-										<p className="text-sm text-gray-600 mb-1">{data.event.location.alamat}</p>
+										<p className="text-sm text-gray-600 mb-1">
+											{data.event.location.alamat}
+										</p>
 										<p className="text-sm text-gray-600">
 											{data.event.location.kota}, {data.event.location.provinsi}
 										</p>
@@ -358,7 +383,9 @@ export default function ActivityDetailPage() {
 										<DynamicButton
 											variant="outline"
 											size="xs"
-											onClick={() => window.open(getGoogleMapsUrl(data.event), "_blank")}
+											onClick={() =>
+												window.open(getGoogleMapsUrl(data.event), "_blank")
+											}
 											className="flex items-center justify-center gap-2 text-xs px-3 py-1 w-full sm:w-auto">
 											<ExternalLink size={12} />
 											Lihat di Maps
@@ -366,7 +393,9 @@ export default function ActivityDetailPage() {
 										<DynamicButton
 											variant="success"
 											size="xs"
-											onClick={() => window.open(getDirectionsUrl(data.event), "_blank")}
+											onClick={() =>
+												window.open(getDirectionsUrl(data.event), "_blank")
+											}
 											className="flex items-center justify-center gap-2 text-xs px-3 py-1 w-full sm:w-auto">
 											<Navigation size={12} />
 											Petunjuk Arah
@@ -383,10 +412,17 @@ export default function ActivityDetailPage() {
 								</h3>
 								<div className="space-y-3">
 									<div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-										<Clock size={18} className="text-gray-500 mt-0.5 flex-shrink-0" />
+										<Clock
+											size={18}
+											className="text-gray-500 mt-0.5 flex-shrink-0"
+										/>
 										<div>
-											<p className="font-semibold text-gray-900 text-sm">Tanggal Mulai</p>
-											<p className="text-gray-700">{formatDate(data.event?.tanggal_mulai)}</p>
+											<p className="font-semibold text-gray-900 text-sm">
+												Tanggal Mulai
+											</p>
+											<p className="text-gray-700">
+												{formatDate(data.event?.tanggal_mulai)}
+											</p>
 											{data.event?.waktu_mulai && (
 												<p className="text-sm text-gray-600">
 													{formatTime(data.event.waktu_mulai)} -{" "}
@@ -396,10 +432,17 @@ export default function ActivityDetailPage() {
 										</div>
 									</div>
 									<div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-										<Clock size={18} className="text-gray-500 mt-0.5 flex-shrink-0" />
+										<Clock
+											size={18}
+											className="text-gray-500 mt-0.5 flex-shrink-0"
+										/>
 										<div>
-											<p className="font-semibold text-gray-900 text-sm">Tanggal Selesai</p>
-											<p className="text-gray-700">{formatDate(data.event?.tanggal_selesai)}</p>
+											<p className="font-semibold text-gray-900 text-sm">
+												Tanggal Selesai
+											</p>
+											<p className="text-gray-700">
+												{formatDate(data.event?.tanggal_selesai)}
+											</p>
 											{data.event?.waktu_selesai && (
 												<p className="text-sm text-gray-600">
 													{formatTime(data.event.waktu_mulai)} -{" "}
@@ -423,7 +466,9 @@ export default function ActivityDetailPage() {
 											<User size={16} className="text-gray-500 flex-shrink-0" />
 											<div>
 												<p className="text-sm text-gray-600">Nama</p>
-												<p className="font-semibold text-gray-900">{data.event.creator.nama}</p>
+												<p className="font-semibold text-gray-900">
+													{data.event.creator.nama}
+												</p>
 											</div>
 										</div>
 										<div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
@@ -437,10 +482,15 @@ export default function ActivityDetailPage() {
 										</div>
 										{data.event?.telepon_kontak && (
 											<div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-												<Phone size={16} className="text-gray-500 flex-shrink-0" />
+												<Phone
+													size={16}
+													className="text-gray-500 flex-shrink-0"
+												/>
 												<div>
 													<p className="text-sm text-gray-600">Telepon</p>
-													<p className="font-semibold text-gray-900">{data.event.telepon_kontak}</p>
+													<p className="font-semibold text-gray-900">
+														{data.event.telepon_kontak}
+													</p>
 												</div>
 											</div>
 										)}
@@ -477,12 +527,16 @@ export default function ActivityDetailPage() {
 											data.status === "rejected") && (
 											<div
 												className={`flex-1 w-1 bg-gradient-to-b   from-yellow-300 ${
-													data.status === "rejected" ? "to-red-300" : "to-blue-300"
+													data.status === "rejected"
+														? "to-red-300"
+														: "to-blue-300"
 												}  mt-2`}></div>
 										)}
 									</div>
 									<div className="flex-1 pb-6">
-										<p className="font-bold text-gray-900 text-base mb-1">Pendaftaran</p>
+										<p className="font-bold text-gray-900 text-base mb-1">
+											Pendaftaran
+										</p>
 										<p className="text-sm text-emerald-600 font-semibold mb-2">
 											{formatDate(data.tanggal_daftar)}
 										</p>
@@ -507,12 +561,16 @@ export default function ActivityDetailPage() {
 											data.timeline_status === "finished") && (
 											<div
 												className={`flex-1 w-1 bg-gradient-to-b from-blue-300 ${
-													data.status === "no_show" ? " to-red-300" : " to-green-300"
+													data.status === "no_show"
+														? " to-red-300"
+														: " to-green-300"
 												} mt-2`}></div>
 										)}
 									</div>
 									<div className="flex-1 pb-6">
-										<p className="font-bold text-gray-900 text-base mb-1">Dikonfirmasi</p>
+										<p className="font-bold text-gray-900 text-base mb-1">
+											Dikonfirmasi
+										</p>
 										<p className="text-sm text-emerald-600 font-semibold mb-2">
 											{formatDate(data.tanggal_konfirmasi)}
 										</p>
@@ -532,11 +590,14 @@ export default function ActivityDetailPage() {
 										</div>
 									</div>
 									<div className="flex-1 pb-6">
-										<p className="font-bold text-gray-900 text-base mb-1">Ditolak</p>
+										<p className="font-bold text-gray-900 text-base mb-1">
+											Ditolak
+										</p>
 
 										<p className="text-sm text-gray-600 leading-relaxed">
-											Maaf, pendaftaran Anda ditolak oleh Penyelenggara. Jangan berkecil hati,
-											mungkin Anda bisa mencoba mendaftar di kegiatan lain.
+											Maaf, pendaftaran Anda ditolak oleh Penyelenggara. Jangan
+											berkecil hati, mungkin Anda bisa mencoba mendaftar di
+											kegiatan lain.
 										</p>
 									</div>
 								</div>
@@ -551,12 +612,15 @@ export default function ActivityDetailPage() {
 										<div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
 											<CheckCircle size={24} className="text-green-600" />
 										</div>
-										{data.has_feedback && data.timeline_status === "finished" && (
-											<div className="flex-1 w-1 bg-gradient-to-b from-green-300 to-orange-300 mt-2"></div>
-										)}
+										{data.has_feedback &&
+											data.timeline_status === "finished" && (
+												<div className="flex-1 w-1 bg-gradient-to-b from-green-300 to-orange-300 mt-2"></div>
+											)}
 									</div>
 									<div className="flex-1 pb-6">
-										<p className="font-bold text-gray-900 text-base mb-1">Hadir</p>
+										<p className="font-bold text-gray-900 text-base mb-1">
+											Hadir
+										</p>
 										<p className="text-sm text-emerald-600 font-semibold mb-2">
 											{formatDate(data.tanggal_hadir)}
 										</p>
@@ -578,13 +642,15 @@ export default function ActivityDetailPage() {
 										</div>
 									</div>
 									<div className="flex-1">
-										<p className="font-bold text-gray-900 text-base mb-1">Tidak Hadir</p>
+										<p className="font-bold text-gray-900 text-base mb-1">
+											Tidak Hadir
+										</p>
 										<p className="text-sm text-red-600 font-semibold mb-2">
 											Anda tidak check-in di kegiatan ini!
 										</p>
 										<p className="text-sm text-gray-600 leading-relaxed">
-											Jika anda hadir di kegiatan ini namun tidak melakukan scan QR kehadiran,
-											silahkan hubungi Penyelenggara
+											Jika anda hadir di kegiatan ini namun tidak melakukan scan
+											QR kehadiran, silahkan hubungi Penyelenggara
 										</p>
 									</div>
 								</div>
@@ -601,13 +667,15 @@ export default function ActivityDetailPage() {
 										</div>
 									</div>
 									<div className="flex-1">
-										<p className="font-bold text-gray-900 text-base mb-1">Kirim Feedback</p>
+										<p className="font-bold text-gray-900 text-base mb-1">
+											Kirim Feedback
+										</p>
 										<p className="text-sm text-emerald-600 font-semibold mb-2">
 											{formatDateTime(data.feedback?.created_at, "WIB")}
 										</p>
 										<p className="text-sm text-gray-600 leading-relaxed">
-											Anda telah mengirim feedback untuk kegiatan ini. Terima kasih atas
-											partisipasinya!
+											Anda telah mengirim feedback untuk kegiatan ini. Terima
+											kasih atas partisipasinya!
 										</p>
 									</div>
 								</div>
@@ -629,7 +697,8 @@ export default function ActivityDetailPage() {
 							</h3>
 							<QrCodeDisplay participationId={data.id} eventData={data.event} />
 							<p className="text-sm text-gray-700 text-center mt-6 font-medium">
-								Tunjukkan QR code ini kepada Penyelenggara untuk check-in (presensi)
+								Tunjukkan QR code ini kepada Penyelenggara untuk check-in
+								(presensi)
 							</p>
 						</Card>
 					</motion.div>
@@ -643,10 +712,17 @@ export default function ActivityDetailPage() {
 						transition={{ delay: 0.7 }}>
 						<Card className="p-6 bg-amber-50 border-2 border-amber-200 shadow-lg mb-8">
 							<div className="flex gap-4">
-								<AlertCircle size={24} className="text-amber-600 flex-shrink-0 mt-1" />
+								<AlertCircle
+									size={24}
+									className="text-amber-600 flex-shrink-0 mt-1"
+								/>
 								<div className="flex-1">
-									<h3 className="font-bold text-gray-900 mb-2 text-base">Catatan</h3>
-									<p className="text-gray-700 leading-relaxed">{data.catatan}</p>
+									<h3 className="font-bold text-gray-900 mb-2 text-base">
+										Catatan
+									</h3>
+									<p className="text-gray-700 leading-relaxed">
+										{data.catatan}
+									</p>
 								</div>
 							</div>
 						</Card>

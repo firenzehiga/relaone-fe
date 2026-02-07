@@ -20,7 +20,14 @@ import {
 	Check,
 	UserX,
 } from "lucide-react";
-import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
+import {
+	Menu,
+	MenuButton,
+	MenuList,
+	MenuItem,
+	Portal,
+	IconButton,
+} from "@chakra-ui/react";
 
 // Hooks / Stores
 import { useAuthStore } from "@/_hooks/useAuth";
@@ -90,8 +97,13 @@ export default function OrganizationEventParticipant() {
 				if (!response.success) return;
 
 				const qrData = response.data.qr_code;
-				const volunteerName = (response.data.volunteer?.nama || "volunteer").replace(/\s+/g, "_");
-				const eventName = (response.data.event?.judul || "event").replace(/\s+/g, "_");
+				const volunteerName = (
+					response.data.volunteer?.nama || "volunteer"
+				).replace(/\s+/g, "_");
+				const eventName = (response.data.event?.judul || "event").replace(
+					/\s+/g,
+					"_",
+				);
 
 				// Store QR data temporarily for rendering
 				setQrDataMap((prev) => ({
@@ -127,13 +139,22 @@ export default function OrganizationEventParticipant() {
 					// Check if canvas has actual QR content (not blank)
 					try {
 						const ctx = canvas.getContext("2d");
-						const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+						const imageData = ctx.getImageData(
+							0,
+							0,
+							canvas.width,
+							canvas.height,
+						);
 						const pixels = imageData.data;
 
 						// Check for non-white pixels
 						let hasContent = false;
 						for (let i = 0; i < pixels.length; i += 4) {
-							if (pixels[i] < 250 || pixels[i + 1] < 250 || pixels[i + 2] < 250) {
+							if (
+								pixels[i] < 250 ||
+								pixels[i + 1] < 250 ||
+								pixels[i + 2] < 250
+							) {
 								hasContent = true;
 								break;
 							}
@@ -161,7 +182,9 @@ export default function OrganizationEventParticipant() {
 					}
 
 					// Canvas has content, download it
-					const pngUrl = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+					const pngUrl = canvas
+						.toDataURL("image/png")
+						.replace("image/png", "image/octet-stream");
 
 					const link = document.createElement("a");
 					link.href = pngUrl;
@@ -174,7 +197,7 @@ export default function OrganizationEventParticipant() {
 						`QR Code untuk ${response.data.volunteer?.nama || "volunteer"} berhasil didownload`,
 						{
 							position: "top-center",
-						}
+						},
 					);
 
 					// Cleanup
@@ -209,7 +232,9 @@ export default function OrganizationEventParticipant() {
 				eventsMap.get(p.event.id).count++;
 			}
 		});
-		return Array.from(eventsMap.values()).sort((a, b) => a.judul.localeCompare(b.judul));
+		return Array.from(eventsMap.values()).sort((a, b) =>
+			a.judul.localeCompare(b.judul),
+		);
 	}, [participants]);
 
 	// Get selected event info
@@ -233,7 +258,9 @@ export default function OrganizationEventParticipant() {
 
 		// Filter by selected event
 		if (selectedEventId !== "all") {
-			filtered = filtered.filter((p) => p.event?.id === parseInt(selectedEventId));
+			filtered = filtered.filter(
+				(p) => p.event?.id === parseInt(selectedEventId),
+			);
 		}
 
 		return filtered;
@@ -296,14 +323,19 @@ export default function OrganizationEventParticipant() {
 	// Fungsi update no show participants
 	const handleUpdateNoShow = () => {
 		if (selectedEventId === "all") {
-			toast.error("Pilih kegiatan terlebih dahulu untuk perbarui status tidak hadir", {
-				position: "top-center",
-			});
+			toast.error(
+				"Pilih kegiatan terlebih dahulu untuk perbarui status tidak hadir",
+				{
+					position: "top-center",
+				},
+			);
 			return;
 		}
 
 		// Count participants yang masih confirmed (for display only)
-		const confirmedCount = filteredParticipants.filter((p) => p.status === "confirmed").length;
+		const confirmedCount = filteredParticipants.filter(
+			(p) => p.status === "confirmed",
+		).length;
 
 		Swal.fire({
 			title: "Perbarui Status Tidak Hadir?",
@@ -408,10 +440,15 @@ export default function OrganizationEventParticipant() {
 				}
 
 				// Check if event is completed - disable actions
-				if (isLoading) return <Loader2 className="text-emerald-600 animate-spin" />; // Show spinner while isLoading
+				if (isLoading)
+					return <Loader2 className="text-emerald-600 animate-spin" />; // Show spinner while isLoading
 
 				if (isEventCompleted)
-					return <span className="text-xs text-gray-400 italic">Kegiatan sudah selesai</span>;
+					return (
+						<span className="text-xs text-gray-400 italic">
+							Kegiatan sudah selesai
+						</span>
+					);
 				return (
 					<Menu>
 						<MenuButton
@@ -425,10 +462,14 @@ export default function OrganizationEventParticipant() {
 								{/* Download QR - Only for confirmed and event not completed */}
 								{row.status === "confirmed" && !isEventCompleted && (
 									<MenuItem
-										icon={<Download className="text-blue-500 hover:text-blue-600" />}
+										icon={
+											<Download className="text-blue-500 hover:text-blue-600" />
+										}
 										onClick={() => handleDownloadQR(row)}
 										isDisabled={downloadQrMutation.isPending}>
-										{downloadQrMutation.isPending ? "Downloading..." : "QR Code"}
+										{downloadQrMutation.isPending
+											? "Downloading..."
+											: "QR Code"}
 									</MenuItem>
 								)}
 								{/* Confirm/Reject - Only for registered and event not completed */}
@@ -437,7 +478,9 @@ export default function OrganizationEventParticipant() {
 										<MenuItem
 											onClick={() => handleConfirm(row.id)}
 											disabled={isLoading}
-											icon={<Check className="text-green-500 hover:text-green-600" />}>
+											icon={
+												<Check className="text-green-500 hover:text-green-600" />
+											}>
 											Konfirmasi
 										</MenuItem>
 										<MenuItem
@@ -459,25 +502,32 @@ export default function OrganizationEventParticipant() {
 
 	if (participantsError) {
 		return (
-			<div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+			<div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
 				<div className="flex flex-col items-center justify-center  text-gray-600">
 					<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 					<h3 className="text-lg font-semibold mb-2">Error</h3>
-					<p className="text-gray-500 mb-4 text-center">Gagal mengambil data participant.</p>
-					<p className="text-red-500 mb-4 text-center font-semibold">{participantsError.message}</p>
+					<p className="text-gray-500 mb-4 text-center">
+						Gagal mengambil data participant.
+					</p>
+					<p className="text-red-500 mb-4 text-center font-semibold">
+						{participantsError.message}
+					</p>
 				</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="py-8 bg-emerald-100 page-transition min-h-screen">
+		<div className="py-8 page-transition min-h-screen">
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="bg-white rounded-lg shadow p-6">
 					<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
 						<h2 className="text-lg font-semibold">
 							{participantsRefetching ? (
-								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
+								<FetchLoader
+									variant="inline"
+									text="Mengambil Data Terbaru..."
+								/>
 							) : (
 								"Daftar Partisipan (Relawan)"
 							)}
@@ -493,7 +543,9 @@ export default function OrganizationEventParticipant() {
 									disabled={updateNoShowMutation.isPending}
 									className="flex items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed">
 									<UserX className="w-4 h-4" />
-									{updateNoShowMutation.isPending ? "Memperbarui..." : "Perbarui Status"}
+									{updateNoShowMutation.isPending
+										? "Memperbarui..."
+										: "Perbarui Status"}
 								</DynamicButton>
 							)}
 
@@ -564,17 +616,17 @@ export default function OrganizationEventParticipant() {
 										Fitur Manajemen Kehadiran
 									</h3>
 									<p className="text-sm text-blue-700 mb-3">
-										Pilih kegiatan terlebih dahulu untuk mengakses fitur scanner check-in dan
-										perbarui status kehadiran
+										Pilih kegiatan terlebih dahulu untuk mengakses fitur scanner
+										check-in dan perbarui status kehadiran
 									</p>
 									<div className="text-xs text-blue-600 space-y-1">
 										<div>
-											� <strong>Scanner Presensi:</strong> Scan kode QR volunteer untuk check-in
-											realtime
+											� <strong>Scanner Presensi:</strong> Scan kode QR
+											volunteer untuk check-in realtime
 										</div>
 										<div>
-											⏰ <strong>Perbarui Status:</strong> Ubah status partisipan yang tidak hadir
-											setelah kegiatan selesai
+											⏰ <strong>Perbarui Status:</strong> Ubah status
+											partisipan yang tidak hadir setelah kegiatan selesai
 										</div>
 									</div>
 								</div>
@@ -587,7 +639,9 @@ export default function OrganizationEventParticipant() {
 						<div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
 							<div className="flex items-center justify-between">
 								<div>
-									<p className="text-sm text-blue-600 font-medium">Total Kegiatan</p>
+									<p className="text-sm text-blue-600 font-medium">
+										Total Kegiatan
+									</p>
 									<p className="text-2xl font-bold text-blue-900">
 										{participantsLoading ? (
 											<Loader2 className="animate-spin h-4 w-4 text-blue-600 mt-2" />
@@ -602,7 +656,9 @@ export default function OrganizationEventParticipant() {
 						<div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg p-4 border border-emerald-200">
 							<div className="flex items-center justify-between">
 								<div>
-									<p className="text-sm text-emerald-600 font-medium">Total Partisipan</p>
+									<p className="text-sm text-emerald-600 font-medium">
+										Total Partisipan
+									</p>
 									<p className="text-2xl font-bold text-emerald-900">
 										{participantsLoading ? (
 											<Loader2 className="animate-spin h-4 w-4 text-emerald-600 mt-2" />
@@ -617,7 +673,9 @@ export default function OrganizationEventParticipant() {
 						<div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
 							<div className="flex items-center justify-between">
 								<div>
-									<p className="text-sm text-purple-600 font-medium">Total Hasil Filter</p>
+									<p className="text-sm text-purple-600 font-medium">
+										Total Hasil Filter
+									</p>
 									<p className="text-2xl font-bold text-purple-900">
 										<p className="text-2xl font-bold text-purple-900">
 											{participantsLoading ? (
@@ -681,7 +739,8 @@ export default function OrganizationEventParticipant() {
 							{selectedEventId !== "all" && (
 								<Badge variant="primary" className="flex items-center gap-1">
 									Event:{" "}
-									{eventsList.find((e) => e.id === parseInt(selectedEventId))?.judul || "Unknown"}
+									{eventsList.find((e) => e.id === parseInt(selectedEventId))
+										?.judul || "Unknown"}
 									<button
 										onClick={() => setSelectedEventId("all")}
 										className="ml-1 hover:text-white">
@@ -747,10 +806,14 @@ export default function OrganizationEventParticipant() {
 										<div className="space-y-3">
 											<div className="text-sm text-gray-700">
 												<span className="font-semibold">Nama partisipan:</span>
-												<span className="ml-2 text-gray-900">{data.user?.nama || "-"}</span>
+												<span className="ml-2 text-gray-900">
+													{data.user?.nama || "-"}
+												</span>
 											</div>
 											<div className="flex items-start">
-												<div className="text-sm text-gray-700 font-semibold">Tanggal:</div>
+												<div className="text-sm text-gray-700 font-semibold">
+													Tanggal:
+												</div>
 												<div className="text-sm text-gray-900 ml-2">
 													{formatDate(data.event?.tanggal_mulai) || "-"} -{" "}
 													{formatDate(data.event?.tanggal_selesai) || "-"}
@@ -758,7 +821,9 @@ export default function OrganizationEventParticipant() {
 											</div>
 
 											<div>
-												<div className="text-sm font-semibold text-gray-700 mb-1">Catatan</div>
+												<div className="text-sm font-semibold text-gray-700 mb-1">
+													Catatan
+												</div>
 												<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
 													{data.catatan || "-"}
 												</div>
@@ -768,7 +833,9 @@ export default function OrganizationEventParticipant() {
 										{/* Right column */}
 										<div className="space-y-3">
 											<div className="flex items-start">
-												<div className="text-sm text-gray-700 font-semibold">Tanggal Daftar:</div>
+												<div className="text-sm text-gray-700 font-semibold">
+													Tanggal Daftar:
+												</div>
 												<div className="text-sm text-gray-900 ml-2">
 													{formatDate(data.tanggal_daftar) || "-"}
 												</div>
@@ -789,14 +856,18 @@ export default function OrganizationEventParticipant() {
 												</div>
 											</div>
 											<div className="flex items-start">
-												<div className="text-sm text-gray-700 font-semibold">Waktu Kehadiran:</div>
+												<div className="text-sm text-gray-700 font-semibold">
+													Waktu Kehadiran:
+												</div>
 												<div className="text-sm ml-2">
 													{data.tanggal_hadir ? (
 														<span className="text-gray-900">
 															{formatDateTime(data.tanggal_hadir, "WIB")}{" "}
 														</span>
 													) : (
-														<span className="text-gray-500 italic">Belum Check-In</span>
+														<span className="text-gray-500 italic">
+															Belum Check-In
+														</span>
 													)}
 												</div>
 											</div>

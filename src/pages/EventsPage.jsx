@@ -18,7 +18,7 @@ import { toInputDate } from "@/utils/dateFormatter";
 
 // UI Components
 import DynamicButton from "@/components/ui/DynamicButton";
-import Skeleton from "@/components/ui/Skeleton";
+import CustomSkeleton from "@/components/ui/CustomSkeleton";
 import EventCard from "@/components/EventCard";
 import Badge from "@/components/ui/Badge";
 import { SlidersHorizontalIcon } from "@/components/ui/sliders-horizontal";
@@ -176,9 +176,12 @@ export default function EventsPage() {
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Header */}
 				<div className="mb-8 text-center">
-					<h1 className="text-4xl lg:text-5xl font-bold text-emerald-600 mb-4">Kegiatan Relawan</h1>
+					<h1 className="text-4xl lg:text-5xl font-bold text-emerald-600 mb-4">
+						Kegiatan Relawan
+					</h1>
 					<p className="text-xl text-gray-600">
-						Temukan berbagai kegiatan sosial yang dapat Anda ikuti. Mereka butuh bantuan Anda!
+						Temukan berbagai kegiatan sosial yang dapat Anda ikuti. Mereka butuh
+						bantuan Anda!
 					</p>
 				</div>
 
@@ -214,7 +217,10 @@ export default function EventsPage() {
 
 						<div className="flex items-center gap-2">
 							{hasActiveFilters && (
-								<DynamicButton variant="outline" onClick={clearFilters} size="sm">
+								<DynamicButton
+									variant="outline"
+									onClick={clearFilters}
+									size="sm">
 									Hapus Filter
 								</DynamicButton>
 							)}
@@ -231,11 +237,15 @@ export default function EventsPage() {
 							<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 								{/* Category Filter */}
 								<div>
-									<label className="block text-gray-900 font-semibold mb-2">Kategori</label>
+									<label className="block text-gray-900 font-semibold mb-2">
+										Kategori
+									</label>
 									<select
 										value={filters.category}
 										disabled={eventsLoading || categoriesLoading}
-										onChange={(e) => handleFilterChange("category", e.target.value)}
+										onChange={(e) =>
+											handleFilterChange("category", e.target.value)
+										}
 										className="w-full px-3 py-3 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
 										<option value="">Semua Kategori</option>
 										{categories?.map((category) => (
@@ -248,7 +258,9 @@ export default function EventsPage() {
 
 								{/* City Filter */}
 								<div>
-									<label className="block text-gray-900 font-semibold mb-2">Kota</label>
+									<label className="block text-gray-900 font-semibold mb-2">
+										Kota
+									</label>
 									<select
 										value={filters.city}
 										disabled={eventsLoading || categoriesLoading}
@@ -265,12 +277,16 @@ export default function EventsPage() {
 
 								{/* Date Filter */}
 								<div>
-									<label className="block text-gray-900 font-semibold mb-2">Tanggal</label>
+									<label className="block text-gray-900 font-semibold mb-2">
+										Tanggal
+									</label>
 									<input
 										type="date"
 										value={filters.tanggal_mulai}
 										disabled={eventsLoading || categoriesLoading}
-										onChange={(e) => handleFilterChange("tanggal_mulai", e.target.value)}
+										onChange={(e) =>
+											handleFilterChange("tanggal_mulai", e.target.value)
+										}
 										className="w-full px-3 py-3 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 									/>
 								</div>
@@ -284,11 +300,19 @@ export default function EventsPage() {
 				{/* Active Filters */}
 				{hasActiveFilters && (
 					<div className="flex flex-wrap items-center gap-2 mb-6">
-						<span className="text-gray-600 text-sm font-medium">Filter aktif:</span>
-						{filters.search && <Badge variant="primary">Search: "{filters.search}"</Badge>}
+						<span className="text-gray-600 text-sm font-medium">
+							Filter aktif:
+						</span>
+						{filters.search && (
+							<Badge variant="primary">Search: "{filters.search}"</Badge>
+						)}
 						{filters.category && categories && (
 							<Badge variant="secondary">
-								{categories.find((cat) => cat.id.toString() === filters.category)?.nama}
+								{
+									categories.find(
+										(cat) => cat.id.toString() === filters.category,
+									)?.nama
+								}
 							</Badge>
 						)}
 						{filters.city && (
@@ -308,13 +332,15 @@ export default function EventsPage() {
 
 				{/* Events List */}
 				{eventsLoading || categoriesLoading ? (
-					<Skeleton.EventsSkeleton rows={3} />
+					<CustomSkeleton.EventsSkeleton rows={3} />
 				) : filteredEvents.length === 0 ? (
 					<div className="text-center py-16">
 						<div className="mx-auto w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-between mb-6">
 							<Calendar className="text-emerald-600 ml-5" size={39} />
 						</div>
-						<h3 className="text-2xl font-bold text-gray-900 mb-3">Tidak ada kegiatan ditemukan</h3>
+						<h3 className="text-2xl font-bold text-gray-900 mb-3">
+							Tidak ada kegiatan ditemukan
+						</h3>
 						<p className="text-gray-600 mb-6 text-lg">
 							Coba ubah filter pencarian atau kata kunci Anda
 						</p>
@@ -346,7 +372,9 @@ export default function EventsPage() {
 							))}
 						</div>
 						{/* Sentinel: Auto load next page when scrolled into view */}
-						<div ref={sentinelRef} className="h-8 flex items-center justify-center mt-6">
+						<div
+							ref={sentinelRef}
+							className="h-8 flex items-center justify-center mt-6">
 							<Badge variant="success">
 								{isFetchingNextPage ? (
 									<>

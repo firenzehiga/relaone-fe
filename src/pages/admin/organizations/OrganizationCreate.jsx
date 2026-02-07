@@ -6,7 +6,7 @@ import { UserCircle2Icon, Building2 } from "lucide-react";
 import { Input, InputGroup, InputLeftAddon } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import Skeleton from "@/components/ui/Skeleton";
+import CustomSkeleton from "@/components/ui/CustomSkeleton";
 import Button from "@/components/ui/DynamicButton";
 
 export default function AdminOrganizationCreate() {
@@ -45,7 +45,9 @@ export default function AdminOrganizationCreate() {
 		const allowed = ["image/jpeg", "image/png", "image/jpg"];
 		const maxSize = 2 * 1024 * 1024;
 		if (!allowed.includes(file.type)) {
-			toast.error("Logo harus berupa gambar JPEG/PNG/JPG.", { position: "top-center" });
+			toast.error("Logo harus berupa gambar JPEG/PNG/JPG.", {
+				position: "top-center",
+			});
 			return;
 		}
 		if (file.size > maxSize) {
@@ -78,13 +80,17 @@ export default function AdminOrganizationCreate() {
 		<div className="w-full mx-auto p-4 sm:p-6 max-w-6xl min-h-[calc(100vh-4rem)]">
 			<div className="bg-white shadow-xl rounded-lg p-4 sm:p-6">
 				<header className="mb-6 sm:mb-8">
-					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Buat Organisasi Baru</h1>
+					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
+						Buat Organisasi Baru
+					</h1>
 					<p className="text-xs sm:text-sm text-gray-500 mt-1">
 						Isi detail organisasi dan tambahkan website serta logo.
 					</p>
 				</header>
 
-				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6 flex flex-col">
+				<form
+					onSubmit={handleSubmit(onSubmit)}
+					className="space-y-6 flex flex-col">
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 						<div>
 							<label
@@ -220,10 +226,14 @@ export default function AdminOrganizationCreate() {
 											</label>
 										</div>
 
-										<p className="text-xs text-gray-500">Format: JPEG, JPG, PNG. Maksimal 2MB.</p>
+										<p className="text-xs text-gray-500">
+											Format: JPEG, JPG, PNG. Maksimal 2MB.
+										</p>
 
 										{getValues("logo") && getValues("logo") instanceof File && (
-											<p className="text-xs text-gray-700">{getValues("logo").name}</p>
+											<p className="text-xs text-gray-700">
+												{getValues("logo").name}
+											</p>
 										)}
 									</div>
 								</div>
@@ -298,7 +308,11 @@ export default function AdminOrganizationCreate() {
 							}}>
 							Batal
 						</Button>
-						<Button type="submit" variant="success" loading={isLoading} disabled={isLoading}>
+						<Button
+							type="submit"
+							variant="success"
+							loading={isLoading}
+							disabled={isLoading}>
 							{isLoading ? "Membuat..." : "Buat Organisasi"}
 						</Button>
 					</div>

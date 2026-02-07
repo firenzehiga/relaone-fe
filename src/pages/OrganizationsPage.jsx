@@ -12,7 +12,7 @@ import { useInView } from "react-intersection-observer";
 
 // UI Components
 import DynamicButton from "@/components/ui/DynamicButton";
-import Skeleton from "@/components/ui/Skeleton";
+import CustomSkeleton from "@/components/ui/CustomSkeleton";
 import Card from "@/components/ui/Card";
 import OrganizationCard from "@/components/OrganizationCard";
 import { useDebounce } from "@/_hooks/utils/useDebounce";
@@ -107,8 +107,8 @@ export default function OrganizationsPage() {
 						Organisasi Penyelenggara
 					</h1>
 					<p className="text-xl text-gray-600 max-w-2xl mx-auto">
-						Bergabunglah dengan berbagai organisasi yang berkontribusi untuk membuat perubahan
-						positif di masyarakat
+						Bergabunglah dengan berbagai organisasi yang berkontribusi untuk
+						membuat perubahan positif di masyarakat
 					</p>
 				</div>
 
@@ -132,14 +132,18 @@ export default function OrganizationsPage() {
 				{/* Active Filters */}
 				{hasActiveFilters && (
 					<div className="flex flex-wrap items-center gap-2 mb-6">
-						<span className="text-gray-600 text-sm font-medium">Filter aktif:</span>
-						{filters.search && <Badge variant="primary">Search: "{filters.search}"</Badge>}
+						<span className="text-gray-600 text-sm font-medium">
+							Filter aktif:
+						</span>
+						{filters.search && (
+							<Badge variant="primary">Search: "{filters.search}"</Badge>
+						)}
 					</div>
 				)}
 
 				{/* Organizations List */}
 				{isLoading ? (
-					<Skeleton.OrgSkeleton rows={3} />
+					<CustomSkeleton.OrgSkeleton rows={3} />
 				) : filteredOrganizations.length === 0 ? (
 					<div className="text-center py-16">
 						<div className="mx-auto w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-between mb-6">
@@ -148,7 +152,9 @@ export default function OrganizationsPage() {
 						<h3 className="text-2xl font-bold text-gray-900 mb-3">
 							Tidak ada organisasi ditemukan
 						</h3>
-						<p className="text-gray-600 mb-6 text-lg">Coba ubah kata kunci Anda</p>
+						<p className="text-gray-600 mb-6 text-lg">
+							Coba ubah kata kunci Anda
+						</p>
 						<DynamicButton variant="success" onClick={clearFilters}>
 							Hapus Filter
 						</DynamicButton>
@@ -191,7 +197,9 @@ export default function OrganizationsPage() {
 						</div> */}
 
 						{/* Sentinel: Auto load next page when scrolled into view */}
-						<div ref={ref} className="h-8 flex items-center justify-center mt-6">
+						<div
+							ref={ref}
+							className="h-8 flex items-center justify-center mt-6">
 							<Badge variant="success">
 								{isFetchingNextPage ? (
 									<>

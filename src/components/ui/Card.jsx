@@ -16,9 +16,9 @@ export default function Card({ children, className, hover = true, ...props }) {
 		<div
 			className={cn(
 				"bg-white/80 backdrop-blur-sm border border-black/10 rounded-2xl p-6",
-				"shadow-lg hover:shadow-xl  ",
-				" border-gradient",
-				className
+				"shadow-lg hover:shadow-xl relative z-1",
+				"border-gradient",
+				className,
 			)}
 			{...props}>
 			{children}
@@ -102,7 +102,7 @@ function CardFooter({ children, className, ...props }) {
 		<div
 			className={cn(
 				"mt-6 pt-4 border-t border-gray-100 flex items-center justify-between",
-				className
+				className,
 			)}
 			{...props}>
 			{children}
