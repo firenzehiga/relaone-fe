@@ -20,7 +20,7 @@ import DynamicButton from "@/components/ui/DynamicButton";
 import Avatar from "@/components/ui/Avatar";
 import { useAuthStore, useLogout } from "@/_hooks/useAuth";
 import { getImageUrl } from "@/utils";
-import { HomeIcon } from "../ui/home";
+import { HomeIcon } from "../../ui/home";
 
 /**
  * Komponen Header navigasi utama aplikasi
@@ -114,7 +114,11 @@ export default function Header() {
 					{/* Logo */}
 					<Link to="/" className="flex items-center space-x-2 group">
 						<div className="p-1 group-hover:scale-110  group-hover:-rotate-12 transition-transform duration-300">
-							<img src="/images/logo_fe.png" alt="RelaOne Logo" className="w-10 h-10" />
+							<img
+								src="/images/logo_fe.png"
+								alt="RelaOne Logo"
+								className="w-10 h-10"
+							/>
 						</div>
 						<span className="text-xl font-bold bg-black bg-clip-text text-transparent">
 							Rela
@@ -159,7 +163,9 @@ export default function Header() {
 									onClick={() => setUserMenuOpen(!userMenuOpen)}
 									className="flex items-center space-x-2 p-2 rounded-xl hover:bg-emerald-50 transition-colors">
 									<Avatar
-										src={user?.foto_profil ? getImageUrl(user.foto_profil) : null}
+										src={
+											user?.foto_profil ? getImageUrl(user.foto_profil) : null
+										}
 										fallback={user?.nama}
 										size="sm"
 									/>
@@ -186,7 +192,9 @@ export default function Header() {
 														className="flex items-center px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors rounded-lg"
 														onClick={() => setUserMenuOpen(false)}>
 														<Calendar size={18} className="mr-3" />
-														<span className="font-medium">Riwayat Aktivitas</span>
+														<span className="font-medium">
+															Riwayat Aktivitas
+														</span>
 													</Link>
 												</>
 											) : (
@@ -212,7 +220,10 @@ export default function Header() {
 							</div>
 						) : (
 							<div className="hidden lg:flex items-center space-x-2">
-								<DynamicButton variant="success" size="sm" onClick={() => navigate("/login")}>
+								<DynamicButton
+									variant="success"
+									size="sm"
+									onClick={() => navigate("/login")}>
 									<LogIn size={16} className="mr-1" />
 									Masuk
 								</DynamicButton>
@@ -263,7 +274,9 @@ export default function Header() {
 													onClick={() => setMobileMenuOpen(false)}>
 													<item.icon
 														size={20}
-														className={active ? "text-emerald-600" : "text-gray-500"}
+														className={
+															active ? "text-emerald-600" : "text-gray-500"
+														}
 													/>
 													<span className="font-medium">{item.name}</span>
 												</Link>

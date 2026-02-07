@@ -1,20 +1,39 @@
 import { useMemo } from "react";
-import { Calendar, Users, Activity, CheckSquare, AlertCircle, Star } from "lucide-react";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import {
+	Calendar,
+	Users,
+	Activity,
+	CheckSquare,
+	AlertCircle,
+	Star,
+} from "lucide-react";
+import {
+	ResponsiveContainer,
+	BarChart,
+	Bar,
+	XAxis,
+	YAxis,
+	Tooltip,
+	CartesianGrid,
+} from "recharts";
 import StatsCard from "@/components/admin/StatsCard";
 import Card from "@/components/ui/Card";
-import Skeleton from "@/components/ui/Skeleton";
 import Badge from "@/components/ui/Badge";
 import RatingStars from "@/components/ui/RatingStars";
 import { formatRelativeTime, formatDate } from "@/utils/dateFormatter";
-import { color } from "framer-motion";
+import CustomSkeleton from "../ui/CustomSkeleton";
 
 /**
  * OrganizationAnalytics
  * - Menampilkan ringkasan (overview), analytics event, peserta, volunteer, dan feedback
  * - Dirancang untuk ringkas, informatif, dan mudah di-scan oleh user
  */
-export default function OrganizationAnalytics({ data, isLoading, error, selectedEventId }) {
+export default function OrganizationAnalytics({
+	data,
+	isLoading,
+	error,
+	selectedEventId,
+}) {
 	// Defensive: accept both full API response ({ data: { ... } }) or analytics object
 	const analytics = data?.data ?? data ?? null;
 
@@ -46,14 +65,19 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 	 */
 	const chartData = useMemo(() => {
 		const source =
-			participants?.participants_by_event && participants.participants_by_event.length
+			participants?.participants_by_event &&
+			participants.participants_by_event.length
 				? participants.participants_by_event
-				: events?.events_by_status?.upcoming ?? [];
+				: (events?.events_by_status?.upcoming ?? []);
 
 		return (source || []).map((e) => ({
-			name: (e.judul || e.event_judul || `Event ${e.id || e.event_id}`)?.slice(0, 18),
+			name: (e.judul || e.event_judul || `Event ${e.id || e.event_id}`)?.slice(
+				0,
+				18,
+			),
 			percent_full:
-				e.percent_full ?? Math.round(((e.peserta_saat_ini ?? 0) / (e.maks_peserta || 1)) * 100),
+				e.percent_full ??
+				Math.round(((e.peserta_saat_ini ?? 0) / (e.maks_peserta || 1)) * 100),
 			confirmed: e.confirmed ?? e.confirmed_count ?? 0,
 			total: e.total_participants ?? e.peserta_saat_ini ?? 0,
 		}));
@@ -80,18 +104,24 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 	 * - Menghitung persentase peserta yang sudah dikonfirmasi dari total peserta
 	 */
 	const percentConfirmed = totalParticipants
-		? Math.min(100, Math.round(((participants.confirmed ?? 0) / totalParticipants) * 100))
+		? Math.min(
+				100,
+				Math.round(((participants.confirmed ?? 0) / totalParticipants) * 100),
+			)
 		: 0;
 
 	/*  percentAttended
 	 * - Menghitung persentase peserta yang sudah hadir dari total peserta
 	 */
 	const percentAttended = totalParticipants
-		? Math.min(100, Math.round(((participants.attended ?? 0) / totalParticipants) * 100))
+		? Math.min(
+				100,
+				Math.round(((participants.attended ?? 0) / totalParticipants) * 100),
+			)
 		: 0;
 
 	if (isLoading) {
-		return <Skeleton.AnalyticsSkeleton />;
+		return <CustomSkeleton.AnalyticsSkeleton />;
 	}
 
 	if (error) {
@@ -99,16 +129,22 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 			<div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
 				<div className="flex flex-col items-center justify-center  text-gray-600">
 					<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
-					<h3 className="text-lg font-semibold mb-2">Error loading analytics data</h3>
-					<p className="text-gray-500 mb-4 text-center">Gagal mengambil data analytics.</p>
-					<p className="text-red-500 mb-4 text-center font-semibold">{error?.message}</p>
+					<h3 className="text-lg font-semibold mb-2">
+						Error loading analytics data
+					</h3>
+					<p className="text-gray-500 mb-4 text-center">
+						Gagal mengambil data analytics.
+					</p>
+					<p className="text-red-500 mb-4 text-center font-semibold">
+						{error?.message}
+					</p>
 				</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-6 relative-z-1">
 			{/* Overview stats */}
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 				<StatsCard
@@ -143,20 +179,25 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 				/>
 			</div>
 			{/* Small overview badges (status ringkas event) pakai judul header*/}
-			<h1 className="text-2xl font-bold text-gray-900 mb-3 border-emerald-600">Status Kegiatan</h1>
-			<div className="flex flex-wrap gap-3 mt-2">
-				<Badge variant="warning" size="md">
-					Sedang Berlangsung: {overview.active_events ?? 0}
-				</Badge>
-				<Badge variant="success" size="md">
-					Sudah Selesai: {overview.completed_events ?? 0}
-				</Badge>
-				<Badge variant="orange" size="md">
-					Dibatalkan: {overview.cancelled_events ?? 0}
-				</Badge>
-				<Badge variant="primary" size="md">
-					Telah Dibuat (30 hari terakhir): {overview.events_created_in_period ?? 0}
-				</Badge>
+			<div className="relative z-auto">
+				<h1 className="text-2xl font-bold text-gray-900 mb-3 border-emerald-600">
+					Status Kegiatan
+				</h1>
+				<div className="flex flex-wrap gap-3 mt-2 relative z-auto">
+					<Badge variant="warning" size="md">
+						Sedang Berlangsung: {overview.active_events ?? 0}
+					</Badge>
+					<Badge variant="success" size="md">
+						Sudah Selesai: {overview.completed_events ?? 0}
+					</Badge>
+					<Badge variant="orange" size="md">
+						Dibatalkan: {overview.cancelled_events ?? 0}
+					</Badge>
+					<Badge variant="primary" size="md">
+						Telah Dibuat (30 hari terakhir):{" "}
+						{overview.events_created_in_period ?? 0}
+					</Badge>
+				</div>
 			</div>
 
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -174,7 +215,9 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 
 					{(events.nearly_full_events ?? []).length > 0 && (
 						<div className="mt-4">
-							<h5 className="text-sm font-medium text-gray-700 mb-2">Hampir penuh</h5>
+							<h5 className="text-sm font-medium text-gray-700 mb-2">
+								Hampir penuh
+							</h5>
 							<div className="space-y-2">
 								{events.nearly_full_events.map((nf) => (
 									<div
@@ -194,17 +237,24 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 						<div className="mt-4">
 							<div className="bg-white border border-gray-100 rounded p-2 h-48 w-full">
 								<ResponsiveContainer width="100%" height="100%">
-									<BarChart data={chartData} margin={{ top: 6, right: 6, left: 0, bottom: 0 }}>
+									<BarChart
+										data={chartData}
+										margin={{ top: 6, right: 6, left: 0, bottom: 0 }}>
 										<CartesianGrid strokeDasharray="3 3" opacity={0.4} />
 										<XAxis dataKey="name" tick={{ fontSize: 11 }} />
 										<YAxis />
 										<Tooltip />
-										<Bar dataKey="percent_full" fill="#6366F1" name="% Terisi" />
+										<Bar
+											dataKey="percent_full"
+											fill="#6366F1"
+											name="% Terisi"
+										/>
 									</BarChart>
 								</ResponsiveContainer>
 							</div>
 							<div className="text-xs text-gray-500 mt-2">
-								Chart: Persentase terisi per kegiatan (sumber: peserta per kegiatan / mendatang)
+								Chart: Persentase terisi per kegiatan (sumber: peserta per
+								kegiatan / mendatang)
 							</div>
 						</div>
 					)}
@@ -214,20 +264,26 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 					<h5 className="text-sm font-medium mb-2">Kegiatan Mendatang</h5>
 					<div className="space-y-2">
 						{upcomingEvents.length === 0 ? (
-							<p className="text-sm text-gray-500">Tidak ada kegiatan mendatang.</p>
+							<p className="text-sm text-gray-500">
+								Tidak ada kegiatan mendatang.
+							</p>
 						) : (
 							upcomingEvents.map((ev) => (
 								<div
 									key={ev.id}
 									className="flex items-center justify-between py-3 border-b last:border-b-0">
 									<div>
-										<div className="text-sm font-medium text-gray-800">{ev.judul}</div>
+										<div className="text-sm font-medium text-gray-800">
+											{ev.judul}
+										</div>
 										<div className="text-xs text-gray-500">
 											Mulai: {formatDate(ev.tanggal_mulai)}
 										</div>
 									</div>
 									<div className="text-right">
-										<div className="text-sm font-medium">{ev.percent_full ?? 0}%</div>
+										<div className="text-sm font-medium">
+											{ev.percent_full ?? 0}%
+										</div>
 										<div className="text-xs text-gray-500">
 											{ev.peserta_saat_ini ?? 0}/{ev.maks_peserta ?? 0}
 										</div>
@@ -284,57 +340,70 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 
 					{/* participants by status - grid */}
 					<div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
-						{Object.entries(participants.participants_by_status ?? {}).map(([k, v]) => {
-							const mapVariant = {
-								registered: {
-									color: "gray",
-									status: "Mendaftar",
-								},
-								confirmed: {
-									color: "blue",
-									status: "Dikonfirmasi",
-								},
-								rejected: {
-									color: "red",
-									status: "Ditolak",
-								},
-								cancelled: {
-									color: "orange",
-									status: "Dibatalkan",
-								},
-								attended: {
-									color: "green",
-									status: "Hadir",
-								},
-								no_show: {
-									color: "yellow",
-									status: "Tidak Hadir",
-								},
-							};
-							return (
-								<div
-									key={k}
-									className={`flex items-center justify-between px-3 py-2 bg-${mapVariant[k].color}-100 rounded`}>
-									<div className="text-xs text-gray-600"> {mapVariant[k].status} </div>
-									<div className="text-sm font-medium text-gray-800">{v}</div>
-								</div>
-							);
-						})}
+						{Object.entries(participants.participants_by_status ?? {}).map(
+							([k, v]) => {
+								const mapVariant = {
+									registered: {
+										color: "gray",
+										status: "Mendaftar",
+									},
+									confirmed: {
+										color: "blue",
+										status: "Dikonfirmasi",
+									},
+									rejected: {
+										color: "red",
+										status: "Ditolak",
+									},
+									cancelled: {
+										color: "orange",
+										status: "Dibatalkan",
+									},
+									attended: {
+										color: "green",
+										status: "Hadir",
+									},
+									no_show: {
+										color: "yellow",
+										status: "Tidak Hadir",
+									},
+								};
+								return (
+									<div
+										key={k}
+										className={`flex items-center justify-between px-3 py-2 bg-${mapVariant[k].color}-100 rounded`}>
+										<div className="text-xs text-gray-600">
+											{" "}
+											{mapVariant[k].status}{" "}
+										</div>
+										<div className="text-sm font-medium text-gray-800">{v}</div>
+									</div>
+								);
+							},
+						)}
 					</div>
 
 					<div className="space-y-2">
 						{(participants.participants_by_event ?? []).length === 0 ? (
-							<p className="text-sm text-gray-500">Belum ada data peserta per kegiatan.</p>
+							<p className="text-sm text-gray-500">
+								Belum ada data peserta per kegiatan.
+							</p>
 						) : (
 							participants.participants_by_event.map((pe) => {
 								const pct =
 									pe.percent_full ??
-									Math.round(((pe.peserta_saat_ini ?? 0) / (pe.maks_peserta || 1)) * 100);
+									Math.round(
+										((pe.peserta_saat_ini ?? 0) / (pe.maks_peserta || 1)) * 100,
+									);
 								return (
-									<div key={pe.event_id} className="py-3 border-b last:border-b-0">
+									<div
+										key={pe.event_id}
+										className="py-3 border-b last:border-b-0">
 										<div className="flex items-center justify-between">
 											<div>
-												<div className="text-sm font-medium text-gray-800">{pe.judul}</div>
+												<div className="text-sm font-medium text-gray-800">
+													{pe.judul}
+												</div>
 												<div className="text-xs text-gray-500">
 													Mulai: {formatDate(pe.tanggal_mulai)}
 												</div>
@@ -347,7 +416,10 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 											</div>
 										</div>
 										<div className="w-full bg-gray-100 rounded h-2 mt-2">
-											<div className="h-2 rounded bg-indigo-500" style={{ width: `${pct}%` }} />
+											<div
+												className="h-2 rounded bg-indigo-500"
+												style={{ width: `${pct}%` }}
+											/>
 										</div>
 									</div>
 								);
@@ -360,7 +432,9 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 					<h5 className="text-sm font-medium mb-2">Pendaftaran baru</h5>
 					<div className="space-y-2">
 						{(participants.pending_registrations ?? []).length === 0 ? (
-							<p className="text-sm text-gray-500">Tidak ada pendaftaran pending.</p>
+							<p className="text-sm text-gray-500">
+								Tidak ada pendaftaran pending.
+							</p>
 						) : (
 							(participants.pending_registrations ?? []).map((p) => (
 								<div
@@ -413,7 +487,9 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 
 					{(feedbacksToShow ?? []).length === 0 ? (
 						<p className="text-sm text-gray-500">
-							{selectedEventId ? "Belum ada feedback untuk event ini." : "Belum ada feedback."}
+							{selectedEventId
+								? "Belum ada feedback untuk event ini."
+								: "Belum ada feedback."}
 						</p>
 					) : (
 						<div className="space-y-3 max-h-80 overflow-y-auto">
@@ -421,7 +497,9 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 								<div key={f.id} className="border rounded p-4 bg-white">
 									<div className="flex items-start justify-between">
 										<div>
-											<div className="font-medium text-sm truncate">{f.user_nama}</div>
+											<div className="font-medium text-sm truncate">
+												{f.user_nama}
+											</div>
 											<div className="text-xs text-gray-500">
 												{f.event_judul} · {formatRelativeTime(f.created_at)}
 											</div>
@@ -430,7 +508,9 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 											<RatingStars rating={f.rating ?? 0} size="sm" />
 										</div>
 									</div>
-									<p className="text-sm text-gray-700 mt-2 leading-relaxed">{f.komentar}</p>
+									<p className="text-sm text-gray-700 mt-2 leading-relaxed">
+										{f.komentar}
+									</p>
 								</div>
 							))}
 						</div>
@@ -450,7 +530,9 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 					<div className="mb-3">
 						<p className="text-xs text-gray-500 mb-2">Top volunteers</p>
 						{(volunteers.top_volunteers ?? []).length === 0 ? (
-							<p className="text-sm text-gray-500">Belum ada volunteer aktif.</p>
+							<p className="text-sm text-gray-500">
+								Belum ada volunteer aktif.
+							</p>
 						) : (
 							<div className="space-y-2">
 								{volunteers.top_volunteers.map((v) => (
@@ -458,7 +540,9 @@ export default function OrganizationAnalytics({ data, isLoading, error, selected
 										key={v.user_id}
 										className="flex items-center justify-between py-2 border-b last:border-b-0">
 										<div className="text-sm">{v.nama}</div>
-										<div className="text-xs text-gray-500">{v.participations}x Partisipasi</div>
+										<div className="text-xs text-gray-500">
+											{v.participations}x Partisipasi
+										</div>
 									</div>
 								))}
 							</div>

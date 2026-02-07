@@ -3,12 +3,15 @@ import { useNavigate, useParams } from "react-router-dom";
 
 // Hooks / Stores
 import { useAuthStore } from "@/_hooks/useAuth";
-import { useOrgLocationById, useOrgUpdateLocationMutation } from "@/_hooks/useLocations";
+import {
+	useOrgLocationById,
+	useOrgUpdateLocationMutation,
+} from "@/_hooks/useLocations";
 // import { useAdminOrganizations } from "@/_hooks/useOrganizations";
 
 // UI Components
 import Button from "@/components/ui/DynamicButton";
-import Skeleton from "@/components/ui/Skeleton";
+import CustomSkeleton from "@/components/ui/CustomSkeleton";
 import { useForm } from "react-hook-form";
 import { parseGoogleMapsUrl } from "@/utils";
 import { AlertCircle } from "lucide-react";
@@ -75,21 +78,28 @@ export default function OrganizationLocationEdit() {
 		const result = parseGoogleMapsUrl(gmapUrl);
 		if (!result) {
 			setParseError(
-				"Tidak dapat mem-parsing URL. Pastikan Anda menempelkan link share Google Maps (bukan URL pendek).\nCoba gunakan opsi 'Share' pada Google Maps → 'Copy link'."
+				"Tidak dapat mem-parsing URL. Pastikan Anda menempelkan link share Google Maps (bukan URL pendek).\nCoba gunakan opsi 'Share' pada Google Maps → 'Copy link'.",
 			);
 			return;
 		}
 
 		const place = result.place || "";
-		setValue("latitude", result.latitude || getValues("latitude"), { shouldDirty: true });
-		setValue("longitude", result.longitude || getValues("longitude"), { shouldDirty: true });
-		setValue("zoom_level", result.zoom_level ?? getValues("zoom_level"), { shouldDirty: true });
+		setValue("latitude", result.latitude || getValues("latitude"), {
+			shouldDirty: true,
+		});
+		setValue("longitude", result.longitude || getValues("longitude"), {
+			shouldDirty: true,
+		});
+		setValue("zoom_level", result.zoom_level ?? getValues("zoom_level"), {
+			shouldDirty: true,
+		});
 		setValue("alamat", place || getValues("alamat"), { shouldDirty: true });
-		if (!getValues("nama")) setValue("nama", place || getValues("nama"), { shouldDirty: true });
+		if (!getValues("nama"))
+			setValue("nama", place || getValues("nama"), { shouldDirty: true });
 	};
 
 	if (showLocationLoading) {
-		return <Skeleton.FormSkeleton title="Loading..." />;
+		return <CustomSkeleton.FormSkeleton title="Loading..." />;
 	}
 
 	if (locationsError) {
@@ -98,8 +108,12 @@ export default function OrganizationLocationEdit() {
 				<div className="flex flex-col items-center justify-center  text-gray-600">
 					<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 					<h3 className="text-lg font-semibold mb-2">Error</h3>
-					<p className="text-gray-500 mb-4 text-center">Gagal mengambil data lokasi.</p>
-					<p className="text-red-500 mb-4 text-center font-semibold">{locationsError.message}</p>
+					<p className="text-gray-500 mb-4 text-center">
+						Gagal mengambil data lokasi.
+					</p>
+					<p className="text-red-500 mb-4 text-center font-semibold">
+						{locationsError.message}
+					</p>
 				</div>
 			</div>
 		);
@@ -108,20 +122,25 @@ export default function OrganizationLocationEdit() {
 		<div className="w-full mx-auto p-4 sm:p-6 max-w-6xl min-h-[calc(100vh-4rem)]">
 			<div className="bg-white shadow-lg rounded-lg p-4 sm:p-6">
 				<header className="mb-6 sm:mb-8">
-					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Edit Lokasi</h1>
+					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
+						Edit Lokasi
+					</h1>
 					<p className="text-xs sm:text-sm text-gray-500 mt-1">
-						Isi detail lokasi. Anda bisa menempelkan link Google Maps dan menekan "Parse" untuk
-						mengisi koordinat otomatis.
+						Isi detail lokasi. Anda bisa menempelkan link Google Maps dan
+						menekan "Parse" untuk mengisi koordinat otomatis.
 					</p>
 				</header>
 
-				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6 flex flex-col">
+				<form
+					onSubmit={handleSubmit(onSubmit)}
+					className="space-y-6 flex flex-col">
 					<div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
 						<div className="sm:col-span-2">
 							<label
 								htmlFor="nama"
 								className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
-								Nama Lokasi (bebas, hanya untuk pendataan) <span className="text-red-500">*</span>
+								Nama Lokasi (bebas, hanya untuk pendataan){" "}
+								<span className="text-red-500">*</span>
 							</label>
 							<input
 								id="nama"
@@ -261,7 +280,9 @@ export default function OrganizationLocationEdit() {
 								id="zoom_level"
 								{...register("zoom_level", {
 									onChange: (e) =>
-										setValue("zoom_level", Number(e.target.value), { shouldDirty: true }),
+										setValue("zoom_level", Number(e.target.value), {
+											shouldDirty: true,
+										}),
 								})}
 								type="number"
 								min={0}
@@ -291,18 +312,20 @@ export default function OrganizationLocationEdit() {
 							📍 Opsi 1: Masukkan link Google Maps
 						</label>
 						<p className="text-xs text-gray-500 mt-1">
-							Cara cepat: buka Google Maps, cari lokasi, lalu salin URL dari address bar (bukan
-							short link dari dialog Share). URL yang ideal berisi salah satu dari pola berikut:{" "}
+							Cara cepat: buka Google Maps, cari lokasi, lalu salin URL dari
+							address bar (bukan short link dari dialog Share). URL yang ideal
+							berisi salah satu dari pola berikut:{" "}
 							<code className="text-xs">@lat,lng,ZZz</code>,
-							<code className="text-xs">/place/...</code>, atau parameter query seperti{" "}
-							<code className="text-xs">q=lat,lng</code>.
+							<code className="text-xs">/place/...</code>, atau parameter query
+							seperti <code className="text-xs">q=lat,lng</code>.
 						</p>
 						<p className="text-xs text-gray-500 mt-2">
-							Yang akan otomatis terisi setelah Parse: <strong>latitude</strong>,
-							<strong> longitude</strong>, <strong>zoom</strong> (jika tersedia), dan{" "}
-							<strong>alamat lengkap</strong> (jika dapat diekstrak). Field lain seperti{" "}
-							<em>kota</em>, <em>provinsi</em>, <em>negara</em>, atau <em>place_id</em> dapat diisi
-							manual jika diperlukan.
+							Yang akan otomatis terisi setelah Parse: <strong>latitude</strong>
+							,<strong> longitude</strong>, <strong>zoom</strong> (jika
+							tersedia), dan <strong>alamat lengkap</strong> (jika dapat
+							diekstrak). Field lain seperti <em>kota</em>, <em>provinsi</em>,{" "}
+							<em>negara</em>, atau <em>place_id</em> dapat diisi manual jika
+							diperlukan.
 						</p>
 						<div className="flex flex-col sm:flex-row gap-2 mt-2">
 							<input
@@ -320,15 +343,19 @@ export default function OrganizationLocationEdit() {
 							</button>
 						</div>
 						{gmapUrl &&
-							(gmapUrl.includes("maps.app.goo.gl") || gmapUrl.includes("goo.gl/maps")) && (
+							(gmapUrl.includes("maps.app.goo.gl") ||
+								gmapUrl.includes("goo.gl/maps")) && (
 								<p className="text-sm text-yellow-600 mt-2">
-									Terlihat seperti link pendek Google Maps (maps.app.goo.gl / goo.gl/maps). Untuk
-									hasil terbaik, buka halaman Google Maps di tab browser dan salin URL dari address
-									bar lalu tempelkan di sini sebelum menekan Parse.
+									Terlihat seperti link pendek Google Maps (maps.app.goo.gl /
+									goo.gl/maps). Untuk hasil terbaik, buka halaman Google Maps di
+									tab browser dan salin URL dari address bar lalu tempelkan di
+									sini sebelum menekan Parse.
 								</p>
 							)}
 						{parseError && (
-							<p className="text-sm text-red-600 mt-2 whitespace-pre-wrap">{parseError}</p>
+							<p className="text-sm text-red-600 mt-2 whitespace-pre-wrap">
+								{parseError}
+							</p>
 						)}
 					</div>
 
@@ -338,8 +365,8 @@ export default function OrganizationLocationEdit() {
 							🗺️ Opsi 2: Pilih lokasi di peta
 						</label>
 						<p className="text-xs text-gray-600 mb-3">
-							Cari lokasi, klik peta, atau drag marker untuk menyesuaikan posisi. Koordinat akan
-							otomatis diperbarui.
+							Cari lokasi, klik peta, atau drag marker untuk menyesuaikan
+							posisi. Koordinat akan otomatis diperbarui.
 						</p>
 						<MapCoordinatePicker
 							latitude={getValues("latitude") || -6.2088}
@@ -354,12 +381,16 @@ export default function OrganizationLocationEdit() {
 								if (locationData) {
 									// Always overwrite when selecting from search
 									setValue("nama", locationData.name, { shouldDirty: true });
-									setValue("alamat", locationData.address, { shouldDirty: true });
+									setValue("alamat", locationData.address, {
+										shouldDirty: true,
+									});
 									if (locationData.city) {
 										setValue("kota", locationData.city, { shouldDirty: true });
 									}
 									if (locationData.province) {
-										setValue("provinsi", locationData.province, { shouldDirty: true });
+										setValue("provinsi", locationData.province, {
+											shouldDirty: true,
+										});
 									}
 								}
 							}}

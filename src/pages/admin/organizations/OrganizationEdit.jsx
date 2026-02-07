@@ -9,7 +9,7 @@ import { UserCircle2Icon, Building2 } from "lucide-react";
 import { Input, InputGroup, InputLeftAddon } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import Skeleton from "@/components/ui/Skeleton";
+import CustomSkeleton from "@/components/ui/CustomSkeleton";
 import Button from "@/components/ui/DynamicButton";
 // contact selection removed — no longer using useAdminOrganizationUsers
 import { getImageUrl } from "@/utils";
@@ -82,9 +82,12 @@ export default function AdminOrganizationEdit() {
 		const maxSize = 2 * 1024 * 1024; // 2MB
 
 		if (!allowed.includes(file.type)) {
-			toast.error("File harus berupa gambar JPEG/PNG/JPG (selain itu tidak diperbolehkan).", {
-				position: "top-center",
-			});
+			toast.error(
+				"File harus berupa gambar JPEG/PNG/JPG (selain itu tidak diperbolehkan).",
+				{
+					position: "top-center",
+				},
+			);
 			return;
 		}
 		if (file.size > maxSize) {
@@ -111,7 +114,7 @@ export default function AdminOrganizationEdit() {
 	};
 
 	if (showOrganizationLoading) {
-		return <Skeleton.FormSkeleton title="Loading..." />;
+		return <CustomSkeleton.FormSkeleton title="Loading..." />;
 	}
 	if (error) {
 		return <div>Error: {error?.message}</div>;
@@ -120,7 +123,9 @@ export default function AdminOrganizationEdit() {
 		<div className="w-full mx-auto p-4 sm:p-6 max-w-6xl min-h-[calc(100vh-4rem)]">
 			<div className="bg-white shadow-xl rounded-lg p-4 sm:p-6">
 				<header className="mb-6 sm:mb-8">
-					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Edit Organisasi</h1>
+					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
+						Edit Organisasi
+					</h1>
 					<p className="text-xs sm:text-sm text-gray-500 mt-1">
 						Isi detail organisasi dan tambahkan website serta logo.
 					</p>
@@ -281,7 +286,9 @@ export default function AdminOrganizationEdit() {
 											</label>
 										</div>
 
-										<p className="text-xs text-gray-500">Format: JPEG, JPG, PNG. Maksimal 2MB.</p>
+										<p className="text-xs text-gray-500">
+											Format: JPEG, JPG, PNG. Maksimal 2MB.
+										</p>
 
 										{getValues("logo") && (
 											<p className="text-xs text-gray-700">
@@ -308,7 +315,11 @@ export default function AdminOrganizationEdit() {
 							}}>
 							Batal
 						</Button>
-						<Button type="submit" variant="success" loading={isLoading} disabled={isLoading}>
+						<Button
+							type="submit"
+							variant="success"
+							loading={isLoading}
+							disabled={isLoading}>
 							{isLoading ? "Menyimpan..." : "Simpan Organisasi"}
 						</Button>
 					</div>

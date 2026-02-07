@@ -16,10 +16,20 @@ import {
 	Table,
 	MapIcon,
 } from "lucide-react";
-import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
+import {
+	Menu,
+	MenuButton,
+	MenuList,
+	MenuItem,
+	Portal,
+	IconButton,
+} from "@chakra-ui/react";
 
 // Hooks
-import { useOrgDeleteLocationMutation, useOrgLocations } from "@/_hooks/useLocations";
+import {
+	useOrgDeleteLocationMutation,
+	useOrgLocations,
+} from "@/_hooks/useLocations";
 
 // Helpers
 import { getGoogleMapsUrl, parseApiError } from "@/utils";
@@ -141,7 +151,10 @@ export default function OrganizationLocation() {
 					<Portal>
 						<MenuList className="font-semibold">
 							<Link to={`/organization/locations/edit/${row.id}`}>
-								<MenuItem icon={<EditIcon className="text-yellow-500 hover:text-yellow-600" />}>
+								<MenuItem
+									icon={
+										<EditIcon className="text-yellow-500 hover:text-yellow-600" />
+									}>
 									Edit
 								</MenuItem>
 							</Link>
@@ -161,25 +174,32 @@ export default function OrganizationLocation() {
 
 	if (locationsError) {
 		return (
-			<div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+			<div className="min-h-screen  py-8 px-4 sm:px-6 lg:px-8">
 				<div className="flex flex-col items-center justify-center  text-gray-600">
 					<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 					<h3 className="text-lg font-semibold mb-2">Error</h3>
-					<p className="text-gray-500 mb-4 text-center">Gagal mengambil data lokasi.</p>
-					<p className="text-red-500 mb-4 text-center font-semibold">{locationsError.message}</p>
+					<p className="text-gray-500 mb-4 text-center">
+						Gagal mengambil data lokasi.
+					</p>
+					<p className="text-red-500 mb-4 text-center font-semibold">
+						{locationsError.message}
+					</p>
 				</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="py-8 bg-emerald-100 page-transition min-h-screen">
+		<div className="py-8  page-transition min-h-screen">
 			<div className="max-w-6xl mx-auto px-4">
 				<div className="bg-white rounded-lg shadow p-6">
 					<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
 						<h2 className="text-lg font-semibold">
 							{locationsRefetching ? (
-								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
+								<FetchLoader
+									variant="inline"
+									text="Mengambil Data Terbaru..."
+								/>
 							) : (
 								"Daftar Lokasi"
 							)}
@@ -317,7 +337,9 @@ export default function OrganizationLocation() {
 								<div className="flex flex-col items-center justify-center h-64 text-gray-600">
 									<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 									<h3 className="text-lg font-semibold mb-2">
-										{searchLocation ? "No Matching Locations Found" : "No Locations Available"}
+										{searchLocation
+											? "No Matching Locations Found"
+											: "No Locations Available"}
 									</h3>
 									<p className="text-gray-500 mb-4 text-center">
 										{searchLocation

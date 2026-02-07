@@ -21,7 +21,7 @@ import { getImageUrl } from "@/utils";
 import { formatTime, formatDate } from "@/utils/dateFormatter";
 
 import DynamicButton from "@/components/ui/DynamicButton";
-import Skeleton from "@/components/ui/Skeleton";
+import CustomSkeleton from "@/components/ui/CustomSkeleton";
 import Avatar from "@/components/ui/Avatar";
 import Badge from "@/components/ui/Badge";
 /**
@@ -32,7 +32,12 @@ export default function DetailEventPage() {
 
 	const { eventId } = useParams();
 	const navigate = useNavigate();
-	const { data: event = null, isLoading, isFetching, error } = useEventById(eventId);
+	const {
+		data: event = null,
+		isLoading,
+		isFetching,
+		error,
+	} = useEventById(eventId);
 	const { openJoinModal } = useModalStore();
 
 	const formatDateRange = (startDateStr, endDateStr) => {
@@ -52,7 +57,7 @@ export default function DetailEventPage() {
 	};
 
 	if (isLoading || (isFetching && String(event?.id) !== String(eventId))) {
-		return <Skeleton.Detail />;
+		return <CustomSkeleton.Detail />;
 	}
 
 	if (error || !event) {
@@ -87,7 +92,8 @@ export default function DetailEventPage() {
 	const isStarted = now >= eventStart || event.status === "ongoing";
 	const isFinished = now >= eventEnd || event.status === "completed";
 
-	const isRegistrationEnded = isCancelled || isFull || isStarted || isRegistrationClosed;
+	const isRegistrationEnded =
+		isCancelled || isFull || isStarted || isRegistrationClosed;
 
 	// Alur penutupan tombol pendaftaran:
 	// - event cancelled  -> ditutup
@@ -123,16 +129,23 @@ export default function DetailEventPage() {
 						<div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
 							<div className="lg:col-span-2">
 								<Badge variant={statusBadge.variant}>{statusBadge.text}</Badge>
-								<h1 className="text-2xl md:text-3xl font-bold text-gray-900 mt-1">{event.judul}</h1>
+								<h1 className="text-2xl md:text-3xl font-bold text-gray-900 mt-1">
+									{event.judul}
+								</h1>
 
 								<div className="mt-4 grid grid-cols-1 sm:grid-cols-1 gap-3">
 									{/* Tanggal Pelaksanaan */}
 									<div className="flex items-start gap-3">
 										<Calendar size={18} className="text-emerald-600 mt-1" />
 										<div>
-											<div className="text-gray-600 font-medium text-sm">Tanggal Pelaksanaan</div>
+											<div className="text-gray-600 font-medium text-sm">
+												Tanggal Pelaksanaan
+											</div>
 											<div className="text-gray-600 text-sm">
-												{formatDateRange(event.tanggal_mulai, event.tanggal_selesai)}
+												{formatDateRange(
+													event.tanggal_mulai,
+													event.tanggal_selesai,
+												)}
 											</div>
 										</div>
 									</div>
@@ -141,9 +154,12 @@ export default function DetailEventPage() {
 									<div className="flex items-start gap-3 sm:col-span-2">
 										<Clock size={18} className="text-blue-600 mt-1" />
 										<div>
-											<div className="text-gray-600 font-medium text-sm">Waktu Pelaksanaan</div>
+											<div className="text-gray-600 font-medium text-sm">
+												Waktu Pelaksanaan
+											</div>
 											<div className="text-gray-600 text-sm">
-												{formatTime(event.waktu_mulai)} - {formatTime(event.waktu_selesai, "WIB")}
+												{formatTime(event.waktu_mulai)} -{" "}
+												{formatTime(event.waktu_selesai, "WIB")}
 											</div>
 										</div>
 									</div>
@@ -152,7 +168,9 @@ export default function DetailEventPage() {
 									<div className="flex items-start gap-3 sm:col-span-2">
 										<CalendarX size={18} className="text-red-600 mt-1" />
 										<div>
-											<div className="text-gray-600 font-medium text-sm">Batas pendaftaran</div>
+											<div className="text-gray-600 font-medium text-sm">
+												Batas pendaftaran
+											</div>
 											<div className="text-gray-600 text-sm">
 												{formatDate(event.batas_pendaftaran)}
 											</div>
@@ -181,7 +199,9 @@ export default function DetailEventPage() {
 						</div>
 
 						<div className="mt-6 text-gray-700">
-							<h3 className="text-lg font-semibold text-gray-900 mb-3">Deskripsi Kegiatan</h3>
+							<h3 className="text-lg font-semibold text-gray-900 mb-3">
+								Deskripsi Kegiatan
+							</h3>
 							<p className="leading-relaxed">{event.deskripsi}</p>
 						</div>
 
@@ -192,7 +212,9 @@ export default function DetailEventPage() {
 								</h4>
 								<div className="text-gray-700">
 									<div className="font-medium">{event.location?.nama}</div>
-									<div className="text-sm text-gray-500">{event.location?.alamat}</div>
+									<div className="text-sm text-gray-500">
+										{event.location?.alamat}
+									</div>
 									{event.location?.kota && (
 										<div className="text-sm text-gray-500 mt-1">
 											{event.location?.kota}, {event.location?.provinsi}
@@ -234,7 +256,9 @@ export default function DetailEventPage() {
 												))}
 											</ul>
 										) : (
-											<p className="text-amber-700 text-sm">{event.persyaratan}</p>
+											<p className="text-amber-700 text-sm">
+												{event.persyaratan}
+											</p>
 										)}
 									</div>
 								)}
@@ -269,8 +293,12 @@ export default function DetailEventPage() {
 									fallback={event.organization.nama}
 								/>
 								<div>
-									<div className="font-medium text-gray-900">{event.organization.nama}</div>
-									<div className="text-sm text-gray-500">Penyelenggara Kegiatan</div>
+									<div className="font-medium text-gray-900">
+										{event.organization.nama}
+									</div>
+									<div className="text-sm text-gray-500">
+										Penyelenggara Kegiatan
+									</div>
 								</div>
 							</div>
 						)}

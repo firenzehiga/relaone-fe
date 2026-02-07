@@ -5,15 +5,14 @@ import {
 	SidebarProvider,
 	SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { AdminSidebar } from "@/components/layout/admin/AdminSidebar";
+import { OrganizationSidebar } from "@/components/layout/organization/OrganizationSidebar";
 import { DynamicBreadcrumb } from "@/components/layout/DynamicBreadcrumb";
 import { UserMenu } from "@/components/layout/UserMenu";
-import AdminFooter from "@/components/layout/admin/AdminFooter";
 
-export default function AdminLayout() {
+export default function OrganizationLayout() {
 	return (
 		<SidebarProvider>
-			<AdminSidebar />
+			<OrganizationSidebar />
 			<SidebarInset>
 				<header className="bg-background sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b px-4 z-40">
 					<SidebarTrigger className="-ml-1" />
@@ -25,7 +24,6 @@ export default function AdminLayout() {
 					<div className="flex-1 px-4 sm:px-6 lg:px-8">
 						<Outlet />
 					</div>
-					<AdminFooter />
 				</div>
 			</SidebarInset>
 		</SidebarProvider>

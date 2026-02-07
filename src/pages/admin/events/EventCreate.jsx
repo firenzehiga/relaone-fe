@@ -10,12 +10,20 @@ import { useAuthStore } from "@/_hooks/useAuth";
 import { useAdminCreateEventMutation } from "@/_hooks/useEvents";
 import { Loader2, UserCircle2, Image } from "lucide-react";
 import { useAdminCategory } from "@/_hooks/useCategories";
-import Skeleton from "@/components/ui/Skeleton";
+import CustomSkeleton from "@/components/ui/CustomSkeleton";
 import { useForm } from "react-hook-form";
 export default function AdminEventCreate() {
 	const navigate = useNavigate();
 	const { user } = useAuthStore();
-	const { register, handleSubmit, setValue, watch, reset, getValues, formState } = useForm({
+	const {
+		register,
+		handleSubmit,
+		setValue,
+		watch,
+		reset,
+		getValues,
+		formState,
+	} = useForm({
 		defaultValues: {
 			judul: "",
 			deskripsi: "",
@@ -48,7 +56,11 @@ export default function AdminEventCreate() {
 	const [imagePreview, setImagePreview] = useState(null);
 
 	const createEventMutation = useAdminCreateEventMutation();
-	const { locations, isLoading: locationsLoading, error: locationsError } = useAdminLocations();
+	const {
+		locations,
+		isLoading: locationsLoading,
+		error: locationsError,
+	} = useAdminLocations();
 
 	const organization_id = watch("organization_id");
 	const gambar = watch("gambar");
@@ -57,7 +69,9 @@ export default function AdminEventCreate() {
 
 	// Lokasi yang difilter berdasarkan organisasi yang dipilih di form
 	const filteredLocations = locations.filter((loc) =>
-		organization_id ? String(loc.organization_id) === String(organization_id) : false
+		organization_id
+			? String(loc.organization_id) === String(organization_id)
+			: false,
 	);
 
 	// Jika organisasi berubah dan lokasi saat ini tidak cocok, kosongkan lokasi
@@ -66,7 +80,7 @@ export default function AdminEventCreate() {
 		const ok = locations.some(
 			(loc) =>
 				String(loc.organization_id) === String(organization_id) &&
-				String(loc.id) === String(getValues("location_id"))
+				String(loc.id) === String(getValues("location_id")),
 		);
 		if (!ok && getValues("location_id")) {
 			setValue("location_id", "", { shouldDirty: true });
@@ -79,7 +93,11 @@ export default function AdminEventCreate() {
 		error: organizationsError,
 	} = useAdminOrganizations();
 
-	const { categories, isLoading: categoriesLoading, error: categoriesError } = useAdminCategory();
+	const {
+		categories,
+		isLoading: categoriesLoading,
+		error: categoriesError,
+	} = useAdminCategory();
 
 	const handleFileChange = (e) => {
 		const file = e.target.files && e.target.files[0];
@@ -89,9 +107,12 @@ export default function AdminEventCreate() {
 		const maxSize = 2 * 1024 * 1024; // 2MB
 
 		if (!allowed.includes(file.type)) {
-			toast.error("File harus berupa gambar JPEG/PNG/JPG (webp tidak diperbolehkan).", {
-				position: "top-center",
-			});
+			toast.error(
+				"File harus berupa gambar JPEG/PNG/JPG (webp tidak diperbolehkan).",
+				{
+					position: "top-center",
+				},
+			);
 			return;
 		}
 		if (file.size > maxSize) {
@@ -130,7 +151,7 @@ export default function AdminEventCreate() {
 		setValue(
 			"persyaratan",
 			current.map((p, i) => (i === idx ? value : p)),
-			{ shouldDirty: true }
+			{ shouldDirty: true },
 		);
 	};
 	const removePersyaratan = (idx) => {
@@ -138,7 +159,7 @@ export default function AdminEventCreate() {
 		setValue(
 			"persyaratan",
 			current.filter((_, i) => i !== idx),
-			{ shouldDirty: true }
+			{ shouldDirty: true },
 		);
 	};
 
@@ -155,7 +176,7 @@ export default function AdminEventCreate() {
 		setValue(
 			"manfaat",
 			current.map((m, i) => (i === idx ? value : m)),
-			{ shouldDirty: true }
+			{ shouldDirty: true },
 		);
 	};
 	const removeManfaat = (idx) => {
@@ -163,7 +184,7 @@ export default function AdminEventCreate() {
 		setValue(
 			"manfaat",
 			current.filter((_, i) => i !== idx),
-			{ shouldDirty: true }
+			{ shouldDirty: true },
 		);
 	};
 
@@ -217,13 +238,15 @@ export default function AdminEventCreate() {
 	};
 
 	if (locationsLoading || organizationsLoading || categoriesLoading) {
-		return <Skeleton.FormSkeleton title="Loading..." />;
+		return <CustomSkeleton.FormSkeleton title="Loading..." />;
 	}
 
 	if (locationsError || organizationsError || categoriesError) {
 		return (
 			<div>
-				{locationsError?.message || organizationsError?.message || categoriesError?.message}
+				{locationsError?.message ||
+					organizationsError?.message ||
+					categoriesError?.message}
 			</div>
 		);
 	}
@@ -232,14 +255,22 @@ export default function AdminEventCreate() {
 		<div className="w-full mx-auto p-4 sm:p-6 max-w-7xl min-h-[calc(100vh-4rem)]">
 			<div className="bg-white shadow-xl rounded-lg p-4 sm:p-6">
 				<header className="mb-6 sm:mb-8">
-					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2">Buat Event Baru</h1>
+					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2">
+						Buat Event Baru
+					</h1>
 					<p className="text-xs sm:text-sm text-gray-500 mt-1">
 						Isi nama, deskripsi dan tambahkan gambar untuk event.
 					</p>
 				</header>
 
-				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6 flex flex-col">
-					{error && <div className="text-sm text-red-600 bg-red-50 p-2 rounded">{error}</div>}
+				<form
+					onSubmit={handleSubmit(onSubmit)}
+					className="space-y-6 flex flex-col">
+					{error && (
+						<div className="text-sm text-red-600 bg-red-50 p-2 rounded">
+							{error}
+						</div>
+					)}
 
 					<Tabs variant="enclosed" colorScheme="green" isFitted>
 						<TabList className="flex-wrap">
@@ -254,7 +285,9 @@ export default function AdminEventCreate() {
 							</Tab>
 						</TabList>
 
-						<TabPanels className="mt-4 sm:mt-6 w-full" style={{ minHeight: "420px" }}>
+						<TabPanels
+							className="mt-4 sm:mt-6 w-full"
+							style={{ minHeight: "420px" }}>
 							<TabPanel>
 								{/* Judul & Deskripsi */}
 								<div className="mb-4">
@@ -326,7 +359,10 @@ export default function AdminEventCreate() {
 										className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
 										Gambar Event <span className="text-red-500">*</span>
 									</label>
-									<div className="mt-2" onDrop={handleDrop} onDragOver={handleDragOver}>
+									<div
+										className="mt-2"
+										onDrop={handleDrop}
+										onDragOver={handleDragOver}>
 										<div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
 											{/* Image Preview */}
 											<div className="relative mx-auto sm:mx-0">
@@ -505,7 +541,9 @@ export default function AdminEventCreate() {
 															type="text"
 															className="flex-1 rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 															value={p}
-															onChange={(e) => updatePersyaratan(idx, e.target.value)}
+															onChange={(e) =>
+																updatePersyaratan(idx, e.target.value)
+															}
 														/>
 														<button
 															type="button"
@@ -565,7 +603,9 @@ export default function AdminEventCreate() {
 															type="text"
 															className="flex-1 rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
 															value={m}
-															onChange={(e) => updateManfaat(idx, e.target.value)}
+															onChange={(e) =>
+																updateManfaat(idx, e.target.value)
+															}
 														/>
 														<button
 															type="button"

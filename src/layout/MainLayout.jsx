@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import Header from "@/components/layout/volunteer/Header";
+import Footer from "@/components/layout/volunteer/Footer";
 import { useUserRole } from "@/_hooks/useAuth";
 import AdminFooter from "@/components/layout/admin/AdminFooter";
 

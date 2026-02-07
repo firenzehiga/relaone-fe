@@ -21,7 +21,7 @@ import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 // UI Components
 import ActivityCard from "@/components/volunteer/ActivityCard";
 import DynamicButton from "@/components/ui/DynamicButton";
-import Skeleton from "@/components/ui/Skeleton";
+import CustomSkeleton from "@/components/ui/CustomSkeleton";
 import Card from "@/components/ui/Card";
 
 export default function MyActivitiesPage() {
@@ -39,7 +39,7 @@ export default function MyActivitiesPage() {
 	};
 
 	if (isLoading) {
-		return <Skeleton.MyActivitiesSkeleton />;
+		return <CustomSkeleton.MyActivitiesSkeleton />;
 	}
 
 	if (error) {
@@ -143,7 +143,11 @@ export default function MyActivitiesPage() {
 				{/* Header */}
 				<div className="mb-8">
 					<div className="flex items-center gap-3 mb-2">
-						<DynamicButton variant="ghost" size="sm" onClick={() => navigate("/")} className="p-2">
+						<DynamicButton
+							variant="ghost"
+							size="sm"
+							onClick={() => navigate("/")}
+							className="p-2">
 							<ArrowLeft size={20} />
 						</DynamicButton>
 						<h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
@@ -164,8 +168,12 @@ export default function MyActivitiesPage() {
 						<Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
 							<div className="flex items-center justify-between p-5">
 								<div>
-									<p className="text-blue-100 text-sm font-medium mb-1">Total Kegiatan</p>
-									<p className="text-4xl font-bold">{data?.statistics?.total || 0}</p>
+									<p className="text-blue-100 text-sm font-medium mb-1">
+										Total Kegiatan
+									</p>
+									<p className="text-4xl font-bold">
+										{data?.statistics?.total || 0}
+									</p>
 								</div>
 								<Sparkles size={40} className="opacity-80" />
 							</div>
@@ -179,8 +187,12 @@ export default function MyActivitiesPage() {
 						<Card className="bg-gradient-to-br from-green-500 to-green-600 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
 							<div className="flex items-center justify-between p-5">
 								<div>
-									<p className="text-green-100 text-sm font-medium mb-1">Hadir</p>
-									<p className="text-4xl font-bold">{data?.statistics?.attended || 0}</p>
+									<p className="text-green-100 text-sm font-medium mb-1">
+										Hadir
+									</p>
+									<p className="text-4xl font-bold">
+										{data?.statistics?.attended || 0}
+									</p>
 								</div>
 								<CheckCircle size={40} className="opacity-80" />
 							</div>
@@ -194,8 +206,12 @@ export default function MyActivitiesPage() {
 						<Card className="bg-gradient-to-br from-red-500 to-red-600 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
 							<div className="flex items-center justify-between p-5">
 								<div>
-									<p className="text-red-100 text-sm font-medium mb-1">Tidak Hadir</p>
-									<p className="text-4xl font-bold">{data?.statistics?.no_show || 0}</p>
+									<p className="text-red-100 text-sm font-medium mb-1">
+										Tidak Hadir
+									</p>
+									<p className="text-4xl font-bold">
+										{data?.statistics?.no_show || 0}
+									</p>
 								</div>
 								<XCircle size={40} className="opacity-80" />
 							</div>
@@ -209,8 +225,12 @@ export default function MyActivitiesPage() {
 						<Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
 							<div className="flex items-center justify-between p-5">
 								<div>
-									<p className="text-orange-100 text-sm font-medium mb-1">Ditolak</p>
-									<p className="text-4xl font-bold">{data?.statistics?.rejected || 0}</p>
+									<p className="text-orange-100 text-sm font-medium mb-1">
+										Ditolak
+									</p>
+									<p className="text-4xl font-bold">
+										{data?.statistics?.rejected || 0}
+									</p>
 								</div>
 								<XCircle size={40} className="opacity-80" />
 							</div>
@@ -240,7 +260,9 @@ export default function MyActivitiesPage() {
 										`}>
 										<IconComponent
 											size={18}
-											className={activeTab === tab.id ? "text-white" : tab.color}
+											className={
+												activeTab === tab.id ? "text-white" : tab.color
+											}
 										/>
 										<span className="font-semibold">{tab.label}</span>
 										<span
@@ -268,12 +290,17 @@ export default function MyActivitiesPage() {
 								<div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
 									<Calendar className="text-gray-400" size={48} />
 								</div>
-								<h3 className="text-2xl font-bold text-gray-900 mb-3">Belum Ada Aktivitas</h3>
+								<h3 className="text-2xl font-bold text-gray-900 mb-3">
+									Belum Ada Aktivitas
+								</h3>
 								<p className="text-gray-600 text-lg mb-8 max-w-md mx-auto">
-									Kamu belum memiliki aktivitas di kategori ini. Yuk mulai berkontribusi dengan
-									mengikuti kegiatan volunteer!
+									Kamu belum memiliki aktivitas di kategori ini. Yuk mulai
+									berkontribusi dengan mengikuti kegiatan volunteer!
 								</p>
-								<DynamicButton variant="success" size="lg" onClick={() => navigate("/events")}>
+								<DynamicButton
+									variant="success"
+									size="lg"
+									onClick={() => navigate("/events")}>
 									<Sparkles size={18} className="mr-2" />
 									Jelajahi Kegiatan
 								</DynamicButton>
@@ -289,7 +316,9 @@ export default function MyActivitiesPage() {
 									transition={{ delay: index * 0.05 }}>
 									<ActivityCard
 										data={item}
-										onClick={() => navigate(`/volunteer/my-activities/${item.id}`)}
+										onClick={() =>
+											navigate(`/volunteer/my-activities/${item.id}`)
+										}
 									/>
 								</motion.div>
 							))}
@@ -305,11 +334,17 @@ export default function MyActivitiesPage() {
 											{/* Info */}
 											<div className="text-sm text-gray-600">
 												Menampilkan{" "}
-												<span className="font-semibold text-gray-900">{startIndex + 1}</span> -{" "}
+												<span className="font-semibold text-gray-900">
+													{startIndex + 1}
+												</span>{" "}
+												-{" "}
 												<span className="font-semibold text-gray-900">
 													{Math.min(endIndex, allData.length)}
 												</span>{" "}
-												dari <span className="font-semibold text-gray-900">{allData.length}</span>{" "}
+												dari{" "}
+												<span className="font-semibold text-gray-900">
+													{allData.length}
+												</span>{" "}
 												aktivitas
 											</div>
 
@@ -332,22 +367,29 @@ export default function MyActivitiesPage() {
 
 												{/* Page Numbers */}
 												<div className="flex items-center gap-1">
-													{Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => {
+													{Array.from(
+														{ length: totalPages },
+														(_, i) => i + 1,
+													).map((pageNumber) => {
 														// Show first page, last page, current page, and pages around current
 														const showPage =
 															pageNumber === 1 ||
 															pageNumber === totalPages ||
-															(pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1);
+															(pageNumber >= currentPage - 1 &&
+																pageNumber <= currentPage + 1);
 
 														// Show ellipsis
 														const showEllipsisBefore =
 															pageNumber === currentPage - 2 && currentPage > 3;
 														const showEllipsisAfter =
-															pageNumber === currentPage + 2 && currentPage < totalPages - 2;
+															pageNumber === currentPage + 2 &&
+															currentPage < totalPages - 2;
 
 														if (showEllipsisBefore || showEllipsisAfter) {
 															return (
-																<span key={pageNumber} className="px-2 text-gray-400">
+																<span
+																	key={pageNumber}
+																	className="px-2 text-gray-400">
 																	...
 																</span>
 															);
