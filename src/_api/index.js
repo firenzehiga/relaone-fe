@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const BASE_URL =
-	import.meta.env.VITE_API_BASE_URL || "https://peladen.my.id/api";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // ============================================================================
 // REFRESH TOKEN STATE MANAGEMENT
@@ -51,7 +50,7 @@ api.interceptors.request.use(
 		}
 		return config;
 	},
-	(error) => Promise.reject(error),
+	(error) => Promise.reject(error)
 );
 
 // ============================================================================
@@ -69,7 +68,7 @@ api.interceptors.response.use(
 		logError(error);
 
 		return Promise.reject(error);
-	},
+	}
 );
 
 // ============================================================================
@@ -194,7 +193,7 @@ async function refreshToken(oldToken) {
 	const response = await refreshClient.post(
 		"/refresh-token",
 		{},
-		{ headers: { Authorization: `Bearer ${oldToken}` } },
+		{ headers: { Authorization: `Bearer ${oldToken}` } }
 	);
 
 	const newToken = response.data?.data?.token;
