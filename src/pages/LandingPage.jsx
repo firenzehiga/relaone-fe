@@ -25,7 +25,7 @@ export default function LandingPage() {
 	const { events, isLoading: eventsLoading } = useEvents();
 
 	const {
-		data: categories = [],
+		data: categories,
 		isLoading: categoriesLoading,
 		error: categoriesError,
 	} = useCategory();
@@ -49,7 +49,8 @@ export default function LandingPage() {
 		}, 500);
 	}, [setStats]);
 
-	const featuredEvents = events?.filter((event) => event.status === "published").slice(0, 3) || [];
+	const featuredEvents =
+		events?.filter((event) => event.status === "published").slice(0, 3) || [];
 
 	/**
 	 * Handler untuk membuka modal pendaftaran event

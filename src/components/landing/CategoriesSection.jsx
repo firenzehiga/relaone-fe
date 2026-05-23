@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Card from "../ui/Card";
 export default function CategoriesSection({ categories }) {
 	const navigate = useNavigate();
+	const safeCategories = Array.isArray(categories) ? categories : [];
 
 	const categoriesIcons = [
 		{
@@ -21,14 +22,16 @@ export default function CategoriesSection({ categories }) {
 		<section className="w-full py-20 bg-white">
 			<div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="text-center mb-16">
-					<h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Kategori Kegiatan</h2>
+					<h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+						Kategori Kegiatan
+					</h2>
 					<p className="text-xl text-gray-600">
 						Beragam jenis kegiatan sosial yang dapat Anda ikuti
 					</p>
 				</div>
 
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-					{categories.slice(0, 3).map((category, index) => {
+					{safeCategories.slice(0, 3).map((category, index) => {
 						const Icon = categoriesIcons[index]?.icon;
 						return (
 							<motion.div
@@ -39,9 +42,13 @@ export default function CategoriesSection({ categories }) {
 									<div
 										className={`mx-auto w-16 h-16  rounded-full flex items-center justify-center mb-6`}
 										style={{ backgroundColor: `${category.warna}20` }}>
-										{Icon ? <Icon style={{ color: category.warna }} size={32} /> : null}
+										{Icon ? (
+											<Icon style={{ color: category.warna }} size={32} />
+										) : null}
 									</div>
-									<h3 className="text-xl font-semibold text-gray-500 mb-2">{category.nama}</h3>
+									<h3 className="text-xl font-semibold text-gray-500 mb-2">
+										{category.nama}
+									</h3>
 									<p className="text-gray-400">{category.deskripsi}</p>
 								</Card>
 							</motion.div>
