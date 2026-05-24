@@ -46,6 +46,7 @@ import { formatDate, formatDateTime } from "@/utils/dateFormatter";
 import FetchLoader from "@/components/ui/FetchLoader";
 import DynamicButton, { LinkButton } from "@/components/ui/DynamicButton";
 import Badge from "@/components/ui/Badge";
+import ExportData from "@/components/ui/ExportData";
 import { useDebounce } from "@/_hooks/utils/useDebounce";
 
 export default function OrganizationEventParticipant() {
@@ -559,6 +560,27 @@ export default function OrganizationEventParticipant() {
 									Buka Presensi
 								</LinkButton>
 							)}
+
+							<ExportData
+								data={filteredParticipants.map((participant, index) => ({
+									no: index + 1,
+									nama: participant.user?.nama || "",
+									email: participant.user?.email || "",
+									event: participant.event?.judul || "",
+									tanggal_daftar: formatDate(participant.tanggal_daftar) || "",
+									status: participant.status || "",
+									catatan: participant.catatan || "",
+								}))}
+								filename="organization-participants"
+								buttonText="Export XLSX"
+								variant="success"
+								disabled={
+									participantsLoading ||
+									!filteredParticipants ||
+									filteredParticipants.length === 0
+								}
+								className="flex items-center gap-2"
+							/>
 						</div>
 					</div>
 

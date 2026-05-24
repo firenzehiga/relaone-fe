@@ -47,6 +47,7 @@ import { getImageUrl, parseApiError } from "@/utils";
 import FetchLoader from "@/components/ui/FetchLoader";
 import { LinkButton } from "@/components/ui/DynamicButton";
 import Badge from "@/components/ui/Badge";
+import ExportData from "@/components/ui/ExportData";
 import { useDebounce } from "@/_hooks/utils/useDebounce";
 
 export default function OrganizationEvent() {
@@ -435,6 +436,30 @@ export default function OrganizationEvent() {
 								<option value="completed">Sudah Selesai</option>
 							</select>
 						</div>
+						<ExportData
+							data={filteredEvents.map((eventItem, index) => ({
+								no: index + 1,
+								judul: eventItem.judul || "",
+								kategori: eventItem.category?.nama || "",
+								status: eventItem.status || "",
+								tanggal_mulai: formatDate(eventItem.tanggal_mulai) || "",
+								tanggal_selesai: formatDate(eventItem.tanggal_selesai) || "",
+								waktu_mulai: formatTime(eventItem.waktu_mulai) || "",
+								waktu_selesai: formatTime(eventItem.waktu_selesai) || "",
+								lokasi: eventItem.location?.nama || "",
+								maks_peserta: eventItem.maks_peserta || 0,
+								peserta_saat_ini: eventItem.peserta_saat_ini || 0,
+								deskripsi_singkat: eventItem.deskripsi_singkat || "",
+								deskripsi: eventItem.deskripsi || "",
+							}))}
+							filename="organization-events"
+							buttonText="Export XLSX"
+							variant="success"
+							disabled={
+								eventsLoading || !filteredEvents || filteredEvents.length === 0
+							}
+							className="w-full sm:w-auto"
+						/>
 					</div>
 					{eventsLoading ? (
 						<div className="flex h-96 justify-center py-20">

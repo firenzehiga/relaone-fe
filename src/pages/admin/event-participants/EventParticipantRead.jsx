@@ -19,7 +19,14 @@ import {
 	Users,
 	FileText,
 } from "lucide-react";
-import { Menu, MenuButton, MenuList, MenuItem, Portal, IconButton } from "@chakra-ui/react";
+import {
+	Menu,
+	MenuButton,
+	MenuList,
+	MenuItem,
+	Portal,
+	IconButton,
+} from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom";
@@ -79,7 +86,9 @@ export default function AdminEventParticipant() {
 				eventsMap.get(p.event.id).count++;
 			}
 		});
-		return Array.from(eventsMap.values()).sort((a, b) => a.judul.localeCompare(b.judul));
+		return Array.from(eventsMap.values()).sort((a, b) =>
+			a.judul.localeCompare(b.judul),
+		);
 	}, [participants]);
 
 	const filteredParticipants = useMemo(() => {
@@ -87,7 +96,9 @@ export default function AdminEventParticipant() {
 
 		// Filter by selected event
 		if (selectedEventId !== "all") {
-			filtered = filtered.filter((p) => p.event?.id === parseInt(selectedEventId));
+			filtered = filtered.filter(
+				(p) => p.event?.id === parseInt(selectedEventId),
+			);
 		}
 
 		return filtered;
@@ -186,7 +197,8 @@ export default function AdminEventParticipant() {
 		{
 			name: "Aksi",
 			cell: (row) => {
-				if (isLoading) return <Loader2 className="text-emerald-600 animate-spin" />; // Show spinner while isLoading
+				if (isLoading)
+					return <Loader2 className="text-emerald-600 animate-spin" />; // Show spinner while isLoading
 				return (
 					<Menu>
 						<MenuButton
@@ -197,8 +209,13 @@ export default function AdminEventParticipant() {
 						/>
 						<Portal>
 							<MenuList className="font-semibold">
-								<Link to={`/admin/event-participants/edit/${row.id}`} className="w-full">
-									<MenuItem icon={<EditIcon className="text-yellow-500 hover:text-yellow-600" />}>
+								<Link
+									to={`/admin/event-participants/edit/${row.id}`}
+									className="w-full">
+									<MenuItem
+										icon={
+											<EditIcon className="text-yellow-500 hover:text-yellow-600" />
+										}>
 										Edit
 									</MenuItem>
 								</Link>
@@ -223,8 +240,12 @@ export default function AdminEventParticipant() {
 				<div className="flex flex-col items-center justify-center  text-gray-600">
 					<AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
 					<h3 className="text-lg font-semibold mb-2">Error</h3>
-					<p className="text-gray-500 mb-4 text-center">Gagal mengambil data participant.</p>
-					<p className="text-red-500 mb-4 text-center font-semibold">{participantsError.message}</p>
+					<p className="text-gray-500 mb-4 text-center">
+						Gagal mengambil data participant.
+					</p>
+					<p className="text-red-500 mb-4 text-center font-semibold">
+						{participantsError.message}
+					</p>
 				</div>
 			</div>
 		);
@@ -238,7 +259,10 @@ export default function AdminEventParticipant() {
 						<h2 className="text-lg font-semibold">
 							{" "}
 							{participantsRefetching ? (
-								<FetchLoader variant="inline" text="Mengambil Data Terbaru..." />
+								<FetchLoader
+									variant="inline"
+									text="Mengambil Data Terbaru..."
+								/>
 							) : (
 								"Daftar Partisipan"
 							)}
@@ -257,8 +281,12 @@ export default function AdminEventParticipant() {
 						<div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-3 border border-blue-200">
 							<div className="flex items-center justify-between">
 								<div>
-									<p className="text-sm text-blue-600 font-medium">Total Kegiatan</p>
-									<p className="text-xl font-bold text-blue-900">{eventsList.length}</p>
+									<p className="text-sm text-blue-600 font-medium">
+										Total Kegiatan
+									</p>
+									<p className="text-xl font-bold text-blue-900">
+										{eventsList.length}
+									</p>
 								</div>
 								<Calendar className="w-8 h-8 text-blue-500 opacity-70" />
 							</div>
@@ -266,8 +294,12 @@ export default function AdminEventParticipant() {
 						<div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg p-3 border border-emerald-200">
 							<div className="flex items-center justify-between">
 								<div>
-									<p className="text-sm text-emerald-600 font-medium">Total Partisipan</p>
-									<p className="text-xl font-bold text-emerald-900">{participants.length}</p>
+									<p className="text-sm text-emerald-600 font-medium">
+										Total Partisipan
+									</p>
+									<p className="text-xl font-bold text-emerald-900">
+										{participants.length}
+									</p>
 								</div>
 								<Users className="w-8 h-8 text-emerald-500 opacity-70" />
 							</div>
@@ -275,8 +307,12 @@ export default function AdminEventParticipant() {
 						<div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-3 border border-purple-200">
 							<div className="flex items-center justify-between">
 								<div>
-									<p className="text-sm text-purple-600 font-medium">Total Hasil Filter</p>
-									<p className="text-xl font-bold text-purple-900">{filteredParticipants.length}</p>
+									<p className="text-sm text-purple-600 font-medium">
+										Total Hasil Filter
+									</p>
+									<p className="text-xl font-bold text-purple-900">
+										{filteredParticipants.length}
+									</p>
 								</div>
 								<Filter className="w-8 h-8 text-purple-500 opacity-70" />
 							</div>
@@ -336,10 +372,13 @@ export default function AdminEventParticipant() {
 												size="sm"
 												onClick={handleBulkDelete}
 												disabled={
-													!selectedRows || selectedRows.length === 0 || bulkDeleteMutation.isLoading
+													!selectedRows ||
+													selectedRows.length === 0 ||
+													bulkDeleteMutation.isLoading
 												}
 												className="w-full md:w-auto">
-												<Trash className="w-4 h-4 mr-2" /> Hapus Terpilih ({selectedRows.length})
+												<Trash className="w-4 h-4 mr-2" /> Hapus Terpilih (
+												{selectedRows.length})
 											</Button>
 											{/* 
 											<ExportData
@@ -371,9 +410,13 @@ export default function AdminEventParticipant() {
 											catatan: p.catatan || "",
 										}))}
 										filename="participants"
-										buttonText="Export CSV"
+										buttonText="Export XLSX"
 										variant="success"
-										disabled={participantsLoading || !participants || participants.length === 0}
+										disabled={
+											participantsLoading ||
+											!participants ||
+											participants.length === 0
+										}
 										className="w-full md:w-auto"
 									/>
 								</div>
@@ -388,7 +431,8 @@ export default function AdminEventParticipant() {
 							{selectedEventId !== "all" && (
 								<Badge variant="primary" className="flex items-center gap-1">
 									Event:{" "}
-									{eventsList.find((e) => e.id === parseInt(selectedEventId))?.judul || "Unknown"}
+									{eventsList.find((e) => e.id === parseInt(selectedEventId))
+										?.judul || "Unknown"}
 									<button
 										onClick={() => setSelectedEventId("all")}
 										className="ml-1 hover:text-white">
@@ -458,10 +502,14 @@ export default function AdminEventParticipant() {
 										<div className="space-y-3">
 											<div className="text-sm text-gray-700">
 												<span className="font-semibold">Nama partisipan:</span>
-												<span className="ml-2 text-gray-900">{data.user?.nama || "-"}</span>
+												<span className="ml-2 text-gray-900">
+													{data.user?.nama || "-"}
+												</span>
 											</div>
 											<div className="text-sm text-gray-700">
-												<span className="font-semibold">Organisasi Penyelenggara:</span>
+												<span className="font-semibold">
+													Organisasi Penyelenggara:
+												</span>
 												<span className="ml-2 text-gray-900 bg-emerald-100">
 													{data.event?.organization?.nama || "-"}
 												</span>
@@ -486,12 +534,18 @@ export default function AdminEventParticipant() {
 											</div>
 
 											<div>
-												<div className="text-sm font-semibold text-gray-700 mb-1">Catatan</div>
+												<div className="text-sm font-semibold text-gray-700 mb-1">
+													Catatan
+												</div>
 												<div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
 													{data.catatan ? (
-														<span className="text-gray-900">{data.catatan}</span>
+														<span className="text-gray-900">
+															{data.catatan}
+														</span>
 													) : (
-														<span className="italic text-gray-500">tidak ada catatan</span>
+														<span className="italic text-gray-500">
+															tidak ada catatan
+														</span>
 													)}
 												</div>
 											</div>
@@ -500,7 +554,9 @@ export default function AdminEventParticipant() {
 										{/* Right column */}
 										<div className="space-y-3">
 											<div className="flex items-start">
-												<div className="text-sm text-gray-700 font-semibold">Tanggal Daftar:</div>
+												<div className="text-sm text-gray-700 font-semibold">
+													Tanggal Daftar:
+												</div>
 												<div className="text-sm text-gray-900 ml-2">
 													{formatDate(data.tanggal_daftar) || "-"}
 												</div>
@@ -521,14 +577,18 @@ export default function AdminEventParticipant() {
 												</div>
 											</div>
 											<div className="flex items-start">
-												<div className="text-sm text-gray-700 font-semibold">Waktu Kehadiran:</div>
+												<div className="text-sm text-gray-700 font-semibold">
+													Waktu Kehadiran:
+												</div>
 												<div className="text-sm ml-2">
 													{data.tanggal_hadir ? (
 														<span className="text-gray-900">
 															{formatDateTime(data.tanggal_hadir, "WIB")}{" "}
 														</span>
 													) : (
-														<span className="text-gray-500 italic">Belum Check-In</span>
+														<span className="text-gray-500 italic">
+															Belum Check-In
+														</span>
 													)}
 												</div>
 											</div>

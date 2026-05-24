@@ -1,11 +1,12 @@
 import React from "react";
+import * as XLSX from "xlsx";
 import { FileText } from "lucide-react";
 
 export function ExportData({
 	data = [],
 	filename = "export-data",
 	columns = [],
-	buttonText = "Export CSV",
+	buttonText = "Export XLSX",
 	className = "",
 	disabled = false,
 	variant = "primary",
@@ -26,10 +27,14 @@ export function ExportData({
 	const getValueByKey = (obj, key) => {
 		if (!key) return "";
 		// support nested keys like 'user.nama'
-		return key.split(".").reduce((o, k) => (o && o[k] !== undefined ? o[k] : ""), obj) || "";
+		return (
+			key
+				.split(".")
+				.reduce((o, k) => (o && o[k] !== undefined ? o[k] : ""), obj) || ""
+		);
 	};
 
-	const exportToCSV = () => {
+	const exportToXLSX = () => {
 		try {
 			if (!data || data.length === 0) {
 				// nothing to export
@@ -41,32 +46,29 @@ export function ExportData({
 					? columns
 					: Object.keys(data[0]).map((k) => ({ key: k, header: k }));
 
-			const headers = cols.map((c) => (typeof c === "string" ? c : c.header || c.key));
-
-			const rows = data.map((row) =>
-				cols
-					.map((c) => {
-						const key = typeof c === "string" ? c : c.key;
-						const formatter = typeof c === "object" ? c.formatter : null;
-						const raw = formatter ? formatter(row) : getValueByKey(row, key);
-						return `"${String(raw).replace(/"/g, '""')}"`;
-					})
-					.join(",")
+			const headers = cols.map((c) =>
+				typeof c === "string" ? c : c.header || c.key,
 			);
+			const rows = data.map((row) => {
+				const output = {};
+				cols.forEach((c, idx) => {
+					const key = typeof c === "string" ? c : c.key;
+					const formatter = typeof c === "object" ? c.formatter : null;
+					const raw = formatter ? formatter(row) : getValueByKey(row, key);
+					output[headers[idx]] = raw;
+				});
+				return output;
+			});
 
-			// prepend BOM so Excel detects UTF-8, and use CRLF
-			const csvContent = "\uFEFF" + [headers.join(","), ...rows].join("\r\n");
-			const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-			const url = window.URL.createObjectURL(blob);
-			const a = document.createElement("a");
-			a.href = url;
-			a.download = `${filename}-${new Date().toISOString().split("T")[0]}.csv`;
-			document.body.appendChild(a);
-			a.click();
-			document.body.removeChild(a);
-			window.URL.revokeObjectURL(url);
+			const worksheet = XLSX.utils.json_to_sheet(rows);
+			const workbook = XLSX.utils.book_new();
+			XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
+			XLSX.writeFile(
+				workbook,
+				`${filename}-${new Date().toISOString().split("T")[0]}.xlsx`,
+			);
 		} catch (error) {
-			console.error("Error exporting CSV:", error);
+			console.error("Error exporting XLSX:", error);
 			// swallow or optionally show a toast
 		}
 	};
@@ -74,7 +76,7 @@ export function ExportData({
 	return (
 		<button
 			type="button"
-			onClick={exportToCSV}
+			onClick={exportToXLSX}
 			disabled={disabled || !data || data.length === 0}
 			className={`${getButtonClass()} ${className}`}>
 			<FileText className="w-4 h-4 mr-2" />
