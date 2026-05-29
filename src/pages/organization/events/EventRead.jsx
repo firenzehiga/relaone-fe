@@ -162,6 +162,27 @@ export default function OrganizationEvent() {
 		return !["completed", "cancelled", "ongoing", "draft"].includes(row.status);
 	};
 
+	const getPendingRegistrationsCount = (eventItem) => {
+		if (!eventItem) return 0;
+		if (typeof eventItem.pending_registrations_count === "number") {
+			return eventItem.pending_registrations_count;
+		}
+		if (typeof eventItem.registered_count === "number") {
+			return eventItem.registered_count;
+		}
+		const byStatus =
+			eventItem.participants_by_status || eventItem.participant_status_counts;
+		if (byStatus && typeof byStatus.registered === "number") {
+			return byStatus.registered;
+		}
+		const participants =
+			eventItem.participants || eventItem.event_participants || [];
+		if (Array.isArray(participants)) {
+			return participants.filter((p) => p?.status === "registered").length;
+		}
+		return 0;
+	};
+
 	const handleStart = (row) => {
 		Swal.fire({
 			title: "Mulai event?",
@@ -449,6 +470,7 @@ export default function OrganizationEvent() {
 								lokasi: eventItem.location?.nama || "",
 								maks_peserta: eventItem.maks_peserta || 0,
 								peserta_saat_ini: eventItem.peserta_saat_ini || 0,
+								"pendaftaran baru": getPendingRegistrationsCount(eventItem),
 								deskripsi_singkat: eventItem.deskripsi_singkat || "",
 								deskripsi: eventItem.deskripsi || "",
 							}))}
