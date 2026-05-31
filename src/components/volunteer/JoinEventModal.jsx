@@ -10,12 +10,16 @@ import {
 	Gift,
 } from "lucide-react";
 import Modal from "@/components/ui/Modal";
-import DynamicButton from "@/components/ui/DynamicButton";
+import DynamicButton, { LinkButton } from "@/components/ui/DynamicButton";
 import Badge from "@/components/ui/Badge";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/_hooks/useAuth";
 import { useVolunteerJoinEventMutation } from "@/_hooks/useParticipants";
-import { getImageUrl } from "@/utils";
+import {
+	formatScreeningReasons,
+	getImageUrl,
+	getScreeningStatus,
+} from "@/utils";
 import { useEventById } from "@/_hooks/useEvents";
 import { useModalStore } from "@/stores/useAppStore";
 import { AsyncImage } from "loadable-image";
@@ -40,6 +44,7 @@ export default function JoinEventModal() {
 	} = useModalStore();
 	const [agreed, setAgreed] = useState(false);
 	const [success, setSuccess] = useState(false);
+	const [screeningResult, setScreeningResult] = useState(null);
 
 	const { isLoading, setLoading } = useAuthStore();
 
@@ -96,7 +101,8 @@ export default function JoinEventModal() {
 			};
 
 			// Tunggu join selesai
-			await joinMutation.mutateAsync(payload);
+			const response = await joinMutation.mutateAsync(payload);
+			setScreeningResult(response || null);
 
 			// Langsung tampilkan success animation setelah request berhasil
 			setSuccess(true);
@@ -106,6 +112,7 @@ export default function JoinEventModal() {
 				setSuccess(false);
 				setAgreed(false);
 				setFormData({ catatan: "" });
+				setScreeningResult(null);
 				setLoading(false); // Reset loading state sebelum tutup modal
 				closeJoinModal();
 			}, 1500);
@@ -158,6 +165,54 @@ export default function JoinEventModal() {
 							📧 Email konfirmasi akan dikirim ke alamat email Anda
 						</p>
 					</div>
+					{screeningResult && (
+						<div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+							{(() => {
+								const screening = getScreeningStatus(screeningResult);
+								const reasons = formatScreeningReasons(
+									screeningResult?.review_reasons,
+								);
+								return (
+									<div>
+										<div className="flex items-center gap-2 mb-2">
+											<Badge variant={screening.variant}>
+												{screening.label}
+											</Badge>
+											<span className="text-xs text-gray-600">
+												Status auto-screening pendaftaran
+											</span>
+										</div>
+										{reasons.length > 0 ? (
+											<ul className="list-disc list-inside text-xs text-gray-600 space-y-1">
+												{reasons.map((reason) => (
+													<li key={reason}>{reason}</li>
+												))}
+											</ul>
+										) : (
+											<p className="text-xs text-gray-500 italic">
+												Tidak ada alasan review
+											</p>
+										)}
+										{screeningResult?.review_reasons?.includes(
+											"profile_incomplete",
+										) && (
+											<div className="mt-3 flex flex-wrap items-center gap-2">
+												<p className="text-xs text-amber-700">
+													Lengkapi profil agar bisa masuk auto-approve.
+												</p>
+												<LinkButton
+													to="/volunteer/profile/edit"
+													variant="warning"
+													size="sm">
+													Lengkapi Profil
+												</LinkButton>
+											</div>
+										)}
+									</div>
+								);
+							})()}
+						</div>
+					)}
 				</motion.div>
 			) : (
 				<div className="space-y-5">

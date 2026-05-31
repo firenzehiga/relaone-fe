@@ -31,12 +31,18 @@ import { useModalStore } from "@/stores/useAppStore";
 import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 // Helpers
-import { getDirectionsUrl, getGoogleMapsUrl, getImageUrl } from "@/utils";
+import {
+	formatScreeningReasons,
+	getDirectionsUrl,
+	getGoogleMapsUrl,
+	getImageUrl,
+	getScreeningStatus,
+} from "@/utils";
 import { formatDate, formatDateTime, formatTime } from "@/utils/dateFormatter";
 
 // UI Components
 import QrCodeDisplay from "@/components/volunteer/QrCodeDisplay";
-import DynamicButton from "@/components/ui/DynamicButton";
+import DynamicButton, { LinkButton } from "@/components/ui/DynamicButton";
 import CustomSkeleton from "@/components/ui/CustomSkeleton";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
@@ -259,6 +265,50 @@ export default function ActivityDetailPage() {
 						</Card>
 					</motion.div>
 				</div>
+				<Card className="p-6 bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-shadow mb-8">
+					<div className="flex items-center justify-between mb-3">
+						<h2 className="text-lg font-semibold text-gray-900">
+							Auto-Screening
+						</h2>
+						{(() => {
+							const screening = getScreeningStatus(data);
+							return (
+								<Badge variant={screening.variant} className="text-sm">
+									{screening.label}
+								</Badge>
+							);
+						})()}
+					</div>
+					{(() => {
+						const reasons = formatScreeningReasons(data?.review_reasons);
+						if (reasons.length === 0) {
+							return (
+								<p className="text-sm text-gray-600">
+									Tidak ada alasan review untuk pendaftaran ini.
+								</p>
+							);
+						}
+						return (
+							<div>
+								<ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+									{reasons.map((reason) => (
+										<li key={reason}>{reason}</li>
+									))}
+								</ul>
+								{data?.review_reasons?.includes("profile_incomplete") && (
+									<div className="mt-3">
+										<LinkButton
+											to="/volunteer/profile/edit"
+											variant="warning"
+											size="sm">
+											Lengkapi Profil
+										</LinkButton>
+									</div>
+								)}
+							</div>
+						);
+					})()}
+				</Card>
 
 				{/* Event Banner */}
 				<motion.div

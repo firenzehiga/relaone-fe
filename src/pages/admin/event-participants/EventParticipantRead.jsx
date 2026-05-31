@@ -32,6 +32,7 @@ import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom";
 import FetchLoader from "@/components/ui/FetchLoader";
 import { formatDate, formatDateTime, formatTime } from "@/utils/dateFormatter";
+import { formatScreeningReasons, getScreeningStatus } from "@/utils";
 import Badge from "@/components/ui/Badge";
 import { useAuthStore } from "@/_hooks/useAuth";
 import { useDebounce } from "@/_hooks/utils/useDebounce";
@@ -193,6 +194,26 @@ export default function AdminEventParticipant() {
 			),
 			sortable: true,
 			width: "140px",
+		},
+		{
+			name: "Screening",
+			selector: (row) => {
+				const screening = getScreeningStatus(row);
+				return (
+					<div className="flex items-center gap-2">
+						{screening.icon === "check" ? (
+							<CheckCircle className="w-4 h-4 text-emerald-600" />
+						) : screening.icon === "x" ? (
+							<XCircle className="w-4 h-4 text-red-500" />
+						) : (
+							<AlertCircle className="w-4 h-4 text-gray-500" />
+						)}
+						<Badge variant={screening.variant}>{screening.label}</Badge>
+					</div>
+				);
+			},
+			sortable: true,
+			width: "190px",
 		},
 		{
 			name: "Aksi",
@@ -407,6 +428,10 @@ export default function AdminEventParticipant() {
 											event: p.event?.judul || "",
 											tanggal_daftar: formatDate(p.tanggal_daftar) || "",
 											status: p.status || "",
+											screening_status: getScreeningStatus(p).label,
+											screening_reasons:
+												formatScreeningReasons(p.review_reasons).join("; ") ||
+												"-",
 											catatan: p.catatan || "",
 										}))}
 										filename="participants"
@@ -590,6 +615,37 @@ export default function AdminEventParticipant() {
 															Belum Check-In
 														</span>
 													)}
+												</div>
+											</div>
+											<div>
+												<div className="text-sm text-gray-700 font-semibold">
+													Screening:
+												</div>
+												<div className="mt-2 space-y-2">
+													{(() => {
+														const screening = getScreeningStatus(data);
+														const reasons = formatScreeningReasons(
+															data?.review_reasons,
+														);
+														return (
+															<div>
+																<Badge variant={screening.variant}>
+																	{screening.label}
+																</Badge>
+																{reasons.length > 0 ? (
+																	<ul className="mt-2 list-disc list-inside text-xs text-gray-600">
+																		{reasons.map((reason) => (
+																			<li key={reason}>{reason}</li>
+																		))}
+																	</ul>
+																) : (
+																	<p className="mt-2 text-xs text-gray-500 italic">
+																		Tidak ada alasan review
+																	</p>
+																)}
+															</div>
+														);
+													})()}
 												</div>
 											</div>
 										</div>

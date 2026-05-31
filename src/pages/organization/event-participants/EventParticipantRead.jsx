@@ -41,6 +41,7 @@ import {
 
 // Helpers
 import { formatDate, formatDateTime } from "@/utils/dateFormatter";
+import { formatScreeningReasons, getScreeningStatus } from "@/utils";
 
 // UI Components
 import FetchLoader from "@/components/ui/FetchLoader";
@@ -267,6 +268,15 @@ export default function OrganizationEventParticipant() {
 		return filtered;
 	}, [participants, selectedEventId]);
 
+	const getScreeningExport = (participant) => {
+		const status = getScreeningStatus(participant);
+		const reasons = formatScreeningReasons(participant?.review_reasons);
+		return {
+			status: status.label,
+			reasons: reasons.length > 0 ? reasons.join("; ") : "-",
+		};
+	};
+
 	// Fungsi konfirmasi participant
 	const confirmParticipantMutation = useOrgConfirmParticipantMutation();
 	const handleConfirm = (id) => {
@@ -424,6 +434,26 @@ export default function OrganizationEventParticipant() {
 			width: "150px",
 		},
 		{
+			name: "Screening",
+			selector: (row) => {
+				const screening = getScreeningStatus(row);
+				return (
+					<div className="flex items-center gap-2">
+						{screening.icon === "check" ? (
+							<Check className="w-4 h-4 text-emerald-600" />
+						) : screening.icon === "x" ? (
+							<X className="w-4 h-4 text-red-500" />
+						) : (
+							<AlertCircle className="w-4 h-4 text-gray-500" />
+						)}
+						<Badge variant={screening.variant}>{screening.label}</Badge>
+					</div>
+				);
+			},
+			sortable: true,
+			width: "190px",
+		},
+		{
 			name: "Aksi",
 			cell: (row) => {
 				// Tidak tampilkan tombol aksi untuk status rejected atau attended
@@ -569,6 +599,8 @@ export default function OrganizationEventParticipant() {
 									event: participant.event?.judul || "",
 									tanggal_daftar: formatDate(participant.tanggal_daftar) || "",
 									status: participant.status || "",
+									screening_status: getScreeningExport(participant).status,
+									screening_reasons: getScreeningExport(participant).reasons,
 									catatan: participant.catatan || "",
 								}))}
 								filename="organization-participants"
@@ -643,12 +675,12 @@ export default function OrganizationEventParticipant() {
 									</p>
 									<div className="text-xs text-blue-600 space-y-1">
 										<div>
-											� <strong>Scanner Presensi:</strong> Scan kode QR
-											volunteer untuk check-in realtime
+											<strong>Scanner Presensi:</strong> Scan kode QR volunteer
+											untuk check-in realtime
 										</div>
 										<div>
-											⏰ <strong>Perbarui Status:</strong> Ubah status
-											partisipan yang tidak hadir setelah kegiatan selesai
+											<strong>Perbarui Status:</strong> Ubah status partisipan
+											yang tidak hadir setelah kegiatan selesai
 										</div>
 									</div>
 								</div>
@@ -891,6 +923,37 @@ export default function OrganizationEventParticipant() {
 															Belum Check-In
 														</span>
 													)}
+												</div>
+											</div>
+											<div>
+												<div className="text-sm text-gray-700 font-semibold">
+													Screening:
+												</div>
+												<div className="mt-2 space-y-2">
+													{(() => {
+														const screening = getScreeningStatus(data);
+														const reasons = formatScreeningReasons(
+															data?.review_reasons,
+														);
+														return (
+															<div>
+																<Badge variant={screening.variant}>
+																	{screening.label}
+																</Badge>
+																{reasons.length > 0 ? (
+																	<ul className="mt-2 list-disc list-inside text-xs text-gray-600">
+																		{reasons.map((reason) => (
+																			<li key={reason}>{reason}</li>
+																		))}
+																	</ul>
+																) : (
+																	<p className="mt-2 text-xs text-gray-500 italic">
+																		Tidak ada alasan review
+																	</p>
+																)}
+															</div>
+														);
+													})()}
 												</div>
 											</div>
 										</div>

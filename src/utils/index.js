@@ -31,7 +31,7 @@ export const getImageUrl = (path) => {
 	if (!path) return "";
 
 	// Jika sudah absolute URL (Google avatar), return as-is
-	if (path.startsWith('http://') || path.startsWith('https://')) {
+	if (path.startsWith("http://") || path.startsWith("https://")) {
 		return path;
 	}
 
@@ -61,7 +61,12 @@ export const parseApiError = (err) => {
 		)
 			.filter(Boolean)
 			.join(" ");
-	return flatten(data.message) || flatten(data.errors) || flatten(data) || JSON.stringify(data);
+	return (
+		flatten(data.message) ||
+		flatten(data.errors) ||
+		flatten(data) ||
+		JSON.stringify(data)
+	);
 };
 
 /**
@@ -82,7 +87,7 @@ export const parseApiError = (err) => {
  */
 export const toQueryBuilderParams = (
 	params = {},
-	filterKeys = ["search", "status_verifikasi", "category_id"]
+	filterKeys = ["search", "status_verifikasi", "category_id"],
 ) => {
 	const result = { ...params };
 
@@ -94,6 +99,31 @@ export const toQueryBuilderParams = (
 	});
 
 	return result;
+};
+
+// AUTO-SCREENING HELPERS
+export const SCREENING_REASON_LABELS = {
+	email_unverified: "Email belum terverifikasi",
+	profile_incomplete:
+		"Profil belum lengkap (telepon, tanggal lahir, alamat, keahlian)",
+	schedule_conflict: "Jadwal bentrok dengan event lain",
+	high_no_show_risk: "Riwayat no-show tinggi (>= 3)",
+};
+
+export const formatScreeningReasons = (reasons) => {
+	if (!Array.isArray(reasons) || reasons.length === 0) return [];
+	return reasons.map((reason) => SCREENING_REASON_LABELS[reason] || reason);
+};
+
+export const getScreeningStatus = (participant) => {
+	const eligible = participant?.auto_approve_eligible;
+	if (eligible === true) {
+		return { label: "Layak Otomatis", variant: "success", icon: "check" };
+	}
+	if (eligible === false) {
+		return { label: "Perlu Review", variant: "warning", icon: "x" };
+	}
+	return { label: "Belum Dicek", variant: "secondary", icon: "info" };
 };
 
 // GOOGLE MAPS UTILITIES
