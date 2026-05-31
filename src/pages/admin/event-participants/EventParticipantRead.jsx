@@ -16,6 +16,7 @@ import {
 	Filter,
 	X,
 	XCircle,
+	CheckCircle,
 	Calendar,
 	Users,
 	FileText,

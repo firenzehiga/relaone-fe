@@ -19,7 +19,7 @@ import {
 import DynamicButton from "@/components/ui/DynamicButton";
 import Avatar from "@/components/ui/Avatar";
 import { useAuthStore, useLogout } from "@/_hooks/useAuth";
-import { getImageUrl } from "@/utils";
+import { getProfileImageUrl } from "@/utils";
 import { HomeIcon } from "../../ui/home";
 
 /**
@@ -164,7 +164,9 @@ export default function Header() {
 									className="flex items-center space-x-2 p-2 rounded-xl hover:bg-emerald-50 transition-colors">
 									<Avatar
 										src={
-											user?.foto_profil ? getImageUrl(user.foto_profil) : null
+											user?.foto_profil
+												? getProfileImageUrl(user.foto_profil)
+												: null
 										}
 										fallback={user?.nama}
 										size="sm"

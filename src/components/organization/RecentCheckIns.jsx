@@ -1,4 +1,4 @@
-import { getImageUrl } from "@/utils";
+import { getProfileImageUrl } from "@/utils";
 import { Clock, UserCheck, AlertCircle } from "lucide-react";
 import Avatar from "../ui/Avatar";
 
@@ -41,7 +41,7 @@ function RecentCheckIns({ checkIns = [] }) {
 									: "bg-gray-50 border-gray-200 hover:bg-gray-100"
 							}`}>
 							<Avatar
-								src={getImageUrl(`foto_profil/${item.volunteer?.foto}`)}
+								src={getProfileImageUrl(item.volunteer?.foto)}
 								fallback={item.volunteer?.nama}
 								size="md"
 							/>

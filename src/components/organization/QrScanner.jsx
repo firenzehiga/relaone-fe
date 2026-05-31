@@ -3,7 +3,7 @@ import { Html5Qrcode } from "html5-qrcode";
 import { Scan, CheckCircle, XCircle, AlertCircle, Camera } from "lucide-react";
 import { useOrgScanQrMutation } from "../../_hooks/useParticipants";
 import Avatar from "../ui/Avatar";
-import { getImageUrl } from "@/utils";
+import { getProfileImageUrl } from "@/utils";
 
 /**
  * Component QR Scanner untuk organization check-in volunteer
@@ -63,13 +63,15 @@ function QrScanner({ eventId }) {
 							aspectRatio: 1.0,
 						},
 						handleCameraDetected,
-						handleCameraError
+						handleCameraError,
 					);
 
 					scannerRef.current = html5QrCode;
 				} catch (error) {
 					console.error("❌ Failed to initialize scanner:", error);
-					alert("Gagal mengakses kamera. Pastikan Anda sudah memberikan izin akses kamera.");
+					alert(
+						"Gagal mengakses kamera. Pastikan Anda sudah memberikan izin akses kamera.",
+					);
 					if (mounted) setScanning(false);
 				}
 			};
@@ -193,7 +195,7 @@ function QrScanner({ eventId }) {
 						}, 2000);
 					}
 				},
-			}
+			},
 		);
 	};
 
@@ -242,11 +244,20 @@ function QrScanner({ eventId }) {
 				// Strategy 2: Resize only (no contrast)
 				{ name: "resize-only", process: () => preprocessImage(file, 1500, 0) },
 				// Strategy 3: Resize + light sharpening
-				{ name: "light-sharpen", process: () => preprocessImage(file, 1200, 15) },
+				{
+					name: "light-sharpen",
+					process: () => preprocessImage(file, 1200, 15),
+				},
 				// Strategy 4: Resize + medium contrast
-				{ name: "medium-contrast", process: () => preprocessImage(file, 1200, 30) },
+				{
+					name: "medium-contrast",
+					process: () => preprocessImage(file, 1200, 30),
+				},
 				// Strategy 5: Resize + high contrast
-				{ name: "high-contrast", process: () => preprocessImage(file, 1000, 50) },
+				{
+					name: "high-contrast",
+					process: () => preprocessImage(file, 1000, 50),
+				},
 				// Strategy 6: Convert to grayscale + threshold
 				{ name: "grayscale", process: () => preprocessGrayscale(file) },
 			];
@@ -257,7 +268,9 @@ function QrScanner({ eventId }) {
 					const processedFile = await strategy.process();
 					const fileToScan =
 						processedFile instanceof Blob
-							? new File([processedFile], file.name || "scan.png", { type: processedFile.type })
+							? new File([processedFile], file.name || "scan.png", {
+									type: processedFile.type,
+								})
 							: processedFile;
 
 					decoded = await attemptScan(fileToScan);
@@ -328,8 +341,14 @@ function QrScanner({ eventId }) {
 							const f = (259 * (contrast + 255)) / (255 * (259 - contrast));
 							for (let i = 0; i < d.length; i += 4) {
 								d[i] = Math.min(255, Math.max(0, f * (d[i] - 128) + 128));
-								d[i + 1] = Math.min(255, Math.max(0, f * (d[i + 1] - 128) + 128));
-								d[i + 2] = Math.min(255, Math.max(0, f * (d[i + 2] - 128) + 128));
+								d[i + 1] = Math.min(
+									255,
+									Math.max(0, f * (d[i + 1] - 128) + 128),
+								);
+								d[i + 2] = Math.min(
+									255,
+									Math.max(0, f * (d[i + 2] - 128) + 128),
+								);
 							}
 							ctx.putImageData(imgData, 0, 0);
 						} catch (e) {
@@ -343,7 +362,7 @@ function QrScanner({ eventId }) {
 							else reject(new Error("Canvas toBlob failed"));
 						},
 						"image/png",
-						0.95
+						0.95,
 					);
 				};
 				img.onerror = () => reject(new Error("Image load error"));
@@ -404,7 +423,7 @@ function QrScanner({ eventId }) {
 							else reject(new Error("Canvas toBlob failed"));
 						},
 						"image/png",
-						1.0
+						1.0,
 					);
 				};
 				img.onerror = () => reject(new Error("Failed to load image"));
@@ -534,8 +553,8 @@ function QrScanner({ eventId }) {
 						atau seret gambar QR ke area kamera untuk memindai dari file
 					</p>
 					<p className="text-center text-xs text-gray-500 mt-1">
-						Pastikan QR Code terlihat jelas dalam kotak hijau. Area scanning sudah diperbesar untuk
-						pembacaan lebih mudah.
+						Pastikan QR Code terlihat jelas dalam kotak hijau. Area scanning
+						sudah diperbesar untuk pembacaan lebih mudah.
 					</p>
 				</div>
 			)}{" "}
@@ -546,8 +565,8 @@ function QrScanner({ eventId }) {
 						resultType === "success"
 							? "bg-green-50 border-green-300"
 							: resultType === "error"
-							? "bg-red-50 border-red-300"
-							: "bg-yellow-50 border-yellow-300"
+								? "bg-red-50 border-red-300"
+								: "bg-yellow-50 border-yellow-300"
 					}`}>
 					<div className="flex items-start gap-2 sm:gap-3">
 						{resultType === "success" ? (
@@ -564,8 +583,8 @@ function QrScanner({ eventId }) {
 									resultType === "success"
 										? "text-green-800"
 										: resultType === "error"
-										? "text-red-800"
-										: "text-yellow-800"
+											? "text-red-800"
+											: "text-yellow-800"
 								}`}>
 								{result.message}
 							</h3>
@@ -573,7 +592,7 @@ function QrScanner({ eventId }) {
 							{result.volunteer && (
 								<div className="flex items-center gap-2 sm:gap-3 bg-white rounded-lg p-2 sm:p-3 mt-2">
 									<Avatar
-										src={getImageUrl(`foto_profil/${result.volunteer?.foto}`)}
+										src={getProfileImageUrl(result.volunteer?.foto)}
 										fallback={result.volunteer?.nama}
 										size="md"
 									/>
@@ -596,7 +615,8 @@ function QrScanner({ eventId }) {
 							{result.details && (
 								<div className="mt-2 text-xs sm:text-sm text-gray-700 bg-white rounded p-2">
 									<p>
-										Status: <span className="font-medium">{result.details}</span>
+										Status:{" "}
+										<span className="font-medium">{result.details}</span>
 									</p>
 								</div>
 							)}
@@ -608,7 +628,9 @@ function QrScanner({ eventId }) {
 			{!scanning && !result && (
 				<div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 text-center">
 					<Camera className="w-10 h-10 sm:w-12 sm:h-12 text-blue-500 mx-auto mb-2" />
-					<p className="text-blue-800 font-medium text-sm sm:text-base">Scanner belum aktif</p>
+					<p className="text-blue-800 font-medium text-sm sm:text-base">
+						Scanner belum aktif
+					</p>
 					<p className="text-blue-600 text-xs sm:text-sm mt-1">
 						Klik "Mulai Scan" untuk memulai check-in volunteer
 					</p>

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { User, LogOut, Settings, ChevronDown } from "lucide-react";
 import Avatar from "@/components/ui/Avatar";
 import { useAuthStore, useLogout } from "@/_hooks/useAuth";
-import { getImageUrl } from "@/utils";
+import { getProfileImageUrl } from "@/utils";
 
 export function UserMenu() {
 	const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -74,11 +74,7 @@ export function UserMenu() {
 				onClick={handleMenuToggle}
 				className="flex items-center space-x-2 p-1.5 rounded-lg hover:bg-sidebar-accent transition-colors">
 				<Avatar
-					src={
-						user?.foto_profil
-							? getImageUrl(`foto_profil/${user.foto_profil}`)
-							: null
-					}
+					src={user?.foto_profil ? getProfileImageUrl(user.foto_profil) : null}
 					alt={user?.name || "User"}
 					fallback={user?.name?.charAt(0) || "U"}
 					size="sm"

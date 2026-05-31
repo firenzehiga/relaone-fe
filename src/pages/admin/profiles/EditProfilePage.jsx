@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useUpdateUserMutation, useUserProfile } from "@/_hooks/useUsers";
 import {
 	getImageUrl,
+	getProfileImageUrl,
 	parseSkillsArray,
 	addSkill,
 	updateSkill,
@@ -91,7 +92,7 @@ export default function AdminEditProfilePage() {
 		});
 
 		if (profileData.foto_profil) {
-			setImagePreview(getImageUrl(`foto_profil/${profileData.foto_profil}`));
+			setImagePreview(getProfileImageUrl(profileData.foto_profil));
 		}
 	}, [profileData]);
 

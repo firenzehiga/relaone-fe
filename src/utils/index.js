@@ -40,6 +40,19 @@ export const getImageUrl = (path) => {
 	return `${baseUrl}${path}`;
 };
 
+// Profile photo may be stored as a full URL (Google) or as a storage filename.
+export const getProfileImageUrl = (photoValue) => {
+	if (!photoValue) return "";
+	if (typeof photoValue === "string" && /^https?:\/\//i.test(photoValue)) {
+		return photoValue;
+	}
+	const normalized = String(photoValue);
+	if (normalized.startsWith("foto_profil/")) {
+		return getImageUrl(normalized);
+	}
+	return getImageUrl(`foto_profil/${normalized}`);
+};
+
 /*
  * Parse error response dari API menjadi string pesan yang mudah dibaca
  * Karena biasanya response error dari backend bisa dalam bentuk object
@@ -105,7 +118,7 @@ export const toQueryBuilderParams = (
 export const SCREENING_REASON_LABELS = {
 	email_unverified: "Email belum terverifikasi",
 	profile_incomplete:
-		"Profil belum lengkap (telepon, tanggal lahir, alamat, keahlian)",
+		"Profil belum lengkap (telepon, tanggal lahir, alamat, keahlian). Pastikan semua data sudah diisi",
 	schedule_conflict: "Jadwal bentrok dengan event lain",
 	high_no_show_risk: "Riwayat no-show tinggi (>= 3)",
 };
@@ -118,7 +131,7 @@ export const formatScreeningReasons = (reasons) => {
 export const getScreeningStatus = (participant) => {
 	const eligible = participant?.auto_approve_eligible;
 	if (eligible === true) {
-		return { label: "Layak Otomatis", variant: "success", icon: "check" };
+		return { label: "Layak", variant: "success", icon: "check" };
 	}
 	if (eligible === false) {
 		return { label: "Perlu Review", variant: "warning", icon: "x" };

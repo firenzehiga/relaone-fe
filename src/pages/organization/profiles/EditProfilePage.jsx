@@ -25,7 +25,7 @@ import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 
 // Helpers
 import { toInputDate } from "@/utils/dateFormatter";
-import { getImageUrl } from "@/utils";
+import { getImageUrl, getProfileImageUrl } from "@/utils";
 
 // UI Components
 import CustomSkeleton from "@/components/ui/CustomSkeleton";
@@ -107,7 +107,7 @@ export default function OrganizationEditProfilePage() {
 		});
 
 		if (profileData.foto_profil) {
-			setImagePreview(getImageUrl(`foto_profil/${profileData.foto_profil}`));
+			setImagePreview(getProfileImageUrl(profileData.foto_profil));
 		}
 		if (profileData.role_data?.logo) {
 			setLogoPreview(

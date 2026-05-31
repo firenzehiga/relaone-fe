@@ -115,7 +115,7 @@ export default function JoinEventModal() {
 				setScreeningResult(null);
 				setLoading(false); // Reset loading state sebelum tutup modal
 				closeJoinModal();
-			}, 1500);
+			}, 4500);
 		} catch (err) {
 			// Error sudah dihandle di hook
 			console.error("Join event error:", err);

@@ -24,6 +24,7 @@ import { useDocumentTitle } from "@/_hooks/utils/useDocumentTitle";
 import { toInputDate } from "@/utils/dateFormatter";
 import {
 	getImageUrl,
+	getProfileImageUrl,
 	parseSkillsArray,
 	addSkill,
 	updateSkill,
@@ -97,7 +98,7 @@ export default function EditProfilePage() {
 		});
 
 		if (profileData.foto_profil) {
-			setImagePreview(getImageUrl(`foto_profil/${profileData.foto_profil}`));
+			setImagePreview(getProfileImageUrl(profileData.foto_profil));
 		}
 	}, [profileData]);
 
