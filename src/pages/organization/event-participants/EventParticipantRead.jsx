@@ -53,7 +53,7 @@ import { useDebounce } from "@/_hooks/utils/useDebounce";
 export default function OrganizationEventParticipant() {
 	const [searchParticipant, setSearchParticipant] = useState("");
 	const [currentPage, setCurrentPage] = useState(1);
-	const [rowsPerPage, setRowsPerPage] = useState(10);
+	const [rowsPerPage, setRowsPerPage] = useState(50);
 
 	// Debounce search menggunakan custom hook
 	const debouncedSearch = useDebounce(searchParticipant, 500); // You can implement debounce if needed
